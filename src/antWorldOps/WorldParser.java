@@ -8,16 +8,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import antBrainOps.Brain;
+
 public class WorldParser {
 	public WorldParser() {
 		
 	}
 	
-	public World readWorldFrom(String path) {
+	public World readWorldFrom(String path, Brain[] brains) {
 		BufferedReader br;
 		File f = new File(path);
 		String line;
-		World world = new World();
+		World world = null;
 		String[] rowCellStrings;
 		char[][] cellChars;
 		int rows = 0;
@@ -62,7 +64,7 @@ public class WorldParser {
 			
 			br.close();
 			
-			world.setWorld(rows, cols, cellChars);
+			world = new World(cellChars, brains);
 			
 		}catch(FileNotFoundException FNF){
 			FNF.printStackTrace();

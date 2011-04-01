@@ -41,10 +41,11 @@ Move 8 11             ; state 15:     ...or move forward and return to
  */
 
 public class State {
-	enum Command { SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP};
-	enum SenseDir { AHEAD, UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT, BEHIND};
-	enum TurnDir { LEFT, RIGHT};
-	enum Condition { FOOD, HOME }; //More values needed, but I don't want to add too many
+	enum Command { SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP };
+	enum SenseDir { HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD };
+	enum TurnDir { LEFT, RIGHT };
+	enum Condition { FRIEND, FOE, FRIENDWITHFOOD, FOEWITHFOOD,
+		FOOD, ROCK, MARKER, FOEMARKER, HOME, FOEHOME }
 
 	private Command command;
 	private SenseDir senseDir;
@@ -54,6 +55,7 @@ public class State {
 	private int st1;
 	private int st2;
 	private Condition condition;
+	private int senseMarker;
 	
 	private int stateNum;
 
@@ -67,52 +69,91 @@ public class State {
 		command = Command.valueOf(terms[0].trim().toUpperCase());
 		
 		switch(command){
-		//Sense sensedir st1 st2 cond
+		//Sense senseDir st1 st2 condition
 		case SENSE:
 			senseDir = SenseDir.valueOf(terms[1].trim().toUpperCase());
 			st1 = Integer.parseInt(terms[2]);
 			st2 = Integer.parseInt(terms[3]);
 			condition = Condition.valueOf(terms[4].trim().toUpperCase());
+			if(condition == Condition.MARKER){
+				senseMarker = Integer.parseInt(terms[5]);
+			}
 			break;
-			//Mark i st
+		//Mark marker st1
 		case MARK:
 			marker = Integer.parseInt(terms[1]);
 			st1 = Integer.parseInt(terms[2]);
 			break;
-			//Unmark i st
+		//Unmark marker st1
 		case UNMARK:
 			marker = Integer.parseInt(terms[1]);
 			st1 = Integer.parseInt(terms[2]);
 			break;
-			//PickUp st1 st2
+		//PickUp st1 st2
 		case PICKUP:
 			st1 = Integer.parseInt(terms[1]);
 			st2 = Integer.parseInt(terms[2]);
 			break;
-			//Drop st
+		//Drop st1
 		case DROP:
 			st1 = Integer.parseInt(terms[1]);
 			break;
-			//Turn lr st
+		//Turn turnDir st1
 		case TURN:
 			turnDir = TurnDir.valueOf(terms[1].trim().toUpperCase());
 			st1 = Integer.parseInt(terms[2]);
 			break;
-			//Move st1 st2
+		//Move st1 st2
 		case MOVE:
 			st1 = Integer.parseInt(terms[1]);
 			st2 = Integer.parseInt(terms[2]);
 			break;
-			//Flip p st1 st2
+		//Flip p st1 st2
 		case FLIP:
 			p = Integer.parseInt(terms[1]);
 			st1 = Integer.parseInt(terms[2]);
 			st2 = Integer.parseInt(terms[3]);
 			break;
+		//This should never be reached
 		default:
-			//This should never be reached
 			System.out.println("Illegal Command Argument in State constructer");
 		}
+	}
+	
+	public int getCommand() {
+		return command.ordinal();
+	}
+	
+	public int getSenseDir() {
+		return senseDir.ordinal();
+	}
+	
+	public int getTurnDir() {
+		return turnDir.ordinal();
+	}
+	
+	public int getMarker() {
+		return marker;
+	}
+	
+	public int getP() {
+		return p;
+	}
+	
+	public int getSt1() {
+		return st1;
+	}
+	
+	public int getSt2() {
+		return st2;
+	}
+	
+	public int getCondition() {
+		return condition.ordinal();
+	}
+	
+	public int getSenseMarker() {
+		return senseMarker;
 	}
 
 	public String toString() {
@@ -120,50 +161,53 @@ public class State {
 		s += command + " ";
 		
 		switch(command){
-		//Sense sensedir st1 st2 cond
+		//Sense senseDir st1 st2 condition
 		case SENSE:
 			s += senseDir + " ";
 			s += st1 + " ";
 			s += st2 + " ";
 			s += condition + " ";
+			if(condition == Condition.MARKER){
+				s += senseMarker;
+			}
 			break;
-			//Mark i st
+		//Mark marker st1
 		case MARK:
 			s += marker + " ";
 			s += st1 + " ";
 			break;
-			//Unmark i st
+		//Unmark marker st1
 		case UNMARK:
 			s += marker + " ";
 			s += st1 + " ";
 			break;
-			//PickUp st1 st2
+		//PickUp st1 st2
 		case PICKUP:
 			s += st1 + " ";
 			s += st2 + " ";
 			break;
-			//Drop st
+		//Drop st1
 		case DROP:
 			s += st1 + " ";
 			break;
-			//Turn lr st
+		//Turn turnDir st1
 		case TURN:
 			s += turnDir + " ";
 			s += st1 + " ";
 			break;
-			//Move st1 st2
+		//Move st1 st2
 		case MOVE:
 			s += st1 + " ";
 			s += st2 + " ";
 			break;
-			//Flip p st1 st2
+		//Flip p st1 st2
 		case FLIP:
 			s += p + " ";
 			s += st1 + " ";
 			s += st2 + " ";
 			break;
+		//This should never be reached
 		default:
-			//This should never be reached
 			System.out.println("Illegal Command Argument in State toString");
 		}
 		//So far s == "SENSE AHEAD 1 3 FOOD "

@@ -4,8 +4,6 @@ import antBrainOps.Brain;
 
 public class WorldController {
 	private static final WorldParser parser = new WorldParser();
-	private static final String inPath = "example.world";
-	private static final String outPath = "my.world"; 
 	
 	public WorldController() {
 		
@@ -24,13 +22,20 @@ public class WorldController {
 	}
 	
 	public static void main(String args[]) {
+//		String inPath = "example.world";
+		String outPath = "my.world"; 
 		WorldController wc = new WorldController(); 
 		World world = null;
+		World world2 = null;
 		
-		world = wc.readWorldFrom(inPath, null);
 		world = wc.getTournamentWorld(null, 0);
 		
-		System.out.println(world);
 		wc.writeWorldTo(world, outPath);
+		world2 = wc.readWorldFrom(outPath, null);
+		
+		System.out.println(world);
+		System.out.println(world2);
+		System.out.println(world.getAttributes());
+		System.out.println(world2.getAttributes());
 	}
 }

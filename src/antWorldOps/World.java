@@ -52,8 +52,13 @@ public class World {
 	
 	private Cell[][] cells; //indent every second line, starting at cells[1]
 	private final Brain[] brains;
+	private final ArrayList<Ant> ants = new ArrayList<Ant>();
 	//I would use a ArrayList<Ant>[], but you can't do that in Java
-	private final ArrayList<ArrayList<Ant>> ants = new ArrayList<ArrayList<Ant>>();
+	private final ArrayList<ArrayList<Ant>> antsBySpecies = new ArrayList<ArrayList<Ant>>();
+	
+	//Ant colours:
+	//'+' == black
+	//'-' == red
 	
 	/**
 	 * @param seed 0 to use random seed
@@ -105,25 +110,141 @@ public class World {
 		this.cols = cellChars[0].length;
 		this.brains = brains;
 		
-		//TODO work out these values from cellChars (effort + boring)
-		rocks = 0;
-		anthills = 0;
-		anthillSideLength = 0;
-		foodBlobCount = 0;
-		foodBlobSideLength = 0;
-		foodBlobCellFoodCount = 0;
-		antInitialDirection = 0;
-		
 		cells = new Cell[rows][cols];
 		int r = 0;
 		int c = 0;
 		
+		//Setup cells
 		for(r = 0; r < rows; r++){
 			cells[r] = new Cell[cols];
 			for(c = 0; c < cols; c++){
 				cells[r][c] = new Cell(r, c, cellChars[r][c]);
 			}
 		}
+		
+		//Setup neighbours for each cell
+		Cell current;
+		for(r = 0; r < rows; r++){
+			for(c = 0; c < cols; c++){
+				current = cells[r][c];
+				current.setNeighbours(getNeighbours(current));
+			}
+		}
+		
+		//Assumptions:
+		//There is a rocky border around the world which should not 
+		//count towards the total number of rocks in the world
+		//There is a gap of at least 1 hex between each object
+		//All anthills are hexagonal and have the same side length
+		//There are no more than 2 types of anthill in the world ('+' and '-')
+		//However, there may be more than 1 anthill for each species
+		//Food blobs are square, and all have the same side length
+		//All cells which contain food contain the same amount of food
+		int rocks = 0;
+		boolean plusAnthill = false;
+		boolean minusAnthill = false;
+		Cell current2;
+		boolean firstAnthillFound = false;
+		int anthillSideLength = 0;
+		ArrayList<Cell> foodBlobTopLefts = new ArrayList<Cell>();
+		int currentRow = 0;
+		int currentCol = 0;
+		int tlRow = 0;
+		int tlCol = 0;
+		boolean newBlob = true;
+		boolean firstFoodFound = false;
+		int foodBlobSideLength = 0;
+		int foodBlobCellFoodCount = 0;
+		
+		//Calculate field values from cell information
+		for(r = 0; r < rows; r++){
+			for(c = 0; c < cols; c++){
+				current = cells[r][c];
+				
+				//Calculate number of rocks
+				if(current.isRocky()){
+					rocks++;
+				//Calculate number of anthills
+				}else if(current.getAnthill() == 1){
+					plusAnthill = true;
+				}else if(current.getAnthill() == 2){
+					minusAnthill = true;
+				}
+				
+				//Calculate anthill side length
+				if(current.getAnthill() != 0){
+					if(!firstAnthillFound){
+						current2 = current;
+						do{
+							anthillSideLength++;
+							current2 = current2.getNeighbour(0);
+						}while(current2.getAnthill() != 0);
+						firstAnthillFound = true;
+					}
+				}
+				
+				if(current.hasFood()){
+					//Calculate food blob side length
+					if(!firstFoodFound){
+						foodBlobCellFoodCount = current.foodCount();
+						current2 = current;
+						do{
+							foodBlobSideLength++;
+							current2 = current2.getNeighbour(0);
+						}while(current2.hasFood());
+						firstAnthillFound = true;
+						foodBlobTopLefts.add(current);
+					}
+					
+					//Calculate number of food blobs
+					currentRow = current.getRow();
+					currentCol = current.getCol();
+					newBlob = true;
+					for(Cell topLeft : foodBlobTopLefts){
+						//If current and topleft row gap < foodblobsidelength
+						tlRow = topLeft.getRow();
+						tlCol = topLeft.getCol();
+						if(currentRow - tlRow < foodBlobSideLength){
+							if(currentCol - tlCol < foodBlobSideLength){
+								newBlob = false;
+							}
+						}
+					}
+					if(newBlob){
+						foodBlobTopLefts.add(current);
+					}
+				}
+			}
+		}
+		
+		rocks -= (rows - 1) * 2 + (cols - 1) * 2; //subtract border rocks
+		this.rocks = rocks;
+		
+		int anthills = 0;
+		if(plusAnthill){
+			anthills++;
+		}
+		if(minusAnthill){
+			anthills++;
+		}
+		this.anthills = anthills;
+		this.anthillSideLength = anthillSideLength;
+		this.foodBlobCount = foodBlobTopLefts.size();
+		this.foodBlobSideLength = foodBlobSideLength;
+		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		antInitialDirection = 0;
+		
+		//Setup markers in each cell
+		//Use this. for fields, local variables created above
+		for(r = 0; r < rows; r++){
+			for(c = 0; c < cols; c++){
+				current = cells[r][c];
+				current.setNeighbours(getNeighbours(current));
+				current.setupMarkers(this.anthills);
+			}
+		}
+		
+		createAnts();
 	}
 	
 	/**
@@ -174,7 +295,6 @@ public class World {
 				ranRow = ran.nextInt(rows - 2) + 1;
 				ranCol = ran.nextInt(cols - 2) + 1;
 			}while(!setHex(ranRow, ranCol, anthillSideLength, '+'));
-			createAnts(ranRow, ranCol, anthillSideLength, '+');
 		}
 		
 		if(anthills >= 2){
@@ -185,11 +305,11 @@ public class World {
 				ranRow = ran.nextInt(rows - 2) + 1;
 				ranCol = ran.nextInt(cols - 2) + 1;
 			}while(!setHex(ranRow, ranCol, anthillSideLength, '-'));
-			createAnts(ranRow, ranCol, anthillSideLength, '-');
 		}
 		
 		//No more than 2 anthills can be constructed as any more than this they cannot be 
 		//represented uniquely by the 2 char values specified in Cell
+		createAnts();
 		
 		//Foods
 		for(i = 0; i < foodBlobCount; i++){
@@ -435,60 +555,51 @@ public class World {
 	}
 	
 	/**
+	 * Call after anthills generated, puts an ant in each anthill hex
+	 * 
 	 * @param row of centre hex
 	 * @param col of centre hex
 	 * @param sideLength
 	 * @param c new value for every cell in the area
 	 */
-	private boolean createAnts(int row, int col, int sideLength, char ch) {
-		//Doesn't check cells, assumes are all locations where ants are desired
+	private void createAnts() {
+		ArrayList<Ant> species;
+		Brain brain = null;
+		Cell cell;
+		Ant ant;
+		int colour = -1;
+		int r = 0;
+		int c = 0;
+		int uid = 0;
 		
-		int num = -1;
-		if(ch == '+'){
-			num = 0;
-		}else if(ch == '-'){
-			num = 1;
-		}else{
-			return false;
-		}
-		
-		while(ants.size() <= num){
-			ants.add(new ArrayList<Ant>());
-		}
-		ArrayList<Ant> species = ants.get(num);
-		Brain brain = brains[num];
-		
-		Cell centre = cells[row][col];
-		
-		createAntsRecurse(centre, 0, sideLength, species, brain);
-		return true;
-	}
-	
-	private void createAntsRecurse(Cell cell, int recurseNum, int recurseDepth,
-		ArrayList<Ant> species, Brain brain) {
-		//Need both checks to allow for hexes
-		//containing elements on first or last rows or columns
-		//and hexes with side length 0
-		
-		//Don't set if over required length
-		if(recurseNum > recurseDepth - 1){
-			return;
-		}
-		
-		Ant ant = new Ant(antInitialDirection, brain, cell);
-		cell.setAnt(ant);
-		species.add(ant);
-		
-		//Don't recurse if next recurse will take side length over required length
-		if(recurseNum > recurseDepth - 2){
-			return;
-		}
-		
-		//Sets hexes multiple times, inefficient
-		Cell[] neighbours = getNeighbours(cell);
-		int i = 0;
-		for(i = 0; i < neighbours.length; i++){
-			createAntsRecurse(neighbours[i], recurseNum + 1, recurseDepth, species, brain);
+		for(r = 0; r < rows; r++){
+			for(c = 0; c < cols; c++){
+				colour = -1;
+				cell = cells[r][c];
+				
+				if(cell.toChar() == '+'){
+					colour = 0;
+				}else if(cell.toChar() == '-'){
+					colour = 1;
+				}else{
+					continue;
+				}
+				
+				while(antsBySpecies.size() <= colour){
+					antsBySpecies.add(new ArrayList<Ant>());
+				}
+				species = antsBySpecies.get(colour);
+				if(brains != null){
+					brain = brains[colour];
+				}
+				
+				ant = new Ant(uid, ran, antInitialDirection, colour, brain, cell);
+				cell.setAnt(ant);
+				ants.add(ant);
+				species.add(ant);
+				
+				uid++;
+			}
 		}
 	}
 	
@@ -496,7 +607,7 @@ public class World {
 		return cells;
 	}
 	
-	public ArrayList<ArrayList<Ant>> getAnts() {
+	public ArrayList<Ant> getAnts() {
 		return ants;
 	}
 	
@@ -512,20 +623,71 @@ public class World {
 		//Subtract indent from calculations
 		//0 if row is unindented, 1 if row is indented
 		int k = r % 2;
-		
+
 		//Clockwise from east
-		neighbours[0] = cells[r    ][c + 1    ]; //east
-		neighbours[1] = cells[r + 1][c + k    ]; //south-east
-		neighbours[2] = cells[r + 1][c - 1 + k]; //south-west
-		neighbours[3] = cells[r    ][c - 1    ]; //west
-		neighbours[4] = cells[r - 1][c - 1 + k]; //north-west
-		neighbours[5] = cells[r - 1][c + k    ]; //north-east
-		
+		try{
+			neighbours[0] = cells[r    ][c + 1    ]; //east
+		}catch(ArrayIndexOutOfBoundsException aiob){
+		}
+		try{
+			neighbours[1] = cells[r + 1][c + k    ]; //south-east
+		}catch(ArrayIndexOutOfBoundsException aiob){
+		}
+		try{
+			neighbours[2] = cells[r + 1][c - 1 + k]; //south-west
+		}catch(ArrayIndexOutOfBoundsException aiob){
+		}
+		try{
+			neighbours[3] = cells[r    ][c - 1    ]; //west
+		}catch(ArrayIndexOutOfBoundsException aiob){
+		}
+		try{
+			neighbours[4] = cells[r - 1][c - 1 + k]; //north-west
+		}catch(ArrayIndexOutOfBoundsException aiob){
+		}
+		try{
+			neighbours[5] = cells[r - 1][c + k    ]; //north-east
+		}catch(ArrayIndexOutOfBoundsException aiob){
+		}
+
 		return neighbours;
 	}
 	
 	public int getSeed() {
 		return seed;
+	}
+	
+	public String getAttributes() {
+		String s = "";
+		int i = 0;
+		
+		s += "\nseed: " + seed;
+		s += "\nrows: " + rows;
+		s += "\ncols: " + cols;
+		s += "\nrocks: " + rocks;
+		s += "\nanthills: " + anthills;
+		s += "\nanthill side length: " + anthillSideLength;
+		s += "\nfood blob count: " + foodBlobCount;
+		s += "\nfood blob side length: " + foodBlobSideLength;
+		s += "\nfood blob cell food count: " + foodBlobCellFoodCount;
+		s += "\nant initial direction: " + antInitialDirection;
+		s += "\ngap: " + gap;
+		if(brains != null){
+			for(i = 0; i < brains.length; i++){
+				s += "\nbrains" + i + ": " + brains[i];
+			}
+		}else{
+			s += "\nbrains: " + null;
+		}
+		s += "\nants: ";
+		for(i = 0; i < antsBySpecies.size(); i++){
+			s += antsBySpecies.get(i).size();
+			if(i < antsBySpecies.size() - 1){
+				s += ", ";
+			}
+		}
+		
+		return s;
 	}
 	
 	public String toString() {

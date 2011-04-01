@@ -4,11 +4,14 @@ public class Cell {
 	private final int row;
 	private final int col;
 	
-	//Defaults are for "clear cell" ('.')
-	private boolean rocky; //TODO final
+	//I would prefer to make 'rocky' and 'anthill' final, but it would be impossible,
+	//given how I construct the world object before altering cell types
+	private boolean rocky;
 	private int food;
-	private int anthill; //TODO final
+	private int anthill;
+	private boolean[][] markers;
 	
+	private Cell[] neighbours;
 	private Ant ant;
 	
 	public Cell(int row, int col, char c) {
@@ -59,6 +62,18 @@ public class Cell {
 		}
 	}
 	
+	public void setNeighbours(Cell[] neighbours) {
+		this.neighbours = neighbours;
+	}
+	
+	public Cell[] getNeighbours() {
+		return neighbours;
+	}
+	
+	public Cell getNeighbour(int direction) {
+		return neighbours[direction];
+	}
+	
 	public int getRow() {
 		return row;
 	}
@@ -83,12 +98,76 @@ public class Cell {
 		return "X"; //Else error, cannot be less than 0 or more than 2 anthills
 	}
 	
+	public void setupMarkers(int specieses) {
+		markers = new boolean[specieses][5];
+	}
+	
+	public void mark(int species, int i) {
+		markers[species][i] = true;
+	}
+	
+	public void unmark(int species, int i) {
+		markers[species][i] = false;
+	}
+	
+	public boolean getMarker(int species, int i) {
+		return markers[species][i];
+	}
+	
+	public boolean getAnyMarker(int notSpecies) {
+		//returns true if any marker not of species notSpecies is true
+		int i = 0;
+		int j = 0;
+		for(i = 0; i < markers.length; i++){
+			if(i != notSpecies){
+				for(j = 0; j < 6; j++){
+					if(markers[i][j] == true){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public int getSpecieses() {
+		return markers.length;
+	}
+	
 	public void setAnt(Ant ant) {
 		this.ant = ant;
 	}
 	
 	public Ant getAnt() {
 		return ant;
+	}
+	
+	public boolean isRocky() {
+		return rocky;
+	}
+	
+	public int foodCount() {
+		return food;
+	}
+	
+	public boolean hasFood() {
+		return food != 0;
+	}
+	
+	public void giveFood() {
+		food++;
+	}
+	
+	public void takeFood() {
+		food--;
+	}
+	
+	public int getAnthill() {
+		return anthill;
+	}
+	
+	public boolean hasAnt() {
+		return ant != null;
 	}
 	
 	public char toChar() {

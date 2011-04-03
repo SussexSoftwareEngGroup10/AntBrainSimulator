@@ -5,11 +5,16 @@ import java.util.Random;
 import antBrainOps.Brain;
 import antBrainOps.State;
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public class Ant {
 	enum Colour { BLACK, RED };
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
 	//with the same seed, so exactly the same game can be replicated
+	//If no Random is passed, generate a new Random with random seed
 	private final Random ran;
 	private final int uid;
 	private final Colour colour;
@@ -22,7 +27,12 @@ public class Ant {
 	public Ant(int uid, Random ran, int direction, int colour, Brain brain, Cell cell) {
 		this.uid = uid;
 		
-		this.ran = ran;
+		if(ran == null){
+			this.ran = new Random();
+		}else{
+			this.ran = ran;
+		}
+		
 		switch(colour){
 		case 0:
 			this.colour = Colour.BLACK;
@@ -32,7 +42,7 @@ public class Ant {
 			break;
 		default:
 			System.out.println("Illegal Colour Argument in Ant Constructer");
-			this.colour = Colour.BLACK;
+			this.colour = null;
 		}
 		this.brain = brain;
 		this.state = 0;

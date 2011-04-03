@@ -10,12 +10,16 @@ import java.io.IOException;
 
 import antBrainOps.Brain;
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public class WorldParser {
 	public WorldParser() {
 		
 	}
 	
-	public World readWorldFrom(String path, Brain[] brains) {
+	public World readWorldFrom(Brain[] brains, String path) {
 		BufferedReader br;
 		File f = new File(path);
 		String line;

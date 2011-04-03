@@ -40,26 +40,89 @@ Move 8 11             ; state 15:     ...or move forward and return to
 										state 8
  */
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public class State {
+	//Remember to change random state generation in GA and other methods if any enums are altered
 	enum Command { SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP };
 	enum SenseDir { HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD };
 	enum TurnDir { LEFT, RIGHT };
 	enum Condition { FRIEND, FOE, FRIENDWITHFOOD, FOEWITHFOOD,
 		FOOD, ROCK, MARKER, FOEMARKER, HOME, FOEHOME }
-
-	private Command command;
-	private SenseDir senseDir;
-	private TurnDir turnDir;
-	private int marker;
-	private int p;
-	private int st1;
-	private int st2;
-	private Condition condition;
-	private int senseMarker;
 	
-	private int stateNum;
-
-	public State(int stateNum, String stateString) throws ArrayIndexOutOfBoundsException {
+	//All effectively final, but cannot all be final as some fields are never initialised
+	//Defaults and uninitialised values are null and -1
+	private Command command = null;
+	private SenseDir senseDir = null;
+	private TurnDir turnDir = null;
+	private int marker = -1;
+	private int p = -1;
+	private int st1 = -1;
+	private int st2 = -1;
+	private Condition condition = null;
+	private int senseMarker = -1;
+	
+	private int stateNum = -1;
+	
+	public State(int stateNum, int[] genes) {
+		this.stateNum = stateNum;
+		
+		command = toCommand(genes[0]);
+		switch(command){
+		//Sense senseDir st1 st2 condition (senseMarker)
+		case SENSE:
+			senseDir = toSenseDir(genes[1]);
+			st1 = genes[5];
+			st2 = genes[6];
+			condition = toCondition(genes[7]);
+			if(condition == Condition.MARKER){
+				senseMarker = genes[8];
+			}
+			break;
+		//Mark marker st1
+		case MARK:
+			marker = genes[3];
+			st1 = genes[5];
+			break;
+		//Unmark marker st1
+		case UNMARK:
+			marker = genes[3];
+			st1 = genes[5];
+			break;
+		//PickUp st1 st2
+		case PICKUP:
+			st1 = genes[5];
+			st2 = genes[6];
+			break;
+		//Drop st1
+		case DROP:
+			st1 = genes[5];
+			break;
+		//Turn turnDir st1
+		case TURN:
+			turnDir = toTurnDir(genes[2]);
+			st1 = genes[5];
+			break;
+		//Move st1 st2
+		case MOVE:
+			st1 = genes[5];
+			st2 = genes[6];
+			break;
+		//Flip p st1 st2
+		case FLIP:
+			p = genes[4];
+			st1 = genes[5];
+			st2 = genes[6];
+			break;
+		//This should never be reached
+		default:
+			System.out.println("Illegal Command ordinal Argument in State constructer");
+		}
+	}
+	
+	public State(int stateNum, String stateString) {
 		this.stateNum = stateNum;
 		
 		//Given: "Sense Ahead 1 3 Food"
@@ -69,7 +132,7 @@ public class State {
 		command = Command.valueOf(terms[0].trim().toUpperCase());
 		
 		switch(command){
-		//Sense senseDir st1 st2 condition
+		//Sense senseDir st1 st2 condition (senseMarker)
 		case SENSE:
 			senseDir = SenseDir.valueOf(terms[1].trim().toUpperCase());
 			st1 = Integer.parseInt(terms[2]);
@@ -120,15 +183,199 @@ public class State {
 		}
 	}
 	
+	public static int[] getValues(int states) {
+		int[] values = new int[9];
+		int i = 0;
+		for(i = 0; i < 9; i++){
+			values[i] = getValue(states, i);
+		}
+		return values;
+	}
+	
+	public static int getValue(int states, int field) {
+		switch(field){
+		case 0:
+			return 8;
+		case 1:
+			return 4;
+		case 2:
+			return 2;
+		case 3:
+			return 6;
+		case 4:
+			return 10;
+		case 5:
+			return states;
+		case 6:
+			return states;
+		case 7:
+			return 10;
+		case 8:
+			return 6;
+		default:
+			System.out.println("Illegal field Argument in State constructer");
+			return -1;
+		}
+	}
+	
+	private Command toCommand(int i) {
+		//SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP
+		switch(i){
+		case -1:
+			return null;
+		case 0:
+			return Command.SENSE;
+		case 1:
+			return Command.MARK;
+		case 2:
+			return Command.UNMARK;
+		case 3:
+			return Command.PICKUP;
+		case 4:
+			return Command.DROP;
+		case 5:
+			return Command.TURN;
+		case 6:
+			return Command.MOVE;
+		case 7:
+			return Command.FLIP;
+		//This should never be reached
+		default:
+			System.out.println("Illegal Command ordinal Argument in State toCommand");
+		}
+		return null;
+	}
+	
+	private SenseDir toSenseDir(int i) {
+		//HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD
+		switch(i){
+		case -1:
+			return null;
+		case 0:
+			return SenseDir.HERE;
+		case 1:
+			return SenseDir.AHEAD;
+		case 2:
+			return SenseDir.LEFTAHEAD;
+		case 3:
+			return SenseDir.RIGHTAHEAD;
+		//This should never be reached
+		default:
+			System.out.println("Illegal senseDir ordinal Argument in State toSenseDir");
+		}
+		return null;
+	}
+	
+	private TurnDir toTurnDir(int i) {
+		//LEFT, RIGHT
+		switch(i){
+		case -1:
+			return null;
+		case 0:
+			return TurnDir.LEFT;
+		case 1:
+			return TurnDir.RIGHT;
+		//This should never be reached
+		default:
+			System.out.println("Illegal turnDir ordinal Argument in State toSenseDir");
+		}
+		return null;
+	}
+	
+	private Condition toCondition(int i) {
+		//FRIEND, FOE, FRIENDWITHFOOD, FOEWITHFOOD,	FOOD, ROCK, MARKER, FOEMARKER, HOME, FOEHOME
+		switch(i){
+		case -1:
+			return null;
+		case 0:
+			return Condition.FRIEND;
+		case 1:
+			return Condition.FOE;
+		case 2:
+			return Condition.FRIENDWITHFOOD;
+		case 3:
+			return Condition.FOEWITHFOOD;
+		case 4:
+			return Condition.FOOD;
+		case 5:
+			return Condition.ROCK;
+		case 6:
+			return Condition.MARKER;
+		case 7:
+			return Condition.FOEMARKER;
+		case 8:
+			return Condition.HOME;
+		case 9:
+			return Condition.FOEHOME;
+		//This should never be reached
+		default:
+			System.out.println("Illegal Condition ordinal Argument in State toSenseDir");
+		}
+		return null;
+	}
+	
+	/**
+	 * @return the values of all int fields, and the ordinal of all enum values
+	 * returns -1 if int or enum is not in use by state
+	 * e.g. when command == SENSE, turnDir returns -1, as sense does not have a turnDir
+	 */
+	public int[] getGenes() {
+		int[] genes = new int[9];
+		genes[0] = command.ordinal();
+		if(senseDir == null){
+			genes[1] = -1;
+		}else{
+			genes[1] = senseDir.ordinal();
+		}
+		if(turnDir == null){
+			genes[2] = -1;
+		}else{
+			genes[2] = turnDir.ordinal();
+		}
+		genes[3] = marker;
+		genes[4] = p;
+		genes[5] = st1;
+		genes[6] = st2;
+		if(condition == null){
+			genes[7] = -1;
+		}else{
+			genes[7] = condition.ordinal();
+		}
+		genes[8] = senseMarker;
+		return genes;
+	}
+	
+	public boolean equals(Object o) {
+		State b = (State) o;
+		int[] genesA = this.getGenes();
+		int[] genesB = b.getGenes();
+		int i = 0;
+		for(i = 0; i < 9; i++){
+			if(genesA[i] != genesB[i]){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public int getCommand() {
+		if(command == null){
+			return -1;
+		}
 		return command.ordinal();
 	}
 	
 	public int getSenseDir() {
+		if(senseDir == null){
+			return -1;
+		}
 		return senseDir.ordinal();
 	}
 	
 	public int getTurnDir() {
+		if(turnDir == null){
+			return -1;
+		}
 		return turnDir.ordinal();
 	}
 	
@@ -149,11 +396,18 @@ public class State {
 	}
 	
 	public int getCondition() {
+		if(condition == null){
+			return -1;
+		}
 		return condition.ordinal();
 	}
 	
 	public int getSenseMarker() {
 		return senseMarker;
+	}
+	
+	public int getStateNum() {
+		return stateNum;
 	}
 
 	public String toString() {
@@ -168,7 +422,7 @@ public class State {
 			s += st2 + " ";
 			s += condition + " ";
 			if(condition == Condition.MARKER){
-				s += senseMarker;
+				s += senseMarker + " ";
 			}
 			break;
 		//Mark marker st1
@@ -212,13 +466,13 @@ public class State {
 		}
 		//So far s == "SENSE AHEAD 1 3 FOOD "
 		
-		while(s.length() < 30){
+		while(s.length() < 45){
 			s += " ";
 		}
 		
 		s += "; STATE " + stateNum + ": ";
 		
-		while(s.length() < 45){
+		while(s.length() < 60){
 			s += " ";
 		}
 		

@@ -30,11 +30,15 @@ Example World:
 	 # # # # # # # # # #
 */
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public class World {
 	//Using a seed means that the same world can be reproduced
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
-	private int seed = new Random().nextInt(Integer.MAX_VALUE);
-	private final Random ran = new Random(seed);
+	private int seed;
+	private final Random ran;
 	private final int rows;
 	private final int cols;
 	
@@ -78,10 +82,13 @@ public class World {
 	 * @param rocks
 	 */
 	public World(int rows, int cols, int rocks, Brain[] brains, int seed) {
-		if(seed != 0){
+		//Can either use a random or predefined seed
+		if(seed == 0){
+			this.seed = new Random().nextInt(Integer.MAX_VALUE);
+		}else{
 			this.seed = seed;
-			ran.setSeed(this.seed);
 		}
+		ran = new Random(this.seed);
 		
 		this.rows = rows;
 		this.cols = cols;
@@ -106,6 +113,10 @@ public class World {
 	 * @param cellChars
 	 */
 	protected World(char[][] cellChars, Brain[] brains) {
+		//Random is not needed as world will not be generated
+		seed = -1;
+		ran = null;
+		
 		this.rows = cellChars.length;
 		this.cols = cellChars[0].length;
 		this.brains = brains;
@@ -137,21 +148,21 @@ public class World {
 		//There is a gap of at least 1 hex between each object
 		//All anthills are hexagonal and have the same side length
 		//There are no more than 2 types of anthill in the world ('+' and '-')
-		//However, there may be more than 1 anthill for each species
+		//(however, there may be more than 1 anthill for each species)
 		//Food blobs are square, and all have the same side length
 		//All cells which contain food contain the same amount of food
+		
+		//Confirmed works for tournament worlds,
+		//getAttributes on generated world,
+		//then compared results with those given after writing
+		//and reading world in through a WorldParser
 		int rocks = 0;
 		boolean plusAnthill = false;
 		boolean minusAnthill = false;
 		Cell current2;
 		boolean firstAnthillFound = false;
 		int anthillSideLength = 0;
-		ArrayList<Cell> foodBlobTopLefts = new ArrayList<Cell>();
-		int currentRow = 0;
-		int currentCol = 0;
-		int tlRow = 0;
-		int tlCol = 0;
-		boolean newBlob = true;
+		int foodBlobCellCount = 0;
 		boolean firstFoodFound = false;
 		int foodBlobSideLength = 0;
 		int foodBlobCellFoodCount = 0;
@@ -164,6 +175,7 @@ public class World {
 				//Calculate number of rocks
 				if(current.isRocky()){
 					rocks++;
+				
 				//Calculate number of anthills
 				}else if(current.getAnthill() == 1){
 					plusAnthill = true;
@@ -184,6 +196,9 @@ public class World {
 				}
 				
 				if(current.hasFood()){
+					//Calculate number of cells containing food
+					foodBlobCellCount++;
+					
 					//Calculate food blob side length
 					if(!firstFoodFound){
 						foodBlobCellFoodCount = current.foodCount();
@@ -192,26 +207,7 @@ public class World {
 							foodBlobSideLength++;
 							current2 = current2.getNeighbour(0);
 						}while(current2.hasFood());
-						firstAnthillFound = true;
-						foodBlobTopLefts.add(current);
-					}
-					
-					//Calculate number of food blobs
-					currentRow = current.getRow();
-					currentCol = current.getCol();
-					newBlob = true;
-					for(Cell topLeft : foodBlobTopLefts){
-						//If current and topleft row gap < foodblobsidelength
-						tlRow = topLeft.getRow();
-						tlCol = topLeft.getCol();
-						if(currentRow - tlRow < foodBlobSideLength){
-							if(currentCol - tlCol < foodBlobSideLength){
-								newBlob = false;
-							}
-						}
-					}
-					if(newBlob){
-						foodBlobTopLefts.add(current);
+						firstFoodFound = true;
 					}
 				}
 			}
@@ -229,7 +225,7 @@ public class World {
 		}
 		this.anthills = anthills;
 		this.anthillSideLength = anthillSideLength;
-		this.foodBlobCount = foodBlobTopLefts.size();
+		this.foodBlobCount = foodBlobCellCount / (foodBlobSideLength * foodBlobSideLength);
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		antInitialDirection = 0;
@@ -589,8 +585,15 @@ public class World {
 					antsBySpecies.add(new ArrayList<Ant>());
 				}
 				species = antsBySpecies.get(colour);
+				
+				//If more than 1 brain is given, use most possible
+				//Otherwise use brain at 0
 				if(brains != null){
-					brain = brains[colour];
+					if(brains[colour] != null){
+						brain = brains[colour];
+					}else{
+						brain = brains[0];
+					}
 				}
 				
 				ant = new Ant(uid, ran, antInitialDirection, colour, brain, cell);
@@ -617,40 +620,66 @@ public class World {
 	 */
 	private Cell[] getNeighbours(Cell cell) {
 		Cell[] neighbours = new Cell[6];
-		int r = cell.getRow();
-		int c = cell.getCol();
-		
-		//Subtract indent from calculations
-		//0 if row is unindented, 1 if row is indented
-		int k = r % 2;
+		int i = 0;
 
 		//Clockwise from east
-		try{
-			neighbours[0] = cells[r    ][c + 1    ]; //east
-		}catch(ArrayIndexOutOfBoundsException aiob){
-		}
-		try{
-			neighbours[1] = cells[r + 1][c + k    ]; //south-east
-		}catch(ArrayIndexOutOfBoundsException aiob){
-		}
-		try{
-			neighbours[2] = cells[r + 1][c - 1 + k]; //south-west
-		}catch(ArrayIndexOutOfBoundsException aiob){
-		}
-		try{
-			neighbours[3] = cells[r    ][c - 1    ]; //west
-		}catch(ArrayIndexOutOfBoundsException aiob){
-		}
-		try{
-			neighbours[4] = cells[r - 1][c - 1 + k]; //north-west
-		}catch(ArrayIndexOutOfBoundsException aiob){
-		}
-		try{
-			neighbours[5] = cells[r - 1][c + k    ]; //north-east
-		}catch(ArrayIndexOutOfBoundsException aiob){
+		for(i = 0; i < 6; i++){
+			neighbours[i] = getNeighbour(cell, i);
 		}
 
 		return neighbours;
+	}
+	
+	private Cell getNeighbour(Cell cell, int i) {
+		Cell neighbour = null;
+		int r = cell.getRow();
+		int c = cell.getCol();
+		//Subtract indent from calculations
+		//0 if row is unindented, 1 if row is indented
+		int k = r % 2;
+		
+		switch(i){
+		//Clockwise from east
+		case 0:
+			try{
+				neighbour = cells[r    ][c + 1    ]; //east
+			}catch(ArrayIndexOutOfBoundsException aiob){
+			}
+			break;
+		case 1:
+			try{
+				neighbour = cells[r + 1][c + k    ]; //south-east
+			}catch(ArrayIndexOutOfBoundsException aiob){
+			}
+			break;
+		case 2:
+			try{
+				neighbour = cells[r + 1][c - 1 + k]; //south-west
+			}catch(ArrayIndexOutOfBoundsException aiob){
+			}
+			break;
+		case 3:
+			try{
+				neighbour = cells[r    ][c - 1    ]; //west
+			}catch(ArrayIndexOutOfBoundsException aiob){
+			}
+			break;
+		case 4:
+			try{
+				neighbour = cells[r - 1][c - 1 + k]; //north-west
+			}catch(ArrayIndexOutOfBoundsException aiob){
+			}
+			break;
+		case 5:
+			try{
+				neighbour = cells[r - 1][c + k    ]; //north-east
+			}catch(ArrayIndexOutOfBoundsException aiob){
+			}
+			break;
+		default:
+			System.out.println("Illegal i Argument in World getNeighbour");
+		}
+		return neighbour;
 	}
 	
 	public int getSeed() {

@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public class BrainParser {
 	public BrainParser() {
 		
@@ -46,7 +50,7 @@ public class BrainParser {
 				//Get stateNum from stateStrings[1]
 				stateNum = getStateNum(lineParts[1]);
 
-				brain.setState(stateNum, new State(stateNum, lineParts[0]));
+				brain.setState(new State(stateNum, lineParts[0]));
 			}
 				
 			br.close();

@@ -1,5 +1,9 @@
 package antWorldOps;
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public class Cell {
 	private final int row;
 	private final int col;
@@ -71,6 +75,11 @@ public class Cell {
 	}
 	
 	public Cell getNeighbour(int direction) {
+		if(direction < 0){
+			direction += 6;
+		}else if(direction > 5){
+			direction -= 6;
+		}
 		return neighbours[direction];
 	}
 	
@@ -99,7 +108,7 @@ public class Cell {
 	}
 	
 	public void setupMarkers(int specieses) {
-		markers = new boolean[specieses][5];
+		markers = new boolean[specieses][6];
 	}
 	
 	public void mark(int species, int i) {

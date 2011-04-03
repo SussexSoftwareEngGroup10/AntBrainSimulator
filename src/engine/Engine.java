@@ -33,6 +33,8 @@ public class Engine {
 	}
 	
 	public static void main(String args[]) {
+		//Dummy engine methods show that the
+		//World-, Brain- and Ant-related methods work
 		Engine engine = new Engine();
 		BrainController bc = new BrainController();
 		WorldController wc = new WorldController();

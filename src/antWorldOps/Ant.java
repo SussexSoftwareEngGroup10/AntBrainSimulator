@@ -21,6 +21,7 @@ public class Ant {
 	private final Brain brain;
 	private int state;
 	private Cell cell;
+	private boolean alive = true;
 	private int direction;
 	private boolean food = false;
 	
@@ -271,6 +272,54 @@ public class Ant {
 		}else{
 			state = s.getSt2();
 		}
+	}
+	
+	public boolean isSurrounded() {
+		if(neighbourFoes() >= 5){
+			return true;
+		}
+		return false;
+	}
+	
+	private int neighbourFoes() {
+		Cell[] neighbours = cell.getNeighbours();
+		Ant ant = null;
+		int foes = 0;
+		int i = 0;
+		//For each neighbouring cell
+		for(i = 0; i < 6; i++){
+			//If the cell contains a foe,
+			//increment number of foes found
+			ant = neighbours[i].getAnt();
+			if(ant != null){
+				if(ant.getColour() != colour.ordinal()){
+					foes++;
+				}
+			}
+		}
+		//All cells must have contained foes
+		return foes;
+	}
+	
+	public void kill() {
+		alive = false;
+		
+		//Drop food carried + 3
+		if(food){
+			cell.giveFood();
+		}
+		int i = 0;
+		for(i = 0; i < 3; i++){
+			cell.giveFood();
+		}
+		
+		//Remove from world
+		cell.setAnt(null);
+		cell = null;
+	}
+	
+	public boolean isAlive() {
+		return alive;
 	}
 	
 	public Cell getCell() {

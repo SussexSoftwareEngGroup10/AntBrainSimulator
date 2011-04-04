@@ -30,6 +30,7 @@ public class Engine {
 		//fight each brain against the default brain a number of times
 		//
 		//then rank according to wins, most first
+		//don't use the Collections.sort method at all, this is a dummy
 	}
 	
 	public static void main(String args[]) {
@@ -69,7 +70,13 @@ public class Engine {
 		int rounds = 300000;
 		for(r = 0; r < rounds; r++){
 			for(Ant ant : ants){
-				ant.step();
+				if(ant.isAlive()){
+					if(ant.isSurrounded()){
+						ant.kill();
+					}else{
+						ant.step();
+					}
+				}
 			}
 		}
 	}

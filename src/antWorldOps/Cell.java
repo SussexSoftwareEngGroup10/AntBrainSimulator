@@ -164,11 +164,15 @@ public class Cell {
 	}
 	
 	public void giveFood() {
-		food++;
+		if(food < 9){
+			food++;
+		}
 	}
 	
 	public void takeFood() {
-		food--;
+		if(food > 0){
+			food--;
+		}
 	}
 	
 	public int getAnthill() {

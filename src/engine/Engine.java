@@ -3,13 +3,23 @@ package engine;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import antBrainOps.BrainController;
-import antBrainOps.Brain;
-import antWorldOps.Ant;
-import antWorldOps.WorldController;
-import antWorldOps.World;
+import antBrain.Brain;
+import antBrain.BrainController;
+import antWorld.Ant;
+import antWorld.World;
+import antWorld.WorldController;
 
 /**
+ * Dummy Engine class
+ * 
+ * sortByFitness is needed by the GA,
+ * it must order the population by how good they are at winning games, best first
+ * 
+ * the main method is just a dummy version of what the engine might do,
+ * used to test antBrain and antWorld classes
+ * 
+ * To work out get the winner in a game, call world.getFoodInAnthills()
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

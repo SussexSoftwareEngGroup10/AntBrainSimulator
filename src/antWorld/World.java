@@ -39,13 +39,13 @@ public class World {
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
 	private final int seed;
 	private final Random ran;
+	
 	private final int rows;
 	private final int cols;
 	
 	private final int rocks;
 	private final int anthills;
 	private final int anthillSideLength;
-	
 	private final int foodBlobCount;
 	private final int foodBlobSideLength;
 	private final int foodBlobCellFoodCount;
@@ -60,6 +60,8 @@ public class World {
 	//I use 2 different ways of storing the pointers to the ants in the world
 	//These should be kept in sync as they only use pointers,
 	//ants are added to both, and never removed
+	//Ants are added in UID order,
+	//Collections.sort() will restore the list to UID order, as it was created
 	private final ArrayList<Ant> ants = new ArrayList<Ant>();
 	//I would use a ArrayList<Ant>[], but you can't do that in Java
 	private final ArrayList<ArrayList<Ant>> antsBySpecies = new ArrayList<ArrayList<Ant>>();

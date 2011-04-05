@@ -2,7 +2,8 @@ package antWorld;
 
 import java.util.Random;
 
-import engine.InvalidInputException;
+import utilities.InvalidInputException;
+
 
 import antBrain.Brain;
 import antBrain.State;

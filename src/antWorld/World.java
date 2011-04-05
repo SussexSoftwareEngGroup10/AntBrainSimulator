@@ -37,7 +37,7 @@ Example World:
 public class World {
 	//Using a seed means that the same world can be reproduced
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
-	private int seed;
+	private final int seed;
 	private final Random ran;
 	private final int rows;
 	private final int cols;
@@ -54,8 +54,12 @@ public class World {
 	
 	private static final int gap = 1; //gap between objects in world
 	
-	private Cell[][] cells; //indent every second line, starting at cells[1]
+	private final Cell[][] cells; //indent every second line, starting at cells[1]
 	private final Brain[] brains;
+	
+	//I use 2 different ways of storing the pointers to the ants in the world
+	//These should be kept in sync as they only use pointers,
+	//ants are added to both, and never removed
 	private final ArrayList<Ant> ants = new ArrayList<Ant>();
 	//I would use a ArrayList<Ant>[], but you can't do that in Java
 	private final ArrayList<ArrayList<Ant>> antsBySpecies = new ArrayList<ArrayList<Ant>>();
@@ -102,7 +106,17 @@ public class World {
 		foodBlobCellFoodCount = 5;
 		antInitialDirection = 0;
 		
-		constructCells();
+		//Initialise every cell to be clear
+		int r = 0;
+		int c = 0;
+		cells = new Cell[rows][cols];
+		for(r = 0; r < rows; r++){
+			cells[r] = new Cell[cols];
+			for(c = 0; c < cols; c++){
+				cells[r][c] = new Cell(r, c, '.');
+			}
+		}
+		
 		createWorld();
 	}
 	
@@ -241,22 +255,6 @@ public class World {
 		}
 		
 		createAnts();
-	}
-	
-	/**
-	 * Initialises the arrays of cells to clear
-	 */
-	private void constructCells() {
-		int r = 0;
-		int c = 0;
-		
-		cells = new Cell[rows][cols];
-		for(r = 0; r < rows; r++){
-			cells[r] = new Cell[cols];
-			for(c = 0; c < cols; c++){
-				cells[r][c] = new Cell(r, c, '.');
-			}
-		}
 	}
 	
 	/**
@@ -612,6 +610,10 @@ public class World {
 	
 	public ArrayList<Ant> getAnts() {
 		return ants;
+	}
+	
+	public ArrayList<ArrayList<Ant>> getAntsBySpecies() {
+		return antsBySpecies;
 	}
 	
 	/**

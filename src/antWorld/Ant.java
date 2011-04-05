@@ -2,6 +2,8 @@ package antWorld;
 
 import java.util.Random;
 
+import engine.InvalidInputException;
+
 import antBrain.Brain;
 import antBrain.State;
 
@@ -9,7 +11,7 @@ import antBrain.State;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Ant {
+public class Ant implements Comparable<Ant> {
 	enum Colour { BLACK, RED };
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
@@ -42,7 +44,7 @@ public class Ant {
 			this.colour = Colour.RED;
 			break;
 		default:
-			System.out.println("Illegal Colour Argument in Ant Constructer");
+			new InvalidInputException("Illegal Colour Argument in Ant Constructer").printStackTrace();
 			this.colour = null;
 		}
 		this.brain = brain;
@@ -336,5 +338,16 @@ public class Ant {
 	
 	public boolean hasFood() {
 		return food;
+	}
+	
+	public int compareTo(Ant ant) {
+		//Sorts by UID, lowest first
+		if(ant.getUID() < uid){
+			return -1;
+		}else if(ant.getUID() == uid){
+			return 0;
+		}else{//if(ant.getUID() > uid){
+			return 1;
+		}
 	}
 }

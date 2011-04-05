@@ -1,5 +1,7 @@
 package antBrain;
 
+import engine.InvalidInputException;
+
 /*
 Instruction set:
 Sense sensedir st1 st2 cond	    	Go to state st1 if cond holds in sensedir;
@@ -52,21 +54,21 @@ public class State {
 	enum Condition { FRIEND, FOE, FRIENDWITHFOOD, FOEWITHFOOD,
 		FOOD, ROCK, MARKER, FOEMARKER, HOME, FOEHOME }
 	
-	//All effectively final, but cannot all be final as some fields are never initialised
-	//Defaults and uninitialised values are null and -1
-	private Command command = null;
-	private SenseDir senseDir = null;
-	private TurnDir turnDir = null;
-	private int marker = -1;
-	private int p = -1;
-	private int st1 = -1;
-	private int st2 = -1;
-	private Condition condition = null;
-	private int senseMarker = -1;
+	//All  final, as the first value given should never be overridden
+	//Default  values are null and -1
+	private final Command command;
+	private final SenseDir senseDir;
+	private final TurnDir turnDir;
+	private final int marker;
+	private final int p;
+	private final int st1;
+	private final int st2;
+	private final Condition condition;
+	private final int senseMarker;
 	
 	private int stateNum = -1;
 	
-	public State(int stateNum, int[] genes) {
+	public State(int stateNum, int[] genes) throws InvalidInputException {
 		this.stateNum = stateNum;
 		
 		command = toCommand(genes[0]);
@@ -74,51 +76,106 @@ public class State {
 		//Sense senseDir st1 st2 condition (senseMarker)
 		case SENSE:
 			senseDir = toSenseDir(genes[1]);
+			turnDir = null;
+			marker = -1;
+			p = -1;
 			st1 = genes[5];
 			st2 = genes[6];
 			condition = toCondition(genes[7]);
 			if(condition == Condition.MARKER){
 				senseMarker = genes[8];
+			}else{
+				senseMarker = -1;
 			}
 			break;
 		//Mark marker st1
 		case MARK:
+			senseDir = null;
+			turnDir = null;
 			marker = genes[3];
+			p = -1;
 			st1 = genes[5];
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Unmark marker st1
 		case UNMARK:
+			senseDir = null;
+			turnDir = null;
 			marker = genes[3];
+			p = -1;
 			st1 = genes[5];
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 			break;
 		//PickUp st1 st2
 		case PICKUP:
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
+			p = -1;
 			st1 = genes[5];
 			st2 = genes[6];
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Drop st1
 		case DROP:
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
+			p = -1;
 			st1 = genes[5];
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Turn turnDir st1
 		case TURN:
+			senseDir = null;
 			turnDir = toTurnDir(genes[2]);
+			marker = -1;
+			p = -1;
 			st1 = genes[5];
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Move st1 st2
 		case MOVE:
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
+			p = -1;
 			st1 = genes[5];
 			st2 = genes[6];
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Flip p st1 st2
 		case FLIP:
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
 			p = genes[4];
 			st1 = genes[5];
 			st2 = genes[6];
+			condition = null;
+			senseMarker = -1;
 			break;
 		//This should never be reached
 		default:
-			System.out.println("Illegal Command ordinal Argument in State constructer");
+			new InvalidInputException("Illegal Command ordinal Argument in State constructer").printStackTrace();
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
+			p = -1;
+			st1 = -1;
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 		}
 	}
 	
@@ -135,51 +192,106 @@ public class State {
 		//Sense senseDir st1 st2 condition (senseMarker)
 		case SENSE:
 			senseDir = SenseDir.valueOf(terms[1].trim().toUpperCase());
+			turnDir = null;
+			marker = -1;
+			p = -1;
 			st1 = Integer.parseInt(terms[2]);
 			st2 = Integer.parseInt(terms[3]);
 			condition = Condition.valueOf(terms[4].trim().toUpperCase());
 			if(condition == Condition.MARKER){
 				senseMarker = Integer.parseInt(terms[5]);
+			}else{
+				senseMarker = -1;
 			}
 			break;
 		//Mark marker st1
 		case MARK:
+			senseDir = null;
+			turnDir = null;
 			marker = Integer.parseInt(terms[1]);
+			p = -1;
 			st1 = Integer.parseInt(terms[2]);
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Unmark marker st1
 		case UNMARK:
+			senseDir = null;
+			turnDir = null;
 			marker = Integer.parseInt(terms[1]);
+			p = -1;
 			st1 = Integer.parseInt(terms[2]);
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 			break;
 		//PickUp st1 st2
 		case PICKUP:
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
+			p = -1;
 			st1 = Integer.parseInt(terms[1]);
 			st2 = Integer.parseInt(terms[2]);
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Drop st1
 		case DROP:
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
+			p = -1;
 			st1 = Integer.parseInt(terms[1]);
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Turn turnDir st1
 		case TURN:
+			senseDir = null;
 			turnDir = TurnDir.valueOf(terms[1].trim().toUpperCase());
+			marker = -1;
+			p = -1;
 			st1 = Integer.parseInt(terms[2]);
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Move st1 st2
 		case MOVE:
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
+			p = -1;
 			st1 = Integer.parseInt(terms[1]);
 			st2 = Integer.parseInt(terms[2]);
+			condition = null;
+			senseMarker = -1;
 			break;
 		//Flip p st1 st2
 		case FLIP:
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
 			p = Integer.parseInt(terms[1]);
 			st1 = Integer.parseInt(terms[2]);
 			st2 = Integer.parseInt(terms[3]);
+			condition = null;
+			senseMarker = -1;
 			break;
 		//This should never be reached
 		default:
-			System.out.println("Illegal Command Argument in State constructer");
+			new InvalidInputException("Illegal Command Argument in State constructer").printStackTrace();
+			senseDir = null;
+			turnDir = null;
+			marker = -1;
+			p = -1;
+			st1 = -1;
+			st2 = -1;
+			condition = null;
+			senseMarker = -1;
 		}
 	}
 	
@@ -213,7 +325,7 @@ public class State {
 		case 8:
 			return 6;
 		default:
-			System.out.println("Illegal field Argument in State constructer");
+			new InvalidInputException("Illegal field Argument in State constructer").printStackTrace();
 			return -1;
 		}
 	}
@@ -241,7 +353,7 @@ public class State {
 			return Command.FLIP;
 		//This should never be reached
 		default:
-			System.out.println("Illegal Command ordinal Argument in State toCommand");
+			new InvalidInputException("Illegal Command ordinal Argument in State toCommand").printStackTrace();
 		}
 		return null;
 	}
@@ -261,7 +373,7 @@ public class State {
 			return SenseDir.RIGHTAHEAD;
 		//This should never be reached
 		default:
-			System.out.println("Illegal senseDir ordinal Argument in State toSenseDir");
+			new InvalidInputException("Illegal senseDir ordinal Argument in State toSenseDir").printStackTrace();
 		}
 		return null;
 	}
@@ -277,7 +389,7 @@ public class State {
 			return TurnDir.RIGHT;
 		//This should never be reached
 		default:
-			System.out.println("Illegal turnDir ordinal Argument in State toSenseDir");
+			new InvalidInputException("Illegal turnDir ordinal Argument in State toSenseDir").printStackTrace();
 		}
 		return null;
 	}
@@ -309,7 +421,7 @@ public class State {
 			return Condition.FOEHOME;
 		//This should never be reached
 		default:
-			System.out.println("Illegal Condition ordinal Argument in State toSenseDir");
+			new InvalidInputException("Illegal Condition ordinal Argument in State toSenseDir").printStackTrace();
 		}
 		return null;
 	}
@@ -462,7 +574,7 @@ public class State {
 			break;
 		//This should never be reached
 		default:
-			System.out.println("Illegal Command Argument in State toString");
+			new InvalidInputException("Illegal Command Argument in State toString").printStackTrace();
 		}
 		//So far s == "SENSE AHEAD 1 3 FOOD "
 		

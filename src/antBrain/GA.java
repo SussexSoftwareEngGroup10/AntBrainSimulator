@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import engine.Engine;
+import engine.InvalidInputException;
 
 /**
  * @author pkew20 / 57116
@@ -18,7 +19,7 @@ public class GA {
 	private static final Brain exampleBrain = new BrainParser().readBrainFrom(exampleBrainPath);
 	private final ArrayList<Brain> population = new ArrayList<Brain>();
 	
-	private int elite = 0;
+	private int elite;
 	
 	public GA() {
 		
@@ -29,8 +30,6 @@ public class GA {
 	}
 	
 	public void createPopulation(Engine engine, int popSize) {
-		elite = 0;
-		
 		//Remove population ready for next
 		try{
 			while(true){
@@ -54,6 +53,20 @@ public class GA {
 		int i = 0;
 		int ran1;
 		int ran2;
+		
+		//Elitism is where, when each epoch is run and a new population is
+		//formed from the offspring of the old population,
+		//a number of the individuals with the highest fitnesses from
+		//the old population are moved into the new population
+		//This means the best brain found so far, at the end of each epoch
+		//is never worse than the best brain at the last epoch
+		//However, this can mean becoming stuck in local optima,
+		//and not searching the search space enough, resulting in
+		
+		//Elitism has been tested and works,
+		//It is not necessary, but may give better results
+		//when tested on the final Engine
+		elite = 0;
 		
 		//Each iteration retains the elite,
 		//removes the less fit half of the population and
@@ -211,11 +224,19 @@ public class GA {
 		
 		gc = mutateGenes(gc, states, mutationConstant);
 		
-		return new State(index, gc);
+		try{
+			return new State(index, gc);
+		}catch(InvalidInputException iie){
+			return null;
+		}
 	}
 	
 	private State mutateState(int index, State c, int states, int mutationConstant) {
-		return new State(index, mutateGenes(c.getGenes(), states, mutationConstant));
+		try{
+			return new State(index, mutateGenes(c.getGenes(), states, mutationConstant));
+		}catch(InvalidInputException iie){
+			return null;
+		}
 	}
 	
 	private int[] mutateGenes(int[] gc, int states, int mutationConstant) {
@@ -250,7 +271,11 @@ public class GA {
 	}
 	
 	private State ranState(int index, int states) {
-		return new State(index, ranGenes(states));
+		try{
+			return new State(index, ranGenes(states));
+		}catch(InvalidInputException iie){
+			return null;
+		}
 	}
 	
 	private int[] ranGenes(int states) {
@@ -271,6 +296,7 @@ public class GA {
 	}
 	
 	public Brain getBestBrain() {
+		System.out.println(population.get(0).getNumOfStates());
 		return population.get(0);
 	}
 	

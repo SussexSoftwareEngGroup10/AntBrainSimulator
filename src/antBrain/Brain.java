@@ -25,8 +25,7 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	}
 	
 	public void setState(State state) {
-		int stateNum = state.getStateNum();
-		states.put(stateNum, state);
+		states.put(state.getStateNum(), state);
 	}
 	
 	public State getState(int i) {
@@ -39,10 +38,6 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	
 	public Collection<State> getValues() {
 		return states.values();
-	}
-	
-	public Enumeration<State> getElements() {
-		return states.elements();
 	}
 	
 	public Brain clone() {
@@ -68,15 +63,6 @@ public class Brain implements Cloneable, Comparable<Brain> {
 			}
 		}
 		return true;
-	}
-	
-	public int lastState() {
-		Enumeration<Integer> keys = states.keys();
-		Integer i = 0;
-		while(keys.hasMoreElements()){
-			i = keys.nextElement();
-		}
-		return i;
 	}
 	
 	public int compareTo(Brain b) {

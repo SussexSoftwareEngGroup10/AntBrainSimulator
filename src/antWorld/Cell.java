@@ -32,25 +32,21 @@ public class Cell {
 			food = 0;
 			anthill = 0;
 			break;
-			
 		case '.':
 			rocky = false;
 			food = 0;
 			anthill = 0;
 			break;
-			
 		case '+':
 			rocky = false;
 			food = 0;
 			anthill = 1;
 			break;
-			
 		case '-':
 			rocky = false;
 			food = 0;
 			anthill = 2;
 			break;
-			
 		default: //'0 to 9'
 			//Only case left is int/food (or inappropriate char value)
 			try{
@@ -97,14 +93,13 @@ public class Cell {
 			
 			//Otherwise, food must be in an anthill
 			//so give unique char value that acknowledges this
-			//We aren't using Latin at the moment
 			//Greek isn't recognised by Notepad or the console (prints '?' instead)
 		}else if(anthill == 1){ //Upper case, 65 for Latin, 913 for Greek
 			return Character.toString((char) (65 + food));
 		}else if(anthill == 2){ //Lower case, 97 for Latin, 945 for Greek
 			return Character.toString((char) (97 + food));
 		}
-		return "X"; //Else error, cannot be less than 0 or more than 2 anthills
+		return null; //Else error, cannot be less than 0 or more than 2 anthills
 	}
 	
 	public void setupMarkers(int specieses) {
@@ -140,6 +135,8 @@ public class Cell {
 	}
 	
 	public int getSpecieses() {
+		//I know the plural of specieses is wrong,
+		//but I needed a way to make the singular and plural distinct
 		return markers.length;
 	}
 	

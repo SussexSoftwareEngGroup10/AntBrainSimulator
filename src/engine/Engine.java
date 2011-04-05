@@ -19,6 +19,9 @@ import antWorld.WorldController;
  * used to test antBrain and antWorld classes
  * 
  * To work out get the winner in a game, call world.getFoodInAnthills()
+ * or world.survivingAntsBySpecies()
+ * both return an int[], where index 0 == black and 1 == red
+ * high numbers are better for both
  * 
  * @author pkew20 / 57116
  * @version 1.0

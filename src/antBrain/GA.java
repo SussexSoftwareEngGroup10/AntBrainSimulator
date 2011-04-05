@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
+import utilities.InvalidInputException;
+
 import engine.Engine;
-import engine.InvalidInputException;
 
 /**
  * @author pkew20 / 57116

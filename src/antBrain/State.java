@@ -1,6 +1,6 @@
 package antBrain;
 
-import engine.InvalidInputException;
+import utilities.InvalidInputException;
 
 /*
 Instruction set:

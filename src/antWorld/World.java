@@ -706,6 +706,20 @@ public class World {
 		return totals;
 	}
 	
+	public int[] survivingAntsBySpecies() {
+		int[] survivors = new int[antsBySpecies.size()];
+		int i = 0;
+		
+		for(i = 0; i < antsBySpecies.size(); i++){
+			for(Ant ant : antsBySpecies.get(i)){
+				if(ant.isAlive()){
+					survivors[i]++;
+				}
+			}
+		}
+		return survivors;
+	}
+	
 	public String getAttributes() {
 		String s = "";
 		int i = 0;

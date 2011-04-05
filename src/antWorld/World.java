@@ -76,7 +76,7 @@ public class World {
 	 * @return a world which is fit to be used in a tournament
 	 */
 	public static World getTournamentWorld(Brain[] brains, int seed) {
-		return new World(140, 140, 13, brains, seed);
+		return getRegularWorld(140, 140, 13, brains, seed);
 	}
 	
 	/**
@@ -86,8 +86,34 @@ public class World {
 	 * @param rows
 	 * @param cols
 	 * @param rocks
+	 * @param brains
+	 * @param seed
+	 * @return
 	 */
-	public World(int rows, int cols, int rocks, Brain[] brains, int seed) {
+	public static World getRegularWorld(int rows, int cols, int rocks, Brain[] brains, int seed) {
+		return new World(rows, cols, rocks, brains, seed, 2, 7, 10, 5, 5, 0);
+	}
+	
+	/**
+	 * There are 3 different levels of specification of parameters for world generation,
+	 * the user can manually enter values for rows, cols...etc... if they choose, or use
+	 * the defaults for a world which could be used in a tournament
+	 * 
+	 * @param rows
+	 * @param cols
+	 * @param rocks
+	 * @param brains
+	 * @param seed
+	 * @param anthills
+	 * @param anthillSideLength
+	 * @param foodBlobCount
+	 * @param foodBlobSideLength
+	 * @param foodBlobCellFoodCount
+	 * @param antInitialDirection
+	 */
+	public World(int rows, int cols, int rocks, Brain[] brains, int seed,
+		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
+		int foodBlobCellFoodCount, int antInitialDirection) {
 		//Can either use a random or predefined seed
 		if(seed == 0){
 			this.seed = new Random().nextInt(Integer.MAX_VALUE);
@@ -100,13 +126,12 @@ public class World {
 		this.cols = cols;
 		this.rocks = rocks;
 		this.brains = brains;
-		
-		anthills = 2;
-		anthillSideLength = 7;
-		foodBlobCount = 10;
-		foodBlobSideLength = 5;
-		foodBlobCellFoodCount = 5;
-		antInitialDirection = 0;
+		this.anthills = anthills;
+		this.anthillSideLength = anthillSideLength;
+		this.foodBlobCount = foodBlobCount;
+		this.foodBlobSideLength = foodBlobSideLength;
+		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		this.antInitialDirection = antInitialDirection;
 		
 		//Initialise every cell to be clear
 		int r = 0;

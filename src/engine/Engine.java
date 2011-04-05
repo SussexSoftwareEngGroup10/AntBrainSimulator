@@ -49,8 +49,6 @@ public class Engine {
 		//Dummy engine methods show that the
 		//World-, Brain- and Ant-related methods work
 		Engine engine = new Engine();
-		BrainController bc = new BrainController();
-		WorldController wc = new WorldController();
 		
 		//Setup brains
 		//Evolve and get the best brain from the GA
@@ -62,8 +60,8 @@ public class Engine {
 		//Black is the best one found by the GA with parameters specified
 		//Red is default brain, read in from file
 		//Black should win when sortByFitness is done
-		brains[0] = bc.getBestGABrain(engine, epochs, popSize, mutationRate);
-		brains[1] = bc.readBrainFrom("example.brain");
+		brains[0] = BrainController.getBestGABrain(engine, epochs, popSize, mutationRate);
+		brains[1] = BrainController.readBrainFrom("example.brain");
 		
 		
 		//Setup world
@@ -71,8 +69,8 @@ public class Engine {
 		//This creates a random seed, rather than a fixed seed world
 		int seed = 0;
 		
-		world = wc.getTournamentWorld(brains, seed);
-		world = wc.readWorldFrom(brains, "example.world");
+		world = WorldController.getTournamentWorld(brains, seed);
+		world = WorldController.readWorldFrom(brains, "example.world");
 		
 		//Setup ants
 		ArrayList<Ant> ants = world.getAnts();

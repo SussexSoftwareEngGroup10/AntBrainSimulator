@@ -15,11 +15,7 @@ import antBrain.Brain;
  * @version 1.0
  */
 public class WorldParser {
-	public WorldParser() {
-		
-	}
-	
-	public World readWorldFrom(Brain[] brains, String path) {
+	public static World readWorldFrom(Brain[] brains, String path) {
 		BufferedReader br;
 		File f = new File(path);
 		String line;
@@ -79,7 +75,7 @@ public class WorldParser {
 		return world;
 	}
 	
-	public void writeWorldTo(World world, String path) {
+	public static void writeWorldTo(World world, String path) {
 		File outputFile = new File(path);
 		
 		try{

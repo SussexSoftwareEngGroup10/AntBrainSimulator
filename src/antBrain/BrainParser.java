@@ -13,11 +13,7 @@ import java.io.IOException;
  * @version 1.0
  */
 public class BrainParser {
-	public BrainParser() {
-		
-	}
-	
-	public Brain readBrainFrom(String path) {
+	public static Brain readBrainFrom(String path) {
 		Brain brain = new Brain();
 		BufferedReader br;
 		File f = new File(path);
@@ -63,7 +59,7 @@ public class BrainParser {
 		return brain;
 	}
 	
-	public void writeBrainTo(Brain brain, String path) {
+	public static void writeBrainTo(Brain brain, String path) {
 		File outputFile = new File(path);
 		
 		try{
@@ -95,7 +91,7 @@ public class BrainParser {
 	 * @param string
 	 * @return
 	 */
-	private int getStateNum(String string) {
+	private static int getStateNum(String string) {
 //		Alternative method using regex,
 //		which is slower but more versatile
 //		//Regex which finds any int in the input string:

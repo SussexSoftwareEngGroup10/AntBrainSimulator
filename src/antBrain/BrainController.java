@@ -9,15 +9,11 @@ import engine.Engine;
  * @version 1.0
  */
 public class BrainController {
-	public BrainController() {
-		
+	public static Brain readBrainFrom(String path) {
+		return BrainParser.readBrainFrom(path);
 	}
 	
-	public Brain readBrainFrom(String path) {
-		return new BrainParser().readBrainFrom(path);
-	}
-	
-	public Brain getBestGABrain(Engine engine, int epochs, int popSize, int mutationRate) {
+	public static Brain getBestGABrain(Engine engine, int epochs, int popSize, int mutationRate) {
 		GA ga = new GA();
 		ga.createPopulation(engine, popSize);
 		ga.evolve(engine, epochs, mutationRate);

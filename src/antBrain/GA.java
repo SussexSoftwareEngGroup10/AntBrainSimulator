@@ -17,7 +17,7 @@ public class GA {
 	private static final Random ran = new Random();
 	private static final String bestBrainPath = "best.brain";
 	private static final String exampleBrainPath = "example.brain";
-	private static final Brain exampleBrain = new BrainParser().readBrainFrom(exampleBrainPath);
+	private static final Brain exampleBrain = BrainParser.readBrainFrom(exampleBrainPath);
 	private final ArrayList<Brain> population = new ArrayList<Brain>();
 	
 	private int elite;
@@ -303,6 +303,6 @@ public class GA {
 	
 	@SuppressWarnings("unused")
 	private void writeBrain(Brain brain) {
-		new BrainParser().writeBrainTo(brain, bestBrainPath);
+		BrainParser.writeBrainTo(brain, bestBrainPath);
 	}
 }

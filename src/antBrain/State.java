@@ -1,6 +1,7 @@
 package antBrain;
 
-import utilities.InvalidInputException;
+import utilities.InvalidInputEvent;
+import utilities.Logger;
 
 /*
 Instruction set:
@@ -68,7 +69,7 @@ public class State {
 	
 	private int stateNum = -1;
 	
-	public State(int stateNum, int[] genes) throws InvalidInputException {
+	public State(int stateNum, int[] genes) throws InvalidInputEvent {
 		this.stateNum = stateNum;
 		
 		command = toCommand(genes[0]);
@@ -167,7 +168,7 @@ public class State {
 			break;
 		//This should never be reached
 		default:
-			new InvalidInputException("Illegal Command ordinal Argument in State constructer").printStackTrace();
+			Logger.log(new InvalidInputEvent("Illegal Command ordinal Argument in State constructer"));
 			senseDir = null;
 			turnDir = null;
 			marker = -1;
@@ -283,7 +284,7 @@ public class State {
 			break;
 		//This should never be reached
 		default:
-			new InvalidInputException("Illegal Command Argument in State constructer").printStackTrace();
+			Logger.log(new InvalidInputEvent("Illegal Command Argument in State constructer"));
 			senseDir = null;
 			turnDir = null;
 			marker = -1;
@@ -325,7 +326,7 @@ public class State {
 		case 8:
 			return 6;
 		default:
-			new InvalidInputException("Illegal field Argument in State constructer").printStackTrace();
+			Logger.log(new InvalidInputEvent("Illegal field Argument in State constructer"));
 			return -1;
 		}
 	}
@@ -353,7 +354,7 @@ public class State {
 			return Command.FLIP;
 		//This should never be reached
 		default:
-			new InvalidInputException("Illegal Command ordinal Argument in State toCommand").printStackTrace();
+			Logger.log(new InvalidInputEvent("Illegal Command ordinal Argument in State toCommand"));
 		}
 		return null;
 	}
@@ -373,7 +374,7 @@ public class State {
 			return SenseDir.RIGHTAHEAD;
 		//This should never be reached
 		default:
-			new InvalidInputException("Illegal senseDir ordinal Argument in State toSenseDir").printStackTrace();
+			Logger.log(new InvalidInputEvent("Illegal senseDir ordinal Argument in State toSenseDir"));
 		}
 		return null;
 	}
@@ -389,7 +390,7 @@ public class State {
 			return TurnDir.RIGHT;
 		//This should never be reached
 		default:
-			new InvalidInputException("Illegal turnDir ordinal Argument in State toSenseDir").printStackTrace();
+			Logger.log(new InvalidInputEvent("Illegal turnDir ordinal Argument in State toSenseDir"));
 		}
 		return null;
 	}
@@ -421,7 +422,7 @@ public class State {
 			return Condition.FOEHOME;
 		//This should never be reached
 		default:
-			new InvalidInputException("Illegal Condition ordinal Argument in State toSenseDir").printStackTrace();
+			Logger.log(new InvalidInputEvent("Illegal Condition ordinal Argument in State toSenseDir"));
 		}
 		return null;
 	}
@@ -574,7 +575,7 @@ public class State {
 			break;
 		//This should never be reached
 		default:
-			new InvalidInputException("Illegal Command Argument in State toString").printStackTrace();
+			Logger.log(new InvalidInputEvent("Illegal Command Argument in State toString"));
 		}
 		//So far s == "SENSE AHEAD 1 3 FOOD "
 		

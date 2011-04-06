@@ -3,10 +3,12 @@ package antWorld;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import utilities.IOEvent;
+import utilities.Logger;
 
 import antBrain.Brain;
 
@@ -65,11 +67,8 @@ public class WorldParser {
 			br.close();
 			
 			world = new World(cellChars, brains);
-			
-		}catch(FileNotFoundException FNF){
-			FNF.printStackTrace();
 		}catch(IOException IO){
-			IO.printStackTrace();
+			Logger.log(new IOEvent(IO.getMessage()));
 		}
 		
 		return world;
@@ -89,11 +88,8 @@ public class WorldParser {
 			
 			bw.write(world.toString());
 			bw.close();
-			
-		}catch(FileNotFoundException FNF){
-			FNF.printStackTrace();
 		}catch(IOException IO){
-			IO.printStackTrace();
+			Logger.log(new IOEvent(IO.getMessage()));
 		}
 	}
 }

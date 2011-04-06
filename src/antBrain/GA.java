@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
-import utilities.InvalidInputException;
+import utilities.InvalidInputEvent;
+import utilities.Logger;
 
-import engine.Engine;
+import engine.DummyEngine;
 
 /**
  * @author pkew20 / 57116
@@ -30,7 +31,7 @@ public class GA {
 		return bestBrainPath;
 	}
 	
-	public void createPopulation(Engine engine, int popSize) {
+	public void createPopulation(DummyEngine dummyEngine, int popSize) {
 		//Remove population ready for next
 		try{
 			while(true){
@@ -45,10 +46,10 @@ public class GA {
 		for(i = 0; i < popSize; i++){
 			population.add((Brain) exampleBrain.clone());
 		}
-		orderByFitness(engine);
+		orderByFitness(dummyEngine);
 	}
 	
-	public void evolve(Engine engine, int epochs, int mutationRate) {
+	public void evolve(DummyEngine dummyEngine, int epochs, int mutationRate) {
 		int popSize = population.size();
 		int e = 0;
 		int i = 0;
@@ -66,7 +67,7 @@ public class GA {
 		
 		//Elitism has been tested and works,
 		//It is not necessary, but may give better results
-		//when tested on the final Engine
+		//when tested on the final DummyEngine
 		elite = 0;
 		
 		//Each iteration retains the elite,
@@ -112,14 +113,14 @@ public class GA {
 			//This would make the code more efficient on running and reading in for the Brains,
 			//but would seriously slow down evolve()
 			
-			orderByFitness(engine);
+			orderByFitness(dummyEngine);
 		}
 		
 //		writeBrain(population.get(0));
 	}
 	
-	private void orderByFitness(Engine engine) {
-		engine.sortByFitness(population);
+	private void orderByFitness(DummyEngine dummyEngine) {
+		dummyEngine.sortByFitness(population);
 	}
 	
 	private Brain breed(Brain brainA, Brain brainB, int mutationConstant) {
@@ -227,7 +228,8 @@ public class GA {
 		
 		try{
 			return new State(index, gc);
-		}catch(InvalidInputException iie){
+		}catch(InvalidInputEvent e){
+			Logger.log(e);
 			return null;
 		}
 	}
@@ -235,7 +237,8 @@ public class GA {
 	private State mutateState(int index, State c, int states, int mutationConstant) {
 		try{
 			return new State(index, mutateGenes(c.getGenes(), states, mutationConstant));
-		}catch(InvalidInputException iie){
+		}catch(InvalidInputEvent e){
+			Logger.log(e);
 			return null;
 		}
 	}
@@ -274,7 +277,8 @@ public class GA {
 	private State ranState(int index, int states) {
 		try{
 			return new State(index, ranGenes(states));
-		}catch(InvalidInputException iie){
+		}catch(InvalidInputEvent e){
+			Logger.log(e);
 			return null;
 		}
 	}
@@ -286,7 +290,11 @@ public class GA {
 		
 		for(i = 0; i < 9; i++){
 			//Generate a new random value
-			gc[i] = ran.nextInt(values[i]);
+			if(i == 4){
+				gc[i] = ran.nextInt(values[i] - 2) + 2;
+			}else{
+				gc[i] = ran.nextInt(values[i]);
+			}
 		}
 		
 		//Every index in gc now has a possible value,
@@ -297,7 +305,6 @@ public class GA {
 	}
 	
 	public Brain getBestBrain() {
-		System.out.println(population.get(0).getNumOfStates());
 		return population.get(0);
 	}
 	

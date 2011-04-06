@@ -3,10 +3,12 @@ package antBrain;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import utilities.IOEvent;
+import utilities.Logger;
 
 /**
  * @author pkew20 / 57116
@@ -49,11 +51,8 @@ public class BrainParser {
 			}
 				
 			br.close();
-			
-		}catch(FileNotFoundException FNF){
-			FNF.printStackTrace();
 		}catch(IOException IO){
-			IO.printStackTrace();
+			Logger.log(new IOEvent(IO.getMessage()));
 		}
 		
 		return brain;
@@ -73,11 +72,8 @@ public class BrainParser {
 			
 			bw.write(brain.toString());
 			bw.close();
-			
-		}catch(FileNotFoundException FNF){
-			FNF.printStackTrace();
 		}catch(IOException IO){
-			IO.printStackTrace();
+			Logger.log(new IOEvent(IO.getMessage()));
 		}
 	}
 	

@@ -3,6 +3,9 @@ package engine;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import utilities.InvalidInputEvent;
+import utilities.Logger;
+
 import antBrain.Brain;
 import antBrain.BrainController;
 import antWorld.Ant;
@@ -10,7 +13,7 @@ import antWorld.World;
 import antWorld.WorldController;
 
 /**
- * Dummy Engine class
+ * Dummy DummyEngine class
  * 
  * sortByFitness is needed by the GA,
  * it must order the population by how good they are at winning games, best first
@@ -26,8 +29,8 @@ import antWorld.WorldController;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Engine {
-	public Engine() {
+public class DummyEngine {
+	public DummyEngine() {
 		
 	}
 	
@@ -46,21 +49,25 @@ public class Engine {
 	}
 	
 	public static void main(String args[]) {
+		//Test event logging
+		Logger.clearLogs();
+		Logger.log(new InvalidInputEvent("test"));
+		
 		//Dummy engine methods show that the
 		//World-, Brain- and Ant-related methods work
-		Engine engine = new Engine();
+		DummyEngine dummyEngine = new DummyEngine();
 		
 		//Setup brains
 		//Evolve and get the best brain from the GA
 		Brain[] brains = new Brain[2];
-		int epochs = 100;
-		int popSize = 50;
+		int epochs = 10;
+		int popSize = 10;
 		int mutationRate = 20;
 		
 		//Black is the best one found by the GA with parameters specified
 		//Red is default brain, read in from file
 		//Black should win when sortByFitness is done
-		brains[0] = BrainController.getBestGABrain(engine, epochs, popSize, mutationRate);
+		brains[0] = BrainController.getBestGABrain(dummyEngine, epochs, popSize, mutationRate);
 		brains[1] = BrainController.readBrainFrom("example.brain");
 		
 		

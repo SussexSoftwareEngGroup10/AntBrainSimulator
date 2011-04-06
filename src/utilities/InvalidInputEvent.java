@@ -7,10 +7,15 @@ package utilities;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class InvalidInputException extends Exception {
+public class InvalidInputEvent extends Event {
 	private static final long serialVersionUID = 7577003793013502978L;
 	
-	public InvalidInputException(String string) {
-		super(string);
+	public InvalidInputEvent(String message) {
+		super(message);
+	}
+	
+	@Override
+	protected void setSeverity() {
+		severity = Severity.WARNING;
 	}
 }

@@ -2,7 +2,7 @@ package antWorld;
 
 import java.util.Random;
 
-import utilities.InvalidInputEvent;
+import utilities.InvalidInputWarningEvent;
 import utilities.Logger;
 
 
@@ -46,7 +46,7 @@ public class Ant implements Comparable<Ant> {
 			this.colour = Colour.RED;
 			break;
 		default:
-			Logger.log(new InvalidInputEvent("Illegal Colour Argument in Ant Constructer"));
+			Logger.log(new InvalidInputWarningEvent("Illegal Colour Argument in Ant Constructer"));
 			this.colour = null;
 		}
 		this.brain = brain;
@@ -94,7 +94,7 @@ public class Ant implements Comparable<Ant> {
 			break;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputEvent("Illegal Command Argument in Ant step"));
+			Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in Ant step"));
 		}
 	}
 
@@ -115,7 +115,7 @@ public class Ant implements Comparable<Ant> {
 			c = cell.getNeighbour(direction + 1);
 			break;
 		default:
-			Logger.log(new InvalidInputEvent("Illegal senseDir Argument in Ant sense"));
+			Logger.log(new InvalidInputWarningEvent("Illegal senseDir Argument in Ant sense"));
 		}
 		
 		boolean condition = false;
@@ -195,7 +195,7 @@ public class Ant implements Comparable<Ant> {
 			}
 			break;
 		default:
-			Logger.log(new InvalidInputEvent("Illegal Condition Argument in Ant sense"));
+			Logger.log(new InvalidInputWarningEvent("Illegal Condition Argument in Ant sense"));
 		}
 		
 		if(condition){
@@ -252,7 +252,7 @@ public class Ant implements Comparable<Ant> {
 				direction = 0;
 			}
 		}else{
-			Logger.log(new InvalidInputEvent("Illegal TurnDir Argument in Ant turn"));
+			Logger.log(new InvalidInputWarningEvent("Illegal TurnDir Argument in Ant turn"));
 		}
 	}
 	

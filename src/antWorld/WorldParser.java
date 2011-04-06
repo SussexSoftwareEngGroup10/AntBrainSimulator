@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import utilities.IOEvent;
+import utilities.IOWarningEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
@@ -36,8 +36,8 @@ public class WorldParser {
 			try{
 				rows = Integer.parseInt(br.readLine());
 				cols = Integer.parseInt(br.readLine());
-			}catch(NumberFormatException nfe){
-				nfe.printStackTrace();
+			}catch(NumberFormatException e){
+				e.printStackTrace();
 			}
 			
 			cellChars = new char[rows][cols];
@@ -67,8 +67,8 @@ public class WorldParser {
 			br.close();
 			
 			world = new World(cellChars, brains);
-		}catch(IOException IO){
-			Logger.log(new IOEvent(IO.getMessage()));
+		}catch(IOException e){
+			Logger.log(new IOWarningEvent(e.getMessage(), e));
 		}
 		
 		return world;
@@ -88,8 +88,8 @@ public class WorldParser {
 			
 			bw.write(world.toString());
 			bw.close();
-		}catch(IOException IO){
-			Logger.log(new IOEvent(IO.getMessage()));
+		}catch(IOException e){
+			Logger.log(new IOWarningEvent(e.getMessage(), e));
 		}
 	}
 }

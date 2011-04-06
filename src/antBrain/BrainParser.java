@@ -7,7 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import utilities.IOEvent;
+import utilities.IOWarningEvent;
+import utilities.InformationEvent;
 import utilities.Logger;
 
 /**
@@ -16,6 +17,7 @@ import utilities.Logger;
  */
 public class BrainParser {
 	public static Brain readBrainFrom(String path) {
+		Logger.log(new InformationEvent("Begun reading Brain object from " + path));
 		Brain brain = new Brain();
 		BufferedReader br;
 		File f = new File(path);
@@ -34,6 +36,7 @@ public class BrainParser {
 				
 				if(line == null){
 					//End of file has been reached
+					Logger.log(new InformationEvent("End of file " + path + " has been reached"));
 					break;
 				}
 				
@@ -49,16 +52,16 @@ public class BrainParser {
 				
 				brain.setState(new State(stateNum, lineParts[0]));
 			}
-				
 			br.close();
-		}catch(IOException IO){
-			Logger.log(new IOEvent(IO.getMessage()));
+		}catch(IOException e){
+			Logger.log(new IOWarningEvent(e.getMessage(), e));
 		}
-		
+		Logger.log(new InformationEvent("Completed reading Brain object from " + path));
 		return brain;
 	}
 	
 	public static void writeBrainTo(Brain brain, String path) {
+		Logger.log(new InformationEvent("Begun writing Brain object to " + path));
 		File outputFile = new File(path);
 		
 		try{
@@ -72,9 +75,10 @@ public class BrainParser {
 			
 			bw.write(brain.toString());
 			bw.close();
-		}catch(IOException IO){
-			Logger.log(new IOEvent(IO.getMessage()));
+		}catch(IOException e){
+			Logger.log(new IOWarningEvent(e.getMessage(), e));
 		}
+		Logger.log(new InformationEvent("Completed writing Brain object to " + path));
 	}
 	
 	/**
@@ -100,16 +104,19 @@ public class BrainParser {
 //		//Group all ints found in stateStrings[1], as a string
 //		String stateNumString = matchInt.group();
 		
+		//Get a number from the string given, starting after "state "
 		String stateNumString = "";
+		String substring;
 		int i = 0;
 		
 		for(i = 6; i < string.length(); i++){
+			substring = string.substring(i, i + 1);
 			try{
-				Integer.parseInt(string.substring(i, i + 1));
+				Integer.parseInt(substring);
 			}catch(NumberFormatException nfe){
 				break;
 			}
-			stateNumString += string.substring(i, i + 1);
+			stateNumString += substring;
 		}
 		
 		return Integer.parseInt(stateNumString);

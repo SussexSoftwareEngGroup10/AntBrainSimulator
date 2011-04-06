@@ -12,6 +12,12 @@ public abstract class Event extends Throwable {
 		setSeverity();
 	}
 	
+	public Event(String message, Throwable cause) {
+		//Adds the stack trace from the cause to that of this instance
+		super(message, cause);
+		setSeverity();
+	}
+	
 	protected abstract void setSeverity();
 	
 	public String toString() {

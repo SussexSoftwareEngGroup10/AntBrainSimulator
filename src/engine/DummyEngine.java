@@ -3,7 +3,7 @@ package engine;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import utilities.InvalidInputEvent;
+import utilities.InformationEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
@@ -31,7 +31,7 @@ import antWorld.WorldController;
  */
 public class DummyEngine {
 	public DummyEngine() {
-		
+		Logger.log(new InformationEvent("new Engine initialised"));
 	}
 	
 	public void sortByFitness(ArrayList<Brain> population) {
@@ -51,7 +51,6 @@ public class DummyEngine {
 	public static void main(String args[]) {
 		//Test event logging
 		Logger.clearLogs();
-		Logger.log(new InvalidInputEvent("test"));
 		
 		//Dummy engine methods show that the
 		//World-, Brain- and Ant-related methods work
@@ -60,7 +59,7 @@ public class DummyEngine {
 		//Setup brains
 		//Evolve and get the best brain from the GA
 		Brain[] brains = new Brain[2];
-		int epochs = 100000;
+		int epochs = 10000;
 		int popSize = 100;
 		int mutationRate = 20;
 		
@@ -85,6 +84,7 @@ public class DummyEngine {
 		//Run the simulation
 		int r = 0;
 		int rounds = 300000;
+		Logger.log(new InformationEvent("Simulation begun"));
 		for(r = 0; r < rounds; r++){
 			for(Ant ant : ants){
 				if(ant.isAlive()){
@@ -96,5 +96,6 @@ public class DummyEngine {
 				}
 			}
 		}
+		Logger.log(new InformationEvent("Virtual Machine terminated"));
 	}
 }

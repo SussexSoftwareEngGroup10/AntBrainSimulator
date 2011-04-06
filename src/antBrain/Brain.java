@@ -4,16 +4,28 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import utilities.Logger;
+import utilities.WarningEvent;
+
 /**
  * @author pkew20 / 57116
  * @version 1.0
  */
 public class Brain implements Cloneable, Comparable<Brain> {
 	private static final int numOfStates = 10000;
-	private final Hashtable<Integer, State> states = new Hashtable<Integer, State>();
+	private final Hashtable<Integer, State> states;
 	
 	public Brain() {
-		
+		states = new Hashtable<Integer, State>();
+	}
+	
+	/**
+	 * Alternative constructor used for more efficient cloning of Brain objects
+	 * 
+	 * @param states
+	 */
+	protected Brain(Hashtable<Integer, State> states) {
+		this.states = states;
 	}
 	
 	public int getNumOfStates() {
@@ -32,6 +44,7 @@ public class Brain implements Cloneable, Comparable<Brain> {
 		try{
 			return states.get(i);
 		}catch(NullPointerException npe){
+			Logger.log(new WarningEvent("Null state " + i + " returned in Brain"));
 			return null;
 		}
 	}
@@ -41,16 +54,7 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	}
 	
 	public Brain clone() {
-		Brain brain = new Brain();
-		int i = 0;
-		
-		for(i = 0; i < numOfStates; i++){
-			if(states.get(i) != null){
-				brain.setState(states.get(i));
-			}
-		}
-		
-		return brain;
+		return new Brain(states);
 	}
 	
 	public boolean equals(Object o) {
@@ -88,7 +92,6 @@ public class Brain implements Cloneable, Comparable<Brain> {
 			s += elements.nextElement();
 			s += "\r\n";
 		}
-		
 		return s;
 	}
 }

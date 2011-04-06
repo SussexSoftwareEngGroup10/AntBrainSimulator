@@ -9,6 +9,7 @@ import java.io.PrintStream;
 public class Logger {
 	private static final long sizeLimit = 100 * 1000 * 1000; //100MB
 	private static final String folderName = "logs";
+	private static final File folder = new File(folderName);
 	private static final String fileNamePrefix = "log_";
 	private static final String fileNameSuffix = ".log";
 	private static final PrintStream sysErr = System.err;
@@ -16,25 +17,22 @@ public class Logger {
 	private static File file;
 	
 	private static void nextLogFile() {
-		if(!new File(folderName).exists()){
-			new File(folderName).mkdir();
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		
 		//Sets up the writer to a new log file
-		File file;
 		int i = -1;
 		do{
 			i++;
 			file = new File(folderName + "\\" + fileNamePrefix + "" + i + "" + fileNameSuffix);
 		}while(file.exists());
-		Logger.file = file;
 		
 		//Create log file
 		try{
 			file.createNewFile();
 		}catch(IOException e){
 			e.printStackTrace();
-			System.out.println(file.getPath());
 		}
 		
 		//Setup print stream to file

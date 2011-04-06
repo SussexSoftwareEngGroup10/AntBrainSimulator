@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
-import utilities.InvalidInputEvent;
+import utilities.InvalidInputWarningEvent;
 import utilities.Logger;
 
 import engine.DummyEngine;
@@ -16,15 +16,19 @@ import engine.DummyEngine;
  */
 public class GA {
 	private static final Random ran = new Random();
-	private static final String bestBrainPath = "best.brain";
 	private static final String exampleBrainPath = "example.brain";
 	private static final Brain exampleBrain = BrainParser.readBrainFrom(exampleBrainPath);
+	private static String bestBrainPath = "best.brain";
 	private final ArrayList<Brain> population = new ArrayList<Brain>();
 	
 	private int elite;
 	
 	public GA() {
 		
+	}
+	
+	public static void setBestBrainPath(String bestBrainPath) {
+		GA.bestBrainPath = bestBrainPath;
 	}
 	
 	public static String getBestBrainPath() {
@@ -228,7 +232,7 @@ public class GA {
 		
 		try{
 			return new State(index, gc);
-		}catch(InvalidInputEvent e){
+		}catch(InvalidInputWarningEvent e){
 			Logger.log(e);
 			return null;
 		}
@@ -237,7 +241,7 @@ public class GA {
 	private State mutateState(int index, State c, int states, int mutationConstant) {
 		try{
 			return new State(index, mutateGenes(c.getGenes(), states, mutationConstant));
-		}catch(InvalidInputEvent e){
+		}catch(InvalidInputWarningEvent e){
 			Logger.log(e);
 			return null;
 		}
@@ -281,7 +285,7 @@ public class GA {
 	private State ranState(int index, int states) {
 		try{
 			return new State(index, ranGenes(states));
-		}catch(InvalidInputEvent e){
+		}catch(InvalidInputWarningEvent e){
 			Logger.log(e);
 			return null;
 		}

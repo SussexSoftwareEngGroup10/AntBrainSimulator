@@ -261,7 +261,11 @@ public class GA {
 		for(i = 1; i < 9; i++){
 			if(ran.nextInt(mutationConstant) == 0){
 				//Sometimes replace value with a new random value
-				gc[i] = ran.nextInt(values[i]);
+				if(i == 4){
+					gc[i] = ran.nextInt(values[i] - 2) + 2;
+				}else{
+					gc[i] = ran.nextInt(values[i]);
+				}
 			}
 		}
 		

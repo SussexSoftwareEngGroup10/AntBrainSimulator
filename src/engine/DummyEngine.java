@@ -60,8 +60,8 @@ public class DummyEngine {
 		//Setup brains
 		//Evolve and get the best brain from the GA
 		Brain[] brains = new Brain[2];
-		int epochs = 10;
-		int popSize = 10;
+		int epochs = 100000;
+		int popSize = 100;
 		int mutationRate = 20;
 		
 		//Black is the best one found by the GA with parameters specified

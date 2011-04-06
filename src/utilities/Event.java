@@ -29,11 +29,8 @@ public abstract class Event extends Throwable {
 		s += "TIME: ";
 		s += new Date();
 		
-		//DummyEngine
-		s += ";  ENGINE: ";
-		String engine = "";
-		//TODO
-		s += engine;
+//		//DummyEngine
+//		//TODO
 		
 		//Class name
 		s += ";  CLASS_NAME: ";

@@ -17,7 +17,9 @@ import utilities.Logger;
  */
 public class BrainParser {
 	public static Brain readBrainFrom(String path) {
-		Logger.log(new InformationEvent("Begun reading Brain object from " + path));
+		if(Logger.getLogLevel() >= 3){
+			Logger.log(new InformationEvent("Begun reading Brain object from \"" + path + "\""));
+		}
 		Brain brain = new Brain();
 		BufferedReader br;
 		File f = new File(path);
@@ -36,7 +38,9 @@ public class BrainParser {
 				
 				if(line == null){
 					//End of file has been reached
-					Logger.log(new InformationEvent("End of file " + path + " has been reached"));
+					if(Logger.getLogLevel() >= 3){
+						Logger.log(new InformationEvent("End of file \"" + path + "\" has been reached"));
+					}
 					break;
 				}
 				
@@ -56,12 +60,16 @@ public class BrainParser {
 		}catch(IOException e){
 			Logger.log(new IOWarningEvent(e.getMessage(), e));
 		}
-		Logger.log(new InformationEvent("Completed reading Brain object from " + path));
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Completed reading Brain object from \"" + path + "\""));
+		}
 		return brain;
 	}
 	
 	public static void writeBrainTo(Brain brain, String path) {
-		Logger.log(new InformationEvent("Begun writing Brain object to " + path));
+		if(Logger.getLogLevel() >= 3){
+			Logger.log(new InformationEvent("Begun writing Brain object to \"" + path + "\""));
+		}
 		File outputFile = new File(path);
 		
 		try{
@@ -78,7 +86,9 @@ public class BrainParser {
 		}catch(IOException e){
 			Logger.log(new IOWarningEvent(e.getMessage(), e));
 		}
-		Logger.log(new InformationEvent("Completed writing Brain object to " + path));
+		if(Logger.getLogLevel() >= 3){
+			Logger.log(new InformationEvent("Completed writing Brain object to \"" + path + "\""));
+		}
 	}
 	
 	/**

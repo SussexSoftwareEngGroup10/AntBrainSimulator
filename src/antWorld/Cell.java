@@ -1,10 +1,14 @@
 package antWorld;
 
+import utilities.InvalidInputWarningEvent;
+import utilities.Logger;
+import utilities.WarningEvent;
+
 /**
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Cell {
+public class Cell implements Cloneable {
 	private final int row;
 	private final int col;
 	
@@ -55,9 +59,11 @@ public class Cell {
 				//Need to convert from (48 to 58) to (0 to 9)
 				food = ((int) c) - 48;
 				anthill = 0;
-			}catch(NumberFormatException nfe){
+			}catch(NumberFormatException e){
 				//Cell must contain food, otherwise switch would have broken at '.'
-				nfe.printStackTrace();
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal food argument in Cell setCell", e));
+				}
 			}
 		}
 	}
@@ -85,21 +91,6 @@ public class Cell {
 	
 	public int getCol() {
 		return col;
-	}
-	
-	private String getFoodChar() {
-		if(anthill == 0){ //0 to 9
-			return Integer.toString(food);
-			
-			//Otherwise, food must be in an anthill
-			//so give unique char value that acknowledges this
-			//Greek isn't recognised by Notepad or the console (prints '?' instead)
-		}else if(anthill == 1){ //Upper case, 65 for Latin, 913 for Greek
-			return Character.toString((char) (65 + food));
-		}else if(anthill == 2){ //Lower case, 97 for Latin, 945 for Greek
-			return Character.toString((char) (97 + food));
-		}
-		return null; //Else error, cannot be less than 0 or more than 2 anthills
 	}
 	
 	public void setupMarkers(int specieses) {
@@ -132,12 +123,6 @@ public class Cell {
 			}
 		}
 		return false;
-	}
-	
-	public int getSpecieses() {
-		//I know the plural of specieses is wrong,
-		//but I needed a way to make the singular and plural distinct
-		return markers.length;
 	}
 	
 	public void setAnt(Ant ant) {
@@ -180,21 +165,64 @@ public class Cell {
 		return ant != null;
 	}
 	
+	public Cell clone() {
+		Cell clone = new Cell(row, col, toChar());
+		clone.setupMarkers(2);
+		clone.setNeighbours(neighbours);
+		//clone has null ant
+		
+		return clone;
+	}
+	
 	public char toChar() {
 		return toString().charAt(0);
 	}
 	
 	public String toString() {
+		if(hasAnt()){
+			if(ant.getColour() == 0){
+				if(ant.isAlive()){
+					return "=";
+				}
+			}
+			if(ant.getColour() == 1){
+				if(ant.isAlive()){
+					return "|";
+				}
+			}
+		}
+		
 		if(rocky){
 			return "#";
 			
-		}else if(food > 0){
-			return getFoodChar();
+		}
+		if(food > 0){
+			if(anthill == 0){ //0 to 9
+				return Integer.toString(food);
+			}
 			
-		}else if(anthill > 0){
+			//Otherwise, food must be in an anthill
+			//so give unique char value that acknowledges this
+			//Greek isn't recognised by Notepad or the console (prints '?' instead)
+			//Minimum food value is 1, so -1 from ascii codes
+			if(anthill == 1){ //Upper case, 65 for Latin, 913 for Greek
+				return Character.toString((char) (64 + food));
+			}
+			if(anthill == 2){ //Lower case, 97 for Latin, 945 for Greek
+				return Character.toString((char) (96 + food));
+			}
+			//Else error, cannot be less than 0 or more than 2 anthills
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new WarningEvent("Cell anthill value not 0, 1 or 2"));
+			}
+			return null; 
+			
+		}
+		if(anthill > 0){
 			if(anthill == 1){
 				return "+";
-			}else if(anthill == 2){
+			}
+			if(anthill == 2){
 				return "-";
 			}
 		}

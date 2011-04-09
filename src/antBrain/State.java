@@ -48,15 +48,17 @@ Move 8 11             ; state 15:     ...or move forward and return to
  * @version 1.0
  */
 public class State {
-	//Remember to change random state generation in GA and other methods if any enums are altered
+	private static final int max = Brain.getMaxNumOfStates();
+	
+	//Remember to change random state generation in GeneticAlgorithm and other methods if any enums are altered
 	enum Command { SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP };
 	enum SenseDir { HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD };
 	enum TurnDir { LEFT, RIGHT };
 	enum Condition { FRIEND, FOE, FRIENDWITHFOOD, FOEWITHFOOD,
 		FOOD, ROCK, MARKER, FOEMARKER, HOME, FOEHOME }
 	
-	//All  final, as the first value given should never be overridden
-	//Default  values are null and -1
+	//All final, as the first value given should never be overridden
+	//Default values are null and -1
 	private final Command command;
 	private final SenseDir senseDir;
 	private final TurnDir turnDir;
@@ -67,24 +69,65 @@ public class State {
 	private final Condition condition;
 	private final int senseMarker;
 	
-	private int stateNum = -1;
+	private final int stateNum;
 	
-	public State(int stateNum, int[] genes) throws InvalidInputWarningEvent {
+	/**
+	 * Constructer used by the Genetic Algorithm, gives increased efficiency
+	 * 
+	 * @param stateNum
+	 * @param genes
+	 */
+	public State(int stateNum, int[] genes) {
 		this.stateNum = stateNum;
 		
 		command = toCommand(genes[0]);
 		switch(command){
 		//Sense senseDir st1 st2 condition (senseMarker)
 		case SENSE:
-			senseDir = toSenseDir(genes[1]);
+			if(genes[1] < 0 || genes[1] > 3){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal SenseDir ordinal argument in State constructor"));
+				}
+				senseDir = toSenseDir(0);
+			}else{
+				senseDir = toSenseDir(genes[1]);
+			}
 			turnDir = null;
 			marker = -1;
 			p = -1;
-			st1 = genes[5];
-			st2 = genes[6];
-			condition = toCondition(genes[7]);
+			if(genes[5] < 0 || genes[5] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = genes[5];
+			}
+			if(genes[6] < 0 || genes[6] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st2 argument in State constructor"));
+				}
+				st2 = 0;
+			}else{
+				st2 = genes[6];
+			}
+			if(genes[7] < 0 || genes[7] > 9){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal Condition ordinal argument in State constructor"));
+				}
+				condition = toCondition(0);
+			}else{
+				condition = toCondition(genes[7]);
+			}
 			if(condition == Condition.MARKER){
-				senseMarker = genes[8];
+				if(genes[8] < 0 || genes[8] > 5){
+					if(Logger.getLogLevel() >= 1){
+						Logger.log(new InvalidInputWarningEvent("Illegal SenseMarker argument in State constructor"));
+					}
+					senseMarker = 0;
+				}else{
+					senseMarker = genes[8];
+				}
 			}else{
 				senseMarker = -1;
 			}
@@ -93,9 +136,23 @@ public class State {
 		case MARK:
 			senseDir = null;
 			turnDir = null;
-			marker = genes[3];
+			if(genes[3] < 0 || genes[3] > 5){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal marker argument in State constructor"));
+				}
+				marker = 0;
+			}else{
+				marker = genes[3];
+			}
 			p = -1;
-			st1 = genes[5];
+			if(genes[5] < 0 || genes[5] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = genes[5];
+			}
 			st2 = -1;
 			condition = null;
 			senseMarker = -1;
@@ -104,9 +161,23 @@ public class State {
 		case UNMARK:
 			senseDir = null;
 			turnDir = null;
-			marker = genes[3];
+			if(genes[3] < 0 || genes[3] > 5){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal marker argument in State constructor"));
+				}
+				marker = 0;
+			}else{
+				marker = genes[3];
+			}
 			p = -1;
-			st1 = genes[5];
+			if(genes[5] < 0 || genes[5] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = genes[5];
+			}
 			st2 = -1;
 			condition = null;
 			senseMarker = -1;
@@ -117,8 +188,22 @@ public class State {
 			turnDir = null;
 			marker = -1;
 			p = -1;
-			st1 = genes[5];
-			st2 = genes[6];
+			if(genes[5] < 0 || genes[5] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = genes[5];
+			}
+			if(genes[6] < 0 || genes[6] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st2 argument in State constructor"));
+				}
+				st2 = 0;
+			}else{
+				st2 = genes[6];
+			}
 			condition = null;
 			senseMarker = -1;
 			break;
@@ -128,7 +213,14 @@ public class State {
 			turnDir = null;
 			marker = -1;
 			p = -1;
-			st1 = genes[5];
+			if(genes[5] < 0 || genes[5] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = genes[5];
+			}
 			st2 = -1;
 			condition = null;
 			senseMarker = -1;
@@ -136,10 +228,24 @@ public class State {
 		//Turn turnDir st1
 		case TURN:
 			senseDir = null;
-			turnDir = toTurnDir(genes[2]);
+			if(genes[2] < 0 || genes[2] > 1){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal TurnDir ordinal argument in State constructor"));
+				}
+				turnDir = toTurnDir(0);
+			}else{
+				turnDir = toTurnDir(genes[2]);
+			}
 			marker = -1;
 			p = -1;
-			st1 = genes[5];
+			if(genes[5] < 0 || genes[5] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = genes[5];
+			}
 			st2 = -1;
 			condition = null;
 			senseMarker = -1;
@@ -150,8 +256,22 @@ public class State {
 			turnDir = null;
 			marker = -1;
 			p = -1;
-			st1 = genes[5];
-			st2 = genes[6];
+			if(genes[5] < 0 || genes[5] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = genes[5];
+			}
+			if(genes[6] < 0 || genes[6] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st2 argument in State constructor"));
+				}
+				st2 = 0;
+			}else{
+				st2 = genes[6];
+			}
 			condition = null;
 			senseMarker = -1;
 			break;
@@ -160,15 +280,38 @@ public class State {
 			senseDir = null;
 			turnDir = null;
 			marker = -1;
-			p = genes[4];
-			st1 = genes[5];
-			st2 = genes[6];
+			if(genes[4] < 2 || genes[4] > 10){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				p = 2;
+			}else{
+				p = genes[4];
+			}
+			if(genes[5] < 0 || genes[5] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = genes[5];
+			}
+			if(genes[6] < 0 || genes[6] > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st2 argument in State constructor"));
+				}
+				st2 = 0;
+			}else{
+				st2 = genes[6];
+			}
 			condition = null;
 			senseMarker = -1;
 			break;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal Command ordinal Argument in State constructer"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Command ordinal argument in State constructor"));
+			}
 			senseDir = null;
 			turnDir = null;
 			marker = -1;
@@ -180,27 +323,85 @@ public class State {
 		}
 	}
 	
+	/**
+	 * General constructer used when reading in States from file
+	 * 
+	 * @param stateNum
+	 * @param stateString
+	 */
 	public State(int stateNum, String stateString) {
+		@SuppressWarnings("rawtypes")
+		Enum eVal = null;
+		int iVal = 0;
+		
 		this.stateNum = stateNum;
 		
 		//Given: "Sense Ahead 1 3 Food"
 		String[] terms = stateString.split(" ");
 		//Gives: [Sense,Ahead,1,3,Food]
 		
-		command = Command.valueOf(terms[0].trim().toUpperCase());
+		try{
+			eVal = Command.valueOf(terms[0].trim().toUpperCase());
+		}catch(IllegalArgumentException e){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in State constructor"));
+			}
+		}finally{
+			command = (Command) eVal;
+		}
 		
 		switch(command){
 		//Sense senseDir st1 st2 condition (senseMarker)
 		case SENSE:
-			senseDir = SenseDir.valueOf(terms[1].trim().toUpperCase());
+			try{
+				eVal = SenseDir.valueOf(terms[1].trim().toUpperCase());
+			}catch(IllegalArgumentException e){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal SenseDir ordinal argument in State constructor", e));
+				}
+			}finally{
+				senseDir = (SenseDir) eVal;
+			}
 			turnDir = null;
 			marker = -1;
 			p = -1;
-			st1 = Integer.parseInt(terms[2]);
-			st2 = Integer.parseInt(terms[3]);
-			condition = Condition.valueOf(terms[4].trim().toUpperCase());
+			iVal = Integer.parseInt(terms[2]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = iVal;
+			}
+			iVal = Integer.parseInt(terms[3]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st2 argument in State constructor"));
+				}
+				st2 = 0;
+			}else{
+				st2 = iVal;
+			}
+			try{
+				eVal = Condition.valueOf(terms[4].trim().toUpperCase());
+			}catch(IllegalArgumentException e){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal Condition ordinal argument in State constructor", e));
+				}
+			}finally{
+				condition = (Condition) eVal;
+			}
 			if(condition == Condition.MARKER){
-				senseMarker = Integer.parseInt(terms[5]);
+				iVal = Integer.parseInt(terms[5]);
+				if(iVal < 0 || iVal > 5){
+					if(Logger.getLogLevel() >= 1){
+						Logger.log(new InvalidInputWarningEvent("Illegal senseMarker argument in State constructor"));
+					}
+					senseMarker = 0;
+				}else{
+					senseMarker = iVal;
+				}
 			}else{
 				senseMarker = -1;
 			}
@@ -209,9 +410,25 @@ public class State {
 		case MARK:
 			senseDir = null;
 			turnDir = null;
-			marker = Integer.parseInt(terms[1]);
+			iVal = Integer.parseInt(terms[1]);
+			if(iVal < 0 || iVal > 5){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal marker argument in State constructor"));
+				}
+				marker = 0;
+			}else{
+				marker = iVal;
+			}
 			p = -1;
-			st1 = Integer.parseInt(terms[2]);
+			iVal = Integer.parseInt(terms[2]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = iVal;
+			}
 			st2 = -1;
 			condition = null;
 			senseMarker = -1;
@@ -220,9 +437,25 @@ public class State {
 		case UNMARK:
 			senseDir = null;
 			turnDir = null;
-			marker = Integer.parseInt(terms[1]);
+			iVal = Integer.parseInt(terms[1]);
+			if(iVal < 0 || iVal > 5){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal marker argument in State constructor"));
+				}
+				marker = 0;
+			}else{
+				marker = iVal;
+			}
 			p = -1;
-			st1 = Integer.parseInt(terms[2]);
+			iVal = Integer.parseInt(terms[2]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = iVal;
+			}
 			st2 = -1;
 			condition = null;
 			senseMarker = -1;
@@ -233,8 +466,24 @@ public class State {
 			turnDir = null;
 			marker = -1;
 			p = -1;
-			st1 = Integer.parseInt(terms[1]);
-			st2 = Integer.parseInt(terms[2]);
+			iVal = Integer.parseInt(terms[1]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = iVal;
+			}
+			iVal = Integer.parseInt(terms[2]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st2 argument in State constructor"));
+				}
+				st2 = 0;
+			}else{
+				st2 = iVal;
+			}
 			condition = null;
 			senseMarker = -1;
 			break;
@@ -244,7 +493,15 @@ public class State {
 			turnDir = null;
 			marker = -1;
 			p = -1;
-			st1 = Integer.parseInt(terms[1]);
+			iVal = Integer.parseInt(terms[1]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = iVal;
+			}
 			st2 = -1;
 			condition = null;
 			senseMarker = -1;
@@ -252,10 +509,26 @@ public class State {
 		//Turn turnDir st1
 		case TURN:
 			senseDir = null;
-			turnDir = TurnDir.valueOf(terms[1].trim().toUpperCase());
+			try{
+				eVal = TurnDir.valueOf(terms[1].trim().toUpperCase());
+			}catch(IllegalArgumentException e){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal TurnDir ordinal argument in State constructor", e));
+				}
+			}finally{
+				turnDir = (TurnDir) eVal;
+			}
 			marker = -1;
 			p = -1;
-			st1 = Integer.parseInt(terms[2]);
+			iVal = Integer.parseInt(terms[2]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = iVal;
+			}
 			st2 = -1;
 			condition = null;
 			senseMarker = -1;
@@ -266,8 +539,24 @@ public class State {
 			turnDir = null;
 			marker = -1;
 			p = -1;
-			st1 = Integer.parseInt(terms[1]);
-			st2 = Integer.parseInt(terms[2]);
+			iVal = Integer.parseInt(terms[1]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = iVal;
+			}
+			iVal = Integer.parseInt(terms[2]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st2 argument in State constructor"));
+				}
+				st2 = 0;
+			}else{
+				st2 = iVal;
+			}
 			condition = null;
 			senseMarker = -1;
 			break;
@@ -276,15 +565,41 @@ public class State {
 			senseDir = null;
 			turnDir = null;
 			marker = -1;
-			p = Integer.parseInt(terms[1]);
-			st1 = Integer.parseInt(terms[2]);
-			st2 = Integer.parseInt(terms[3]);
+			iVal = Integer.parseInt(terms[1]);
+			if(iVal < 2 || iVal > 10){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal p argument in State constructor"));
+				}
+				p = 0;
+			}else{
+				p = iVal;
+			}
+			iVal = Integer.parseInt(terms[2]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st1 argument in State constructor"));
+				}
+				st1 = 0;
+			}else{
+				st1 = iVal;
+			}
+			iVal = Integer.parseInt(terms[3]);
+			if(iVal < 0 || iVal > max){
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputWarningEvent("Illegal st2 argument in State constructor"));
+				}
+				st2 = 0;
+			}else{
+				st2 = iVal;
+			}
 			condition = null;
 			senseMarker = -1;
 			break;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in State constructer"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in State constructor"));
+			}
 			senseDir = null;
 			turnDir = null;
 			marker = -1;
@@ -326,12 +641,14 @@ public class State {
 		case 8:
 			return 6;
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal field Argument in State constructer"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal field Argument in State constructor"));
+			}
 			return -1;
 		}
 	}
 	
-	private Command toCommand(int i) {
+	private static Command toCommand(int i) {
 		//SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP
 		switch(i){
 		case -1:
@@ -354,12 +671,14 @@ public class State {
 			return Command.FLIP;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal Command ordinal Argument in State toCommand"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Command ordinal Argument in State toCommand"));
+			}
 		}
 		return null;
 	}
 	
-	private SenseDir toSenseDir(int i) {
+	private static SenseDir toSenseDir(int i) {
 		//HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD
 		switch(i){
 		case -1:
@@ -374,12 +693,14 @@ public class State {
 			return SenseDir.RIGHTAHEAD;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal senseDir ordinal Argument in State toSenseDir"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal senseDir ordinal Argument in State toSenseDir"));
+			}
 		}
 		return null;
 	}
 	
-	private TurnDir toTurnDir(int i) {
+	private static TurnDir toTurnDir(int i) {
 		//LEFT, RIGHT
 		switch(i){
 		case -1:
@@ -390,12 +711,14 @@ public class State {
 			return TurnDir.RIGHT;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal turnDir ordinal Argument in State toSenseDir"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal turnDir ordinal Argument in State toSenseDir"));
+			}
 		}
 		return null;
 	}
 	
-	private Condition toCondition(int i) {
+	private static Condition toCondition(int i) {
 		//FRIEND, FOE, FRIENDWITHFOOD, FOEWITHFOOD,	FOOD, ROCK, MARKER, FOEMARKER, HOME, FOEHOME
 		switch(i){
 		case -1:
@@ -422,7 +745,9 @@ public class State {
 			return Condition.FOEHOME;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal Condition ordinal Argument in State toSenseDir"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Condition ordinal Argument in State toSenseDir"));
+			}
 		}
 		return null;
 	}
@@ -575,7 +900,9 @@ public class State {
 			break;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in State toString"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in State toString"));
+			}
 		}
 		//So far s == "SENSE AHEAD 1 3 FOOD "
 		

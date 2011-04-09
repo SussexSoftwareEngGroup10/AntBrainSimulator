@@ -34,19 +34,21 @@ public abstract class Event extends Throwable {
 		//Time
 		s += "TIME: ";
 		s += new Date();
-		
-//		//DummyEngine
-//		//TODO
+		s += ";  ";
 		
 		//Class name
-		s += ";  CLASS_NAME: ";
+		s += "CLASS_NAME: ";
 		String className = this.getClass().getName();
 		//Remove package name from class name
 		className = className.substring(className.lastIndexOf(".") + 1);
 		s += className;
+		s += ";  ";
+		while(s.length() < 100){
+			s += " ";
+		}
 		
 		//Object throw location/cause
-		s += ";  SOURCE: ";
+		s += "SOURCE: ";
 		String cause = "";
 		StackTraceElement[] trace = this.getStackTrace();
 		int i = 0;
@@ -54,9 +56,13 @@ public abstract class Event extends Throwable {
 			cause += trace[i];
 		}
 		s += cause;
+		s += ";  ";
+		while(s.length() < 350){
+			s += " ";
+		}
 		
 		//Message/Description
-		s += ";  DESCRIPTION: ";
+		s += "DESCRIPTION: ";
 		s += this.getMessage();
 		
 		return s;

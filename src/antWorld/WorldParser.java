@@ -10,14 +10,12 @@ import java.io.IOException;
 import utilities.IOWarningEvent;
 import utilities.Logger;
 
-import antBrain.Brain;
-
 /**
  * @author pkew20 / 57116
  * @version 1.0
  */
 public class WorldParser {
-	public static World readWorldFrom(Brain[] brains, String path) {
+	public static World readWorldFrom(String path) {
 		BufferedReader br;
 		File f = new File(path);
 		String line;
@@ -37,7 +35,11 @@ public class WorldParser {
 				rows = Integer.parseInt(br.readLine());
 				cols = Integer.parseInt(br.readLine());
 			}catch(NumberFormatException e){
-				e.printStackTrace();
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new IOWarningEvent("Failed to read row and column values from "
+						+ path + ". " + e.getMessage(), e));
+				}
+				return null;
 			}
 			
 			cellChars = new char[rows][cols];
@@ -66,9 +68,11 @@ public class WorldParser {
 			
 			br.close();
 			
-			world = new World(cellChars, brains);
+			world = new World(cellChars);
 		}catch(IOException e){
-			Logger.log(new IOWarningEvent(e.getMessage(), e));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new IOWarningEvent(e.getMessage(), e));
+			}
 		}
 		
 		return world;
@@ -89,7 +93,9 @@ public class WorldParser {
 			bw.write(world.toString());
 			bw.close();
 		}catch(IOException e){
-			Logger.log(new IOWarningEvent(e.getMessage(), e));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new IOWarningEvent(e.getMessage(), e));
+			}
 		}
 	}
 }

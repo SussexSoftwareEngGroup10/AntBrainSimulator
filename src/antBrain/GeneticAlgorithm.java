@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
-import utilities.InvalidInputWarningEvent;
+import utilities.InformationEvent;
 import utilities.Logger;
+import utilities.WarningEvent;
 
 import engine.DummyEngine;
 
@@ -14,28 +15,32 @@ import engine.DummyEngine;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class GA {
+public class GeneticAlgorithm {
 	private static final Random ran = new Random();
-	private static final String exampleBrainPath = "example.brain";
-	private static final Brain exampleBrain = BrainParser.readBrainFrom(exampleBrainPath);
+	private static final int min = Brain.getMinNumOfStates();
+	private static final int max = Brain.getMaxNumOfStates();
 	private static String bestBrainPath = "best.brain";
 	private final ArrayList<Brain> population = new ArrayList<Brain>();
 	
 	private int elite;
 	
-	public GA() {
+	public GeneticAlgorithm() {
 		
 	}
 	
 	public static void setBestBrainPath(String bestBrainPath) {
-		GA.bestBrainPath = bestBrainPath;
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Path for the writing of Brain objects " +
+				"resulting from GeneticAlgorithm.writeBrain() changed to " + bestBrainPath));
+		}
+		GeneticAlgorithm.bestBrainPath = bestBrainPath;
 	}
 	
 	public static String getBestBrainPath() {
 		return bestBrainPath;
 	}
 	
-	public void createPopulation(DummyEngine dummyEngine, int popSize) {
+	public void createPopulation(Brain exampleBrain, DummyEngine dummyEngine, int popSize) {
 		//Remove population ready for next
 		try{
 			while(true){
@@ -50,10 +55,18 @@ public class GA {
 		for(i = 0; i < popSize; i++){
 			population.add((Brain) exampleBrain.clone());
 		}
+		System.out.println("Ordering");
 		orderByFitness(dummyEngine);
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("New GeneticAlgorithm Brain population of size " + popSize + " created"));
+		}
 	}
 	
 	public void evolve(DummyEngine dummyEngine, int epochs, int mutationRate) {
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Begun GeneticAlgorithm evolution for "
+				+ epochs + " epochs, with a 1/" + mutationRate + " chance of mutation"));
+		}
 		int popSize = population.size();
 		int e = 0;
 		int i = 0;
@@ -72,14 +85,23 @@ public class GA {
 		//Elitism has been tested and works,
 		//It is not necessary, but may give better results
 		//when tested on the final DummyEngine
-		elite = 0;
+		elite = popSize / 5;
 		
 		//Each iteration retains the elite,
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
+		Brain b;//TODO
 		
 		for(e = 0; e < epochs; e++){
+			//
+			for(i = 1; i < 101; i++){
+				if(e == epochs * i / 100){
+					if(Logger.getLogLevel() >= 3){
+						Logger.log(new InformationEvent("Completed " + i + " percent of GeneticAlgorithm evolution epochs"));
+					}
+				}
+			}
 			//Remove the least fit half of the population
 			for(i = 0; i < popSize / 2; i++){
 				population.remove(population.size() - 1);
@@ -96,31 +118,26 @@ public class GA {
 				if(ran2 >= ran1){
 					ran2++;
 				}
-				
+				//TODO find out why some Brains contain null state/commands
 				// Sexual reproduction
-				population.add(breed(population.get(ran1), population.get(ran2), mutationRate));
-			}
-			
-			while(population.size() > popSize + ((popSize - elite) / 2)){
-				population.add(breed(population.get(0), population.get(0), mutationRate));
+				b = breed(population.get(ran1), population.get(ran2), mutationRate);
+				population.add(b);
 			}
 			
 			//Remove the last of the old population, not including the elite
-			for(i = elite; i < ((popSize - elite) / 2) + elite; i++){
+			while(population.size() > popSize){
 				population.remove(elite);
 			}
 			
-			//Remove states which are equal from each of the Brains in the population,
-			//Redirect pointers to the state which was not removed
-			//Gaps are fine, don't need to change every state index and pointer
-			//Gaps will be removed on next iteration (except for elites)
-			//This would make the code more efficient on running and reading in for the Brains,
-			//but would seriously slow down evolve()
-			
+			//Order, ready for next epoch
 			orderByFitness(dummyEngine);
+			
+			//Write best brain so far to file
+			BrainParser.writeBrainTo(population.get(0), "ga.brain");
 		}
-		
-//		writeBrain(population.get(0));
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Completed GeneticAlgorithm evolution"));
+		}
 	}
 	
 	private void orderByFitness(DummyEngine dummyEngine) {
@@ -142,10 +159,18 @@ public class GA {
 		//i.e. size, in itself, is not inherently good
 		int targetSize = Math.max(statesA.size(), statesB.size()) + (ran.nextInt(5) - 2);
 		//Keep targetSize within limits
-		if(targetSize < 3){
-			targetSize = 3;
-		}else if(targetSize > Brain.getMaxNumOfStates()){
-			targetSize = Brain.getMaxNumOfStates();
+		if(targetSize < min){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new WarningEvent("Brain bred containing the" +
+					"minimum number of states (" + min + ")"));
+			}
+			targetSize = min;
+		}else if(targetSize > max){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new WarningEvent("Brain bred containing the" +
+					"maximum number of states (" + max + ")"));
+			}
+			targetSize = max;
 		}
 		
 		//Consider each state in statesA and statesB for inclusion in statesC
@@ -223,28 +248,17 @@ public class GA {
 			}
 		}
 		
-		//If neither of the parent states has SENSE......MARKER...senseMarker
+		//If neither of the parent states has SENSE......MARKER...[senseMarker]
 		//the senseMarker value for both will be -1, and the child will be given this value
 		//this is not a legal value and must be replaced with a new random value
 		//This is performed by the mutateGenes method
-		
 		gc = mutateGenes(gc, states, mutationConstant);
 		
-		try{
-			return new State(index, gc);
-		}catch(InvalidInputWarningEvent e){
-			Logger.log(e);
-			return null;
-		}
+		return new State(index, gc);
 	}
 	
 	private State mutateState(int index, State c, int states, int mutationConstant) {
-		try{
-			return new State(index, mutateGenes(c.getGenes(), states, mutationConstant));
-		}catch(InvalidInputWarningEvent e){
-			Logger.log(e);
-			return null;
-		}
+		return new State(index, mutateGenes(c.getGenes(), states, mutationConstant));
 	}
 	
 	private int[] mutateGenes(int[] gc, int states, int mutationConstant) {
@@ -257,8 +271,9 @@ public class GA {
 		int[] values = State.getValues(states);
 		int i = 0;
 		
-		//Changing the entire command if 10 times less likely than changing a parameter
+		//Changing the entire command is 10 times less likely than changing a parameter
 		//The value 10 is arbitrary
+		//This is not evolution as it does not use any of the genes present in either of the parents
 		if(ran.nextInt(mutationConstant * 10) == 0){
 			return ranGenes(states);
 		}
@@ -266,6 +281,7 @@ public class GA {
 			if(ran.nextInt(mutationConstant) == 0){
 				//Sometimes replace value with a new random value
 				if(i == 4){
+					//P < 2 makes no sense
 					gc[i] = ran.nextInt(values[i] - 2) + 2;
 				}else{
 					gc[i] = ran.nextInt(values[i]);
@@ -283,12 +299,7 @@ public class GA {
 	}
 	
 	private State ranState(int index, int states) {
-		try{
-			return new State(index, ranGenes(states));
-		}catch(InvalidInputWarningEvent e){
-			Logger.log(e);
-			return null;
-		}
+		return new State(index, ranGenes(states));
 	}
 	
 	private int[] ranGenes(int states) {
@@ -299,6 +310,7 @@ public class GA {
 		for(i = 0; i < 9; i++){
 			//Generate a new random value
 			if(i == 4){
+				//P < 2 makes no sense
 				gc[i] = ran.nextInt(values[i] - 2) + 2;
 			}else{
 				gc[i] = ran.nextInt(values[i]);
@@ -307,12 +319,18 @@ public class GA {
 		
 		//Every index in gc now has a possible value,
 		//however, this does not matter, as values which do not apply to the
-		//generated command value (g[0]) will not be used in the State constructer
+		//generated command value (g[0]) will not be used in the State constructor
+		//This is inefficient as some values are generated needlessly,
+		//however, increasing efficiency would require drastically more code,
+		//and switch/case statements, which would be more prone to errors
 		
 		return gc;
 	}
 	
 	public Brain getBestBrain() {
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Returned the Brain with the highest fitness generated by GeneticAlgorithm"));
+		}
 		return population.get(0);
 	}
 	

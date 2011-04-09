@@ -1,0 +1,17 @@
+Sense Ahead 4 1 Home     ; state 0:  if home, move, else search for food
+Sense Ahead 2 4 Food     ; state 1:  [SEARCH] is there food in front of me?
+Move 3 0                 ; state 2:  YES: move onto food (return to state 0 on failure)
+PickUp 9 0               ; state 3:       pick up food and jump to state 9 (or 0 on failure)
+Flip 3 5 6               ; state 4:  NO: choose whether to...
+Turn Left 0              ; state 5:      turn left and return to state 0
+Flip 2 7 8               ; state 6:      ... or ...
+Turn Right 0             ; state 7:      turn right and return to state 0
+Move 0 4                 ; state 8:      ... or move forward and return to state 0 (or 4 on failure)
+Sense Ahead 10 12 Home   ; state 9:  [GO HOME] is the cell in front of me my anthill?
+Move 11 9                ; state 10: YES: move onto anthill
+Drop 0                   ; state 11:     drop food and return to searching. Note, retains food if cell has 9 food
+Flip 3 13 14             ; state 12: NO: choose whether to...
+Turn Left 9              ; state 13:     turn left and return to state 9
+Flip 2 15 16             ; state 14:     ...or...
+Turn Right 9             ; state 15:     turn right and return to state 9
+Move 9 12                ; state 16:     ...or move forward and return to state 9

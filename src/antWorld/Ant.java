@@ -2,9 +2,9 @@ package antWorld;
 
 import java.util.Random;
 
+import utilities.ErrorEvent;
 import utilities.InvalidInputWarningEvent;
 import utilities.Logger;
-
 
 import antBrain.Brain;
 import antBrain.State;
@@ -13,7 +13,7 @@ import antBrain.State;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Ant implements Comparable<Ant> {
+public class Ant implements Comparable<Ant>, Cloneable {
 	enum Colour { BLACK, RED };
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
@@ -22,14 +22,15 @@ public class Ant implements Comparable<Ant> {
 	private final Random ran;
 	private final int uid;
 	private final Colour colour;
-	private final Brain brain;
+	private Brain brain;
 	private int state;
 	private Cell cell;
 	private boolean alive = true;
 	private int direction;
 	private boolean food = false;
+	private int rest = 0;
 	
-	public Ant(int uid, Random ran, int direction, int colour, Brain brain, Cell cell) {
+	public Ant(int uid, Random ran, int direction, int colour, Cell cell) {
 		this.uid = uid;
 		
 		if(ran == null){
@@ -46,18 +47,36 @@ public class Ant implements Comparable<Ant> {
 			this.colour = Colour.RED;
 			break;
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal Colour Argument in Ant Constructer"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Colour Argument in Ant Constructor"));
+			}
 			this.colour = null;
 		}
-		this.brain = brain;
 		this.state = 0;
 		this.cell = cell;
 		this.direction = direction;
 	}
 	
 	public void step() {
+		if(rest > 0){
+			rest--;
+			return;
+		}
+		
 		State s = brain.getState(state);
-		int command = s.getCommand();
+		int command = 0;
+		try{
+			command = s.getCommand();
+		}catch(NullPointerException e){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new ErrorEvent("Null Command in state. " + e.getMessage(), e));
+				Logger.setLogLevel(0);
+				System.out.println("ERR:\n\n");
+				System.out.println(brain);
+				System.out.println(state);
+			}
+			return;
+		}
 		
 		switch(command){
 		//Sense senseDir st1 st2 condition
@@ -94,7 +113,9 @@ public class Ant implements Comparable<Ant> {
 			break;
 		//This should never be reached
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in Ant step"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in Ant step"));
+			}
 		}
 	}
 
@@ -115,7 +136,10 @@ public class Ant implements Comparable<Ant> {
 			c = cell.getNeighbour(direction + 1);
 			break;
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal senseDir Argument in Ant sense"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal senseDir Argument in Ant sense"));
+			}
+			c = cell;
 		}
 		
 		boolean condition = false;
@@ -182,20 +206,22 @@ public class Ant implements Comparable<Ant> {
 			break;
 		//HOME
 		case 8:
-			if(c.getAnthill() == colour.ordinal()) {
+			if(c.getAnthill() - 1 == colour.ordinal()) {
 				condition = true;
 			}
 			break;
 		//FOEHOME
 		case 9:
 			if(c.getAnthill() != 0){
-				if(c.getAnthill() != colour.ordinal()) {
+				if(c.getAnthill() - 1 != colour.ordinal()) {
 					condition = true;
 				}
 			}
 			break;
 		default:
-			Logger.log(new InvalidInputWarningEvent("Illegal Condition Argument in Ant sense"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal Condition Argument in Ant sense"));
+			}
 		}
 		
 		if(condition){
@@ -241,32 +267,40 @@ public class Ant implements Comparable<Ant> {
 	
 	//Turn turnDir st1
 	private void turn(State s) {
-		if(s.getTurnDir() == 0){
+		switch(s.getTurnDir()){
+		case 0:
 			direction--;
 			if(direction < 0){
 				direction = 5;
 			}
-		}else if(s.getTurnDir() == 1){
+			break;
+		case 1:
 			direction++;
 			if(direction > 5){
 				direction = 0;
 			}
-		}else{
-			Logger.log(new InvalidInputWarningEvent("Illegal TurnDir Argument in Ant turn"));
+			break;
+		default:
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal TurnDir Argument in Ant turn"));
+			}
 		}
+		state = s.getSt1();
 	}
 	
 	//Move st1 st2
 	private void move(State s) {
 		//If new cell is not rocky and does not contain an ant, move there and go to st1, else st2
-		Cell c = cell.getNeighbour(direction);
-		if(!c.isRocky() && !c.hasAnt()){
-			c.setAnt(this);
+		Cell newCell = cell.getNeighbour(direction);
+		if(!newCell.isRocky() && !newCell.hasAnt()){
+			newCell.setAnt(this);
 			cell.setAnt(null);
+			cell = newCell;
 			state = s.getSt1();
 		}else{
 			state = s.getSt2();
 		}
+		rest = 14;
 	}
 
 	//Flip p st1 st2
@@ -283,6 +317,10 @@ public class Ant implements Comparable<Ant> {
 			return true;
 		}
 		return false;
+	}
+	
+	public void setBrain(Brain brain) {
+		this.brain = brain;
 	}
 	
 	private int neighbourFoes() {
@@ -342,8 +380,25 @@ public class Ant implements Comparable<Ant> {
 		return food;
 	}
 	
+	public Ant clone() {
+		Ant clone = new Ant(uid, ran, direction, colour.ordinal(), null);
+		return clone;
+	}
+	
+	public boolean equals(Ant ant) {
+		//This is consistent with the natural ordering of Ant objects,
+		//as given by compareTo
+		//Should never return true, as each engine creates a maximum of 1
+		//Ant for any UID number
+		if(ant.getUID() == uid){
+			return true;
+		}
+		return false;
+	}
+	
 	public int compareTo(Ant ant) {
 		//Sorts by UID, lowest first
+		//Returns negative if this instance is less than the argument
 		if(ant.getUID() < uid){
 			return -1;
 		}else if(ant.getUID() == uid){
@@ -351,5 +406,9 @@ public class Ant implements Comparable<Ant> {
 		}else{//if(ant.getUID() > uid){
 			return 1;
 		}
+	}
+
+	public void setCell(Cell cell) {
+		this.cell = cell;
 	}
 }

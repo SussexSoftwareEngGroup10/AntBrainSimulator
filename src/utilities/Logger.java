@@ -6,8 +6,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public class Logger {
-	private static final long sizeLimit = 100 * 1000 * 1000; //100MB
+	//TODO
+	private static double logLevel = 1;
+	//0 == no logging
+	//1 == warnings and errors (default)
+	//2 == timing and beginning and ending
+	//simulation and engine
+	//3 == statistics about a simulation
+	//4 == actions of each ant
+	//5 == breeding results in each GA evolve
+	
+	private static final long sizeLimit = 10 * 1000 * 1000; //100MB
 	private static final String folderName = "logs";
 	private static final File folder = new File(folderName);
 	private static final String fileNamePrefix = "log_";
@@ -73,5 +87,13 @@ public class Logger {
 		
 		//Reset printing to the console
 		System.setErr(sysErr);
+	}
+	
+	public static double getLogLevel() {
+		return logLevel;
+	}
+	
+	public static void setLogLevel(int logLevel) {
+		Logger.logLevel = logLevel;
 	}
 }

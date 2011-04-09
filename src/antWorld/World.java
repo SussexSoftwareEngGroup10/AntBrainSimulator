@@ -1,7 +1,11 @@
 package antWorld;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
+
+import utilities.InvalidInputWarningEvent;
+import utilities.Logger;
 
 import antBrain.Brain;
 
@@ -34,7 +38,7 @@ Example World:
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class World {
+public class World implements Cloneable {
 	//Using a seed means that the same world can be reproduced
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
 	private final int seed;
@@ -54,17 +58,16 @@ public class World {
 	
 	private static final int gap = 1; //gap between objects in world
 	
-	private final Cell[][] cells; //indent every second line, starting at cells[1]
-	private final Brain[] brains;
+	private Cell[][] cells; //indent every second line, starting at cells[1]
 	
 	//I use 2 different ways of storing the pointers to the ants in the world
 	//These should be kept in sync as they only use pointers,
 	//ants are added to both, and never removed
 	//Ants are added in UID order,
 	//Collections.sort() will restore the list to UID order, as it was created
-	private final ArrayList<Ant> ants = new ArrayList<Ant>();
+	private ArrayList<Ant> ants = new ArrayList<Ant>();
 	//I would use a ArrayList<Ant>[], but you can't do that in Java
-	private final ArrayList<ArrayList<Ant>> antsBySpecies = new ArrayList<ArrayList<Ant>>();
+	private ArrayList<ArrayList<Ant>> antsBySpecies = new ArrayList<ArrayList<Ant>>();
 	
 	//Ant colours:
 	//'+' == black
@@ -75,8 +78,8 @@ public class World {
 	 * 
 	 * @return a world which is fit to be used in a tournament
 	 */
-	public static World getTournamentWorld(Brain[] brains, int seed) {
-		return getRegularWorld(140, 140, 13, brains, seed);
+	public static World getTournamentWorld(int seed) {
+		return getRegularWorld(140, 140, 13, seed);
 	}
 	
 	/**
@@ -90,8 +93,8 @@ public class World {
 	 * @param seed
 	 * @return
 	 */
-	public static World getRegularWorld(int rows, int cols, int rocks, Brain[] brains, int seed) {
-		return new World(rows, cols, rocks, brains, seed, 2, 7, 10, 5, 5, 0);
+	public static World getRegularWorld(int rows, int cols, int rocks, int seed) {
+		return new World(rows, cols, rocks, seed, 2, 7, 10, 5, 5, 0);
 	}
 	
 	/**
@@ -111,7 +114,7 @@ public class World {
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
 	 */
-	public World(int rows, int cols, int rocks, Brain[] brains, int seed,
+	public World(int rows, int cols, int rocks, int seed,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection) {
 		//Can either use a random or predefined seed
@@ -125,7 +128,6 @@ public class World {
 		this.rows = rows;
 		this.cols = cols;
 		this.rocks = rocks;
-		this.brains = brains;
 		this.anthills = anthills;
 		this.anthillSideLength = anthillSideLength;
 		this.foodBlobCount = foodBlobCount;
@@ -144,6 +146,17 @@ public class World {
 			}
 		}
 		
+		Cell current;
+		//Setup markers in each cell
+		//Use this. for fields, local variables created above
+		for(r = 0; r < rows; r++){
+			for(c = 0; c < cols; c++){
+				current = cells[r][c];
+				current.setNeighbours(getNeighbours(current));
+				current.setupMarkers(this.anthills);
+			}
+		}
+		
 		createWorld();
 	}
 	
@@ -153,14 +166,13 @@ public class World {
 	 * 
 	 * @param cellChars
 	 */
-	protected World(char[][] cellChars, Brain[] brains) {
+	public World(char[][] cellChars) {
 		//Random is not needed as world will not be generated
 		seed = -1;
 		ran = null;
 		
 		this.rows = cellChars.length;
 		this.cols = cellChars[0].length;
-		this.brains = brains;
 		
 		cells = new Cell[rows][cols];
 		int r = 0;
@@ -284,6 +296,27 @@ public class World {
 		createAnts();
 	}
 	
+	private World(int rows, int cols, int rocks, int seed,
+		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
+		int foodBlobCellFoodCount, int antInitialDirection, Cell[][] cells,
+		ArrayList<Ant> ants, ArrayList<ArrayList<Ant>> antsBySpecies) {
+		this.seed = seed;
+		ran = new Random(seed);
+		
+		this.rows = rows;
+		this.cols = cols;
+		this.rocks = rocks;
+		this.anthills = anthills;
+		this.anthillSideLength = anthillSideLength;
+		this.foodBlobCount = foodBlobCount;
+		this.foodBlobSideLength = foodBlobSideLength;
+		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		this.antInitialDirection = antInitialDirection;
+		this.cells = cells;
+		this.ants = ants;
+		this.antsBySpecies = antsBySpecies;
+	}
+	
 	/**
 	 * Places all objects specified into world, with required gap between objects
 	 * Generates and checks random locations for each object
@@ -376,13 +409,13 @@ public class World {
 		
 		//First row
 		r = 0;
-		for(c = 0; c < rows; c++){
+		for(c = 0; c < cols; c++){
 			cells[r][c].setCell('#');
 		}
 		
 		//Last row
 		r = rows - 1;
-		for(c = 0; c < rows; c++){
+		for(c = 0; c < cols; c++){
 			cells[r][c].setCell('#');
 		}
 		
@@ -509,12 +542,15 @@ public class World {
 			
 			try{
 				return checkHexClearRecurse(centre, 0, sideLength + gap);
-			}catch(ArrayIndexOutOfBoundsException aiob){
+			}catch(ArrayIndexOutOfBoundsException e){
 				return false;
 			}
 		}
 		
 	private boolean checkHexClearRecurse(Cell cell, int recurseNum, int recurseDepth) {
+		if(cell == null){
+			return false;
+		}
 		if(cell.toChar() != '.'){
 			return false;
 		}
@@ -554,7 +590,7 @@ public class World {
 					}
 				}
 			}
-		}catch(ArrayIndexOutOfBoundsException aiob){
+		}catch(ArrayIndexOutOfBoundsException e){
 			return false;
 		}
 		
@@ -585,7 +621,6 @@ public class World {
 	 */
 	private void createAnts() {
 		ArrayList<Ant> species;
-		Brain brain = null;
 		Cell cell;
 		Ant ant;
 		int colour = -1;
@@ -611,23 +646,25 @@ public class World {
 				}
 				species = antsBySpecies.get(colour);
 				
-				//If more than 1 brain is given, use most possible
-				//Otherwise use brain at 0
-				if(brains != null){
-					if(brains[colour] != null){
-						brain = brains[colour];
-					}else{
-						brain = brains[0];
-					}
-				}
-				
-				ant = new Ant(uid, ran, antInitialDirection, colour, brain, cell);
+				ant = new Ant(uid, ran, antInitialDirection, colour, cell);
 				cell.setAnt(ant);
 				ants.add(ant);
 				species.add(ant);
 				
 				uid++;
 			}
+		}
+	}
+	
+	public void setBrains(Brain[] brains) {
+		for(int i = 0; i < antsBySpecies.size(); i++){
+			setBrain(brains[i], i);
+		}
+	}
+	
+	public void setBrain(Brain brain, int i) {
+		for(Ant ant : antsBySpecies.get(i)){
+			ant.setBrain(brain);
 		}
 	}
 	
@@ -665,6 +702,7 @@ public class World {
 		int c = cell.getCol();
 		//Subtract indent from calculations
 		//0 if row is unindented, 1 if row is indented
+		//Neighbours of border cells off the edge of the World are null
 		int k = r % 2;
 		
 		switch(i){
@@ -672,41 +710,43 @@ public class World {
 		case 0:
 			try{
 				neighbour = cells[r    ][c + 1    ]; //east
-			}catch(ArrayIndexOutOfBoundsException aiob){
+			}catch(ArrayIndexOutOfBoundsException e){
 			}
 			break;
 		case 1:
 			try{
 				neighbour = cells[r + 1][c + k    ]; //south-east
-			}catch(ArrayIndexOutOfBoundsException aiob){
+			}catch(ArrayIndexOutOfBoundsException e){
 			}
 			break;
 		case 2:
 			try{
 				neighbour = cells[r + 1][c - 1 + k]; //south-west
-			}catch(ArrayIndexOutOfBoundsException aiob){
+			}catch(ArrayIndexOutOfBoundsException e){
 			}
 			break;
 		case 3:
 			try{
 				neighbour = cells[r    ][c - 1    ]; //west
-			}catch(ArrayIndexOutOfBoundsException aiob){
+			}catch(ArrayIndexOutOfBoundsException e){
 			}
 			break;
 		case 4:
 			try{
 				neighbour = cells[r - 1][c - 1 + k]; //north-west
-			}catch(ArrayIndexOutOfBoundsException aiob){
+			}catch(ArrayIndexOutOfBoundsException e){
 			}
 			break;
 		case 5:
 			try{
 				neighbour = cells[r - 1][c + k    ]; //north-east
-			}catch(ArrayIndexOutOfBoundsException aiob){
+			}catch(ArrayIndexOutOfBoundsException e){
 			}
 			break;
 		default:
-			System.out.println("Illegal i Argument in World getNeighbour");
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new InvalidInputWarningEvent("Illegal i Argument in World getNeighbour"));
+			}
 		}
 		return neighbour;
 	}
@@ -720,10 +760,14 @@ public class World {
 		
 		int r = 0;
 		int c  = 0;
+		Cell current;
 		for(r = 0; r < rows; r++){
 			for(c = 0; c < cols; c++){
-				if(cells[r][c].getAnthill() != 0){
-					totals[cells[r][c].getAnthill() - 1]++;
+				current = cells[r][c];
+				if(current.getAnthill() != 0){
+					if(current.hasFood()){
+						totals[cells[r][c].getAnthill() - 1] += current.foodCount();
+					}
 				}
 			}
 		}
@@ -745,6 +789,45 @@ public class World {
 		return survivors;
 	}
 	
+	public World clone() {
+		Cell[][] cellsClone = new Cell[rows][cols];
+		ArrayList<Ant> antsClone = new ArrayList<Ant>();
+		ArrayList<ArrayList<Ant>> antsBySpeciesClone = new ArrayList<ArrayList<Ant>>();
+		Cell cell;
+		Cell cellClone;
+		Ant ant;
+		Ant antClone;
+		int r = 0;
+		int c = 0;
+		
+		for(r = 0; r < antsBySpecies.size(); r++){
+			antsBySpeciesClone.add(new ArrayList<Ant>());
+		}
+		for(r = 0; r < rows; r++){
+			for(c = 0; c < cols; c++){
+				cell = cells[r][c];
+				cellClone = cell.clone();
+				cellsClone[r][c] = cellClone;
+				if(cell.hasAnt()){
+					ant = cell.getAnt();
+					antClone = ant.clone();
+					antClone.setCell(cellClone);
+					cellClone.setAnt(antClone);
+					antsClone.add(antClone);
+					antsBySpeciesClone.get(antClone.getColour()).add(antClone);
+				}
+			}
+		}
+		Collections.sort(antsClone);
+		for(r = 0; r < antsBySpeciesClone.size(); r++){
+			Collections.sort(antsBySpeciesClone.get(r));
+		}
+		
+		return new World(rows, cols, rocks, seed, anthills, anthillSideLength,
+			foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
+			antInitialDirection, cells, ants, antsBySpecies);
+	}
+	
 	public String getAttributes() {
 		String s = "";
 		int i = 0;
@@ -760,13 +843,6 @@ public class World {
 		s += "\nfood blob cell food count: " + foodBlobCellFoodCount;
 		s += "\nant initial direction: " + antInitialDirection;
 		s += "\ngap: " + gap;
-		if(brains != null){
-			for(i = 0; i < brains.length; i++){
-				s += "\nbrains" + i + ": " + brains[i];
-			}
-		}else{
-			s += "\nbrains: " + null;
-		}
 		s += "\nants: ";
 		for(i = 0; i < antsBySpecies.size(); i++){
 			s += antsBySpecies.get(i).size();
@@ -779,6 +855,10 @@ public class World {
 	}
 	
 	public String toString() {
+		//Returns the world in a format identical to that found in a readable text file,
+		//such that if the toString of a world were written to a file and read in through
+		//a parser, the world would be identical
+		//(except for ants and food in anthills, that'd break the parser)
 		String s = "";
 		int r = 0;
 		int c = 0;

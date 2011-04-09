@@ -12,8 +12,10 @@ import utilities.WarningEvent;
  * @version 1.0
  */
 public class Brain implements Cloneable, Comparable<Brain> {
-	private static final int numOfStates = 10000;
+	private static final int minNumOfStates = 3;
+	private static final int maxNumOfStates = 10000;
 	private final Hashtable<Integer, State> states;
+	private int score;
 	
 	public Brain() {
 		states = new Hashtable<Integer, State>();
@@ -32,8 +34,12 @@ public class Brain implements Cloneable, Comparable<Brain> {
 		return states.size();
 	}
 	
+	public static int getMinNumOfStates() {
+		return minNumOfStates;
+	}
+	
 	public static int getMaxNumOfStates() {
-		return numOfStates;
+		return maxNumOfStates;
 	}
 	
 	public void setState(State state) {
@@ -44,13 +50,23 @@ public class Brain implements Cloneable, Comparable<Brain> {
 		try{
 			return states.get(i);
 		}catch(NullPointerException npe){
-			Logger.log(new WarningEvent("Null state " + i + " returned in Brain"));
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new WarningEvent("Null state " + i + " returned in Brain"));
+			}
 			return null;
 		}
 	}
 	
 	public Collection<State> getValues() {
 		return states.values();
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	public void setScore(int score) {
+		this.score = score;
 	}
 	
 	public Brain clone() {
@@ -61,7 +77,7 @@ public class Brain implements Cloneable, Comparable<Brain> {
 		Brain b = (Brain) o;
 		//do state by state, not contains
 		int i = 0;
-		for(i = 0; i < numOfStates; i++){
+		for(i = 0; i < maxNumOfStates; i++){
 			if(!this.getState(i).equals(b.getState(i))){
 				return false;
 			}
@@ -70,17 +86,30 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	}
 	
 	public int compareTo(Brain b) {
-		//Sorts by putting -1s to the left, 1s to the right
-		//More states = -1
-		int sa = this.getValues().size();
-		int sb = b.getValues().size();
+//		//Test used by GA, sorts Brains in order of number of states
+//		//Sorts by putting -1s to the left, 1s to the right
+//		//More states = -1
+//		int sa = this.getValues().size();
+//		int sb = b.getValues().size();
+//		if(sa > sb){
+//			return -1;
+//		}
+//		if(sa == sb){
+//			return 0;
+//		}
+//		//if(sa < sb){
+//		return 1;
+		
+		int sa = this.getScore();
+		int sb = b.getScore();
+		
 		if(sa > sb){
 			return -1;
 		}
 		if(sa == sb){
 			return 0;
 		}
-		//if(sa < sb){
+//		if(sa < sb){
 		return 1;
 	}
 	

@@ -6,7 +6,7 @@ import org.gicentre.utils.move.*;
 /*
  * CURRENTLY AN EXPERIMENTAL CLASS - TESTING DRAWING HEXAGONS CORRECTLY TO THE SCREEN
  * IMAGES ARE ALSO NOT FINAL VERSIONS
- * 
+ * TODO:
  * NOTES FOR MYSELF (WILL):
  * HOW SHOULD THE GRID COMMUNICATE WITH ENGINE, WILL ENGINE CALL AN UPDATE METHOD IN GUI?
  * SOME SORT OF UNIFORM SCALE FACTOR TO SIZE ALL OBJECTS BY? MAYBE JUST SCALE TO FIT HEXAGON WIDTH.
@@ -51,6 +51,8 @@ public class GameDisplay extends PApplet {
 		
 	private int numHexCol; //Number of columns (in hexagons) wide
 	private int numHexRow; //Number of rows (in hexagons) high
+	private int pixelWidth; //Used to store size of display in pixels
+	private int pixelHeight;
 		
 	public static void main(String args[]) {
 		PApplet.main(new String[] { "--present", "gUI.GameDisplay" });
@@ -58,8 +60,8 @@ public class GameDisplay extends PApplet {
 
 	public void setup() {
 		//Dimensions of display in pixels - change to modify size
-		int pixelWidth = 750;
-		int pixelHeight = 600;
+		pixelWidth = 750;
+		pixelHeight = 600;
 		size(pixelWidth, pixelHeight);
 		
 		background(0); //Set background to black
@@ -71,39 +73,27 @@ public class GameDisplay extends PApplet {
 		blackAnt = loadImage("resources/Ant.png");
 		
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 140;
-		numHexRow = 140;
+		numHexCol = 5;
+		numHexRow = 50;
 		
-		//Work out the sizes of the hexagons given size of display and number of hexagons needed
-		//Check which is the larger amount between the values above and use that to determine the size of the hexagons
-		//This is in accordance with the ratio between the width and height of the hexagons
-		float widthProportion = (float) numHexCol / (float) pixelWidth;
-		float heightProportion =  (float) numHexRow / (float)pixelHeight;
-		//^THIS COULD BE IMPROVED ON - IT ASSUMES THE POINTY PART OF THE HEXAGONS AT THE BOTTOM WILL TAKE UP EXACTLY THE SAME AMOUNT OF SPACE AS THE
-		//ROWS OF HEXAGONS THAT JUT OUT ON THE RIGHT HAND SIDE I.E. HEXANGLEHEIGHT != HEXWIDTH / 2.  PROBLEM IS NEED TO KNOW HEX SIZE TO KNOW THESE VALUES.
-		if (widthProportion >= heightProportion) { // If columns will be wider
-			hexWidth = pixelWidth / (numHexCol + 1);
-			//Trigonometry to work out the height of the angled part of the hexagon
-			hexAngleHeight = (int) (hexWidth / 2 * tan(radians(30)));
-			hexVertHeight = hexAngleHeight * 2;
-			hexHeight = (hexAngleHeight * 4);
-			}//4
-		else { // If rows will be taller
-			hexAngleHeight = ((pixelHeight / (numHexRow + 1)) * 1 / 3);
-			hexVertHeight = hexAngleHeight * 2;
-			hexHeight = hexAngleHeight * 4;
-			hexWidth = (int) ((hexAngleHeight * tan(radians(60))) * 2);
+		//Calculates what the size of the hexagons will be using both the height and the width, it then uses the one
+		//whicth doesn't force the hexaons off the edge of the game display.
+		if (calculateHexDimensionsUsingHeight() * (float) (numHexCol + 0.5) > pixelWidth) { 
+			calculateHexDimensionsUsingWidth(); //If using the height made the width of the grid go over the right hand side of the display, use the width
 		}
-		
-
 	}
-		
+	
 	public void draw() {
-		//Sets a lower bound on the zoom scale - it would be nicer if this was done more smoothly
+		//Sets an upper and lower bound on the zoom scale - it would be nicer if this was done more smoothly
 		if (zoomer.getZoomScale() >= 22.7) {
 			zoomer.setZoomScale(22.71);
 		}
+		else if (zoomer.getZoomScale() <= 0.9) {
+			zoomer.setZoomScale(1);
+		}
 		zoomer.transform();
+		System.out.println(zoomer.getPanOffset());
+		//TODO - work out how to set limits to the pan offset (will probably need to know size of grid for the right hand side)
 
 		//Draw hexagons
 		background(0);
@@ -128,7 +118,29 @@ public class GameDisplay extends PApplet {
 		}
 		*/
 	}
+	
+	//Methods for finding out the dimensions of the hexagons; one uses the height, the other uses the width
+	private int calculateHexDimensionsUsingHeight() {
+		float third = (float) (1) / (float) (3);
+		hexAngleHeight = (int) ((pixelHeight / (float) (numHexRow + third)) * third);
+		hexVertHeight = hexAngleHeight * 2;
+		hexHeight = hexAngleHeight * 4;
+		//Trigonometry to work out the width
+		hexWidth = (int) ((hexAngleHeight * tan(radians(60))) * 2);
 		
+		return hexWidth; //Returned for use in the if statement when this is called
+	}
+	
+	//Inverse of the above method
+	private int calculateHexDimensionsUsingWidth() {
+		hexWidth = (int) (pixelWidth / (float) (numHexCol + 0.5));
+		hexAngleHeight = (int) (hexWidth / 2 * tan(radians(30)));
+		hexVertHeight = hexAngleHeight * 2;
+		hexHeight = (hexAngleHeight * 4);
+		
+		return hexHeight;
+	}
+
 	//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)
 	private int getRowPixelCoords(int row) {
 		//Work out the values, need to do divide by two at the end to give the centre of the hexagon

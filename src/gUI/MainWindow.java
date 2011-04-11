@@ -1,15 +1,15 @@
 package gUI;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import utilities.*;
 
-/*
- * CURRENTLY AN EXPERIMENTAL CLASS - TESTING ADDING PAPPLET TO A SWING GUI
- */
 public class MainWindow {
+	ContestWindow contestWindow;
+	StatisticsWindow statisticsWindow;
+	
 	String blackBrainPath;
 	String redBrainPath;
 	String worldPath;
@@ -130,7 +130,7 @@ public class MainWindow {
 				if (f != null) {
 					path = f.getAbsolutePath();
 				}
-				
+				//TODO: Validate what is return by the file chooser.  Maybe it was closed?  Or nothing selected?
 				JButton clickedBtn = (JButton) e.getSource();
 				
 				if (clickedBtn == uploadRedBtn) {
@@ -152,22 +152,31 @@ public class MainWindow {
 					worldPath = path;
 				}
 			}
-			catch (HeadlessException hE) {
-				System.err.println(hE.getMessage());
-			}
 			//if the user does not have permission to access the file
 			catch (SecurityException sE) {
-				System.err.println("Security violation with file");
+				if (Logger.getLogLevel() >= 1) {
+					Logger.log(new IOWarningEvent("Security violation with file!", sE));
+				}
 			}
 		}
 	}
 	
 	class contestListener implements ActionListener {
 
-		@Override
 		public void actionPerformed(ActionEvent e) {
-			String numberOfPlayers = (String)JOptionPane.showInputDialog(null, "Select number of players:", "Player Selector", JOptionPane.QUESTION_MESSAGE);
-			//TODO: Validate it's an int, and set upper limit | Show ContestWindow
+			String stringNumberOfPlayers = (String)JOptionPane.showInputDialog(null, "Select number of players:", "Player Selector", JOptionPane.QUESTION_MESSAGE);
+			//Validate it's an int | Show ContestWindow
+			
+			int numberOfPlayers;
+			try {
+				numberOfPlayers = Integer.parseInt(stringNumberOfPlayers);
+				contestWindow = new ContestWindow(numberOfPlayers);
+			}
+			catch (NumberFormatException nFE){
+				if (Logger.getLogLevel() >= 1) {
+					Logger.log(new InvalidInputWarningEvent("Input number of players not an integer!", nFE));
+				}
+			}			
 		}
 	}
 }

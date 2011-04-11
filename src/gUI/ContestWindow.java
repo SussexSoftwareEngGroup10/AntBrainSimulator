@@ -9,13 +9,9 @@ public class ContestWindow {
 		drawGUI(numOfPlayers);
 	}
 	
-	public static void main(String args[]) {
-		new ContestWindow(2);
-	}
-	
 	private void drawGUI(int numOfPlayers) {
 		JFrame window = new JFrame("Contest Mode");
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		Container pane = window.getContentPane();
 		pane.setLayout(new BorderLayout());
 		
@@ -54,6 +50,7 @@ public class ContestWindow {
 		JPanel showStatsPanel = new JPanel();
 		showStatsPanel.setLayout(new FlowLayout());
 		JButton showStats = new JButton("Display Statistics");
+		showStats.setEnabled(false);
 		showStatsPanel.add(showStats);
 		pane.add(showStatsPanel, BorderLayout.CENTER);
 		

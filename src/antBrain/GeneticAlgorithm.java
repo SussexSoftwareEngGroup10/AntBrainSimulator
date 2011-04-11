@@ -89,13 +89,17 @@ public class GeneticAlgorithm {
 			//Log progress
 			int tenth = epochs / 10;
 			if(tenth == 0) tenth = 1;
-			for(i = 0; i < epochs; i += tenth){
+			for(i = 0; i <= epochs; i += tenth){
 				if(e == i){
 					if(Logger.getLogLevel() >= 3){
 						Logger.log(new InformationEvent("Completed " + i + " percent of " +
 							"GeneticAlgorithm evolution epochs at " +
 							(System.currentTimeMillis() - DummyEngine.startTime) + "ms"));
 					}
+					//TODO this should print every tenth step, inc 0, epochs
+					System.out.println(new InformationEvent("Completed " + i + " percent of " +
+						"GeneticAlgorithm evolution epochs at " +
+						(System.currentTimeMillis() - DummyEngine.startTime) + "ms"));
 				}
 			}
 			newPop = new Brain[popSize];

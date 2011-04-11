@@ -52,7 +52,11 @@ public class DummyEngine {
 		
 		for(i = 0; i < population.length; i++){
 			brain = population[i];
-			brain.setFitness(tourneySimulation(brain));
+			//Brains from previous tournaments may remain in the elite
+			//their fitness does not need to be calculated again
+			if(brain.getFitness() == 0){
+				brain.setFitness(tourneySimulation(brain));
+			}
 		}
 		
 		Arrays.sort(population);

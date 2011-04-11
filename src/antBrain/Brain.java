@@ -1,8 +1,9 @@
 package antBrain;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Set;
 
 import utilities.Logger;
 import utilities.WarningEvent;
@@ -14,11 +15,11 @@ import utilities.WarningEvent;
 public class Brain implements Cloneable, Comparable<Brain> {
 	private static final int minNumOfStates = 3;
 	private static final int maxNumOfStates = 10000;
-	private final Hashtable<Integer, State> states;
-	private int score;
+	private final HashMap<Integer, State> states;
+	private int fitness;
 	
 	public Brain() {
-		states = new Hashtable<Integer, State>();
+		states = new HashMap<Integer, State>();
 	}
 	
 	/**
@@ -26,7 +27,7 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	 * 
 	 * @param states
 	 */
-	protected Brain(Hashtable<Integer, State> states) {
+	protected Brain(HashMap<Integer, State> states) {
 		this.states = states;
 	}
 	
@@ -57,16 +58,20 @@ public class Brain implements Cloneable, Comparable<Brain> {
 		}
 	}
 	
+	public Set<Integer> getKeys() {
+		return states.keySet();
+	}
+	
 	public Collection<State> getValues() {
 		return states.values();
 	}
 	
-	public int getScore() {
-		return score;
+	public int getFitness() {
+		return fitness;
 	}
 	
-	public void setScore(int score) {
-		this.score = score;
+	public void setFitness(int fitness) {
+		this.fitness = fitness;
 	}
 	
 	public Brain clone() {
@@ -86,40 +91,25 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	}
 	
 	public int compareTo(Brain b) {
-//		//Test used by GA, sorts Brains in order of number of states
-//		//Sorts by putting -1s to the left, 1s to the right
-//		//More states = -1
-//		int sa = this.getValues().size();
-//		int sb = b.getValues().size();
-//		if(sa > sb){
-//			return -1;
-//		}
-//		if(sa == sb){
-//			return 0;
-//		}
-//		//if(sa < sb){
-//		return 1;
+		//Order by fitness, lowest to highest
+		//so if this < b, return -1
+		int sa = this.getFitness();
+		int sb = b.getFitness();
 		
-		int sa = this.getScore();
-		int sb = b.getScore();
-		
-		if(sa > sb){
-			return -1;
-		}
-		if(sa == sb){
-			return 0;
-		}
-//		if(sa < sb){
-		return 1;
+		if(sa < sb)		return -1;
+		if(sa == sb)	return 0;
+		/*if(sa > sb)*/	return 1;
 	}
 	
 	public String toString() {
 		String s = "";
-		Enumeration<State> elements = states.elements();
+		//Prints in state order
+		Object[] keys = (Object[]) states.keySet().toArray();
+		Arrays.sort(keys);
+		int i = 0;
 		
-		while(elements.hasMoreElements()){
-			s += elements.nextElement();
-			s += "\r\n";
+		for(i = 0; i < keys.length; i++){
+			s += states.get(keys[i]) + "\r\n";
 		}
 		return s;
 	}

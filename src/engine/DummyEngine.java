@@ -1,7 +1,7 @@
 package engine;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 import utilities.InformationEvent;
 import utilities.Logger;
@@ -31,6 +31,7 @@ import antWorld.WorldController;
  * @version 1.0
  */
 public class DummyEngine {
+	public static long startTime = System.currentTimeMillis();
 	private int tourneySeed = 1;
 	private World tourneyWorld = WorldController.getTournamentWorld(tourneySeed);
 	private Brain tourneyBrain = BrainController.readBrainFrom("better_example.brain");
@@ -41,34 +42,20 @@ public class DummyEngine {
 		}
 	}
 	
-	public void sortByFitness(ArrayList<Brain> population) {
-		//Dummy method that shows the GeneticAlgorithm works,
-		//populations is sorted by number of states in each brain, most first
-//		Collections.sort(population);
-		
-		//either
-		//run a tournament and fight every brain against every other brain
-		//or
-		//fight each brain against the default brain a number of times,
-		//possibly on a seeded world
-		//
-		//then rank according to wins, most first
-		//don't use the Collections.sort method at all, this is a dummy
-		
+	public void sortByFitness(Brain[] population) {
 		tournament(population);
 	}
 	
-	private void tournament(ArrayList<Brain> population) {
-		int popSize = population.size();
+	private void tournament(Brain[] population) {
 		Brain brain;
 		int i = 0;
 		
-		for(i = 0; i < popSize; i++){
-			brain = population.get(i);
-			brain.setScore(tourneySimulation(brain));
+		for(i = 0; i < population.length; i++){
+			brain = population[i];
+			brain.setFitness(tourneySimulation(brain));
 		}
 		
-		Collections.sort(population);
+		Arrays.sort(population);
 	}
 	
 	private int tourneySimulation(Brain brain) {
@@ -100,89 +87,32 @@ public class DummyEngine {
 		return anthillFood[1] - anthillFood[0];
 	}
 	
-	@SuppressWarnings("unused")
-	private void randomTournament(ArrayList<Brain> population) {
-		int popSize = population.size();
-		int[] scores = new int[popSize];
-		int i = 0;
-		int j = 0;
-		
-		//Sum the wins for each brain against every other brain
-		for(i = 0; i < popSize; i++){
-			for(j = 0; j < popSize; j++){
-				if(i != j){
-					Brain[] brains = {population.get(i), population.get(j)};
-					try{
-						scores[simulation(brains)]++;
-					}catch(ArrayIndexOutOfBoundsException e){
-						//simulation was a draw
-					}
-				}
-			}
-		}
-		//Rank brains according to wins, descending
-		for(i = 0; i < popSize; i++){
-			population.get(i).setScore(scores[i]);
-		}
-		Collections.sort(population);
-	}
-	
-	private int simulation(Brain[] brains) {
-		World world = WorldController.getTournamentWorld(0);
-		ArrayList<Ant> ants = world.getAnts();
-		
-		//Run the simulation
-		int r = 0;
-		int rounds = 300000;
-		if(Logger.getLogLevel() >= 5){
-			Logger.log(new InformationEvent("Begun simulation"));
-		}
-		for(r = 0; r < rounds; r++){
-			for(Ant ant : ants){
-				if(ant.isAlive()){
-					if(ant.isSurrounded()){
-						ant.kill();
-					}else{
-						ant.step();
-					}
-				}
-			}
-		}
-		
-//		ArrayList<ArrayList<Ant>> antPlayers = world.getAntsBySpecies();
-//		int[] survivors = world.survivingAntsBySpecies();
-
-		int[] anthillFood = world.getFoodInAnthills();
-		if(anthillFood[0] > anthillFood[1]){
-			return 0;
-		}
-		if(anthillFood[1] > anthillFood[0]){
-			return 1;
-		}
-		return -1;
-	}
-	
 	public static void main(String args[]) {
-		long startTime = System.currentTimeMillis();
 		Logger.clearLogs();
-		Logger.setLogLevel(3);
+		Logger.setLogLevel(1);
 		
 		//Setup brains
 		//Evolve and get the best brain from the GeneticAlgorithm
 		Brain[] brains = new Brain[2];
 		DummyEngine dummyEngine = new DummyEngine();
-		int epochs = 1;
-		int popSize = 5;
+		int epochs = 100;
+		int popSize = 25;
 		int mutationRate = 20;
 		
 		//Black is the best one found by the GeneticAlgorithm with parameters specified
 		//Red is default brain, read in from file
 		//Black should win when sortByFitness is done
-		Brain exampleBrain = BrainController.readBrainFrom("example.brain");
+//		Brain exampleBrain = BrainController.readBrainFrom("example.brain");
 		Brain betterBrain = BrainController.readBrainFrom("better_example.brain");
-		Brain gaBrain = BrainController.getBestGABrain(exampleBrain.clone(), dummyEngine, epochs, popSize, mutationRate);
-		brains[0] = gaBrain; //black
-		brains[1] = betterBrain;  //red
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Time to GA start: " + (System.currentTimeMillis() - startTime) + "ms"));
+		}
+		Brain gaBrain = BrainController.getBestGABrain(betterBrain.clone(), dummyEngine, epochs, popSize, mutationRate);
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Time to GA end: " + (System.currentTimeMillis() - startTime) + "ms"));
+		}
+		brains[0] = betterBrain;	//black
+		brains[1] = gaBrain;		//red
 		
 		
 		//Setup world
@@ -214,6 +144,9 @@ public class DummyEngine {
 		world.setBrains(brains);
 		ArrayList<Ant> ants = world.getAnts();
 		
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Time to simulation start: " + (System.currentTimeMillis() - startTime) + "ms"));
+		}
 		//Run the simulation
 		int r = 0;
 		int rounds = 300000;
@@ -230,6 +163,10 @@ public class DummyEngine {
 					}
 				}
 			}
+		}
+		
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Time to simulation end: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}
 		
 		if(Logger.getLogLevel() >= 3){
@@ -253,9 +190,11 @@ public class DummyEngine {
 			}
 		}
 		
+		//TODO remove console prints, eventually
 		System.out.println(world);
 		BrainParser.writeBrainTo(gaBrain, "my.brain");
-		System.out.println(gaBrain);
+		System.out.println("---Better Brain---\n" + betterBrain);
+		System.out.println("---GA Brain---\n" + gaBrain);
 		
 		if(Logger.getLogLevel() >= 1){
 			Logger.log(new InformationEvent("Virtual Machine terminated, " +

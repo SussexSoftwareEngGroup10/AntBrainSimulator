@@ -1,9 +1,8 @@
 package antBrain;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
 import utilities.InformationEvent;
 import utilities.Logger;
@@ -20,8 +19,8 @@ public class GeneticAlgorithm {
 	private static final int min = Brain.getMinNumOfStates();
 	private static final int max = Brain.getMaxNumOfStates();
 	private static String bestBrainPath = "best.brain";
-	private final ArrayList<Brain> population = new ArrayList<Brain>();
-	
+	private Brain[] population;
+	private int popSize;
 	private int elite;
 	
 	public GeneticAlgorithm() {
@@ -41,21 +40,15 @@ public class GeneticAlgorithm {
 	}
 	
 	public void createPopulation(Brain exampleBrain, DummyEngine dummyEngine, int popSize) {
-		//Remove population ready for next
-		try{
-			while(true){
-				population.remove(0);
-			}
-		}catch(IndexOutOfBoundsException iob){
-			//population.size() == 0
-		}
+		this.popSize = popSize;
+		elite = popSize / 5;
+		population = new Brain[popSize];
 		
 		//Fill with number of example brains
 		int i = 0;
 		for(i = 0; i < popSize; i++){
-			population.add((Brain) exampleBrain.clone());
+			population[i] = (Brain) exampleBrain.clone();
 		}
-		System.out.println("Ordering");
 		orderByFitness(dummyEngine);
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("New GeneticAlgorithm Brain population of size " + popSize + " created"));
@@ -67,9 +60,10 @@ public class GeneticAlgorithm {
 			Logger.log(new InformationEvent("Begun GeneticAlgorithm evolution for "
 				+ epochs + " epochs, with a 1/" + mutationRate + " chance of mutation"));
 		}
-		int popSize = population.size();
+		Brain[] newPop;
 		int e = 0;
 		int i = 0;
+		int j = 0;
 		int ran1;
 		int ran2;
 		
@@ -85,55 +79,63 @@ public class GeneticAlgorithm {
 		//Elitism has been tested and works,
 		//It is not necessary, but may give better results
 		//when tested on the final DummyEngine
-		elite = popSize / 5;
 		
 		//Each iteration retains the elite,
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
-		Brain b;//TODO
 		
 		for(e = 0; e < epochs; e++){
-			//
-			for(i = 1; i < 101; i++){
-				if(e == epochs * i / 100){
+			//Log progress
+			int tenth = epochs / 10;
+			if(tenth == 0) tenth = 1;
+			for(i = 0; i < epochs; i += tenth){
+				if(e == i){
 					if(Logger.getLogLevel() >= 3){
-						Logger.log(new InformationEvent("Completed " + i + " percent of GeneticAlgorithm evolution epochs"));
+						Logger.log(new InformationEvent("Completed " + i + " percent of " +
+							"GeneticAlgorithm evolution epochs at " +
+							(System.currentTimeMillis() - DummyEngine.startTime) + "ms"));
 					}
 				}
 			}
-			//Remove the least fit half of the population
-			for(i = 0; i < popSize / 2; i++){
-				population.remove(population.size() - 1);
+			newPop = new Brain[popSize];
+			
+			//Copy over elite to the end
+			for(j = 0; j < elite; j++){
+				newPop[popSize - 1 - j] = population[popSize -  1 - j];
 			}
 			
 			//Breed good (most fit half of the population, includes the elite)
-			//until size = startSize + good (which will be removed below)
-			while(population.size() < popSize + ((popSize - elite) / 2)){
+			//Fill newPop from beginning to where elite starts
+			for(j = 0; j < popSize - elite; j++){
 				// Spawn child from 2 random parents
-				ran1 = ran.nextInt(popSize / 2);
-				
-				ran2 = ran.nextInt((popSize / 2) - 1);
+				//(popSize / 2) 
+				ran1 = ran.nextInt(popSize / 2) + popSize / 2;
+				if(popSize < 3){
+					ran2 = 0;
+				}else{
+					try{
+						ran2 = ran.nextInt((popSize / 2) - 1) + popSize / 2;
+					}catch(IllegalArgumentException ex){
+						if(Logger.getLogLevel() >= 1){
+							Logger.log(new WarningEvent("Ran arguments in GeneticAlgorithm: " +
+								"ran.nextInt((" + popSize + "/ 2) - 1) + " + popSize + " / 2", ex));
+						}
+						ran2 = 0;
+					}
+				}
 				// Avoid identical parents
 				if(ran2 >= ran1){
 					ran2++;
 				}
-				//TODO find out why some Brains contain null state/commands
-				// Sexual reproduction
-				b = breed(population.get(ran1), population.get(ran2), mutationRate);
-				population.add(b);
+				newPop[j] = breed(population[ran1], population[ran2], mutationRate);
 			}
-			
-			//Remove the last of the old population, not including the elite
-			while(population.size() > popSize){
-				population.remove(elite);
-			}
-			
+			population = newPop;
 			//Order, ready for next epoch
 			orderByFitness(dummyEngine);
 			
 			//Write best brain so far to file
-			BrainParser.writeBrainTo(population.get(0), "ga.brain");
+			BrainParser.writeBrainTo(population[popSize - 1], "ga.brain");
 		}
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Completed GeneticAlgorithm evolution"));
@@ -146,18 +148,27 @@ public class GeneticAlgorithm {
 	
 	private Brain breed(Brain brainA, Brain brainB, int mutationConstant) {
 		Brain brainC = new Brain();
-		Collection<State> statesA = brainA.getValues();
-		Collection<State> statesB = brainB.getValues();
 		ArrayList<State> statesC = new ArrayList<State>(brainC.getValues());
-		Iterator<State> iterA = statesA.iterator();
-		Iterator<State> iterB = statesB.iterator();
+		Set<Integer> keysA = brainA.getKeys();
+		Set<Integer> keysB = brainB.getKeys();
+		State stateA;
+		State stateB;
+		State stateC;
 		int i = 0;
 		//The target Brain should contain a sensible number of states,
 		//it is not necessary for its size to change in the same direction on every breed
 		//The size of the brain resulting from evolution will reflect on the
 		//size which provides the best fitness
 		//i.e. size, in itself, is not inherently good
-		int targetSize = Math.max(statesA.size(), statesB.size()) + (ran.nextInt(5) - 2);
+		int targetSize = Math.max(brainA.getNumOfStates(), brainB.getNumOfStates()) + (ran.nextInt(3));
+		//(5) - 2);
+		//TODO
+		//removes random states, which is bad
+		//Numbering of states, and their pointers are fixed,
+		//so reducing the size by removing a state would be a real pain,
+		//as changing every pointer would be inefficient,
+		//and leaving gaps might break some methods
+		
 		//Keep targetSize within limits
 		if(targetSize < min){
 			if(Logger.getLogLevel() >= 1){
@@ -174,38 +185,66 @@ public class GeneticAlgorithm {
 		}
 		
 		//Consider each state in statesA and statesB for inclusion in statesC
+		for(i = 0; i < targetSize; i++){
+			stateA = null;
+			stateB = null;
+			stateC = null;
+			//Get state a, if any
+			if(keysA.contains(i)){
+				stateA = brainA.getState(i);
+			}
+			//Get state b, if any
+			if(keysB.contains(i)){
+				stateB = brainB.getState(i);
+			}
+			//Breed
+			if(stateA != null && stateB != null){
+				stateC = combineStates(i, stateA, stateB, targetSize, mutationConstant);
+			//Mutate A
+			}else if(stateA != null){
+				stateC = mutateState(i, stateA, targetSize, mutationConstant);
+			//Mutate B
+			}else if(stateB != null){
+				stateC = mutateState(i, stateB, targetSize, mutationConstant);
+			//New random state
+			}else{
+				stateC = ranState(statesC.size(), targetSize);
+			}
+			statesC.add(stateC);
+		}
 		
-		//Add state resulting from the combination of next a and b states
-		while(iterA.hasNext() && iterB.hasNext()){
-			statesC.add(combineStates(statesC.size(), (State) iterA.next(),
-				(State) iterB.next(), targetSize, mutationConstant));
-		}
-
-		//Mutate sa and add to c
-		while(iterA.hasNext()){
-			statesC.add(mutateState(statesC.size(), (State) iterA.next(),
-				targetSize, mutationConstant));
-		}
-
-		//Mutate sb and add to c
-		while(iterB.hasNext()){
-			statesC.add(mutateState(statesC.size(), (State) iterB.next(),
-				targetSize, mutationConstant));
-		}
 		
-		//All states in statesA and statesB have now been considered for inclusion in statesC
-		//Any more states added will be purely random
-		
-		//Grow to size required
-		while(statesC.size() < targetSize){
-			statesC.add(ranState(statesC.size(), targetSize));
-		}
-		
-		//Trim to size required
-		while(statesC.size() > targetSize){
-			//This should remove a random state each time
-			statesC.remove(ran.nextInt(statesC.size()));
-		}
+//		//Add state resulting from the combination of next a and b states
+//		while(iterA.hasNext() && iterB.hasNext()){
+//			statesC.add(combineStates(statesC.size(), (State) iterA.next(),
+//				(State) iterB.next(), targetSize, mutationConstant));
+//		}
+//
+//		//Mutate sa and add to c
+//		while(iterA.hasNext()){
+//			statesC.add(mutateState(statesC.size(), (State) iterA.next(),
+//				targetSize, mutationConstant));
+//		}
+//
+//		//Mutate sb and add to c
+//		while(iterB.hasNext()){
+//			statesC.add(mutateState(statesC.size(), (State) iterB.next(),
+//				targetSize, mutationConstant));
+//		}
+//		
+//		//All states in statesA and statesB have now been considered for inclusion in statesC
+//		//Any more states added will be purely random
+//		
+//		//Grow to size required
+//		while(statesC.size() < targetSize){
+//			statesC.add(ranState(statesC.size(), targetSize));
+//		}
+//		
+//		//Trim to size required
+//		while(statesC.size() > targetSize){
+//			//This should remove a random state each time
+//			statesC.remove(ran.nextInt(statesC.size()));
+//		}
 		
 		for(i = 0; i < statesC.size(); i++){
 			//Put new states into brain to be returned
@@ -233,7 +272,7 @@ public class GeneticAlgorithm {
 		//this may still result in -1 for senseMarker if a state has SENSE and MARKER
 		int i = 0;
 		for(i = 1; i < 9; i++){
-			if(ran.nextInt(2) == -1){
+			if(ran.nextInt(2) == 0){
 				if(ga[i] == -1){
 					gc[i] = gb[i];
 				}else{
@@ -331,7 +370,7 @@ public class GeneticAlgorithm {
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Returned the Brain with the highest fitness generated by GeneticAlgorithm"));
 		}
-		return population.get(0);
+		return population[population.length - 1];
 	}
 	
 	@SuppressWarnings("unused")

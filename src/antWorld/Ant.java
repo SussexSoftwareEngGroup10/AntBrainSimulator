@@ -70,10 +70,6 @@ public class Ant implements Comparable<Ant>, Cloneable {
 		}catch(NullPointerException e){
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new ErrorEvent("Null Command in state. " + e.getMessage(), e));
-				Logger.setLogLevel(0);
-				System.out.println("ERR:\n\n");
-				System.out.println(brain);
-				System.out.println(state);
 			}
 			return;
 		}

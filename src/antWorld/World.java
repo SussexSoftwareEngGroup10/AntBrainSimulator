@@ -673,12 +673,6 @@ public class World implements Cloneable {
 		}
 	}
 	
-	public void setBrains(Brain[] brains) {
-		for(int i = 0; i < antsBySpecies.size(); i++){
-			setBrain(brains[i], i);
-		}
-	}
-	
 	public void setBrain(Brain brain, int i) {
 		for(Ant ant : antsBySpecies.get(i)){
 			ant.setBrain(brain);

@@ -5,38 +5,57 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import utilities.*;
+import engine.DummyEngine;
+import antWorld.World;
 
+/**
+ * This class displays the main window GUI.  It display a window with the main
+ * game display as well as buttons along the bottom.
+ * 
+ * @author will
+ */
 public class MainWindow {
+	DummyEngine gameEngine;
+	
+	//The other GUI components used
+	GameDisplay gameDisplay;
 	ContestWindow contestWindow;
 	StatisticsWindow statisticsWindow;
 	
+	//The paths to the ant and world files
 	String blackBrainPath;
 	String redBrainPath;
 	String worldPath;
 	
+	//The control buttons to be display at the bottom of the window
 	JButton startGameBtn;
+	JButton contestBtn;
 	JButton uploadRedBtn;
 	JButton uploadBlackBtn;
 	JButton uploadWorldBtn;
+	JButton genWorldBtn;
 	
 	/**
-	 * Constructs a new GUI and draws it to the screen.
+	 * Constructs a new MainWindow and draws it to the screen.
 	 */
 	public MainWindow() {
+		gameEngine = new DummyEngine();
 		drawGUI();
 	}
 		
 	/**
 	 * Main method to run the program - simply calls the constructor
 	 * to display the GUI.
+	 * 
+	 * @param args Unused.
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		new MainWindow();
 	}
 		
 	/*
-	 * This method is what adds all the swing components to the main
-	 * frame and adds listeners to the buttons.
+	 * This method is what adds all the swing components to the main frame and 
+	 * adds listeners to the buttons.
 	 */
 	private void drawGUI() {
 		//Set up the main frame with a border layout
@@ -46,21 +65,23 @@ public class MainWindow {
 		Container pane = window.getContentPane();
 		pane.setLayout(new BorderLayout());
 		
+		//Set up JPanel at the top to hold the game display area
 		JPanel gridDisplayPanel = new JPanel();
 		gridDisplayPanel.setLayout(new FlowLayout());
 		
-		GameDisplay gridDisplay = new GameDisplay();
-		gridDisplayPanel.add(gridDisplay);
-		gridDisplay.init();
+		gameDisplay = new GameDisplay();
+		gridDisplayPanel.add(gameDisplay);
+		gameDisplay.init();
 		
 		pane.add(gridDisplayPanel, BorderLayout.NORTH);
 		
+		//Set up JPanel at the bottom to display the control buttons
 		JPanel controlPanel = new JPanel();
 		controlPanel.setLayout(new GridLayout(2, 3));
 		
 		startGameBtn = new JButton("Start Game");
 		startGameBtn.setEnabled(false);
-		JButton contestBtn = new JButton("Contest Mode");
+		contestBtn = new JButton("Contest Mode");
 		contestBtn.addActionListener(new contestListener());
 		uploadRedBtn = new JButton("Upload Red Brain");
 		uploadRedBtn.addActionListener(new fileBrowseListener());
@@ -68,7 +89,7 @@ public class MainWindow {
 		uploadBlackBtn.addActionListener(new fileBrowseListener());
 		uploadWorldBtn = new JButton("Upload World");
 		uploadWorldBtn.addActionListener(new fileBrowseListener());
-		JButton genWorldBtn = new JButton("Generate World");
+		genWorldBtn = new JButton("Generate World");
 		
 		controlPanel.add(startGameBtn);
 		controlPanel.add(uploadRedBtn);
@@ -79,17 +100,21 @@ public class MainWindow {
 		
 		pane.add(controlPanel, BorderLayout.CENTER);
 		
-		//Centre frame on screen
+		//Centre frame on screen and set visable
 		window.setLocationRelativeTo(null);
 		window.setResizable(false);
 		window.setVisible(true);
 	}
 	
 	/**
-	 * Called when game is complete.
+	 * To be called when the game is complete.  Modifies window to initial
+	 * configuration as well as providing the user with the option of viewing
+	 * statistics.
+	 * 
+	 * @param winner The winner of the game.
 	 */
 	public void notifyGameComplete(String winner) {
-		//TODO: Untested
+		//TODO: Untested, Should it really be parsed a string?
 		//Reset upload buttons to original text without ticks
 		uploadRedBtn.setText("Upload Red Brain");
 		uploadBlackBtn.setText("Upload Black Brain");
@@ -102,37 +127,48 @@ public class MainWindow {
 		
 		startGameBtn.setEnabled(true);
 		
-		//Custom button text
+		//Display dialog box asking if statistics should be displayed
 		String[] options = {"Statistics", "OK"};
-		int choice = JOptionPane.showOptionDialog(null, winner + " wins!", "And The Winner Is...", 
-				JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+		int choice = JOptionPane.showOptionDialog(null, winner + " wins!",
+				"And The Winner Is...", JOptionPane.YES_NO_OPTION, 
+				JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
 		if (choice == 0) {
-			//Show StatisticsWindow
+			//TODO: Show StatisticsWindow
 		}
 	}
 	
+	/**
+	 * Attached to the buttons which need to bring up a file browser window.
+	 * 
+	 * @author will
+	 */
 	public class fileBrowseListener implements ActionListener 
 	{
 		/**
 		 * Displays the file chooser box when the browse button is 
-		 * clicked, and displays the selected path in the text box.
+		 * clicked, a tick is display on the button to confirm the file has been
+		 * selected.
+		 * 
+		 * @param e The triggering event.
 		 */
 		public void actionPerformed(ActionEvent e)
 		{
-			//set the initial directory to the current project dir
+			//Set the initial directory to the current project dir
 			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
 			try {
-				//show the dialog
+				//Show the dialog
 				fc.showOpenDialog(null);
 				String path = "";
-				//get the path from the selected file if one was selected
+				//Get the path from the selected file if one was selected
 				File f = fc.getSelectedFile();
 				if (f != null) {
 					path = f.getAbsolutePath();
 				}
 				//TODO: Validate what is return by the file chooser.  Maybe it was closed?  Or nothing selected?
+				//Depending on which button triggered the event, a tick symbol
+				//is displayed on that button, and the associated file path is
+				//updated with the file chosen
 				JButton clickedBtn = (JButton) e.getSource();
-				
 				if (clickedBtn == uploadRedBtn) {
 					if (!clickedBtn.getText().contains("✔")) {
 						clickedBtn.setText(clickedBtn.getText() + " ✔");
@@ -152,31 +188,64 @@ public class MainWindow {
 					worldPath = path;
 				}
 			}
-			//if the user does not have permission to access the file
+			//If the user does not have permission to access the file
 			catch (SecurityException sE) {
 				if (Logger.getLogLevel() >= 1) {
-					Logger.log(new IOWarningEvent("Security violation with file!", sE));
+					Logger.log(new IOWarningEvent(
+							"Security violation with file!", sE));
 				}
 			}
 		}
 	}
 	
-	class contestListener implements ActionListener {
-
+	/**
+	 * Attached to the button for initiating contest mode.
+	 * 
+	 * @author will
+	 */
+	public class contestListener implements ActionListener {
+		/**
+		 * Brings up a dialog box to select the amount of contest participants
+		 * and then builds the contest window based on the amount of 
+		 * participants entered.
+		 * 
+		 * @param e The triggering event.
+		 */
 		public void actionPerformed(ActionEvent e) {
-			String stringNumberOfPlayers = (String)JOptionPane.showInputDialog(null, "Select number of players:", "Player Selector", JOptionPane.QUESTION_MESSAGE);
-			//Validate it's an int | Show ContestWindow
-			
+			//Display a dialog box where the user inputs the number of players
+			String stringNumberOfPlayers = (String) JOptionPane.showInputDialog(
+					null, "Select number of players:", "Player Selector", 
+					JOptionPane.QUESTION_MESSAGE);
+			//Validate it's an int
 			int numberOfPlayers;
 			try {
 				numberOfPlayers = Integer.parseInt(stringNumberOfPlayers);
+				//Display contest window
 				contestWindow = new ContestWindow(numberOfPlayers);
 			}
 			catch (NumberFormatException nFE){
 				if (Logger.getLogLevel() >= 1) {
-					Logger.log(new InvalidInputWarningEvent("Input number of players not an integer!", nFE));
+					Logger.log(new InvalidInputWarningEvent(
+							"Input number of players not an integer!", nFE));
 				}
 			}			
+		}
+	}
+	
+	/**
+	 * Attached to the button for generating a world.
+	 * 
+	 * @author will
+	 */
+	public class worldGenListener implements ActionListener {
+		/**
+		 * Generates a new random world and displays it.
+		 * 
+		 * @param e The triggering event.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			World generatedWorld = gameEngine.generateWorld();
+			gameDisplay.displayNewWorld(generatedWorld);
 		}
 	}
 }

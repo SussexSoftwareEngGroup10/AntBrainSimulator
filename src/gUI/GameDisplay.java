@@ -3,7 +3,9 @@ package gUI;
 import processing.core.*;
 import org.gicentre.utils.move.*; 
 
-/*
+import antWorld.World;
+
+/* 
  * CURRENTLY AN EXPERIMENTAL CLASS - TESTING DRAWING HEXAGONS CORRECTLY TO THE SCREEN
  * IMAGES ARE ALSO NOT FINAL VERSIONS
  * TODO:
@@ -11,10 +13,12 @@ import org.gicentre.utils.move.*;
  * HOW SHOULD THE GRID COMMUNICATE WITH ENGINE, WILL ENGINE CALL AN UPDATE METHOD IN GUI?
  * HOW TO INTERFACE - FIRST HOW TO SET UP?  HOW TO PARSE IN INITIAL CONFIG DATA??? 
  * SECOND - WHAT METHODS WILL BE NEEDED TO INTERACTIVELY UPDATE??
+ * HAVE DIFFERENT IMAGES FOR DIFFERENT SCALES
+ * USE THE VALUE RETURN BY THE SCALE OF THE ZOOMER TO SIZE ELEMENTS
  */
-@SuppressWarnings("serial")
 public class GameDisplay extends PApplet {
 	
+	private static final long serialVersionUID = 1L;
 	private PImage tile; 
 	private PImage blackAnt;
 		
@@ -22,7 +26,7 @@ public class GameDisplay extends PApplet {
 	
 	/*
 	 * Image below shows the variable which denote hexagon dimensions.
-	 * Imagine image below rotated 90º
+	 * Imagine image below rotated 90ï¿½
 	 * 
 	 *   		A   B
 	 *         |--|----|
@@ -68,12 +72,12 @@ public class GameDisplay extends PApplet {
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
 			
-		tile = loadImage("resources/GrassTileBorder.png");
-		blackAnt = loadImage("resources/Ant.png");
+		tile = loadImage("resources/grass_tile_border.png");
+		blackAnt = loadImage("resources/ant.png");
 		
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 5;
-		numHexRow = 50;
+		numHexCol = 15;
+		numHexRow = 15;
 		
 		//Calculates what the size of the hexagons will be using both the height and the width, it then uses the one
 		//whicth doesn't force the hexaons off the edge of the game display.
@@ -164,5 +168,9 @@ public class GameDisplay extends PApplet {
 		if (colour == 0) {
 			image(blackAnt, getColPixelCoords(col, row), getRowPixelCoords(row), hexWidth, hexWidth);
 		}
+	}
+	
+	public void displayNewWorld(World world) {
+		//TODO: Implement (draw new world to screen)
 	}
 }

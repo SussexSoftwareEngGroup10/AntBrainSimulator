@@ -206,4 +206,9 @@ public class DummyEngine {
 				"total execution time: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}
 	}
+	
+	public World generateWorld() {
+		//TODO: Implement (in another class).
+		return null;
+	}
 }

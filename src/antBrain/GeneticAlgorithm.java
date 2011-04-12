@@ -84,22 +84,20 @@ public class GeneticAlgorithm {
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
-		
 		for(e = 0; e < epochs; e++){
 			//Log progress
-			int tenth = epochs / 10;
-			if(tenth == 0) tenth = 1;
-			for(i = 0; i <= epochs; i += tenth){
-				if(e == i){
+			int frequency = epochs / 100;
+			if(frequency == 0) frequency = 1;
+			for(i = 0; i < epochs / frequency; i++){
+				if(e == i * frequency){
 					if(Logger.getLogLevel() >= 3){
 						Logger.log(new InformationEvent("Completed " + i + " percent of " +
 							"GeneticAlgorithm evolution epochs at " +
 							(System.currentTimeMillis() - DummyEngine.startTime) + "ms"));
 					}
 					//TODO this should print every tenth step, inc 0, epochs
-					System.out.println(new InformationEvent("Completed " + i + " percent of " +
-						"GeneticAlgorithm evolution epochs at " +
-						(System.currentTimeMillis() - DummyEngine.startTime) + "ms"));
+					System.out.println("Completed " + i + "% at " +
+						(System.currentTimeMillis() - DummyEngine.startTime) + "ms");
 				}
 			}
 			newPop = new Brain[popSize];
@@ -164,7 +162,7 @@ public class GeneticAlgorithm {
 		//The size of the brain resulting from evolution will reflect on the
 		//size which provides the best fitness
 		//i.e. size, in itself, is not inherently good
-		int targetSize = Math.max(brainA.getNumOfStates(), brainB.getNumOfStates()) + (ran.nextInt(3));
+		int targetSize = Math.max(brainA.getNumOfStates(), brainB.getNumOfStates()) + ran.nextInt(3);
 		//(5) - 2);
 		//TODO
 		//removes random states, which is bad
@@ -216,39 +214,6 @@ public class GeneticAlgorithm {
 			}
 			statesC.add(stateC);
 		}
-		
-		
-//		//Add state resulting from the combination of next a and b states
-//		while(iterA.hasNext() && iterB.hasNext()){
-//			statesC.add(combineStates(statesC.size(), (State) iterA.next(),
-//				(State) iterB.next(), targetSize, mutationConstant));
-//		}
-//
-//		//Mutate sa and add to c
-//		while(iterA.hasNext()){
-//			statesC.add(mutateState(statesC.size(), (State) iterA.next(),
-//				targetSize, mutationConstant));
-//		}
-//
-//		//Mutate sb and add to c
-//		while(iterB.hasNext()){
-//			statesC.add(mutateState(statesC.size(), (State) iterB.next(),
-//				targetSize, mutationConstant));
-//		}
-//		
-//		//All states in statesA and statesB have now been considered for inclusion in statesC
-//		//Any more states added will be purely random
-//		
-//		//Grow to size required
-//		while(statesC.size() < targetSize){
-//			statesC.add(ranState(statesC.size(), targetSize));
-//		}
-//		
-//		//Trim to size required
-//		while(statesC.size() > targetSize){
-//			//This should remove a random state each time
-//			statesC.remove(ran.nextInt(statesC.size()));
-//		}
 		
 		for(i = 0; i < statesC.size(); i++){
 			//Put new states into brain to be returned

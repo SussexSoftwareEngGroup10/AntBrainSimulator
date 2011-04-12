@@ -13,7 +13,7 @@ import antBrain.State;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Ant implements Comparable<Ant>, Cloneable {
+public class Ant implements Comparable<Ant> {
 	enum Colour { BLACK, RED };
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
@@ -23,7 +23,7 @@ public class Ant implements Comparable<Ant>, Cloneable {
 	private final int uid;
 	private final Colour colour;
 	private Brain brain;
-	private int state;
+	private int stateNum = 0;
 	private Cell cell;
 	private boolean alive = true;
 	private int direction;
@@ -52,7 +52,6 @@ public class Ant implements Comparable<Ant>, Cloneable {
 			}
 			this.colour = null;
 		}
-		this.state = 0;
 		this.cell = cell;
 		this.direction = direction;
 	}
@@ -63,17 +62,18 @@ public class Ant implements Comparable<Ant>, Cloneable {
 			return;
 		}
 		
-		State s = brain.getState(state);
+		State s = brain.getState(stateNum);
+		
 		int command = 0;
 		try{
 			command = s.getCommand();
 		}catch(NullPointerException e){
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new ErrorEvent("Null Command in state. " + e.getMessage(), e));
+				Logger.log(new ErrorEvent("Null Command in state: " + e.getMessage(), e));
 			}
-			return;
+			System.exit(1);
 		}
-		
+
 		switch(command){
 		//Sense senseDir st1 st2 condition
 		case 0:
@@ -113,6 +113,55 @@ public class Ant implements Comparable<Ant>, Cloneable {
 				Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in Ant step"));
 			}
 		}
+	}
+	
+	public void resetState() {
+		stateNum = 0;
+	}
+	
+	//It's ants having their brain changed but their pointer remaining
+	private void setStateNum(int stateNum) {
+		//TODO
+//		if(brain.getState(stateNum) == null){
+//			int oldState = this.stateNum;
+//			System.out.println(
+//					"---oldState---" + "\n"
+//					+ oldState + "\n"
+//					+ brain.getState(oldState));
+//			try{
+//				System.out.println(
+//						+ brain.getState(oldState).getSt1() + "\n"
+//						+ brain.getState(oldState).getSt2() + "\n"
+//				);
+//			}catch(NullPointerException ex){
+//			}
+//			System.out.println(
+//					"---state---" + "\n"
+//					+ stateNum + "\n"
+//					+ brain.getState(stateNum));
+//			try{
+//				System.out.println(
+//						+ brain.getState(stateNum).getSt1() + "\n"
+//						+ brain.getState(stateNum).getSt2() + "\n"
+//				);
+//			}catch(NullPointerException ex){
+//			}
+//			System.out.println("---brain---" + "\n" + brain);
+//			System.out.println("Exit in setState() 1");
+//			System.exit(1);
+//		}
+//		
+//		try{
+//			brain.getState(stateNum).getCommand();
+//		}catch(NullPointerException e){
+//			if(Logger.getLogLevel() >= 1){
+//				Logger.log(new ErrorEvent("Null Command in state: " + e.getMessage(), e));
+//			}
+//			System.out.println("Exit in setState() 2");
+//			System.exit(1);
+//		}
+//		
+		this.stateNum = stateNum;
 	}
 
 	//Sense senseDir st1 st2 condition
@@ -221,22 +270,22 @@ public class Ant implements Comparable<Ant>, Cloneable {
 		}
 		
 		if(condition){
-			state = s.getSt1();
+			setStateNum(s.getSt1());
 		}else{
-			state = s.getSt2();
+			setStateNum(s.getSt2());
 		}
 	}
 
 	//Mark marker st1
 	private void mark(State s) {
 		cell.mark(colour.ordinal(), s.getMarker());
-		state = s.getSt1();
+		setStateNum(s.getSt1());
 	}
 
 	//Unmark marker st1
 	private void unmark(State s) {
 		cell.unmark(colour.ordinal(), s.getMarker());
-		state = s.getSt1();
+		setStateNum(s.getSt1());
 	}
 
 	//PickUp st1 st2
@@ -245,9 +294,9 @@ public class Ant implements Comparable<Ant>, Cloneable {
 		if(!food && cell.hasFood()){
 			cell.takeFood();
 			food = true;
-			state = s.getSt1();
+			setStateNum(s.getSt1());
 		}else{
-			state = s.getSt2();
+			setStateNum(s.getSt2());
 		}
 	}
 
@@ -257,7 +306,7 @@ public class Ant implements Comparable<Ant>, Cloneable {
 		if(food && cell.foodCount() < 9){
 			cell.giveFood();
 			food = false;
-			state = s.getSt1();
+			setStateNum(s.getSt1());
 		}
 	}
 	
@@ -281,7 +330,7 @@ public class Ant implements Comparable<Ant>, Cloneable {
 				Logger.log(new InvalidInputWarningEvent("Illegal TurnDir Argument in Ant turn"));
 			}
 		}
-		state = s.getSt1();
+		setStateNum(s.getSt1());
 	}
 	
 	//Move st1 st2
@@ -292,9 +341,9 @@ public class Ant implements Comparable<Ant>, Cloneable {
 			newCell.setAnt(this);
 			cell.setAnt(null);
 			cell = newCell;
-			state = s.getSt1();
+			setStateNum(s.getSt1());
 		}else{
-			state = s.getSt2();
+			setStateNum(s.getSt2());
 		}
 		rest = 14;
 	}
@@ -302,9 +351,9 @@ public class Ant implements Comparable<Ant>, Cloneable {
 	//Flip p st1 st2
 	private void flip(State s) {
 		if(ran.nextInt(s.getP()) == 0){
-			state = s.getSt1();
+			setStateNum(s.getSt1());
 		}else{
-			state = s.getSt2();
+			setStateNum(s.getSt2());
 		}
 	}
 	
@@ -374,11 +423,6 @@ public class Ant implements Comparable<Ant>, Cloneable {
 	
 	public boolean hasFood() {
 		return food;
-	}
-	
-	public Ant clone() {
-		Ant clone = new Ant(uid, ran, direction, colour.ordinal(), null);
-		return clone;
 	}
 	
 	public boolean equals(Ant ant) {

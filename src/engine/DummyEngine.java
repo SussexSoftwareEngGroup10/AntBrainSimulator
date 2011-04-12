@@ -31,10 +31,10 @@ import antWorld.WorldController;
  * @version 1.0
  */
 public class DummyEngine {
-	public static long startTime = System.currentTimeMillis();
-	private int tourneySeed = 1;
-	private World tourneyWorld = WorldController.getTournamentWorld(tourneySeed);
-	private Brain tourneyBrain = BrainController.readBrainFrom("better_example.brain");
+	public static final long startTime = System.currentTimeMillis();
+	private static final int tourneySeed = 1;
+	private static final World tourneyWorld = WorldController.getTournamentWorld(tourneySeed);
+	private static final Brain tourneyBrain = BrainController.readBrainFrom("better_example.brain");
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 1){
@@ -93,15 +93,15 @@ public class DummyEngine {
 	
 	public static void main(String args[]) {
 		Logger.clearLogs();
-		Logger.setLogLevel(1);
+		Logger.setLogLevel(3);
 		
 		//Setup brains
 		//Evolve and get the best brain from the GeneticAlgorithm
 		Brain[] brains = new Brain[2];
 		DummyEngine dummyEngine = new DummyEngine();
-		int epochs = 100;
-		int popSize = 25;
-		int mutationRate = 20;
+		int epochs = 1000;
+		int popSize = 100;
+		int mutationRate = 10;
 		
 		//Black is the best one found by the GeneticAlgorithm with parameters specified
 		//Red is default brain, read in from file
@@ -112,6 +112,7 @@ public class DummyEngine {
 			Logger.log(new InformationEvent("Time to GA start: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}
 		Brain gaBrain = BrainController.getBestGABrain(betterBrain.clone(), dummyEngine, epochs, popSize, mutationRate);
+//		Brain gaBrain = BrainController.readBrainFrom("ga.brain");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA end: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}

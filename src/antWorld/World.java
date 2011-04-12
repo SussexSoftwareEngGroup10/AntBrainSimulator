@@ -1,7 +1,6 @@
 package antWorld;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 import utilities.InvalidInputWarningEvent;
@@ -298,10 +297,15 @@ public class World implements Cloneable {
 	
 	private World(int rows, int cols, int rocks, int seed,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection, Cell[][] cells,
-		ArrayList<Ant> ants, ArrayList<ArrayList<Ant>> antsBySpecies) {
-		this.seed = seed;
-		ran = new Random(seed);
+		int foodBlobCellFoodCount, int antInitialDirection, Cell[][] cells) {
+		
+		//Can either use a random or predefined seed
+		if(seed == 0){
+			this.seed = new Random().nextInt(Integer.MAX_VALUE);
+		}else{
+			this.seed = seed;
+		}
+		ran = new Random(this.seed);
 		
 		this.rows = rows;
 		this.cols = cols;
@@ -313,8 +317,21 @@ public class World implements Cloneable {
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		this.antInitialDirection = antInitialDirection;
 		this.cells = cells;
-		this.ants = ants;
-		this.antsBySpecies = antsBySpecies;
+		
+		Cell current;
+		int r = 0;
+		int c = 0;
+		//Setup markers in each cell
+		//Use this. for fields, local variables created above
+		for(r = 0; r < rows; r++){
+			for(c = 0; c < cols; c++){
+				current = cells[r][c];
+				current.setNeighbours(getNeighbours(current));
+				current.setupMarkers(this.anthills);
+			}
+		}
+		
+		createWorld();
 	}
 	
 	/**
@@ -791,41 +808,20 @@ public class World implements Cloneable {
 	
 	public World clone() {
 		Cell[][] cellsClone = new Cell[rows][cols];
-		ArrayList<Ant> antsClone = new ArrayList<Ant>();
-		ArrayList<ArrayList<Ant>> antsBySpeciesClone = new ArrayList<ArrayList<Ant>>();
-		Cell cell;
-		Cell cellClone;
-		Ant ant;
-		Ant antClone;
 		int r = 0;
 		int c = 0;
 		
-		for(r = 0; r < antsBySpecies.size(); r++){
-			antsBySpeciesClone.add(new ArrayList<Ant>());
-		}
+		//Clone cells
 		for(r = 0; r < rows; r++){
 			for(c = 0; c < cols; c++){
-				cell = cells[r][c];
-				cellClone = cell.clone();
-				cellsClone[r][c] = cellClone;
-				if(cell.hasAnt()){
-					ant = cell.getAnt();
-					antClone = ant.clone();
-					antClone.setCell(cellClone);
-					cellClone.setAnt(antClone);
-					antsClone.add(antClone);
-					antsBySpeciesClone.get(antClone.getColour()).add(antClone);
-				}
+				cellsClone[r][c] = cells[r][c].clone();
 			}
 		}
-		Collections.sort(antsClone);
-		for(r = 0; r < antsBySpeciesClone.size(); r++){
-			Collections.sort(antsBySpeciesClone.get(r));
-		}
-		
+		//Much easier to create new ants, rather than clone existing ants,
+		//as the ants still need to be set in each cell, which requires a loop
 		return new World(rows, cols, rocks, seed, anthills, anthillSideLength,
 			foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
-			antInitialDirection, cells, ants, antsBySpecies);
+			antInitialDirection, cellsClone);
 	}
 	
 	public String getAttributes() {

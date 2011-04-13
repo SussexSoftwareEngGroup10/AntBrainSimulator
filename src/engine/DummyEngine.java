@@ -8,7 +8,6 @@ import utilities.Logger;
 
 import antBrain.Brain;
 import antBrain.BrainController;
-import antBrain.BrainParser;
 import antWorld.Ant;
 import antWorld.World;
 import antWorld.WorldController;
@@ -33,7 +32,7 @@ import antWorld.WorldController;
 public class DummyEngine {
 	public static final long startTime = System.currentTimeMillis();
 	private static final int tourneySeed = 1;
-	private static final World tourneyWorld = WorldController.getTournamentWorld(tourneySeed);
+	private static final Brain bestBrain = BrainController.readBrainFrom("better_example.brain");
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 1){
@@ -41,31 +40,38 @@ public class DummyEngine {
 		}
 	}
 	
-	public void sortByFitness(Brain[] population) {
-		tournament(population);
+	public void sortByFitness(Brain[] population, int rounds) {
+		tournament(population, rounds);
 	}
 	
-	private void tournament(Brain[] population) {
+	private void tournament(Brain[] population, int rounds) {
 		Brain brain;
 		int i = 0;
 		
 		//Set fitness for each brain against the best brain in the population
 		//Assumes population has been sorted
-		Brain bestBrain = population[population.length - 1];
+		//Dynamic fitness test:
+//		Brain bestBrain = population[population.length - 1];
+		//Else use static fitness test (bestBrain field)
 		for(i = 0; i < population.length; i++){
 			brain = population[i];
 			//Brains from previous tournaments may remain in the elite
 			//their fitness does not need to be calculated again
+			//Only if the fitness test is the same every time,
+			//i.e. tested against the same brain
 			if(brain.getFitness() == 0){
-				brain.setFitness(tourneySimulation(bestBrain, brain));
+				brain.setFitness(tourneySimulation(bestBrain, brain, rounds));
 			}
 		}
-		
 		Arrays.sort(population);
 	}
 	
-	private int tourneySimulation(Brain bestBrain, Brain brain) {
-		World world = tourneyWorld.clone();
+	private int tourneySimulation(Brain bestBrain, Brain brain, int rounds) {
+		World world = WorldController.getTournamentWorld(tourneySeed);
+		//Apparently it is faster to generate a new world than clone an existing one
+		//57991ms against 62795ms
+		//Using a seed to construct a random means the worlds generated will be more
+		//uniform than using cloning anyway
 		world.setBrain(bestBrain, 0);
 		world.setBrain(brain, 1);
 		//World now has better brain at 0, GA brain at 1
@@ -73,7 +79,6 @@ public class DummyEngine {
 		ArrayList<Ant> ants = world.getAnts();
 		//Run the simulation
 		int r = 0;
-		int rounds = 300000;
 		if(Logger.getLogLevel() >= 5){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
@@ -125,21 +130,25 @@ public class DummyEngine {
 //		world = WorldController.readWorldFrom(brains, "example.world");
 		
 		//Setup brains
-		//Evolve and get the best brain from the GeneticAlgorithm
-		DummyEngine dummyEngine = new DummyEngine();
-		int epochs = 1000;
-		int popSize = 100;
-		int mutationRate = 10;
-		
-		//Black is the best one found by the GeneticAlgorithm with parameters specified
-		//Red is default brain, read in from file
-		//Black should win when sortByFitness is done
-//		Brain exampleBrain = BrainController.readBrainFrom("example.brain");
+		//Black is the default brain, read in from file
+		//Red is the best one found by the GeneticAlgorithm with parameters specified
+		//Red should win
+//		Brain blankBrain = BrainController.readBrainFrom("blank.brain");
 		Brain betterBrain = BrainController.readBrainFrom("better_example.brain");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA start: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}
-		Brain gaBrain = BrainController.getBestGABrain(betterBrain.clone(), dummyEngine, epochs, popSize, mutationRate);
+		//Evolve and get the best brain from the GeneticAlgorithm
+		int epochs = 10000;
+		int rounds = 300000;
+		int popSize = 100;
+		int elite = 5;			//Less is slower, but avoids getting stuck with lucky BetterBrains at the start
+		int mutationRate = 10;	//Less is more
+		//betterBrain is a decent place to start from
+		//but more likely to get stuck there in the optima,
+		//blankBrain is a worse starting point, it would take longer to get to a good brain,
+		//but it encourages the brains generated to be more random
+		Brain gaBrain = BrainController.getBestGABrain(betterBrain.clone(), new DummyEngine(), epochs, rounds, popSize, elite, mutationRate);
 //		Brain gaBrain = BrainController.readBrainFrom("ga.brain");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA end: " + (System.currentTimeMillis() - startTime) + "ms"));
@@ -154,7 +163,7 @@ public class DummyEngine {
 		}
 		//Run the simulation
 		int r = 0;
-		int rounds = 300000;
+		rounds = 300000;
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
@@ -197,9 +206,15 @@ public class DummyEngine {
 		
 		//TODO remove console prints, eventually
 		System.out.println(world);
-		BrainParser.writeBrainTo(gaBrain, "my.brain");
 		System.out.println("---Better Brain---\n" + betterBrain);
 		System.out.println("---GA Brain---\n" + gaBrain);
+		System.out.print("GA Brain ");
+		if(gaBrain.equals(betterBrain)){
+			System.out.print("=");
+		}else{
+			System.out.print("!");
+		}
+		System.out.println("= Better Brain");
 		
 		if(Logger.getLogLevel() >= 1){
 			Logger.log(new InformationEvent("Virtual Machine terminated, " +

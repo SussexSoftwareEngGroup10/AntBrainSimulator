@@ -122,17 +122,17 @@ public class DummyEngine {
 		}
 		
 		//Evolve and get the best brain from the GeneticAlgorithm
-		int epochs = 10000;
-		int rounds = 300000;
-		int popSize = 100;
-		int elite = 5;			//Less is slower, but avoids getting stuck with lucky BetterBrains at the start
-		int mutationRate = 10;	//Less is more
+		int epochs = 10000;		//Less is quicker, but less likely to generate an improved brain
+		int rounds = 300000;	//Less is quicker, but reduces the accuracy of the GA
+		int popSize = 100;		//Less is quicker, but searches less of the search space for brains
+		int elite = 5;			//Less is slower, but avoids getting stuck with lucky starting brain
+		int mutationRate = 10;	//Less is more, inverse
 		//betterBrain is a decent place to start from
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
 		Brain gaBrain = BrainController.getBestGABrain(betterBrain.clone(), new DummyEngine(), epochs, rounds, popSize, elite, mutationRate);
-//		Brain gaBrain = BrainController.readBrainFrom("ga");
+//		Brain gaBrain = BrainController.readBrainFrom("ga_result");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA end: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}
@@ -187,7 +187,7 @@ public class DummyEngine {
 			}
 		}
 		
-		//TODO remove console prints, eventually
+		//TODO remove console prints, eventually, from here and Logger
 		System.out.println(world);
 		System.out.println("---Better Brain---\n" + betterBrain);
 		System.out.println("---GA Brain---\n" + gaBrain);

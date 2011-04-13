@@ -134,7 +134,7 @@ public class GeneticAlgorithm {
 			orderByFitness(dummyEngine, rounds);
 			
 			//Write best brain so far to file
-			BrainParser.writeBrainTo(population[popSize - 1], "ga");
+			BrainParser.writeBrainTo(population[popSize - 1], "ga_result");
 		}
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Completed GeneticAlgorithm evolution"));

@@ -165,15 +165,6 @@ public class Cell {
 		return ant != null;
 	}
 	
-//	public Cell clone() {
-//		Cell clone = new Cell(row, col, toChar());
-//		clone.setupMarkers(2);
-//		clone.setNeighbours(neighbours);
-//		//clone has null ant
-//		
-//		return clone;
-//	}
-	
 	public char toChar() {
 		return toString().charAt(0);
 	}

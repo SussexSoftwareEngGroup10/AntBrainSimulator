@@ -109,7 +109,18 @@ public class DummyEngine {
 		//more efficient to test all GA population brains against
 		//the betterBrain with seed == 1
 		int seed = 0;
-		world = WorldController.getTournamentWorld(seed);
+		int rows = 140;
+		int cols = 140;
+		int rocks = 13;
+		int anthills = 2;
+		int anthillSideLength = 2;
+		int foodBlobCount = 10;
+		int foodBlobSideLength = 5;
+		int foodBlobCellFoodCount = 5;
+		int antInitialDirection = 0;
+		world = new World(seed, rows, cols, rocks, anthills,
+			anthillSideLength, foodBlobCount, foodBlobSideLength,
+			foodBlobCellFoodCount, antInitialDirection);
 		
 		//Setup brains
 		//Black is the default brain, read in from file

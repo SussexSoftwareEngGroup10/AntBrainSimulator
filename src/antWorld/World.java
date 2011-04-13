@@ -78,7 +78,7 @@ public class World {
 	 * @return a world which is fit to be used in a tournament
 	 */
 	public static World getTournamentWorld(int seed) {
-		return getRegularWorld(140, 140, 13, seed);
+		return getRegularWorld(seed, 140, 140, 13);
 	}
 	
 	/**
@@ -92,8 +92,8 @@ public class World {
 	 * @param seed
 	 * @return
 	 */
-	public static World getRegularWorld(int rows, int cols, int rocks, int seed) {
-		return new World(rows, cols, rocks, seed, 2, 7, 10, 5, 5, 0);
+	public static World getRegularWorld(int seed, int rows, int cols, int rocks) {
+		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0);
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class World {
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
 	 */
-	public World(int rows, int cols, int rocks, int seed,
+	public World(int seed, int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection) {
 		//Can either use a random or predefined seed
@@ -294,46 +294,6 @@ public class World {
 		
 		createAnts();
 	}
-	
-//	//Used by clone()
-//	private World(int rows, int cols, int rocks, int seed,
-//		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-//		int foodBlobCellFoodCount, int antInitialDirection, Cell[][] cells) {
-//		
-//		//Can either use a random or predefined seed
-//		if(seed == 0){
-//			this.seed = new Random().nextInt(Integer.MAX_VALUE);
-//		}else{
-//			this.seed = seed;
-//		}
-//		ran = new Random(this.seed);
-//		
-//		this.rows = rows;
-//		this.cols = cols;
-//		this.rocks = rocks;
-//		this.anthills = anthills;
-//		this.anthillSideLength = anthillSideLength;
-//		this.foodBlobCount = foodBlobCount;
-//		this.foodBlobSideLength = foodBlobSideLength;
-//		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
-//		this.antInitialDirection = antInitialDirection;
-//		this.cells = cells;
-//		
-//		Cell current;
-//		int r = 0;
-//		int c = 0;
-//		//Setup markers in each cell
-//		//Use this. for fields, local variables created above
-//		for(r = 0; r < rows; r++){
-//			for(c = 0; c < cols; c++){
-//				current = cells[r][c];
-//				current.setNeighbours(getNeighbours(current));
-//				current.setupMarkers(this.anthills);
-//			}
-//		}
-//		
-//		createWorld();
-//	}
 	
 	/**
 	 * Places all objects specified into world, with required gap between objects
@@ -800,24 +760,6 @@ public class World {
 		}
 		return survivors;
 	}
-	
-//	public World clone() {
-//		Cell[][] cellsClone = new Cell[rows][cols];
-//		int r = 0;
-//		int c = 0;
-//		
-//		//Clone cells
-//		for(r = 0; r < rows; r++){
-//			for(c = 0; c < cols; c++){
-//				cellsClone[r][c] = cells[r][c].clone();
-//			}
-//		}
-//		//Much easier to create new ants, rather than clone existing ants,
-//		//as the ants still need to be set in each cell, which requires a loop
-//		return new World(rows, cols, rocks, seed, anthills, anthillSideLength,
-//			foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
-//			antInitialDirection, cellsClone);
-//	}
 	
 	public String getAttributes() {
 		String s = "";

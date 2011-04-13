@@ -32,7 +32,7 @@ import antWorld.WorldController;
 public class DummyEngine {
 	public static final long startTime = System.currentTimeMillis();
 	private static final int tourneySeed = 1;
-	private static final Brain bestBrain = BrainController.readBrainFrom("better_example.brain");
+	private static final Brain bestBrain = BrainController.readBrainFrom("better_example");
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 1){
@@ -134,7 +134,7 @@ public class DummyEngine {
 		//Red is the best one found by the GeneticAlgorithm with parameters specified
 		//Red should win
 //		Brain blankBrain = BrainController.readBrainFrom("blank.brain");
-		Brain betterBrain = BrainController.readBrainFrom("better_example.brain");
+		Brain betterBrain = BrainController.readBrainFrom("better_example");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA start: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}

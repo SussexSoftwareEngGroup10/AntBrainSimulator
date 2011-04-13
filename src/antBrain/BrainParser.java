@@ -16,9 +16,17 @@ import utilities.Logger;
  * @version 1.0
  */
 public class BrainParser {
-	public static Brain readBrainFrom(String path) {
+	private static final String folderName = "brains";
+	private static final File folder = new File(folderName);
+	private static final String fileNameSuffix = ".brain";
+	
+	public static Brain readBrainFrom(String name) {
+		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		if(Logger.getLogLevel() >= 3){
 			Logger.log(new InformationEvent("Begun reading Brain object from \"" + path + "\""));
+		}
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		Brain brain = new Brain();
 		BufferedReader br;
@@ -63,9 +71,13 @@ public class BrainParser {
 		return brain;
 	}
 	
-	public static void writeBrainTo(Brain brain, String path) {
+	public static void writeBrainTo(Brain brain, String name) {
+		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		if(Logger.getLogLevel() >= 3){
 			Logger.log(new InformationEvent("Begun writing Brain object to \"" + path + "\""));
+		}
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		File outputFile = new File(path);
 		

@@ -16,9 +16,17 @@ import utilities.Logger;
  * @version 1.0
  */
 public class WorldParser {
-	public static World readWorldFrom(String path) {
+	private static final String folderName = "worlds";
+	private static final File folder = new File(folderName);
+	private static final String fileNameSuffix = ".world";
+	
+	public static World readWorldFrom(String name) {
+		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		if(Logger.getLogLevel() >= 3){
 			Logger.log(new InformationEvent("Begun reading World object from \"" + path + "\""));
+		}
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		BufferedReader br;
 		File f = new File(path);
@@ -84,9 +92,13 @@ public class WorldParser {
 		return world;
 	}
 	
-	public static void writeWorldTo(World world, String path) {
+	public static void writeWorldTo(World world, String name) {
+		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		if(Logger.getLogLevel() >= 3){
 			Logger.log(new InformationEvent("Begun writing World object to \"" + path + "\""));
+		}
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		File outputFile = new File(path);
 		

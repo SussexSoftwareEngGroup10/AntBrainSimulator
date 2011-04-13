@@ -10,7 +10,6 @@ import antBrain.Brain;
 import antBrain.BrainController;
 import antWorld.Ant;
 import antWorld.World;
-import antWorld.WorldController;
 
 /**
  * Dummy DummyEngine class
@@ -31,8 +30,20 @@ import antWorld.WorldController;
  */
 public class DummyEngine {
 	public static final long startTime = System.currentTimeMillis();
-	private static final int tourneySeed = 1;
-	private static final Brain bestBrain = BrainController.readBrainFrom("better_example");
+	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
+	
+	//World arguments
+	private static int seed = 0;
+	private static int rows = 140;
+	private static int cols = 140;
+	private static int rocks = 13;
+	private static int anthills = 2;
+	//Reducing the anthill size reduces ants, which makes GA quicker
+	private static int anthillSideLength = 7;
+	private static int foodBlobCount = 10;
+	private static int foodBlobSideLength = 5;
+	private static int foodBlobCellFoodCount = 5;
+	private static int antInitialDirection = 0;
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -60,7 +71,7 @@ public class DummyEngine {
 			//Only if the fitness test is the same every time,
 			//i.e. tested against the same brain
 			if(brain.getFitness() == 0){
-				brain.setFitness(tourneySimulation(bestBrain, brain, rounds));
+				brain.setFitness(tourneySimulation(betterBrain, brain, rounds));
 			}
 		}
 		Arrays.sort(population);
@@ -69,7 +80,9 @@ public class DummyEngine {
 	private int tourneySimulation(Brain bestBrain, Brain brain, int rounds) {
 		//Using a seed to construct a random means the worlds generated will be more
 		//uniform than using cloning, which seems to be slightly slower for some reason
-		World world = WorldController.getTournamentWorld(tourneySeed);
+		World world = new World(seed, rows, cols, rocks, anthills,
+				anthillSideLength, foodBlobCount, foodBlobSideLength,
+				foodBlobCellFoodCount, antInitialDirection);
 		world.setBrain(bestBrain, 0);
 		world.setBrain(brain, 1);
 		//World now has better brain at 0, GA brain at 1
@@ -101,24 +114,13 @@ public class DummyEngine {
 		Logger.setLogLevel(1.5);
 		
 		//Setup world
-		World world;
 		//Seed is also used to determine ant moves,
 		//so exactly the same simulation can be replayed
 		//could use a seeded world for every GA game,
 		//(possibly) fairer and quicker, but less random, evolution
 		//more efficient to test all GA population brains against
 		//the betterBrain with seed == 1
-		int seed = 0;
-		int rows = 140;
-		int cols = 140;
-		int rocks = 13;
-		int anthills = 2;
-		int anthillSideLength = 2;
-		int foodBlobCount = 10;
-		int foodBlobSideLength = 5;
-		int foodBlobCellFoodCount = 5;
-		int antInitialDirection = 0;
-		world = new World(seed, rows, cols, rocks, anthills,
+		World world = new World(seed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength,
 			foodBlobCellFoodCount, antInitialDirection);
 		
@@ -127,7 +129,6 @@ public class DummyEngine {
 		//Red is the best one found by the GeneticAlgorithm with parameters specified
 		//The better red does relative to black, the better the GA is
 //		Brain blankBrain = BrainController.readBrainFrom("blank");
-		Brain betterBrain = BrainController.readBrainFrom("better_example");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA start: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}
@@ -142,7 +143,7 @@ public class DummyEngine {
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
-		Brain gaBrain = BrainController.getBestGABrain(betterBrain.clone(), new DummyEngine(), epochs, rounds, popSize, elite, mutationRate);
+		Brain gaBrain = BrainController.getBestGABrain(betterBrain, new DummyEngine(), epochs, rounds, popSize, elite, mutationRate);
 //		Brain gaBrain = BrainController.readBrainFrom("ga_result");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA end: " + (System.currentTimeMillis() - startTime) + "ms"));

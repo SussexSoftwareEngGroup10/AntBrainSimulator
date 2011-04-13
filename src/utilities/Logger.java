@@ -83,6 +83,7 @@ public class Logger {
 		System.setErr(logErr);
 		
 		//Write the toString of e to a log file
+		System.out.println(e.toString());//TODO
 		System.err.println(e.toString());
 		
 		//Reset printing to the console

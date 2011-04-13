@@ -8,7 +8,7 @@ package utilities;
  * @version 1.0
  */
 public class InvalidInputWarningEvent extends WarningEvent {
-	private static final long serialVersionUID = 7577003793013502978L;
+	private static final long serialVersionUID = 1L;
 	
 	public InvalidInputWarningEvent(String message) {
 		super(message);

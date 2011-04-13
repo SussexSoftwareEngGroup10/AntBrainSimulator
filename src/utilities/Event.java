@@ -3,7 +3,7 @@ package utilities;
 import java.util.Date;
 
 public abstract class Event extends Throwable {
-	private static final long serialVersionUID = -4971928423959892927L;
+	private static final long serialVersionUID = 1L;
 	enum Severity { INFORMATION, WARNING, ERROR };
 	protected Severity severity;
 	

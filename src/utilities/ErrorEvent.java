@@ -8,7 +8,7 @@ package utilities;
  * @version 1.0
  */
 public class ErrorEvent extends Event {
-	private static final long serialVersionUID = -2120678710033311329L;
+	private static final long serialVersionUID = 1L;
 
 	public ErrorEvent(String message) {
 		super(message);

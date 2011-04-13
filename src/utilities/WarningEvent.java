@@ -8,7 +8,7 @@ package utilities;
  * @version 1.0
  */
 public class WarningEvent extends Event {
-	private static final long serialVersionUID = 8018666895851115111L;
+	private static final long serialVersionUID = 1L;
 
 	public WarningEvent(String message) {
 		super(message);

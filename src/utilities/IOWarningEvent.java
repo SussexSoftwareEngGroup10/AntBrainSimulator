@@ -8,7 +8,7 @@ package utilities;
  * @version 1.0
  */
 public class IOWarningEvent extends WarningEvent {
-	private static final long serialVersionUID = 7107071594211664095L;
+	private static final long serialVersionUID = 1L;
 
 	public IOWarningEvent(String message) {
 		super(message);

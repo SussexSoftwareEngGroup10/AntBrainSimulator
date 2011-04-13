@@ -94,7 +94,7 @@ public class Logger {
 		return logLevel;
 	}
 	
-	public static void setLogLevel(int logLevel) {
-		Logger.logLevel = logLevel;
+	public static void setLogLevel(double d) {
+		Logger.logLevel = d;
 	}
 }

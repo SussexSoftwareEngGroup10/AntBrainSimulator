@@ -53,7 +53,7 @@ public class GeneticAlgorithm {
 	}
 	
 	public void evolve(DummyEngine dummyEngine, int epochs, int rounds, int elite, int mutationRate) {
-		if(Logger.getLogLevel() >= 2){
+		if(Logger.getLogLevel() >= 1.5){
 			Logger.log(new InformationEvent("Begun GeneticAlgorithm evolution for "
 				+ epochs + " epochs, with " + rounds + " rounds per simulation, an elite of " + elite +
 				", and a 1/" + mutationRate + " chance of mutation"));
@@ -90,7 +90,7 @@ public class GeneticAlgorithm {
 			if(frequency == 0) frequency = 1;
 			for(i = 0; i <= epochs / frequency; i++){
 				if(e == i * frequency){
-					if(Logger.getLogLevel() >= 3){
+					if(Logger.getLogLevel() >= 1.5){
 						Logger.log(new InformationEvent("Completed " + i + " percent of " +
 							"GeneticAlgorithm evolution epochs at " +
 							(System.currentTimeMillis() - DummyEngine.startTime) + "ms"));
@@ -136,7 +136,7 @@ public class GeneticAlgorithm {
 			//Write best brain so far to file
 			BrainParser.writeBrainTo(population[popSize - 1], "ga_result");
 		}
-		if(Logger.getLogLevel() >= 2){
+		if(Logger.getLogLevel() >= 1.5){
 			Logger.log(new InformationEvent("Completed GeneticAlgorithm evolution"));
 		}
 		for(i = 0; i < population.length; i++){//TODO

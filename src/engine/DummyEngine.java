@@ -35,7 +35,7 @@ public class DummyEngine {
 	private static final Brain bestBrain = BrainController.readBrainFrom("better_example");
 	
 	public DummyEngine() {
-		if(Logger.getLogLevel() >= 1){
+		if(Logger.getLogLevel() >= 3){
 			Logger.log(new InformationEvent("New Engine object constructed"));
 		}
 	}
@@ -98,7 +98,7 @@ public class DummyEngine {
 	
 	public static void main(String args[]) {
 		Logger.clearLogs();
-		Logger.setLogLevel(3);
+		Logger.setLogLevel(1.5);
 		
 		//Setup world
 		World world;

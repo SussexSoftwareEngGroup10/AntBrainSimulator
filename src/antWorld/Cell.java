@@ -8,7 +8,7 @@ import utilities.WarningEvent;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Cell implements Cloneable {
+public class Cell {
 	private final int row;
 	private final int col;
 	
@@ -165,14 +165,14 @@ public class Cell implements Cloneable {
 		return ant != null;
 	}
 	
-	public Cell clone() {
-		Cell clone = new Cell(row, col, toChar());
-		clone.setupMarkers(2);
-		clone.setNeighbours(neighbours);
-		//clone has null ant
-		
-		return clone;
-	}
+//	public Cell clone() {
+//		Cell clone = new Cell(row, col, toChar());
+//		clone.setupMarkers(2);
+//		clone.setNeighbours(neighbours);
+//		//clone has null ant
+//		
+//		return clone;
+//	}
 	
 	public char toChar() {
 		return toString().charAt(0);

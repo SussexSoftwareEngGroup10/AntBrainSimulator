@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import utilities.IOWarningEvent;
+import utilities.InformationEvent;
 import utilities.Logger;
 
 /**
@@ -16,6 +17,9 @@ import utilities.Logger;
  */
 public class WorldParser {
 	public static World readWorldFrom(String path) {
+		if(Logger.getLogLevel() >= 3){
+			Logger.log(new InformationEvent("Begun reading World object from \"" + path + "\""));
+		}
 		BufferedReader br;
 		File f = new File(path);
 		String line;
@@ -74,11 +78,16 @@ public class WorldParser {
 				Logger.log(new IOWarningEvent(e.getMessage(), e));
 			}
 		}
-		
+		if(Logger.getLogLevel() >= 2){
+			Logger.log(new InformationEvent("Completed reading World object from \"" + path + "\""));
+		}
 		return world;
 	}
 	
 	public static void writeWorldTo(World world, String path) {
+		if(Logger.getLogLevel() >= 3){
+			Logger.log(new InformationEvent("Begun writing World object to \"" + path + "\""));
+		}
 		File outputFile = new File(path);
 		
 		try{
@@ -96,6 +105,9 @@ public class WorldParser {
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new IOWarningEvent(e.getMessage(), e));
 			}
+		}
+		if(Logger.getLogLevel() >= 3){
+			Logger.log(new InformationEvent("Completed writing World object to \"" + path + "\""));
 		}
 	}
 }

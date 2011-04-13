@@ -37,7 +37,7 @@ Example World:
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class World implements Cloneable {
+public class World {
 	//Using a seed means that the same world can be reproduced
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
 	private final int seed;
@@ -295,44 +295,45 @@ public class World implements Cloneable {
 		createAnts();
 	}
 	
-	private World(int rows, int cols, int rocks, int seed,
-		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection, Cell[][] cells) {
-		
-		//Can either use a random or predefined seed
-		if(seed == 0){
-			this.seed = new Random().nextInt(Integer.MAX_VALUE);
-		}else{
-			this.seed = seed;
-		}
-		ran = new Random(this.seed);
-		
-		this.rows = rows;
-		this.cols = cols;
-		this.rocks = rocks;
-		this.anthills = anthills;
-		this.anthillSideLength = anthillSideLength;
-		this.foodBlobCount = foodBlobCount;
-		this.foodBlobSideLength = foodBlobSideLength;
-		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
-		this.antInitialDirection = antInitialDirection;
-		this.cells = cells;
-		
-		Cell current;
-		int r = 0;
-		int c = 0;
-		//Setup markers in each cell
-		//Use this. for fields, local variables created above
-		for(r = 0; r < rows; r++){
-			for(c = 0; c < cols; c++){
-				current = cells[r][c];
-				current.setNeighbours(getNeighbours(current));
-				current.setupMarkers(this.anthills);
-			}
-		}
-		
-		createWorld();
-	}
+//	//Used by clone()
+//	private World(int rows, int cols, int rocks, int seed,
+//		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
+//		int foodBlobCellFoodCount, int antInitialDirection, Cell[][] cells) {
+//		
+//		//Can either use a random or predefined seed
+//		if(seed == 0){
+//			this.seed = new Random().nextInt(Integer.MAX_VALUE);
+//		}else{
+//			this.seed = seed;
+//		}
+//		ran = new Random(this.seed);
+//		
+//		this.rows = rows;
+//		this.cols = cols;
+//		this.rocks = rocks;
+//		this.anthills = anthills;
+//		this.anthillSideLength = anthillSideLength;
+//		this.foodBlobCount = foodBlobCount;
+//		this.foodBlobSideLength = foodBlobSideLength;
+//		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+//		this.antInitialDirection = antInitialDirection;
+//		this.cells = cells;
+//		
+//		Cell current;
+//		int r = 0;
+//		int c = 0;
+//		//Setup markers in each cell
+//		//Use this. for fields, local variables created above
+//		for(r = 0; r < rows; r++){
+//			for(c = 0; c < cols; c++){
+//				current = cells[r][c];
+//				current.setNeighbours(getNeighbours(current));
+//				current.setupMarkers(this.anthills);
+//			}
+//		}
+//		
+//		createWorld();
+//	}
 	
 	/**
 	 * Places all objects specified into world, with required gap between objects
@@ -800,23 +801,23 @@ public class World implements Cloneable {
 		return survivors;
 	}
 	
-	public World clone() {
-		Cell[][] cellsClone = new Cell[rows][cols];
-		int r = 0;
-		int c = 0;
-		
-		//Clone cells
-		for(r = 0; r < rows; r++){
-			for(c = 0; c < cols; c++){
-				cellsClone[r][c] = cells[r][c].clone();
-			}
-		}
-		//Much easier to create new ants, rather than clone existing ants,
-		//as the ants still need to be set in each cell, which requires a loop
-		return new World(rows, cols, rocks, seed, anthills, anthillSideLength,
-			foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
-			antInitialDirection, cellsClone);
-	}
+//	public World clone() {
+//		Cell[][] cellsClone = new Cell[rows][cols];
+//		int r = 0;
+//		int c = 0;
+//		
+//		//Clone cells
+//		for(r = 0; r < rows; r++){
+//			for(c = 0; c < cols; c++){
+//				cellsClone[r][c] = cells[r][c].clone();
+//			}
+//		}
+//		//Much easier to create new ants, rather than clone existing ants,
+//		//as the ants still need to be set in each cell, which requires a loop
+//		return new World(rows, cols, rocks, seed, anthills, anthillSideLength,
+//			foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
+//			antInitialDirection, cellsClone);
+//	}
 	
 	public String getAttributes() {
 		String s = "";

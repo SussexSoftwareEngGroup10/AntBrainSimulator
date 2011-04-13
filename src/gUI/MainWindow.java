@@ -137,6 +137,13 @@ public class MainWindow {
 		}
 	}
 	
+	//TODO: maybe create a class for this with this as static method, or have
+	// as part of Logger.log()?
+	public void displayErrorMsg(String msg) {
+		JOptionPane.showMessageDialog(null, msg, "Error!",
+			    JOptionPane.ERROR_MESSAGE);
+	}
+	
 	/**
 	 * Attached to the buttons which need to bring up a file browser window.
 	 * 
@@ -154,39 +161,54 @@ public class MainWindow {
 		public void actionPerformed(ActionEvent e)
 		{
 			//Set the initial directory to the current project dir
-			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+			JFileChooser fileChooser = new JFileChooser(
+					System.getProperty("user.dir"));
 			try {
 				//Show the dialog
-				fc.showOpenDialog(null);
+				fileChooser.showOpenDialog(null);
 				String path = "";
 				//Get the path from the selected file if one was selected
-				File f = fc.getSelectedFile();
-				if (f != null) {
-					path = f.getAbsolutePath();
-				}
-				//TODO: Validate what is return by the file chooser.  Maybe it was closed?  Or nothing selected?
-				//Depending on which button triggered the event, a tick symbol
-				//is displayed on that button, and the associated file path is
-				//updated with the file chosen
-				JButton clickedBtn = (JButton) e.getSource();
-				if (clickedBtn == uploadRedBtn) {
-					if (!clickedBtn.getText().contains("✔")) {
-						clickedBtn.setText(clickedBtn.getText() + " ✔");
+				File file = fileChooser.getSelectedFile();
+				if (file != null) {
+					path = file.getAbsolutePath();
+					JButton clickedBtn = (JButton) e.getSource();
+					//Validate the file is of the correct format
+					if ((clickedBtn == uploadRedBtn || 
+							clickedBtn == uploadBlackBtn) && 
+							!path.contains(".brain")) {
+						displayErrorMsg(
+								"Invalid file format, .brain file expected.");
 					}
-					redBrainPath = path;
-				}
-				else if (clickedBtn == uploadBlackBtn) {
-					if (!clickedBtn.getText().contains("✔")) {
-						clickedBtn.setText(clickedBtn.getText() + " ✔");
+					else if (clickedBtn == uploadWorldBtn &&
+							!path.contains(".world")) {
+						displayErrorMsg(
+								"Invalid file format, .world file expected.");
 					}
-					blackBrainPath = path;
-				}
-				else {
-					if (!clickedBtn.getText().contains("✔")) {
-						clickedBtn.setText(clickedBtn.getText() + " ✔");
+					else {
+						//Depending on which button triggered the event, a tick 
+						//symbol is displayed on that button, and the associated 
+						//file path is updated with the file chosen
+						if (clickedBtn == uploadRedBtn) {
+							if (!clickedBtn.getText().contains("✔")) {
+								clickedBtn.setText(clickedBtn.getText() + " ✔");
+							}
+							redBrainPath = path;
+						}
+						else if (clickedBtn == uploadBlackBtn) {
+							if (!clickedBtn.getText().contains("✔")) {
+								clickedBtn.setText(clickedBtn.getText() + " ✔");
+							}
+							blackBrainPath = path;
+						}
+						else {
+							if (!clickedBtn.getText().contains("✔")) {
+								clickedBtn.setText(clickedBtn.getText() + " ✔");
+							}
+							worldPath = path;
+						}
 					}
-					worldPath = path;
 				}
+				
 			}
 			//If the user does not have permission to access the file
 			catch (SecurityException sE) {

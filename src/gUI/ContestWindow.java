@@ -78,6 +78,7 @@ public class ContestWindow {
 		JPanel goPanel = new JPanel();
 		goPanel.setLayout(new FlowLayout());
 		JButton cancelBtn = new JButton("Cancel");
+		cancelBtn.addActionListener(new CloseListener());
 		JButton goBtn = new JButton("Go");
 		goPanel.add(cancelBtn);
 		goPanel.add(goBtn);

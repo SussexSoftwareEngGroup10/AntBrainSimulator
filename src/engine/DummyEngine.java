@@ -67,11 +67,9 @@ public class DummyEngine {
 	}
 	
 	private int tourneySimulation(Brain bestBrain, Brain brain, int rounds) {
-		World world = WorldController.getTournamentWorld(tourneySeed);
-		//Apparently it is faster to generate a new world than clone an existing one
-		//57991ms against 62795ms
 		//Using a seed to construct a random means the worlds generated will be more
-		//uniform than using cloning anyway
+		//uniform than using cloning, which seems to be slightly slower for some reason
+		World world = WorldController.getTournamentWorld(tourneySeed);
 		world.setBrain(bestBrain, 0);
 		world.setBrain(brain, 1);
 		//World now has better brain at 0, GA brain at 1
@@ -104,40 +102,25 @@ public class DummyEngine {
 		
 		//Setup world
 		World world;
-		//This creates a random seed, rather than a fixed seed world
-		//seed is also used to determine ant moves,
+		//Seed is also used to determine ant moves,
 		//so exactly the same simulation can be replayed
 		//could use a seeded world for every GA game,
 		//(possibly) fairer and quicker, but less random, evolution
 		//more efficient to test all GA population brains against
 		//the betterBrain with seed == 1
 		int seed = 0;
-		
-		//World variables
-//		int rows = 140;
-//		int cols = 140;
-//		int rocks = 30;
-//		int anthills = 2;
-//		int anthillSideLength = 7;
-//		int foodBlobCount = 15;
-//		int foodBlobSideLength = 3;
-//		int foodBlobCellFoodCount = 9;
-//		int antInitialDirection = 0;
-//		world = WorldController.getWorld(rows, cols, rocks, brains, seed,
-//			anthills, anthillSideLength, foodBlobCount, foodBlobSideLength,
-//			foodBlobCellFoodCount, antInitialDirection);
 		world = WorldController.getTournamentWorld(seed);
-//		world = WorldController.readWorldFrom(brains, "example.world");
 		
 		//Setup brains
 		//Black is the default brain, read in from file
 		//Red is the best one found by the GeneticAlgorithm with parameters specified
-		//Red should win
-//		Brain blankBrain = BrainController.readBrainFrom("blank.brain");
+		//The better red does relative to black, the better the GA is
+//		Brain blankBrain = BrainController.readBrainFrom("blank");
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA start: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}
+		
 		//Evolve and get the best brain from the GeneticAlgorithm
 		int epochs = 10000;
 		int rounds = 300000;
@@ -149,7 +132,7 @@ public class DummyEngine {
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
 		Brain gaBrain = BrainController.getBestGABrain(betterBrain.clone(), new DummyEngine(), epochs, rounds, popSize, elite, mutationRate);
-//		Brain gaBrain = BrainController.readBrainFrom("ga.brain");
+//		Brain gaBrain = BrainController.readBrainFrom("ga");
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to GA end: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}

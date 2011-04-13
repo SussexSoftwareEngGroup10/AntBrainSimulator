@@ -38,9 +38,6 @@ public class BrainParser {
 				
 				if(line == null){
 					//End of file has been reached
-					if(Logger.getLogLevel() >= 3){
-						Logger.log(new InformationEvent("End of file \"" + path + "\" has been reached"));
-					}
 					break;
 				}
 				

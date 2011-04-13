@@ -21,7 +21,6 @@ public class GeneticAlgorithm {
 	private static String bestBrainPath = "best.brain";
 	private Brain[] population;
 	private int popSize;
-	private int elite;
 	
 	public GeneticAlgorithm() {
 		
@@ -41,7 +40,6 @@ public class GeneticAlgorithm {
 	
 	public void createPopulation(Brain exampleBrain, DummyEngine dummyEngine, int popSize) {
 		this.popSize = popSize;
-		elite = popSize / 5;
 		population = new Brain[popSize];
 		
 		//Fill with number of example brains
@@ -49,16 +47,16 @@ public class GeneticAlgorithm {
 		for(i = 0; i < popSize; i++){
 			population[i] = (Brain) exampleBrain.clone();
 		}
-		orderByFitness(dummyEngine);
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("New GeneticAlgorithm Brain population of size " + popSize + " created"));
 		}
 	}
 	
-	public void evolve(DummyEngine dummyEngine, int epochs, int mutationRate) {
+	public void evolve(DummyEngine dummyEngine, int epochs, int rounds, int elite, int mutationRate) {
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Begun GeneticAlgorithm evolution for "
-				+ epochs + " epochs, with a 1/" + mutationRate + " chance of mutation"));
+				+ epochs + " epochs, with " + rounds + " rounds per simulation, an elite of " + elite +
+				", and a 1/" + mutationRate + " chance of mutation"));
 		}
 		Brain[] newPop;
 		int e = 0;
@@ -84,20 +82,19 @@ public class GeneticAlgorithm {
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
+		orderByFitness(dummyEngine, rounds);
+		
 		for(e = 0; e < epochs; e++){
 			//Log progress
 			int frequency = epochs / 100;
 			if(frequency == 0) frequency = 1;
-			for(i = 0; i < epochs / frequency; i++){
+			for(i = 0; i <= epochs / frequency; i++){
 				if(e == i * frequency){
 					if(Logger.getLogLevel() >= 3){
 						Logger.log(new InformationEvent("Completed " + i + " percent of " +
 							"GeneticAlgorithm evolution epochs at " +
 							(System.currentTimeMillis() - DummyEngine.startTime) + "ms"));
 					}
-					//TODO this should print every tenth step, inc 0, epochs
-					System.out.println("Completed " + i + "% at " +
-						(System.currentTimeMillis() - DummyEngine.startTime) + "ms");
 				}
 			}
 			newPop = new Brain[popSize];
@@ -134,7 +131,7 @@ public class GeneticAlgorithm {
 			}
 			population = newPop;
 			//Order, ready for next epoch
-			orderByFitness(dummyEngine);
+			orderByFitness(dummyEngine, rounds);
 			
 			//Write best brain so far to file
 			BrainParser.writeBrainTo(population[popSize - 1], "ga.brain");
@@ -142,10 +139,13 @@ public class GeneticAlgorithm {
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Completed GeneticAlgorithm evolution"));
 		}
+		for(i = 0; i < population.length; i++){//TODO
+			System.out.println(population[i]);
+		}
 	}
 	
-	private void orderByFitness(DummyEngine dummyEngine) {
-		dummyEngine.sortByFitness(population);
+	private void orderByFitness(DummyEngine dummyEngine, int rounds) {
+		dummyEngine.sortByFitness(population, rounds);
 	}
 	
 	private Brain breed(Brain brainA, Brain brainB, int mutationConstant) {
@@ -162,8 +162,9 @@ public class GeneticAlgorithm {
 		//The size of the brain resulting from evolution will reflect on the
 		//size which provides the best fitness
 		//i.e. size, in itself, is not inherently good
-		int targetSize = Math.max(brainA.getNumOfStates(), brainB.getNumOfStates()) + ran.nextInt(3);
-		//(5) - 2);
+//		int targetSize = max;
+		int targetSize = 20;
+		//Math.max(brainA.getNumOfStates(), brainB.getNumOfStates()) + ran.nextInt(3);
 		//TODO
 		//removes random states, which is bad
 		//Numbering of states, and their pointers are fixed,

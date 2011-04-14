@@ -32,7 +32,9 @@ public class DummyEngine {
 	public static final long startTime = System.currentTimeMillis();
 	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
 	
-	//World arguments
+	//World arguments, used by main and GA,
+	//easier than passing around values,
+	//obviously need to make dynamic in final version
 	private static int seed = 0;
 	private static int rows = 140;
 	private static int cols = 140;

@@ -7,14 +7,14 @@ package utilities;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class IOWarningEvent extends WarningEvent {
+public class IOEvent extends WarningEvent {
 	private static final long serialVersionUID = 1L;
 
-	public IOWarningEvent(String message) {
+	public IOEvent(String message) {
 		super(message);
 	}
 	
-	public IOWarningEvent(String message, Throwable cause) {
+	public IOEvent(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

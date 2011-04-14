@@ -29,7 +29,7 @@ import antWorld.World;
  * @version 1.0
  */
 public class DummyEngine {
-	public static final long startTime = System.currentTimeMillis();
+	public static final long startTime = System.nanoTime();
 	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
 	
 	//World arguments, used by main and GA,
@@ -52,6 +52,39 @@ public class DummyEngine {
 			Logger.log(new InformationEvent("New Engine object constructed"));
 		}
 	}
+	
+	//TODO
+	//How many times GA-related methods are called in each run,
+	//ignoring elite (popSize -= elite)
+	//Variables in descending order and approximate values
+	//rounds,  epochs, ants, popSize, stateNum, k
+	//300,000, ~1000,  ~250, <100,    <100,     10
+	//The more a method is called, the more efficient it should be
+	//Use System.nanoTime() instead of System.timeInMillis()
+	
+	//DummyEngine.main()					== 1
+	//GeneticAlgorithm.createPopulation()	== 1
+	//GeneticAlgorithm.evolve()				== 1
+	//GeneticAlgorithm.evolve().loop		== epochs
+	//DummyEngine.tournament()				== epochs
+	//population.sort()						== epochs
+	//BrainParser.writeBrainTo()			== epochs
+	//GeneticAlgorithm.breed()				== epochs
+	//GeneticAlgorithm.ranGenes()			== epochs * stateNum * k
+	//DummyEngine.tourneySimulation()		== epochs * popSize
+	//World()								== epochs * popSize
+	//World.getFoodInAnthills()				== epochs * popSize
+	//World.setBrain()						== epochs * popSize  * 2
+	//Ant()									== epochs * ants     * popSize
+	//Ant.setBrain()						== epochs * ants     * popSize  * 2
+	//GeneticAlgorithm.combineStates()		== epochs * popSize  * stateNum / 2
+	//GeneticAlgorithm.mutateGenes()		== epochs * popSize  * stateNum / 2
+	//Brain.setState()						== epochs * popSize  * stateNum / 2
+	//State.getValues()						== epochs * popSize  * stateNum / 2
+	//Ant.isKill()							== ants   * epochs   * popSize
+	//Ant.step()							== rounds * ants     * epochs   * popSize
+	//Ant.isAlive()							== rounds * ants     * epochs   * popSize
+	//Ant.isSurrounded()					== rounds * ants     * epochs   * popSize
 	
 	public void sortByFitness(Brain[] population, int rounds) {
 		tournament(population, rounds);
@@ -131,12 +164,9 @@ public class DummyEngine {
 		//Red is the best one found by the GeneticAlgorithm with parameters specified
 		//The better red does relative to black, the better the GA is
 //		Brain blankBrain = BrainController.readBrainFrom("blank");
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("Time to GA start: " + (System.currentTimeMillis() - startTime) + "ms"));
-		}
 		
 		//Evolve and get the best brain from the GeneticAlgorithm
-		int epochs = 10000;		//Less is quicker, but less likely to generate an improved brain
+		int epochs = 1000;		//Less is quicker, but less likely to generate an improved brain
 		int rounds = 300000;	//Less is quicker, but reduces the accuracy of the GA
 		int popSize = 100;		//Less is quicker, but searches less of the search space for brains
 		int elite = 5;			//Less is slower, but avoids getting stuck with lucky starting brain
@@ -147,17 +177,11 @@ public class DummyEngine {
 		//but it encourages the brains generated to be more random
 		Brain gaBrain = BrainController.getBestGABrain(betterBrain, new DummyEngine(), epochs, rounds, popSize, elite, mutationRate);
 //		Brain gaBrain = BrainController.readBrainFrom("ga_result");
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("Time to GA end: " + (System.currentTimeMillis() - startTime) + "ms"));
-		}
 		world.setBrain(betterBrain, 0);	//black
 		world.setBrain(gaBrain, 1);		//red
 		
 		ArrayList<Ant> ants = world.getAnts();
 		
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("Time to simulation start: " + (System.currentTimeMillis() - startTime) + "ms"));
-		}
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		int r = 0;
 		rounds = 300000;
@@ -176,9 +200,6 @@ public class DummyEngine {
 			}
 		}
 		
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("Time to simulation end: " + (System.currentTimeMillis() - startTime) + "ms"));
-		}
 		
 		if(Logger.getLogLevel() >= 3){
 			ArrayList<ArrayList<Ant>> antPlayers = world.getAntsBySpecies();
@@ -214,8 +235,7 @@ public class DummyEngine {
 		System.out.println("= Better Brain");
 		
 		if(Logger.getLogLevel() >= 1){
-			Logger.log(new InformationEvent("Virtual Machine terminated, " +
-				"total execution time: " + (System.currentTimeMillis() - startTime) + "ms"));
+			Logger.log(new InformationEvent("Virtual Machine terminated"));
 		}
 	}
 	

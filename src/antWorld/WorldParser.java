@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import utilities.IOWarningEvent;
+import utilities.IOEvent;
 import utilities.InformationEvent;
 import utilities.Logger;
 
@@ -48,7 +48,7 @@ public class WorldParser {
 				cols = Integer.parseInt(br.readLine());
 			}catch(NumberFormatException e){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new IOWarningEvent("Failed to read row and column values from "
+					Logger.log(new IOEvent("Failed to read row and column values from "
 						+ path + ". " + e.getMessage(), e));
 				}
 				return null;
@@ -83,7 +83,7 @@ public class WorldParser {
 			world = new World(cellChars);
 		}catch(IOException e){
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new IOWarningEvent(e.getMessage(), e));
+				Logger.log(new IOEvent(e.getMessage(), e));
 			}
 		}
 		if(Logger.getLogLevel() >= 2){
@@ -115,7 +115,7 @@ public class WorldParser {
 			bw.close();
 		}catch(IOException e){
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new IOWarningEvent(e.getMessage(), e));
+				Logger.log(new IOEvent(e.getMessage(), e));
 			}
 		}
 		if(Logger.getLogLevel() >= 3){

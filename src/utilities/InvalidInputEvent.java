@@ -7,14 +7,14 @@ package utilities;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class InvalidInputWarningEvent extends WarningEvent {
+public class InvalidInputEvent extends WarningEvent {
 	private static final long serialVersionUID = 1L;
 	
-	public InvalidInputWarningEvent(String message) {
+	public InvalidInputEvent(String message) {
 		super(message);
 	}
 	
-	public InvalidInputWarningEvent(String message, Throwable cause) {
+	public InvalidInputEvent(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

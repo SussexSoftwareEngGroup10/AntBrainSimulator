@@ -3,7 +3,7 @@ package antWorld;
 import java.util.ArrayList;
 import java.util.Random;
 
-import utilities.InvalidInputWarningEvent;
+import utilities.InvalidInputEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
@@ -717,7 +717,7 @@ public class World {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputWarningEvent("Illegal i Argument in World getNeighbour"));
+				Logger.log(new InvalidInputEvent("Illegal i Argument in World getNeighbour"));
 			}
 		}
 		return neighbour;

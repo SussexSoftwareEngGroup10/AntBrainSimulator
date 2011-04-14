@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import utilities.IOWarningEvent;
+import utilities.IOEvent;
 import utilities.InformationEvent;
 import utilities.Logger;
 
@@ -63,7 +63,7 @@ public class BrainParser {
 			}
 			br.close();
 		}catch(IOException e){
-			Logger.log(new IOWarningEvent(e.getMessage(), e));
+			Logger.log(new IOEvent(e.getMessage(), e));
 		}
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Completed reading Brain object from \"" + path + "\""));
@@ -93,7 +93,7 @@ public class BrainParser {
 			bw.write(brain.toString());
 			bw.close();
 		}catch(IOException e){
-			Logger.log(new IOWarningEvent(e.getMessage(), e));
+			Logger.log(new IOEvent(e.getMessage(), e));
 		}
 		if(Logger.getLogLevel() >= 3){
 			Logger.log(new InformationEvent("Completed writing Brain object to \"" + path + "\""));

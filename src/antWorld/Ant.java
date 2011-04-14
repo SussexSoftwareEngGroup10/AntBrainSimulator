@@ -3,7 +3,7 @@ package antWorld;
 import java.util.Random;
 
 import utilities.ErrorEvent;
-import utilities.InvalidInputWarningEvent;
+import utilities.InvalidInputEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
@@ -48,7 +48,7 @@ public class Ant implements Comparable<Ant> {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputWarningEvent("Illegal Colour Argument in Ant Constructor"));
+				Logger.log(new InvalidInputEvent("Illegal Colour Argument in Ant Constructor"));
 			}
 			this.colour = null;
 		}
@@ -110,7 +110,7 @@ public class Ant implements Comparable<Ant> {
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputWarningEvent("Illegal Command Argument in Ant step"));
+				Logger.log(new InvalidInputEvent("Illegal Command Argument in Ant step"));
 			}
 		}
 	}
@@ -133,7 +133,7 @@ public class Ant implements Comparable<Ant> {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputWarningEvent("Illegal senseDir Argument in Ant sense"));
+				Logger.log(new InvalidInputEvent("Illegal senseDir Argument in Ant sense"));
 			}
 			c = cell;
 		}
@@ -216,7 +216,7 @@ public class Ant implements Comparable<Ant> {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputWarningEvent("Illegal Condition Argument in Ant sense"));
+				Logger.log(new InvalidInputEvent("Illegal Condition Argument in Ant sense"));
 			}
 		}
 		
@@ -278,7 +278,7 @@ public class Ant implements Comparable<Ant> {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputWarningEvent("Illegal TurnDir Argument in Ant turn"));
+				Logger.log(new InvalidInputEvent("Illegal TurnDir Argument in Ant turn"));
 			}
 		}
 		stateNum = s.getSt1();

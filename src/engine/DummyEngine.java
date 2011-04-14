@@ -158,7 +158,7 @@ public class DummyEngine {
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Time to simulation start: " + (System.currentTimeMillis() - startTime) + "ms"));
 		}
-		//Run the simulation
+		//Run the simulation, test the Brain result from the GA against bestBrain
 		int r = 0;
 		rounds = 300000;
 		if(Logger.getLogLevel() >= 2){

@@ -11,8 +11,8 @@ import java.io.PrintStream;
  * @version 1.0
  */
 public class Logger {
-	//TODO
-	private static double logLevel = 1;
+	//How long it takes the time logging methods to execute TODO
+	private static final long timeLogTime = 1130;
 	//0 == no logging
 	//1 == warnings and errors (default)
 	//2 == timing and beginning and ending
@@ -20,8 +20,10 @@ public class Logger {
 	//3 == statistics about a simulation
 	//4 == actions of each ant
 	//5 == breeding results in each GA evolve
-	
-	private static final long sizeLimit = 10 * 1000 * 1000; //100MB
+	private static double logLevel = 1;
+	private static final long startTime = System.nanoTime();
+	private static long restartTime = startTime;
+	private static final long sizeLimit = 10000000; //10MB
 	private static final String folderName = "logs";
 	private static final File folder = new File(folderName);
 	private static final String fileNamePrefix = "log_";
@@ -96,5 +98,22 @@ public class Logger {
 	
 	public static void setLogLevel(double d) {
 		Logger.logLevel = d;
+	}
+	
+	public static void restartTimer() {
+		restartTime = System.nanoTime();
+	}
+	
+	public static long getCurrentTime() {
+		return System.nanoTime() - restartTime - timeLogTime;
+	}
+	
+	public static void logCurrentTime(String message) {
+		//Logs time since custom point, rather than the default time since a point
+		Logger.log(new TimeEvent(getCurrentTime(), message));
+	}
+	
+	public static long getStartTime() {
+		return startTime;
 	}
 }

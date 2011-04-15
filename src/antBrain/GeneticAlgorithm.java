@@ -83,7 +83,7 @@ public class GeneticAlgorithm {
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
 		orderByFitness(dummyEngine, rounds);
-		
+
 		for(e = 0; e < epochs; e++){
 			//Log progress
 			int frequency = epochs / 100;
@@ -92,8 +92,7 @@ public class GeneticAlgorithm {
 				if(e == i * frequency){
 					if(Logger.getLogLevel() >= 1.5){
 						Logger.log(new InformationEvent("Completed " + i + " percent of " +
-							"GeneticAlgorithm evolution epochs at " +
-							(System.currentTimeMillis() - DummyEngine.startTime) + "ms"));
+							"GeneticAlgorithm evolution epochs"));
 					}
 				}
 			}
@@ -261,6 +260,7 @@ public class GeneticAlgorithm {
 		//the senseMarker value for both will be -1, and the child will be given this value
 		//this is not a legal value and must be replaced with a new random value
 		//This is performed by the mutateGenes method
+		
 		gc = mutateGenes(gc, states, mutationConstant);
 		
 		return new State(index, gc);
@@ -276,13 +276,13 @@ public class GeneticAlgorithm {
 		//Rather, select a completely new value, independent from the old value
 		//for each gene: (1 / mutationConstant) of the time, a random value is chosen
 		//mutationConstant is proportional to the likelihood that a gene will not be altered
-		
+
 		int[] values = State.getValues(states);
-		int i = 0;
 		
 		//Changing the entire command is 10 times less likely than changing a parameter
 		//The value 10 is arbitrary
 		//This is not evolution as it does not use any of the genes present in either of the parents
+		int i = 0;
 		if(ran.nextInt(mutationConstant * 10) == 0){
 			return ranGenes(states);
 		}

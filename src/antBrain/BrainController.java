@@ -15,7 +15,7 @@ public class BrainController {
 	
 	public static Brain getBestGABrain(Brain exampleBrain, DummyEngine dummyEngine, int epochs, int rounds, int popSize, int elite, int mutationRate) {
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-		geneticAlgorithm.createPopulation(exampleBrain, dummyEngine, popSize);
+		geneticAlgorithm.createPopulation(exampleBrain, popSize);
 		geneticAlgorithm.evolve(dummyEngine, epochs, rounds, elite, mutationRate);
 		return geneticAlgorithm.getBestBrain();
 	}

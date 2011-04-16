@@ -20,6 +20,6 @@ public class InformationEvent extends Event {
 	
 	@Override
 	protected void setSeverity() {
-		severity = Severity.INFORMATION;
+		this.severity = Severity.INFORMATION;
 	}
 }

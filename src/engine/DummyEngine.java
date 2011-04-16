@@ -1,6 +1,5 @@
 package engine;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import utilities.InformationEvent;
@@ -136,20 +135,30 @@ public class DummyEngine {
 		world.setBrain(bestBrain, 0);
 		world.setBrain(brain, 1);
 		
-		ArrayList<Ant> ants = world.getAnts();
+		Ant[] ants = world.getAnts();
+		Ant ant;
+		int i = 0;
 		//Run the simulation
 		int r = 0;
 		if(Logger.getLogLevel() >= 5){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
 		for(r = 0; r < rounds; r++){
-			for(Ant ant : ants){
-				if(ant.isAlive()){
-					if(ant.isSurrounded()){
-						ant.kill();
-					}else{
-						ant.step();
-					}
+			for(i = 0; i < ants.length; i++){
+				ant = ants[i];
+				if(ant == null){
+					//Not sure about this, it's polling,
+					//but arrays are faster than arraylists
+					continue;
+				}
+				if(ant.isSurrounded()){//TODO diary, hasSurrounded after move
+					ant.kill();
+					//Faster than isAlive(), polling is inefficient,
+					//as dead ants aren't used for statistics in the GA
+					ants[i] = null;
+					i--;
+				}else{
+					ant.step();
 				}
 			}
 		}
@@ -208,7 +217,7 @@ public class DummyEngine {
 		world.setBrain(betterBrain, 0);	//black
 		world.setBrain(gaBrain, 1);		//red
 		
-		ArrayList<Ant> ants = world.getAnts();
+		Ant[] ants = world.getAnts();
 		
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		int r = 0;
@@ -230,14 +239,14 @@ public class DummyEngine {
 		
 		
 		if(Logger.getLogLevel() >= 3){
-			ArrayList<ArrayList<Ant>> antPlayers = world.getAntsBySpecies();
+			Ant[][] antPlayers = world.getAntsBySpecies();
 			int[] survivors = world.survivingAntsBySpecies();
 			if(survivors.length > 0){
-				int blackAnts = antPlayers.get(0).size();
+				int blackAnts = antPlayers[0].length;
 				Logger.log(new InformationEvent("Surviving black ants: " + survivors[0] + "/" + blackAnts));
 			}
 			if(survivors.length > 1){
-				int redAnts = antPlayers.get(1).size();
+				int redAnts = antPlayers[1].length;
 				Logger.log(new InformationEvent("Surviving red   ants: " + survivors[1] + "/" + redAnts  ));
 			}
 

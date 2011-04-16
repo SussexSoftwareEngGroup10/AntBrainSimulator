@@ -32,33 +32,33 @@ public class Cell {
 	public void setCell(char c) {
 		switch(c) {
 		case '#':
-			rocky = true;
-			food = 0;
-			anthill = 0;
+			this.rocky = true;
+			this.food = 0;
+			this.anthill = 0;
 			break;
 		case '.':
-			rocky = false;
-			food = 0;
-			anthill = 0;
+			this.rocky = false;
+			this.food = 0;
+			this.anthill = 0;
 			break;
 		case '+':
-			rocky = false;
-			food = 0;
-			anthill = 1;
+			this.rocky = false;
+			this.food = 0;
+			this.anthill = 1;
 			break;
 		case '-':
-			rocky = false;
-			food = 0;
-			anthill = 2;
+			this.rocky = false;
+			this.food = 0;
+			this.anthill = 2;
 			break;
 		default: //'0 to 9'
 			//Only case left is int/food (or inappropriate char value)
 			try{
-				rocky = false;
+				this.rocky = false;
 				//48 is the ascii code for '0', 58 for 9
 				//Need to convert from (48 to 58) to (0 to 9)
-				food = ((int) c) - 48;
-				anthill = 0;
+				this.food = c - 48;
+				this.anthill = 0;
 			}catch(NumberFormatException e){
 				//Cell must contain food, otherwise switch would have broken at '.'
 				if(Logger.getLogLevel() >= 1){
@@ -73,50 +73,51 @@ public class Cell {
 	}
 	
 	public Cell[] getNeighbours() {
-		return neighbours;
+		return this.neighbours;
 	}
 	
 	public Cell getNeighbour(int direction) {
 		if(direction < 0){
-			direction += 6;
-		}else if(direction > 5){
-			direction -= 6;
+			return this.neighbours[direction + 6];
 		}
-		return neighbours[direction];
+		if(direction > 5){
+			return this.neighbours[direction - 6];
+		}
+		return this.neighbours[direction];
 	}
 	
 	public int getRow() {
-		return row;
+		return this.row;
 	}
 	
 	public int getCol() {
-		return col;
+		return this.col;
 	}
 	
 	public void setupMarkers(int specieses) {
-		markers = new boolean[specieses][6];
+		this.markers = new boolean[specieses][6];
 	}
 	
 	public void mark(int species, int i) {
-		markers[species][i] = true;
+		this.markers[species][i] = true;
 	}
 	
 	public void unmark(int species, int i) {
-		markers[species][i] = false;
+		this.markers[species][i] = false;
 	}
 	
 	public boolean getMarker(int species, int i) {
-		return markers[species][i];
+		return this.markers[species][i];
 	}
 	
 	public boolean getAnyMarker(int notSpecies) {
 		//returns true if any marker not of species notSpecies is true
 		int i = 0;
 		int j = 0;
-		for(i = 0; i < markers.length; i++){
+		for(i = 0; i < this.markers.length; i++){
 			if(i != notSpecies){
 				for(j = 0; j < 6; j++){
-					if(markers[i][j] == true){
+					if(this.markers[i][j] == true){
 						return true;
 					}
 				}
@@ -130,77 +131,78 @@ public class Cell {
 	}
 	
 	public Ant getAnt() {
-		return ant;
+		return this.ant;
 	}
 	
 	public boolean isRocky() {
-		return rocky;
+		return this.rocky;
 	}
 	
 	public int foodCount() {
-		return food;
+		return this.food;
 	}
 	
 	public boolean hasFood() {
-		return food != 0;
+		return this.food != 0;
 	}
 	
 	public void giveFood() {
-		if(food < 9){
-			food++;
+		if(this.food < 9){
+			this.food++;
 		}
 	}
 	
 	public void takeFood() {
-		if(food > 0){
-			food--;
+		if(this.food > 0){
+			this.food--;
 		}
 	}
 	
 	public int getAnthill() {
-		return anthill;
+		return this.anthill;
 	}
 	
 	public boolean hasAnt() {
-		return ant != null;
+		return this.ant != null;
 	}
 	
 	public char toChar() {
 		return toString().charAt(0);
 	}
 	
+	@Override
 	public String toString() {
 		if(hasAnt()){
-			if(ant.getColour() == 0){
-				if(ant.isAlive()){
+			if(this.ant.getColour() == 0){
+				if(this.ant.isAlive()){
 					return "=";
 				}
 			}
-			if(ant.getColour() == 1){
-				if(ant.isAlive()){
+			if(this.ant.getColour() == 1){
+				if(this.ant.isAlive()){
 					return "|";
 				}
 			}
 		}
 		
-		if(rocky){
+		if(this.rocky){
 			return "#";
 			
 		}
-		if(food > 0){
-			if(anthill == 0){ //0 to 9
-				return Integer.toString(food);
+		if(this.food > 0){
+			if(this.anthill == 0){ //0 to 9
+				return Integer.toString(this.food);
 			}
 			
 			//Otherwise, food must be in an anthill
 			//so give unique char value that acknowledges this
 			//Greek isn't recognised by Notepad or the console (prints '?' instead)
 			//Minimum food value is 1, so -1 from ascii codes
-			if(anthill == 1){ //Upper case, 65 for Latin, 913 for Greek
-				return Character.toString((char) (64 + food));
+			if(this.anthill == 1){ //Upper case, 65 for Latin, 913 for Greek
+				return Character.toString((char) (64 + this.food));
 			}
-			if(anthill == 2){ //Lower case, 97 for Latin, 945 for Greek
-				return Character.toString((char) (96 + food));
+			if(this.anthill == 2){ //Lower case, 97 for Latin, 945 for Greek
+				return Character.toString((char) (96 + this.food));
 			}
 			//Else error, cannot be less than 0 or more than 2 anthills
 			if(Logger.getLogLevel() >= 1){
@@ -209,11 +211,11 @@ public class Cell {
 			return null; 
 			
 		}
-		if(anthill > 0){
-			if(anthill == 1){
+		if(this.anthill > 0){
+			if(this.anthill == 1){
 				return "+";
 			}
-			if(anthill == 2){
+			if(this.anthill == 2){
 				return "-";
 			}
 		}

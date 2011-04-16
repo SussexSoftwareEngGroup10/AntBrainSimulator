@@ -51,9 +51,9 @@ public class State {
 	private static final int max = Brain.getMaxNumOfStates();
 	
 	//Remember to change random state generation in GeneticAlgorithm and other methods if any enums are altered
-	enum Command { SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP };
-	enum SenseDir { HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD };
-	enum TurnDir { LEFT, RIGHT };
+	enum Command { SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP }
+	enum SenseDir { HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD }
+	enum TurnDir { LEFT, RIGHT }
 	enum Condition { FRIEND, FOE, FRIENDWITHFOOD, FOEWITHFOOD,
 		FOOD, ROCK, MARKER, FOEMARKER, HOME, FOEHOME }
 	
@@ -80,246 +80,246 @@ public class State {
 	public State(int stateNum, int[] genes) {
 		this.stateNum = stateNum;
 		
-		command = toCommand(genes[0]);
-		switch(command){
+		this.command = toCommand(genes[0]);
+		switch(this.command){
 		//Sense senseDir st1 st2 condition (senseMarker)
 		case SENSE:
 			if(genes[1] < 0 || genes[1] > 3){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal SenseDir ordinal argument in State constructor"));
 				}
-				senseDir = toSenseDir(0);
+				this.senseDir = toSenseDir(0);
 			}else{
-				senseDir = toSenseDir(genes[1]);
+				this.senseDir = toSenseDir(genes[1]);
 			}
-			turnDir = null;
-			marker = -1;
-			p = -1;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = genes[5];
+				this.st1 = genes[5];
 			}
 			if(genes[6] < 0 || genes[6] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
 				}
-				st2 = 0;
+				this.st2 = 0;
 			}else{
-				st2 = genes[6];
+				this.st2 = genes[6];
 			}
 			if(genes[7] < 0 || genes[7] > 9){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal Condition ordinal argument in State constructor"));
 				}
-				condition = toCondition(0);
+				this.condition = toCondition(0);
 			}else{
-				condition = toCondition(genes[7]);
+				this.condition = toCondition(genes[7]);
 			}
-			if(condition == Condition.MARKER){
+			if(this.condition == Condition.MARKER){
 				if(genes[8] < 0 || genes[8] > 5){
 					if(Logger.getLogLevel() >= 1){
 						Logger.log(new InvalidInputEvent("Illegal SenseMarker argument in State constructor"));
 					}
-					senseMarker = 0;
+					this.senseMarker = 0;
 				}else{
-					senseMarker = genes[8];
+					this.senseMarker = genes[8];
 				}
 			}else{
-				senseMarker = -1;
+				this.senseMarker = -1;
 			}
 			break;
 		//Mark marker st1
 		case MARK:
-			senseDir = null;
-			turnDir = null;
+			this.senseDir = null;
+			this.turnDir = null;
 			if(genes[3] < 0 || genes[3] > 5){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal marker argument in State constructor"));
 				}
-				marker = 0;
+				this.marker = 0;
 			}else{
-				marker = genes[3];
+				this.marker = genes[3];
 			}
-			p = -1;
+			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = genes[5];
+				this.st1 = genes[5];
 			}
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Unmark marker st1
 		case UNMARK:
-			senseDir = null;
-			turnDir = null;
+			this.senseDir = null;
+			this.turnDir = null;
 			if(genes[3] < 0 || genes[3] > 5){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal marker argument in State constructor"));
 				}
-				marker = 0;
+				this.marker = 0;
 			}else{
-				marker = genes[3];
+				this.marker = genes[3];
 			}
-			p = -1;
+			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = genes[5];
+				this.st1 = genes[5];
 			}
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//PickUp st1 st2
 		case PICKUP:
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
-			p = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = genes[5];
+				this.st1 = genes[5];
 			}
 			if(genes[6] < 0 || genes[6] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
 				}
-				st2 = 0;
+				this.st2 = 0;
 			}else{
-				st2 = genes[6];
+				this.st2 = genes[6];
 			}
-			condition = null;
-			senseMarker = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Drop st1
 		case DROP:
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
-			p = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = genes[5];
+				this.st1 = genes[5];
 			}
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Turn turnDir st1
 		case TURN:
-			senseDir = null;
+			this.senseDir = null;
 			if(genes[2] < 0 || genes[2] > 1){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal TurnDir ordinal argument in State constructor"));
 				}
-				turnDir = toTurnDir(0);
+				this.turnDir = toTurnDir(0);
 			}else{
-				turnDir = toTurnDir(genes[2]);
+				this.turnDir = toTurnDir(genes[2]);
 			}
-			marker = -1;
-			p = -1;
+			this.marker = -1;
+			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = genes[5];
+				this.st1 = genes[5];
 			}
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Move st1 st2
 		case MOVE:
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
-			p = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = genes[5];
+				this.st1 = genes[5];
 			}
 			if(genes[6] < 0 || genes[6] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
 				}
-				st2 = 0;
+				this.st2 = 0;
 			}else{
-				st2 = genes[6];
+				this.st2 = genes[6];
 			}
-			condition = null;
-			senseMarker = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Flip p st1 st2
 		case FLIP:
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
 			if(genes[4] < 2 || genes[4] > 10){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				p = 2;
+				this.p = 2;
 			}else{
-				p = genes[4];
+				this.p = genes[4];
 			}
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = genes[5];
+				this.st1 = genes[5];
 			}
 			if(genes[6] < 0 || genes[6] > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
 				}
-				st2 = 0;
+				this.st2 = 0;
 			}else{
-				st2 = genes[6];
+				this.st2 = genes[6];
 			}
-			condition = null;
-			senseMarker = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new InvalidInputEvent("Illegal Command ordinal argument in State constructor"));
 			}
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
-			p = -1;
-			st1 = -1;
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
+			this.st1 = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 		}
 	}
 	
@@ -347,10 +347,10 @@ public class State {
 				Logger.log(new InvalidInputEvent("Illegal Command Argument in State constructor"));
 			}
 		}finally{
-			command = (Command) eVal;
+			this.command = (Command) eVal;
 		}
 		
-		switch(command){
+		switch(this.command){
 		//Sense senseDir st1 st2 condition (senseMarker)
 		case SENSE:
 			try{
@@ -360,28 +360,28 @@ public class State {
 					Logger.log(new InvalidInputEvent("Illegal SenseDir ordinal argument in State constructor", e));
 				}
 			}finally{
-				senseDir = (SenseDir) eVal;
+				this.senseDir = (SenseDir) eVal;
 			}
-			turnDir = null;
-			marker = -1;
-			p = -1;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = iVal;
+				this.st1 = iVal;
 			}
 			iVal = Integer.parseInt(terms[3]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
 				}
-				st2 = 0;
+				this.st2 = 0;
 			}else{
-				st2 = iVal;
+				this.st2 = iVal;
 			}
 			try{
 				eVal = Condition.valueOf(terms[4].trim().toUpperCase());
@@ -390,125 +390,125 @@ public class State {
 					Logger.log(new InvalidInputEvent("Illegal Condition ordinal argument in State constructor", e));
 				}
 			}finally{
-				condition = (Condition) eVal;
+				this.condition = (Condition) eVal;
 			}
-			if(condition == Condition.MARKER){
+			if(this.condition == Condition.MARKER){
 				iVal = Integer.parseInt(terms[5]);
 				if(iVal < 0 || iVal > 5){
 					if(Logger.getLogLevel() >= 1){
 						Logger.log(new InvalidInputEvent("Illegal senseMarker argument in State constructor"));
 					}
-					senseMarker = 0;
+					this.senseMarker = 0;
 				}else{
-					senseMarker = iVal;
+					this.senseMarker = iVal;
 				}
 			}else{
-				senseMarker = -1;
+				this.senseMarker = -1;
 			}
 			break;
 		//Mark marker st1
 		case MARK:
-			senseDir = null;
-			turnDir = null;
+			this.senseDir = null;
+			this.turnDir = null;
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > 5){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal marker argument in State constructor"));
 				}
-				marker = 0;
+				this.marker = 0;
 			}else{
-				marker = iVal;
+				this.marker = iVal;
 			}
-			p = -1;
+			this.p = -1;
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = iVal;
+				this.st1 = iVal;
 			}
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Unmark marker st1
 		case UNMARK:
-			senseDir = null;
-			turnDir = null;
+			this.senseDir = null;
+			this.turnDir = null;
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > 5){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal marker argument in State constructor"));
 				}
-				marker = 0;
+				this.marker = 0;
 			}else{
-				marker = iVal;
+				this.marker = iVal;
 			}
-			p = -1;
+			this.p = -1;
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = iVal;
+				this.st1 = iVal;
 			}
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//PickUp st1 st2
 		case PICKUP:
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
-			p = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = iVal;
+				this.st1 = iVal;
 			}
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
 				}
-				st2 = 0;
+				this.st2 = 0;
 			}else{
-				st2 = iVal;
+				this.st2 = iVal;
 			}
-			condition = null;
-			senseMarker = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Drop st1
 		case DROP:
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
-			p = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = iVal;
+				this.st1 = iVal;
 			}
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Turn turnDir st1
 		case TURN:
-			senseDir = null;
+			this.senseDir = null;
 			try{
 				eVal = TurnDir.valueOf(terms[1].trim().toUpperCase());
 			}catch(IllegalArgumentException e){
@@ -516,98 +516,98 @@ public class State {
 					Logger.log(new InvalidInputEvent("Illegal TurnDir ordinal argument in State constructor", e));
 				}
 			}finally{
-				turnDir = (TurnDir) eVal;
+				this.turnDir = (TurnDir) eVal;
 			}
-			marker = -1;
-			p = -1;
+			this.marker = -1;
+			this.p = -1;
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = iVal;
+				this.st1 = iVal;
 			}
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Move st1 st2
 		case MOVE:
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
-			p = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = iVal;
+				this.st1 = iVal;
 			}
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
 				}
-				st2 = 0;
+				this.st2 = 0;
 			}else{
-				st2 = iVal;
+				this.st2 = iVal;
 			}
-			condition = null;
-			senseMarker = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//Flip p st1 st2
 		case FLIP:
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 2 || iVal > 10){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal p argument in State constructor"));
 				}
-				p = 0;
+				this.p = 0;
 			}else{
-				p = iVal;
+				this.p = iVal;
 			}
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
 				}
-				st1 = 0;
+				this.st1 = 0;
 			}else{
-				st1 = iVal;
+				this.st1 = iVal;
 			}
 			iVal = Integer.parseInt(terms[3]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
 					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
 				}
-				st2 = 0;
+				this.st2 = 0;
 			}else{
-				st2 = iVal;
+				this.st2 = iVal;
 			}
-			condition = null;
-			senseMarker = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 			break;
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new InvalidInputEvent("Illegal Command Argument in State constructor"));
 			}
-			senseDir = null;
-			turnDir = null;
-			marker = -1;
-			p = -1;
-			st1 = -1;
-			st2 = -1;
-			condition = null;
-			senseMarker = -1;
+			this.senseDir = null;
+			this.turnDir = null;
+			this.marker = -1;
+			this.p = -1;
+			this.st1 = -1;
+			this.st2 = -1;
+			this.condition = null;
+			this.senseMarker = -1;
 		}
 	}
 	
@@ -759,30 +759,88 @@ public class State {
 	 */
 	public int[] getGenes() {
 		int[] genes = new int[9];
-		genes[0] = command.ordinal();
-		if(senseDir == null){
+		genes[0] = this.command.ordinal();
+		if(this.senseDir == null){
 			genes[1] = -1;
 		}else{
-			genes[1] = senseDir.ordinal();
+			genes[1] = this.senseDir.ordinal();
 		}
-		if(turnDir == null){
+		if(this.turnDir == null){
 			genes[2] = -1;
 		}else{
-			genes[2] = turnDir.ordinal();
+			genes[2] = this.turnDir.ordinal();
 		}
-		genes[3] = marker;
-		genes[4] = p;
-		genes[5] = st1;
-		genes[6] = st2;
-		if(condition == null){
+		genes[3] = this.marker;
+		genes[4] = this.p;
+		genes[5] = this.st1;
+		genes[6] = this.st2;
+		if(this.condition == null){
 			genes[7] = -1;
 		}else{
-			genes[7] = condition.ordinal();
+			genes[7] = this.condition.ordinal();
 		}
-		genes[8] = senseMarker;
+		genes[8] = this.senseMarker;
 		return genes;
 	}
 	
+	public int getCommand() {
+		if(this.command == null){
+			return -1;
+		}
+		return this.command.ordinal();
+	}
+	
+	public int getSenseDir() {
+		if(this.senseDir == null){
+			return -1;
+		}
+		return this.senseDir.ordinal();
+	}
+	
+	public int getTurnDir() {
+		if(this.turnDir == null){
+			return -1;
+		}
+		return this.turnDir.ordinal();
+	}
+	
+	public int getMarker() {
+		return this.marker;
+	}
+	
+	public int getP() {
+		return this.p;
+	}
+	
+	public int getSt1() {
+		return this.st1;
+	}
+	
+	public int getSt2() {
+		return this.st2;
+	}
+	
+	public int getCondition() {
+		if(this.condition == null){
+			return -1;
+		}
+		return this.condition.ordinal();
+	}
+	
+	public int getSenseMarker() {
+		return this.senseMarker;
+	}
+	
+	public int getStateNum() {
+		return this.stateNum;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+	
+	@Override
 	public boolean equals(Object o) {
 		State b = (State) o;
 		int[] genesA = this.getGenes();
@@ -795,108 +853,57 @@ public class State {
 		}
 		return true;
 	}
-	
-	public int getCommand() {
-		if(command == null){
-			return -1;
-		}
-		return command.ordinal();
-	}
-	
-	public int getSenseDir() {
-		if(senseDir == null){
-			return -1;
-		}
-		return senseDir.ordinal();
-	}
-	
-	public int getTurnDir() {
-		if(turnDir == null){
-			return -1;
-		}
-		return turnDir.ordinal();
-	}
-	
-	public int getMarker() {
-		return marker;
-	}
-	
-	public int getP() {
-		return p;
-	}
-	
-	public int getSt1() {
-		return st1;
-	}
-	
-	public int getSt2() {
-		return st2;
-	}
-	
-	public int getCondition() {
-		if(condition == null){
-			return -1;
-		}
-		return condition.ordinal();
-	}
-	
-	public int getSenseMarker() {
-		return senseMarker;
-	}
-	
-	public int getStateNum() {
-		return stateNum;
-	}
 
+	@Override
 	public String toString() {
 		String s = "";
-		s += command + " ";
+		s += this.command + " ";
 		
-		switch(command){
+		switch(this.command){
 		//Sense senseDir st1 st2 condition
 		case SENSE:
-			s += senseDir + " ";
-			s += st1 + " ";
-			s += st2 + " ";
-			s += condition + " ";
-			if(condition == Condition.MARKER){
-				s += senseMarker + " ";
+			s += this.senseDir + " ";
+			s += this.st1 + " ";
+			s += this.st2 + " ";
+			s += this.condition + " ";
+			if(this.condition == Condition.MARKER){
+				s += this.senseMarker + " ";
 			}
 			break;
 		//Mark marker st1
 		case MARK:
-			s += marker + " ";
-			s += st1 + " ";
+			s += this.marker + " ";
+			s += this.st1 + " ";
 			break;
 		//Unmark marker st1
 		case UNMARK:
-			s += marker + " ";
-			s += st1 + " ";
+			s += this.marker + " ";
+			s += this.st1 + " ";
 			break;
 		//PickUp st1 st2
 		case PICKUP:
-			s += st1 + " ";
-			s += st2 + " ";
+			s += this.st1 + " ";
+			s += this.st2 + " ";
 			break;
 		//Drop st1
 		case DROP:
-			s += st1 + " ";
+			s += this.st1 + " ";
 			break;
 		//Turn turnDir st1
 		case TURN:
-			s += turnDir + " ";
-			s += st1 + " ";
+			s += this.turnDir + " ";
+			s += this.st1 + " ";
 			break;
 		//Move st1 st2
 		case MOVE:
-			s += st1 + " ";
-			s += st2 + " ";
+			s += this.st1 + " ";
+			s += this.st2 + " ";
 			break;
 		//Flip p st1 st2
 		case FLIP:
-			s += p + " ";
-			s += st1 + " ";
-			s += st2 + " ";
+			s += this.p + " ";
+			s += this.st1 + " ";
+			s += this.st2 + " ";
 			break;
 		//This should never be reached
 		default:
@@ -910,7 +917,7 @@ public class State {
 			s += " ";
 		}
 		
-		s += "; STATE " + stateNum + ": ";
+		s += "; STATE " + this.stateNum + ": ";
 		
 		while(s.length() < 60){
 			s += " ";

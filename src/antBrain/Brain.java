@@ -19,7 +19,7 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	private int fitness;
 	
 	public Brain() {
-		states = new HashMap<Integer, State>();
+		this.states = new HashMap<Integer, State>();
 	}
 	
 	/**
@@ -32,7 +32,7 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	}
 	
 	public int getNumOfStates() {
-		return states.size();
+		return this.states.size();
 	}
 	
 	public static int getMinNumOfStates() {
@@ -44,12 +44,12 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	}
 	
 	public void setState(State state) {
-		states.put(state.getStateNum(), state);
+		this.states.put(state.getStateNum(), state);
 	}
 	
 	public State getState(int i) {
 		try{
-			return states.get(i);
+			return this.states.get(i);
 		}catch(NullPointerException npe){
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new WarningEvent("Null state " + i + " returned in Brain"));
@@ -59,25 +59,32 @@ public class Brain implements Cloneable, Comparable<Brain> {
 	}
 	
 	public Set<Integer> getKeys() {
-		return states.keySet();
+		return this.states.keySet();
 	}
 	
 	public Collection<State> getValues() {
-		return states.values();
+		return this.states.values();
 	}
 	
 	public int getFitness() {
-		return fitness;
+		return this.fitness;
 	}
 	
 	public void setFitness(int fitness) {
 		this.fitness = fitness;
 	}
 	
+	@Override
 	public Brain clone() {
-		return new Brain(states);
+		return new Brain(this.states);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		Brain b = (Brain) o;
 		//do state by state, not contains
@@ -90,6 +97,7 @@ public class Brain implements Cloneable, Comparable<Brain> {
 		return true;
 	}
 	
+	@Override
 	public int compareTo(Brain b) {
 		//Order by fitness, lowest to highest
 		//so if this < b, return -1
@@ -101,15 +109,16 @@ public class Brain implements Cloneable, Comparable<Brain> {
 		/*if(sa > sb)*/	return 1;
 	}
 	
+	@Override
 	public String toString() {
 		String s = "";
 		//Prints in state order
-		Object[] keys = (Object[]) states.keySet().toArray();
+		Object[] keys = this.states.keySet().toArray();
 		Arrays.sort(keys);
 		int i = 0;
 		
 		for(i = 0; i < keys.length; i++){
-			s += states.get(keys[i]) + "\r\n";
+			s += this.states.get(keys[i]) + "\r\n";
 		}
 		return s;
 	}

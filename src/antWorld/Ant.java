@@ -14,7 +14,7 @@ import antBrain.State;
  * @version 1.0
  */
 public class Ant implements Comparable<Ant> {
-	enum Colour { BLACK, RED };
+	enum Colour { BLACK, RED }
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
 	//with the same seed, so exactly the same game can be replicated
@@ -57,12 +57,12 @@ public class Ant implements Comparable<Ant> {
 	}
 	
 	public void step() {
-		if(rest > 0){
-			rest--;
+		if(this.rest > 0){
+			this.rest--;
 			return;
 		}
 		
-		State s = brain.getState(stateNum);
+		State s = this.brain.getState(this.stateNum);
 		
 		int command = 0;
 		try{
@@ -120,22 +120,22 @@ public class Ant implements Comparable<Ant> {
 		Cell c = null;
 		switch(s.getSenseDir()){
 		case 0:
-			c = cell;
+			c = this.cell;
 			break;
 		case 1:
-			c = cell.getNeighbour(direction);
+			c = this.cell.getNeighbour(this.direction);
 			break;
 		case 2:
-			c = cell.getNeighbour(direction - 1);
+			c = this.cell.getNeighbour(this.direction - 1);
 			break;
 		case 3:
-			c = cell.getNeighbour(direction + 1);
+			c = this.cell.getNeighbour(this.direction + 1);
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new InvalidInputEvent("Illegal senseDir Argument in Ant sense"));
 			}
-			c = cell;
+			c = this.cell;
 		}
 		
 		boolean condition = false;
@@ -143,7 +143,7 @@ public class Ant implements Comparable<Ant> {
 		//FRIEND
 		case 0:
 			if(c.hasAnt()){
-				if(c.getAnt().getColour() == colour.ordinal()){
+				if(c.getAnt().getColour() == this.colour.ordinal()){
 					condition = true;
 				}
 			}
@@ -151,7 +151,7 @@ public class Ant implements Comparable<Ant> {
 		//FOE
 		case 1:
 			if(c.hasAnt()){
-				if(c.getAnt().getColour() != colour.ordinal()){
+				if(c.getAnt().getColour() != this.colour.ordinal()){
 					condition = true;
 				}
 			}
@@ -159,7 +159,7 @@ public class Ant implements Comparable<Ant> {
 		//FRIENDWITHFOOD
 		case 2:
 			if(c.hasAnt()){
-				if(c.getAnt().getColour() == colour.ordinal()){
+				if(c.getAnt().getColour() == this.colour.ordinal()){
 					if(c.getAnt().hasFood()){
 						condition = true;
 					}
@@ -169,7 +169,7 @@ public class Ant implements Comparable<Ant> {
 		//FOEWITHFOOD
 		case 3:
 			if(c.hasAnt()){
-				if(c.getAnt().getColour() != colour.ordinal()){
+				if(c.getAnt().getColour() != this.colour.ordinal()){
 					if(c.getAnt().hasFood()){
 						condition = true;
 					}
@@ -190,26 +190,26 @@ public class Ant implements Comparable<Ant> {
 			break;
 		//MARKER
 		case 6:
-			if(c.getMarker(colour.ordinal(), s.getSenseMarker())){
+			if(c.getMarker(this.colour.ordinal(), s.getSenseMarker())){
 				condition = true;
 			}
 			break;
 		//FOEMARKER
 		case 7:
-			if(c.getAnyMarker(colour.ordinal())){
+			if(c.getAnyMarker(this.colour.ordinal())){
 				condition = true;
 			}
 			break;
 		//HOME
 		case 8:
-			if(c.getAnthill() - 1 == colour.ordinal()) {
+			if(c.getAnthill() - 1 == this.colour.ordinal()) {
 				condition = true;
 			}
 			break;
 		//FOEHOME
 		case 9:
 			if(c.getAnthill() != 0){
-				if(c.getAnthill() - 1 != colour.ordinal()) {
+				if(c.getAnthill() - 1 != this.colour.ordinal()) {
 					condition = true;
 				}
 			}
@@ -221,43 +221,43 @@ public class Ant implements Comparable<Ant> {
 		}
 		
 		if(condition){
-			stateNum = s.getSt1();
+			this.stateNum = s.getSt1();
 		}else{
-			stateNum = s.getSt2();
+			this.stateNum = s.getSt2();
 		}
 	}
 
 	//Mark marker st1
 	private void mark(State s) {
-		cell.mark(colour.ordinal(), s.getMarker());
-		stateNum = s.getSt1();
+		this.cell.mark(this.colour.ordinal(), s.getMarker());
+		this.stateNum = s.getSt1();
 	}
 
 	//Unmark marker st1
 	private void unmark(State s) {
-		cell.unmark(colour.ordinal(), s.getMarker());
-		stateNum = s.getSt1();
+		this.cell.unmark(this.colour.ordinal(), s.getMarker());
+		this.stateNum = s.getSt1();
 	}
 
 	//PickUp st1 st2
 	private void pickUp(State s) {
 		//If can not carrying food, and food in cell, pick up food and go to st1, else st2
-		if(!food && cell.hasFood()){
-			cell.takeFood();
-			food = true;
-			stateNum = s.getSt1();
+		if(!this.food && this.cell.hasFood()){
+			this.cell.takeFood();
+			this.food = true;
+			this.stateNum = s.getSt1();
 		}else{
-			stateNum = s.getSt2();
+			this.stateNum = s.getSt2();
 		}
 	}
 
 	//Drop st1
 	private void drop(State s) {
 		//If can carrying food, and food in cell < max, drop up food and go to st1
-		if(food && cell.foodCount() < 9){
-			cell.giveFood();
-			food = false;
-			stateNum = s.getSt1();
+		if(this.food && this.cell.foodCount() < 9){
+			this.cell.giveFood();
+			this.food = false;
+			this.stateNum = s.getSt1();
 		}
 	}
 	
@@ -265,15 +265,15 @@ public class Ant implements Comparable<Ant> {
 	private void turn(State s) {
 		switch(s.getTurnDir()){
 		case 0:
-			direction--;
-			if(direction < 0){
-				direction = 5;
+			this.direction--;
+			if(this.direction < 0){
+				this.direction = 5;
 			}
 			break;
 		case 1:
-			direction++;
-			if(direction > 5){
-				direction = 0;
+			this.direction++;
+			if(this.direction > 5){
+				this.direction = 0;
 			}
 			break;
 		default:
@@ -281,30 +281,30 @@ public class Ant implements Comparable<Ant> {
 				Logger.log(new InvalidInputEvent("Illegal TurnDir Argument in Ant turn"));
 			}
 		}
-		stateNum = s.getSt1();
+		this.stateNum = s.getSt1();
 	}
 	
 	//Move st1 st2
 	private void move(State s) {
 		//If new cell is not rocky and does not contain an ant, move there and go to st1, else st2
-		Cell newCell = cell.getNeighbour(direction);
+		Cell newCell = this.cell.getNeighbour(this.direction);
 		if(!newCell.isRocky() && !newCell.hasAnt()){
 			newCell.setAnt(this);
-			cell.setAnt(null);
-			cell = newCell;
-			stateNum = s.getSt1();
+			this.cell.setAnt(null);
+			this.cell = newCell;
+			this.stateNum = s.getSt1();
 		}else{
-			stateNum = s.getSt2();
+			this.stateNum = s.getSt2();
 		}
-		rest = 14;
+		this.rest = 14;
 	}
 
 	//Flip p st1 st2
 	private void flip(State s) {
-		if(ran.nextInt(s.getP()) == 0){
-			stateNum = s.getSt1();
+		if(this.ran.nextInt(s.getP()) == 0){
+			this.stateNum = s.getSt1();
 		}else{
-			stateNum = s.getSt2();
+			this.stateNum = s.getSt2();
 		}
 	}
 	
@@ -320,7 +320,7 @@ public class Ant implements Comparable<Ant> {
 	}
 	
 	private int neighbourFoes() {
-		Cell[] neighbours = cell.getNeighbours();
+		Cell[] neighbours = this.cell.getNeighbours();
 		Ant ant = null;
 		int foes = 0;
 		int i = 0;
@@ -330,7 +330,7 @@ public class Ant implements Comparable<Ant> {
 			//increment number of foes found
 			ant = neighbours[i].getAnt();
 			if(ant != null){
-				if(ant.getColour() != colour.ordinal()){
+				if(ant.getColour() != this.colour.ordinal()){
 					foes++;
 				}
 			}
@@ -340,40 +340,40 @@ public class Ant implements Comparable<Ant> {
 	}
 	
 	public void kill() {
-		alive = false;
+		this.alive = false;
 		
 		//Drop food carried + 3
-		if(food){
-			cell.giveFood();
+		if(this.food){
+			this.cell.giveFood();
 		}
 		int i = 0;
 		for(i = 0; i < 3; i++){
-			cell.giveFood();
+			this.cell.giveFood();
 		}
 		
 		//Remove from world
-		cell.setAnt(null);
-		cell = null;
+		this.cell.setAnt(null);
+		this.cell = null;
 	}
 	
 	public boolean isAlive() {
-		return alive;
+		return this.alive;
 	}
 	
 	public Cell getCell() {
-		return cell;
+		return this.cell;
 	}
 	
 	public int getUID() {
-		return uid;
+		return this.uid;
 	}
 	
 	public int getColour() {
-		return colour.ordinal();
+		return this.colour.ordinal();
 	}
 	
 	public boolean hasFood() {
-		return food;
+		return this.food;
 	}
 	
 	public boolean equals(Ant ant) {
@@ -381,18 +381,19 @@ public class Ant implements Comparable<Ant> {
 		//as given by compareTo
 		//Should never return true, as each engine creates a maximum of 1
 		//Ant for any UID number
-		if(ant.getUID() == uid){
+		if(ant.getUID() == this.uid){
 			return true;
 		}
 		return false;
 	}
 	
+	@Override
 	public int compareTo(Ant ant) {
 		//Sorts by UID, lowest first
 		//Returns negative if this instance is less than the argument
-		if(ant.getUID() < uid){
+		if(ant.getUID() < this.uid){
 			return -1;
-		}else if(ant.getUID() == uid){
+		}else if(ant.getUID() == this.uid){
 			return 0;
 		}else{//if(ant.getUID() > uid){
 			return 1;

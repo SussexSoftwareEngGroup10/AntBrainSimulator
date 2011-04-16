@@ -1,6 +1,5 @@
 package antWorld;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import utilities.InvalidInputEvent;
@@ -64,9 +63,9 @@ public class World {
 	//ants are added to both, and never removed
 	//Ants are added in UID order,
 	//Collections.sort() will restore the list to UID order, as it was created
-	private ArrayList<Ant> ants = new ArrayList<Ant>();
+	private Ant[] ants;
 	//I would use a ArrayList<Ant>[], but you can't do that in Java
-	private ArrayList<ArrayList<Ant>> antsBySpecies = new ArrayList<ArrayList<Ant>>();
+	private Ant[][] antsBySpecies;
 	
 	//Ant colours:
 	//'+' == black
@@ -122,7 +121,7 @@ public class World {
 		}else{
 			this.seed = seed;
 		}
-		ran = new Random(this.seed);
+		this.ran = new Random(this.seed);
 		
 		this.rows = rows;
 		this.cols = cols;
@@ -137,11 +136,11 @@ public class World {
 		//Initialise every cell to be clear
 		int r = 0;
 		int c = 0;
-		cells = new Cell[rows][cols];
+		this.cells = new Cell[rows][cols];
 		for(r = 0; r < rows; r++){
-			cells[r] = new Cell[cols];
+			this.cells[r] = new Cell[cols];
 			for(c = 0; c < cols; c++){
-				cells[r][c] = new Cell(r, c, '.');
+				this.cells[r][c] = new Cell(r, c, '.');
 			}
 		}
 		
@@ -150,7 +149,7 @@ public class World {
 		//Use this. for fields, local variables created above
 		for(r = 0; r < rows; r++){
 			for(c = 0; c < cols; c++){
-				current = cells[r][c];
+				current = this.cells[r][c];
 				current.setNeighbours(getNeighbours(current));
 				current.setupMarkers(this.anthills);
 			}
@@ -167,29 +166,29 @@ public class World {
 	 */
 	public World(char[][] cellChars) {
 		//Random is not needed as world will not be generated
-		seed = -1;
-		ran = null;
+		this.seed = -1;
+		this.ran = null;
 		
 		this.rows = cellChars.length;
 		this.cols = cellChars[0].length;
 		
-		cells = new Cell[rows][cols];
+		this.cells = new Cell[this.rows][this.cols];
 		int r = 0;
 		int c = 0;
 		
 		//Setup cells
-		for(r = 0; r < rows; r++){
-			cells[r] = new Cell[cols];
-			for(c = 0; c < cols; c++){
-				cells[r][c] = new Cell(r, c, cellChars[r][c]);
+		for(r = 0; r < this.rows; r++){
+			this.cells[r] = new Cell[this.cols];
+			for(c = 0; c < this.cols; c++){
+				this.cells[r][c] = new Cell(r, c, cellChars[r][c]);
 			}
 		}
 		
 		//Setup neighbours for each cell
 		Cell current;
-		for(r = 0; r < rows; r++){
-			for(c = 0; c < cols; c++){
-				current = cells[r][c];
+		for(r = 0; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
+				current = this.cells[r][c];
 				current.setNeighbours(getNeighbours(current));
 			}
 		}
@@ -220,9 +219,9 @@ public class World {
 		int foodBlobCellFoodCount = 0;
 		
 		//Calculate field values from cell information
-		for(r = 0; r < rows; r++){
-			for(c = 0; c < cols; c++){
-				current = cells[r][c];
+		for(r = 0; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
+				current = this.cells[r][c];
 				
 				//Calculate number of rocks
 				if(current.isRocky()){
@@ -265,7 +264,7 @@ public class World {
 			}
 		}
 		
-		rocks -= (rows - 1) * 2 + (cols - 1) * 2; //subtract border rocks
+		rocks -= (this.rows - 1) * 2 + (this.cols - 1) * 2; //subtract border rocks
 		this.rocks = rocks;
 		
 		int anthills = 0;
@@ -280,13 +279,13 @@ public class World {
 		this.foodBlobCount = foodBlobCellCount / (foodBlobSideLength * foodBlobSideLength);
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
-		antInitialDirection = 0;
+		this.antInitialDirection = 0;
 		
 		//Setup markers in each cell
 		//Use this. for fields, local variables created above
-		for(r = 0; r < rows; r++){
-			for(c = 0; c < cols; c++){
-				current = cells[r][c];
+		for(r = 0; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
+				current = this.cells[r][c];
 				current.setNeighbours(getNeighbours(current));
 				current.setupMarkers(this.anthills);
 			}
@@ -319,24 +318,24 @@ public class World {
 			failCount++;
 		}
 		
-		if(anthills >= 1){
+		if(this.anthills >= 1){
 			//Anthill1
 			failCount--;
 			do{
 				failCount++;
-				ranRow = ran.nextInt(rows - 2) + 1;
-				ranCol = ran.nextInt(cols - 2) + 1;
-			}while(!setHex(ranRow, ranCol, anthillSideLength, '+'));
+				ranRow = this.ran.nextInt(this.rows - 2) + 1;
+				ranCol = this.ran.nextInt(this.cols - 2) + 1;
+			}while(!setHex(ranRow, ranCol, this.anthillSideLength, '+'));
 		}
 		
-		if(anthills >= 2){
+		if(this.anthills >= 2){
 			//Anthill2
 			failCount--;
 			do{
 				failCount++;
-				ranRow = ran.nextInt(rows - 2) + 1;
-				ranCol = ran.nextInt(cols - 2) + 1;
-			}while(!setHex(ranRow, ranCol, anthillSideLength, '-'));
+				ranRow = this.ran.nextInt(this.rows - 2) + 1;
+				ranCol = this.ran.nextInt(this.cols - 2) + 1;
+			}while(!setHex(ranRow, ranCol, this.anthillSideLength, '-'));
 		}
 		
 		//No more than 2 anthills can be constructed as any more than this they cannot be 
@@ -344,23 +343,23 @@ public class World {
 		createAnts();
 		
 		//Foods
-		for(i = 0; i < foodBlobCount; i++){
+		for(i = 0; i < this.foodBlobCount; i++){
 			failCount--;
 			do{
 				failCount++;
-				ranRow = ran.nextInt(rows - 2) + 1;
-				ranCol = ran.nextInt(cols - 2) + 1;
-			}while(!setRect(ranRow, ranCol,	foodBlobSideLength,
-				foodBlobSideLength, (char) (foodBlobCellFoodCount + 48)));
+				ranRow = this.ran.nextInt(this.rows - 2) + 1;
+				ranCol = this.ran.nextInt(this.cols - 2) + 1;
+			}while(!setRect(ranRow, ranCol,	this.foodBlobSideLength,
+				this.foodBlobSideLength, (char) (this.foodBlobCellFoodCount + 48)));
 		}
 		
 		//Rocks
-		for(i = 0; i < rocks; i++){
+		for(i = 0; i < this.rocks; i++){
 			failCount--;
 			do{
 				failCount++;
-				ranRow = ran.nextInt(rows - 2) + 1;
-				ranCol = ran.nextInt(cols - 2) + 1;
+				ranRow = this.ran.nextInt(this.rows - 2) + 1;
+				ranCol = this.ran.nextInt(this.cols - 2) + 1;
 			}while(!setCell(ranRow, ranCol, '#'));
 		}
 	}
@@ -375,26 +374,26 @@ public class World {
 		
 		//First column
 		c = 0;
-		for(r = 0; r < rows; r++){
-			cells[r][c].setCell('#');
+		for(r = 0; r < this.rows; r++){
+			this.cells[r][c].setCell('#');
 		}
 		
 		//Last column
-		c = cols - 1;
-		for(r = 0; r < rows; r++){
-			cells[r][c].setCell('#');
+		c = this.cols - 1;
+		for(r = 0; r < this.rows; r++){
+			this.cells[r][c].setCell('#');
 		}
 		
 		//First row
 		r = 0;
-		for(c = 0; c < cols; c++){
-			cells[r][c].setCell('#');
+		for(c = 0; c < this.cols; c++){
+			this.cells[r][c].setCell('#');
 		}
 		
 		//Last row
-		r = rows - 1;
-		for(c = 0; c < cols; c++){
-			cells[r][c].setCell('#');
+		r = this.rows - 1;
+		for(c = 0; c < this.cols; c++){
+			this.cells[r][c].setCell('#');
 		}
 		
 		return true;
@@ -411,7 +410,7 @@ public class World {
 			return false;
 		}
 		
-		Cell centre = cells[row][col];
+		Cell centre = this.cells[row][col];
 		setHexRecurse(centre, 0, sideLength, ch);
 		return true;
 	}
@@ -426,7 +425,11 @@ public class World {
 			return;
 		}
 		
-		cell.setCell(ch);
+		//The check is probably slightly more efficient
+		//than overwriting identical values
+		if(cell.toChar() != ch){
+			cell.setCell(ch);
+		}
 		
 		//Don't recurse if next recurse will take side length over required length
 		if(recurseNum > recurseDepth - 2){
@@ -451,7 +454,7 @@ public class World {
 		
 		for(r = row; r < row + height; r++){
 			for(c = col; c < col + width; c++){
-				cells[r][c].setCell(ch);
+				this.cells[r][c].setCell(ch);
 			}
 		}
 		return true;
@@ -462,7 +465,7 @@ public class World {
 			return false;
 		}
 		
-		cells[row][col].setCell(ch);
+		this.cells[row][col].setCell(ch);
 		return true;
 	}
 	
@@ -472,17 +475,17 @@ public class World {
 		
 		//First column + gap
 		for(c = 0; c < gap + 1; c++){
-			for(r = 0; r < rows; r++){
-				if(cells[r][c].toChar() != '.'){
+			for(r = 0; r < this.rows; r++){
+				if(this.cells[r][c].toChar() != '.'){
 					return false;
 				}
 			}
 		}
 		
 		//Last column + gap
-		for(c = cols - 1 - gap; c < cols; c++){
-			for(r = 0; r < rows; r++){
-				if(cells[r][c].toChar() != '.'){
+		for(c = this.cols - 1 - gap; c < this.cols; c++){
+			for(r = 0; r < this.rows; r++){
+				if(this.cells[r][c].toChar() != '.'){
 					return false;
 				}
 			}
@@ -490,17 +493,17 @@ public class World {
 		
 		//First row + gap
 		for(r = 0; r < gap + 1; r++){
-			for(c = 0; c < rows; c++){
-				if(cells[r][c].toChar() != '.'){
+			for(c = 0; c < this.rows; c++){
+				if(this.cells[r][c].toChar() != '.'){
 					return false;
 				}
 			}
 		}
 		
 		//Last row + gap
-		for(r = rows - 1 - gap; r < rows; r++){
-			for(c = 0; c < rows; c++){
-				if(cells[r][c].toChar() != '.'){
+		for(r = this.rows - 1 - gap; r < this.rows; r++){
+			for(c = 0; c < this.rows; c++){
+				if(this.cells[r][c].toChar() != '.'){
 					return false;
 				}
 			}
@@ -516,7 +519,7 @@ public class World {
 	 * @return
 	 */
 	private boolean checkHexClear(int row, int col, int sideLength) {
-			Cell centre = cells[row][col];
+			Cell centre = this.cells[row][col];
 			
 			try{
 				return checkHexClearRecurse(centre, 0, sideLength + gap);
@@ -563,7 +566,7 @@ public class World {
 		try{
 			for(r = row - gap; r < row + height + gap; r++){
 				for(c = col - gap; c < col + width + gap; c++){
-					if(cells[r][c].toChar() != '.'){
+					if(this.cells[r][c].toChar() != '.'){
 						return false;
 					}
 				}
@@ -581,7 +584,7 @@ public class World {
 		
 		for(r = row - gap; r <= row + gap; r++){
 			for(c = col - gap; c <= col + gap; c++){
-				if(cells[r][c].toChar() != '.'){
+				if(this.cells[r][c].toChar() != '.'){
 					return false;
 				}
 			}
@@ -597,19 +600,33 @@ public class World {
 	 * @param sideLength
 	 * @param c new value for every cell in the area
 	 */
-	private void createAnts() {
-		ArrayList<Ant> species;
+	private void createAnts() {//TODO arraylist to array
 		Cell cell;
 		Ant ant;
 		int colour = -1;
+		int i = 0;
 		int r = 0;
 		int c = 0;
 		int uid = 0;
+		int antsPerAnthill = hexArea(this.anthillSideLength);
 		
-		for(r = 0; r < rows; r++){
-			for(c = 0; c < cols; c++){
+		this.ants = new Ant[this.anthills * antsPerAnthill];
+		this.antsBySpecies = new Ant[this.anthills][antsPerAnthill];
+		
+		//Add different species arrays to antsBySpecies
+		//May result in arrays containing no ants
+		for(i = 0; i < 2; i++){
+			this.antsBySpecies[i] = new Ant[antsPerAnthill];
+		}
+		//Used in the same way as .length for the arrays,
+		//holds the next index to be assigned
+		int[] nextAntIndex = {0, 0};
+		
+		//Put new ants onto each anthill cell, and into the right arrays
+		for(r = 0; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
 				colour = -1;
-				cell = cells[r][c];
+				cell = this.cells[r][c];
 				
 				if(cell.toChar() == '+'){
 					colour = 0;
@@ -619,37 +636,45 @@ public class World {
 					continue;
 				}
 				
-				while(antsBySpecies.size() <= colour){
-					antsBySpecies.add(new ArrayList<Ant>());
-				}
-				species = antsBySpecies.get(colour);
-				
-				ant = new Ant(uid, ran, antInitialDirection, colour, cell);
+				//Create and store ant
+				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell);
 				cell.setAnt(ant);
-				ants.add(ant);
-				species.add(ant);
+				this.ants[nextAntIndex[1] + nextAntIndex[2]] = ant;
+				this.antsBySpecies[colour][nextAntIndex[colour]] = ant;
+				nextAntIndex[colour]++;
 				
 				uid++;
 			}
 		}
 	}
 	
+	private int hexArea(int n) {
+		//Calculates the number of cells in a hex (e.g. anthill) given side length
+		if(n < 1){
+			return 0;
+		}
+		if(n == 1){
+			return 1;
+		}
+		return hexArea(n - 1) + ((n - 1) * 6);
+	}
+	
 	public void setBrain(Brain brain, int i) {
-		for(Ant ant : antsBySpecies.get(i)){
+		for(Ant ant : this.antsBySpecies[i]){
 			ant.setBrain(brain);
 		}
 	}
 	
 	public Cell[][] getWorld() {
-		return cells;
+		return this.cells;
 	}
 	
-	public ArrayList<Ant> getAnts() {
-		return ants;
+	public Ant[] getAnts() {
+		return this.ants;
 	}
 	
-	public ArrayList<ArrayList<Ant>> getAntsBySpecies() {
-		return antsBySpecies;
+	public Ant[][] getAntsBySpecies() {
+		return this.antsBySpecies;
 	}
 	
 	/**
@@ -681,38 +706,44 @@ public class World {
 		//Clockwise from east
 		case 0:
 			try{
-				neighbour = cells[r    ][c + 1    ]; //east
+				neighbour = this.cells[r    ][c + 1    ]; //east
 			}catch(ArrayIndexOutOfBoundsException e){
+				//Neighbour[i] is off the edge of the world, set to null
 			}
 			break;
 		case 1:
 			try{
-				neighbour = cells[r + 1][c + k    ]; //south-east
+				neighbour = this.cells[r + 1][c + k    ]; //south-east
 			}catch(ArrayIndexOutOfBoundsException e){
+				//Neighbour[i] is off the edge of the world, set to null
 			}
 			break;
 		case 2:
 			try{
-				neighbour = cells[r + 1][c - 1 + k]; //south-west
+				neighbour = this.cells[r + 1][c - 1 + k]; //south-west
 			}catch(ArrayIndexOutOfBoundsException e){
+				//Neighbour[i] is off the edge of the world, set to null
 			}
 			break;
 		case 3:
 			try{
-				neighbour = cells[r    ][c - 1    ]; //west
+				neighbour = this.cells[r    ][c - 1    ]; //west
 			}catch(ArrayIndexOutOfBoundsException e){
+				//Neighbour[i] is off the edge of the world, set to null
 			}
 			break;
 		case 4:
 			try{
-				neighbour = cells[r - 1][c - 1 + k]; //north-west
+				neighbour = this.cells[r - 1][c - 1 + k]; //north-west
 			}catch(ArrayIndexOutOfBoundsException e){
+				//Neighbour[i] is off the edge of the world, set to null
 			}
 			break;
 		case 5:
 			try{
-				neighbour = cells[r - 1][c + k    ]; //north-east
+				neighbour = this.cells[r - 1][c + k    ]; //north-east
 			}catch(ArrayIndexOutOfBoundsException e){
+				//Neighbour[i] is off the edge of the world, set to null
 			}
 			break;
 		default:
@@ -724,21 +755,21 @@ public class World {
 	}
 	
 	public int getSeed() {
-		return seed;
+		return this.seed;
 	}
 	
 	public int[] getFoodInAnthills() {
-		int[] totals = new int[antsBySpecies.size()];
+		int[] totals = new int[this.antsBySpecies.length];
 		
 		int r = 0;
 		int c  = 0;
 		Cell current;
-		for(r = 0; r < rows; r++){
-			for(c = 0; c < cols; c++){
-				current = cells[r][c];
+		for(r = 0; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
+				current = this.cells[r][c];
 				if(current.getAnthill() != 0){
 					if(current.hasFood()){
-						totals[cells[r][c].getAnthill() - 1] += current.foodCount();
+						totals[this.cells[r][c].getAnthill() - 1] += current.foodCount();
 					}
 				}
 			}
@@ -748,11 +779,11 @@ public class World {
 	}
 	
 	public int[] survivingAntsBySpecies() {
-		int[] survivors = new int[antsBySpecies.size()];
+		int[] survivors = new int[this.antsBySpecies.length];
 		int i = 0;
 		
-		for(i = 0; i < antsBySpecies.size(); i++){
-			for(Ant ant : antsBySpecies.get(i)){
+		for(i = 0; i < this.antsBySpecies.length; i++){
+			for(Ant ant : this.antsBySpecies[i]){
 				if(ant.isAlive()){
 					survivors[i]++;
 				}
@@ -765,21 +796,21 @@ public class World {
 		String s = "";
 		int i = 0;
 		
-		s += "\nseed: " + seed;
-		s += "\nrows: " + rows;
-		s += "\ncols: " + cols;
-		s += "\nrocks: " + rocks;
-		s += "\nanthills: " + anthills;
-		s += "\nanthill side length: " + anthillSideLength;
-		s += "\nfood blob count: " + foodBlobCount;
-		s += "\nfood blob side length: " + foodBlobSideLength;
-		s += "\nfood blob cell food count: " + foodBlobCellFoodCount;
-		s += "\nant initial direction: " + antInitialDirection;
+		s += "\nseed: " + this.seed;
+		s += "\nrows: " + this.rows;
+		s += "\ncols: " + this.cols;
+		s += "\nrocks: " + this.rocks;
+		s += "\nanthills: " + this.anthills;
+		s += "\nanthill side length: " + this.anthillSideLength;
+		s += "\nfood blob count: " + this.foodBlobCount;
+		s += "\nfood blob side length: " + this.foodBlobSideLength;
+		s += "\nfood blob cell food count: " + this.foodBlobCellFoodCount;
+		s += "\nant initial direction: " + this.antInitialDirection;
 		s += "\ngap: " + gap;
 		s += "\nants: ";
-		for(i = 0; i < antsBySpecies.size(); i++){
-			s += antsBySpecies.get(i).size();
-			if(i < antsBySpecies.size() - 1){
+		for(i = 0; i < this.antsBySpecies.length; i++){
+			s += this.antsBySpecies[i].length;
+			if(i < this.antsBySpecies.length - 1){
 				s += ", ";
 			}
 		}
@@ -787,6 +818,7 @@ public class World {
 		return s;
 	}
 	
+	@Override
 	public String toString() {
 		//Returns the world in a format identical to that found in a readable text file,
 		//such that if the toString of a world were written to a file and read in through
@@ -796,17 +828,17 @@ public class World {
 		int r = 0;
 		int c = 0;
 		
-		s += rows + "\r\n";
-		s += cols + "\r\n";
-		for(r = 0; r < rows; r++){
+		s += this.rows + "\r\n";
+		s += this.cols + "\r\n";
+		for(r = 0; r < this.rows; r++){
 			//Check remainder when divided by 2 is not 0
 			//i.e., current row is odd
 			//Will be printed as even row, as index starts at 0
 			if(r % 2 != 0){
 				s += " ";
 			}
-			for(c = 0; c < cols; c++){
-				s += cells[r][c].toString() + " ";
+			for(c = 0; c < this.cols; c++){
+				s += this.cells[r][c].toString() + " ";
 			}
 			s += "\r\n";
 		}

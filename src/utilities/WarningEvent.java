@@ -21,6 +21,6 @@ public class WarningEvent extends Event {
 
 	@Override
 	protected void setSeverity() {
-		severity = Severity.WARNING;
+		this.severity = Severity.WARNING;
 	}
 }

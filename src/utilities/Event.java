@@ -4,7 +4,7 @@ import java.util.Date;
 
 public abstract class Event extends Throwable {
 	private static final long serialVersionUID = 1L;
-	enum Severity { INFORMATION, WARNING, ERROR };
+	enum Severity { INFORMATION, WARNING, ERROR }
 	protected Severity severity;
 	
 	public Event(String message) {
@@ -20,12 +20,13 @@ public abstract class Event extends Throwable {
 	
 	protected abstract void setSeverity();
 	
+	@Override
 	public String toString() {
 		String s = "";
 		
 		//Severity
 		s += "SEVERITY: ";
-		s += severity + ";  ";
+		s += this.severity + ";  ";
 		//"SEVERITY: INFORMATION;  ".length == 24
 		while(s.length() < 24){
 			s += " ";

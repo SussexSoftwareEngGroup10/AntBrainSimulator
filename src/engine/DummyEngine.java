@@ -70,34 +70,35 @@ public class DummyEngine {
 	//I predict that one run would take 1.4 quadrillion nanoseconds,
 	//which equals 1.4 million seconds,
 	//which equals >385 hours,
+	//which equals >16 days
 	//Running a multithreaded version on a server would help
 	//Or changing the compiler settings to optimise for speed of execution
 	
-//Method name						  Number of calls							Number of calls				   Number of calls		Duration of one		Duration of all calls  Duration					
-//									  per run, by variable						per run, using defaults		   per run				execution / ns		(calls * duration)/ns  per run / %				
-//DummyEngine.main()				  == 1										== 1						   ==                 1 == 					== >1,387,516,889,200,000 = 100
-//GeneticAlgorithm.createPopulation() == 1										== 1						   ==                 1 == 					== 						  = 
-//GeneticAlgorithm.evolve()			  == 1										== 1						   ==                 1 == 					== 					      = 
-//GeneticAlgorithm.evolve().loop	  == epochs									== 1,000					   ==             1,000 == 					== 					      = 
-//DummyEngine.tournament()			  == epochs									== 1,000					   ==             1,000 == 					== 					      = 
-//DummyEngine.tourneySimulation()	  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 					== 	 				      = 
-//GeneticAlgorithm.breed()			  == epochs									== 1,000					   ==             1,000 == 1,500			==              1,500,000 = <1
-//population.sort()					  == epochs									== 1,000					   ==             1,000 == 1,700			==              1,700,000 = <1
-//BrainParser.writeBrainTo()		  == epochs									== 1,000					   ==             1,000 == 6,000			==              6,000,000 = <1
-//Ant.isKill()						  == epochs * ants     * popSize			== 1,000 * 250 * 100		   ==        25,000,000 == 1				==             25,000,000 = <1
-//Ant()								  == epochs * ants     * popSize			== 1,000 * 250 * 100		   ==        25,000,000 == 1				==             25,000,000 = <1
-//World.setBrain()					  == epochs * popSize  * 2					== 1,000 * 100 * 2			   ==           200,000 == 250				==             50,000,000 = <1
-//Brain.setState()					  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 25				==            125,000,000 = <1
-//World()							  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 1,750			==            175,000,000 = <1
-//GeneticAlgorithm.ranGenes()		  == epochs * stateNum * k					== 1,000 * 100 * 10			   ==         1,000,000 == 400				==            400,000,000 = <1
-//State.getValues()					  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 80				==            400,000,000 = <1
-//World.getFoodInAnthills()			  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 6,800			==            680,000,000 = <1
-//GeneticAlgorithm.combineStates()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 700				==          3,500,000,000 = <1
-//GeneticAlgorithm.mutateGenes()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 300				==          1,500,000,000 = <1
-//Ant.setBrain()					  == epochs * ants     * popSize  * 2		== 1,000 * 250 * 100 * 2	   ==        50,000,000 == 200				==         10,000,000,000 = <1
-//Ant.isAlive()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30				==    225,000,000,000,000 = 15
-//Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75				==    562,500,000,000,000 = 39
-//Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80				==    600,000,000,000,000 = 46
+//Method name						  Number of calls							Number of calls				   Number of calls		Duration of	  Duration of all calls		Duration					
+//									  per run, by variable						per run, using defaults		   per run				one call / ns (calls * duration) / ns	per run / %				
+//DummyEngine.main()				  == 1										== 1						   ==                 1 == 			  == >1,387,516,889,200,000 == 100
+//GeneticAlgorithm.createPopulation() == 1										== 1						   ==                 1 == 			  == 						== 
+//GeneticAlgorithm.evolve()			  == 1										== 1						   ==                 1 == 			  == 						== 
+//GeneticAlgorithm.evolve().loop	  == epochs									== 1,000					   ==             1,000 == 			  == 					  	== 
+//DummyEngine.tournament()			  == epochs									== 1,000					   ==             1,000 == 			  == 					  	== 
+//DummyEngine.tourneySimulation()	  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 			  == 	 				  	== 
+//GeneticAlgorithm.breed()			  == epochs									== 1,000					   ==             1,000 == 1,500	  ==              1,500,000 == 0
+//population.sort()					  == epochs									== 1,000					   ==             1,000 == 1,700	  ==              1,700,000 == 0
+//BrainParser.writeBrainTo()		  == epochs									== 1,000					   ==             1,000 == 6,000	  ==              6,000,000 == 0
+//Ant.isKill()						  == epochs * ants     * popSize			== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
+//Ant()								  == epochs * ants     * popSize			== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
+//World.setBrain()					  == epochs * popSize  * 2					== 1,000 * 100 * 2			   ==           200,000 == 250		  ==             50,000,000 == 0
+//Brain.setState()					  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 25		  ==            125,000,000 == 0
+//World()							  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 1,750	  ==            175,000,000 == 0
+//GeneticAlgorithm.ranGenes()		  == epochs * stateNum * k					== 1,000 * 100 * 10			   ==         1,000,000 == 400		  ==            400,000,000 == 0
+//State.getValues()					  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 80		  ==            400,000,000 == 0
+//World.getFoodInAnthills()			  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 6,800	  ==            680,000,000 == 0
+//GeneticAlgorithm.combineStates()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 700		  ==          3,500,000,000 == 0
+//GeneticAlgorithm.mutateGenes()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 300		  ==          1,500,000,000 == 0
+//Ant.setBrain()					  == epochs * ants     * popSize  * 2		== 1,000 * 250 * 100 * 2	   ==        50,000,000 == 200		  ==         10,000,000,000 == 0
+//Ant.isAlive()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15
+//Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39
+//Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46
 	
 	public void sortByFitness(Brain[] population, int rounds) {
 		tournament(population, rounds);
@@ -161,7 +162,7 @@ public class DummyEngine {
 		Logger.clearLogs();
 		Logger.setLogLevel(1.5);
 		
-//		//Calculate duration of the timing methods TODO
+//		//Calculate duration of the timing methods
 //		ArrayList<Long> times;
 //		long mean = 0;
 //		int i = 0;

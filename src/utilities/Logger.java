@@ -11,7 +11,7 @@ import java.io.PrintStream;
  * @version 1.0
  */
 public class Logger {
-	//How long it takes the time logging methods to execute TODO
+	//How long it takes the time logging methods to execute
 	private static final long timeLogTime = 1130;
 	//0 == no logging
 	//1 == warnings and errors (default)

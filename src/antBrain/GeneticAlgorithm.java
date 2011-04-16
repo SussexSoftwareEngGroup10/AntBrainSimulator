@@ -138,9 +138,6 @@ public class GeneticAlgorithm {
 		if(Logger.getLogLevel() >= 1.5){
 			Logger.log(new InformationEvent("Completed GeneticAlgorithm evolution"));
 		}
-		for(i = 0; i < population.length; i++){//TODO
-			System.out.println(population[i]);
-		}
 	}
 	
 	private void orderByFitness(DummyEngine dummyEngine, int rounds) {
@@ -162,10 +159,8 @@ public class GeneticAlgorithm {
 		//size which provides the best fitness
 		//i.e. size, in itself, is not inherently good
 //		int targetSize = max;
-		int targetSize = 20;
-		//Math.max(brainA.getNumOfStates(), brainB.getNumOfStates()) + ran.nextInt(3);
-		//TODO
-		//removes random states, which is bad
+		int targetSize = 50; //TODO do it properly, nextInt(5) - 2
+		//Can't grow or shrink brains, which is bad
 		//Numbering of states, and their pointers are fixed,
 		//so reducing the size by removing a state would be a real pain,
 		//as changing every pointer would be inefficient,

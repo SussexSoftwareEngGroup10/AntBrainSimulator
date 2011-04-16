@@ -1,5 +1,6 @@
 package engine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import utilities.InformationEvent;
@@ -73,8 +74,8 @@ public class DummyEngine {
 	//Running a multithreaded version on a server would help
 	//Or changing the compiler settings to optimise for speed of execution
 	
-//Method name						  Number of calls							Number of calls				   Number of calls		Duration of	  Duration of all calls		Duration					
-//									  per run, by variable						per run, using defaults		   per run				one call / ns (calls * duration) / ns	per run / %				
+//Method name						  Number of calls							Number of calls				   Number of calls		Duration of	  Duration of all calls		Duration	After first								
+//									  per run, by variable						per run, using defaults		   per run				one call / ns (calls * duration) / ns	per run / %	improvements
 //DummyEngine.main()				  == 1										== 1						   ==                 1 == 			  == >1,387,516,889,200,000 == 100
 //GeneticAlgorithm.createPopulation() == 1										== 1						   ==                 1 == 			  == 						== 
 //GeneticAlgorithm.evolve()			  == 1										== 1						   ==                 1 == 			  == 						== 
@@ -95,9 +96,9 @@ public class DummyEngine {
 //GeneticAlgorithm.combineStates()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 700		  ==          3,500,000,000 == 0
 //GeneticAlgorithm.mutateGenes()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 300		  ==          1,500,000,000 == 0
 //Ant.setBrain()					  == epochs * ants     * popSize  * 2		== 1,000 * 250 * 100 * 2	   ==        50,000,000 == 200		  ==         10,000,000,000 == 0
-//Ant.isAlive()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15
-//Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39
-//Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46
+//Ant.isAlive()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15		== N/A
+//Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40
+//Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A
 	
 	public void sortByFitness(Brain[] population, int rounds) {
 		tournament(population, rounds);
@@ -136,32 +137,38 @@ public class DummyEngine {
 		world.setBrain(brain, 1);
 		
 		Ant[] ants = world.getAnts();
-		Ant ant;
 		int i = 0;
 		//Run the simulation
 		int r = 0;
 		if(Logger.getLogLevel() >= 5){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
+		
+		// TIMING
+		ArrayList<Long> times;
+		long mean;
+		times = new ArrayList<Long>();
+		mean = 0;
+		rounds = 10000;
+		// /TIMING
+		
 		for(r = 0; r < rounds; r++){
 			for(i = 0; i < ants.length; i++){
-				ant = ants[i];
-				if(ant == null){
-					//Not sure about this, it's polling,
-					//but arrays are faster than arraylists
-					continue;
-				}
-				if(ant.isSurrounded()){//TODO diary, hasSurrounded after move
-					ant.kill();
-					//Faster than isAlive(), polling is inefficient,
-					//as dead ants aren't used for statistics in the GA
-					ants[i] = null;
-					i--;
-				}else{
-					ant.step();
-				}
+				Logger.restartTimer();				// TIMING
+				ants[i].step();
+				//alive check is in step(), surrounded and kill are called after move()
+				times.add(Logger.getCurrentTime());	// TIMING
 			}
 		}
+		
+		// TIMING
+		for(Long t : times){
+			mean += t;
+		}
+		mean = mean / times.size();
+		System.out.println("MEAN: " + mean);
+		// /TIMING
+		
 		//Fitness of the GA brain = its food - opponent's food
 		int[] anthillFood = world.getFoodInAnthills();
 		return anthillFood[1] - anthillFood[0];
@@ -180,7 +187,7 @@ public class DummyEngine {
 //			times = new ArrayList<Long>();
 //			mean = 0;
 //			for(j = 0; j < 10000000; j++){
-//				Logger.startTimer();
+//				Logger.restartTimer();
 //				times.add(Logger.getCurrentTime());
 //			}
 //			for(Long t : times){
@@ -221,19 +228,14 @@ public class DummyEngine {
 		
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		int r = 0;
+		int i = 0;
 		rounds = 300000;
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
 		for(r = 0; r < rounds; r++){
-			for(Ant ant : ants){
-				if(ant.isAlive()){
-					if(ant.isSurrounded()){
-						ant.kill();
-					}else{
-						ant.step();
-					}
-				}
+			for(i = 0; i < ants.length; i++){
+				ants[i].step();
 			}
 		}
 		

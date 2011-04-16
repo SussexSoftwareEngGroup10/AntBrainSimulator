@@ -594,13 +594,8 @@ public class World {
 	
 	/**
 	 * Call after anthills generated, puts an ant in each anthill hex
-	 * 
-	 * @param row of centre hex
-	 * @param col of centre hex
-	 * @param sideLength
-	 * @param c new value for every cell in the area
 	 */
-	private void createAnts() {//TODO arraylist to array
+	private void createAnts() {
 		Cell cell;
 		Ant ant;
 		int colour = -1;
@@ -639,10 +634,10 @@ public class World {
 				//Create and store ant
 				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell);
 				cell.setAnt(ant);
-				this.ants[nextAntIndex[1] + nextAntIndex[2]] = ant;
+				this.ants[nextAntIndex[0] + nextAntIndex[1]] = ant;
 				this.antsBySpecies[colour][nextAntIndex[colour]] = ant;
 				nextAntIndex[colour]++;
-				
+								
 				uid++;
 			}
 		}

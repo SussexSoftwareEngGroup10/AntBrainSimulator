@@ -174,14 +174,10 @@ public class Cell {
 	public String toString() {
 		if(hasAnt()){
 			if(this.ant.getColour() == 0){
-				if(this.ant.isAlive()){
-					return "=";
-				}
+				return "=";
 			}
 			if(this.ant.getColour() == 1){
-				if(this.ant.isAlive()){
-					return "|";
-				}
+				return "|";
 			}
 		}
 		

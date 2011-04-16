@@ -57,6 +57,10 @@ public class Ant implements Comparable<Ant> {
 	}
 	
 	public void step() {
+		if(!this.alive){
+			return;
+		}
+		
 		if(this.rest > 0){
 			this.rest--;
 			return;
@@ -296,6 +300,14 @@ public class Ant implements Comparable<Ant> {
 		}else{
 			this.stateNum = s.getSt2();
 		}
+		Ant[] surroundedAnts = antsMovedTo();
+		for(Ant ant : surroundedAnts){
+			if(ant != null){
+				if(ant.isSurrounded()){
+					ant.kill();
+				}
+			}
+		}
 		this.rest = 14;
 	}
 
@@ -308,7 +320,19 @@ public class Ant implements Comparable<Ant> {
 		}
 	}
 	
-	public boolean isSurrounded() {
+	private Ant[] antsMovedTo() {
+		Ant[] ants = new Ant[3];
+		int dir = -1;
+		
+		for(dir = -1; dir <= 1; dir++){
+			//(as can't surround a cell you move away from)
+			ants[dir + 1] = this.cell.getNeighbour(dir).getAnt();
+		}
+		//May return null ants
+		return ants;
+	}
+	
+	private boolean isSurrounded() {
 		if(neighbourFoes() >= 5){
 			return true;
 		}
@@ -339,7 +363,7 @@ public class Ant implements Comparable<Ant> {
 		return foes;
 	}
 	
-	public void kill() {
+	private void kill() {
 		this.alive = false;
 		
 		//Drop food carried + 3

@@ -49,9 +49,6 @@ public abstract class Event extends Throwable {
 		if(seconds < 10) s += "0";
 		s += seconds;
 		s += ";  ";
-		while(s.length() < 41){
-			s += " ";
-		}
 		
 		//Class name
 		s += "CLASS_NAME: ";

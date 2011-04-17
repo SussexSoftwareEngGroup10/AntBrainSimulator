@@ -1,5 +1,9 @@
 package antBrain;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,10 +16,11 @@ import utilities.WarningEvent;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Brain implements Cloneable, Comparable<Brain> {
+public class Brain implements Cloneable, Comparable<Brain>, Serializable {
+	private static final long serialVersionUID = 1L;
 	private static final int minNumOfStates = 3;
 	private static final int maxNumOfStates = 10000;
-	private final HashMap<Integer, State> states;
+	private HashMap<Integer, State> states;
 	private int fitness;
 	
 	public Brain() {
@@ -122,4 +127,19 @@ public class Brain implements Cloneable, Comparable<Brain> {
 		}
 		return s;
 	}
+	
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeObject(this.states);
+		out.writeInt(this.fitness);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+		this.states = (HashMap<Integer, State>) in.readObject();
+		this.fitness = in.readInt();
+	}
+
+//	private void readObjectNoData() throws ObjectStreamException{
+//		
+//	}
 }

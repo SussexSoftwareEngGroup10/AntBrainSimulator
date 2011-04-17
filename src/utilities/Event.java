@@ -39,9 +39,15 @@ public abstract class Event extends Throwable {
 //		s += new Date();
 //		s += new Time(System.currentTimeMillis());
 		this.calendar = Calendar.getInstance();
-		s += this.calendar.get(Calendar.HOUR_OF_DAY) + ":"
-		+ this.calendar.get(Calendar.MINUTE) + ":"
-		+ this.calendar.get(Calendar.SECOND);
+		int hours = this.calendar.get(Calendar.HOUR_OF_DAY);
+		if(hours < 10) s += "0";
+		s += hours + ":";
+		int minutes = this.calendar.get(Calendar.MINUTE);
+		if(minutes < 10) s += "0";
+		s += minutes + ":";
+		int seconds = this.calendar.get(Calendar.SECOND);
+		if(seconds < 10) s += "0";
+		s += seconds;
 		s += ";  ";
 		while(s.length() < 41){
 			s += " ";

@@ -1,5 +1,10 @@
 package antBrain;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import utilities.InvalidInputEvent;
 import utilities.Logger;
 
@@ -47,7 +52,8 @@ Move 8 11             ; state 15:     ...or move forward and return to
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class State {
+public class State implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private static final int max = Brain.getMaxNumOfStates();
 	
 	//Remember to change random state generation in GeneticAlgorithm and other methods if any enums are altered
@@ -59,17 +65,17 @@ public class State {
 	
 	//All final, as the first value given should never be overridden
 	//Default values are null and -1
-	private final Command command;
-	private final SenseDir senseDir;
-	private final TurnDir turnDir;
-	private final int marker;
-	private final int p;
-	private final int st1;
-	private final int st2;
-	private final Condition condition;
-	private final int senseMarker;
+	private Command command;
+	private SenseDir senseDir;
+	private TurnDir turnDir;
+	private int marker;
+	private int p;
+	private int st1;
+	private int st2;
+	private Condition condition;
+	private int senseMarker;
 	
-	private final int stateNum;
+	private int stateNum;
 	
 	/**
 	 * Constructer used by the Genetic Algorithm, gives increased efficiency
@@ -932,4 +938,34 @@ public class State {
 		
 		return s;
 	}
+	
+	//The getters and setters for the enums allow for null values
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeInt(getCommand());
+		out.writeInt(getSenseDir());
+		out.writeInt(getTurnDir());
+		out.writeInt(this.marker);
+		out.writeInt(this.p);
+		out.writeInt(this.st1);
+		out.writeInt(this.st2);
+		out.writeInt(getCondition());
+		out.writeInt(this.senseMarker);
+	}
+	
+	@SuppressWarnings("unused")
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+		this.command = toCommand(in.readInt());
+		this.senseDir = toSenseDir(in.readInt());
+		this.turnDir = toTurnDir(in.readInt());
+		this.marker = in.readInt();
+		this.p = in.readInt();
+		this.st1 = in.readInt();
+		this.st2 = in.readInt();
+		this.condition = toCondition(in.readInt());
+		this.senseMarker = in.readInt();
+	}
+	
+//	private void readObjectNoData() throws ObjectStreamException{
+//		
+//	}
 }

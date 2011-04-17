@@ -25,24 +25,24 @@ import engine.DummyEngine;
  */
 public class GeneticAlgorithm implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final String folderName = "Genetic_Algorithms";
-	private static final File folder = new File(folderName);
+	private static final String superFolderPath = "Genetic_Algorithms";
+	private static final File superFolder = new File(superFolderPath);
 	private static int gasConstructed = 0;
-	private static final String saveFolderNamePrefix = folderName + "\\" + "Genetic_Algorithm_";
+	private static final String subFolderPathPrefix = superFolderPath + "\\" + "Genetic_Algorithm_";
 	private static final Random ran = new Random();
 	private static final int min = Brain.getMinNumOfStates();
 	private static final int max = Brain.getMaxNumOfStates();
 	private static String bestBrainPath = "best.brain";
 	
 	private int saveDir;
-	private Brain[] population;
-	private int popSize;
 	private int epoch;
+	private int popSize;
+	private Brain[] population;
 	
 	public GeneticAlgorithm() {
 		this.saveDir = gasConstructed;
 		gasConstructed++;
-		if(!folder.exists()) folder.mkdir();
+		if(!superFolder.exists()) superFolder.mkdir();
 		this.epoch = 0;
 	}
 	
@@ -104,7 +104,8 @@ public class GeneticAlgorithm implements Serializable {
 		
 		//After constructor, epoch == 0,
 		//after deserialization, epoch == epoch to be run next
-		for(;this.epoch < epochs; this.epoch++){
+		for(; this.epoch < epochs; this.epoch++){
+			loadLast();
 			save();
 			//Log progress
 			int frequency = epochs / 1000;
@@ -361,41 +362,45 @@ public class GeneticAlgorithm implements Serializable {
 		return this.population[this.population.length - 1];
 	}
 	
-	public static void clearGASers() {
-		//Deletes every file beginning with the above prefix and ending with the above suffix
-		File folder = new File(folderName + "\\");
-		File[] files = folder.listFiles();
-		int i = 0;
-		
-		for(i = 0; i < files.length; i++){
-			if(files[i].getPath().startsWith(folderName + "\\" + saveFolderNamePrefix)){
-				files[i].delete();
-			}
-		}
-	}
-	
 	public void resetEpoch() {
 		this.epoch = 0;
+	}
+	
+	public static void clearGASers() {//FIXME
+		//Deletes every file beginning with the above prefix and ending with the above suffix
+		File folder = new File(superFolderPath + "\\");
+		File[] files = folder.listFiles();
+		
+		for(File f : files){
+			System.out.println(f.getPath());
+			if(f.getPath().startsWith(subFolderPathPrefix)){
+				//Assume f does not contain any directories
+				for(File sf : f.listFiles()){
+					sf.delete();
+				}
+				f.delete();
+			}
+		}
 	}
 	
 	public void save() {
 		//TODO want to store this object as "Genetic_Algorithms\Genetic_Algorithm_x\epoch_n.ser"
 		//containing population, popsize, epoch
 		
-		//Setup save folder
-		String saveFolderName = saveFolderNamePrefix + this.saveDir;
-		File saveFolder = new File(saveFolderName); 
-		saveFolder.mkdir();
+		//Setup save superFolder
+		String subFolderPath = subFolderPathPrefix + this.saveDir;
+		File subFolder = new File(subFolderPath); 
+		subFolder.mkdir();
 		
-		String path = saveFolderName + "\\epoch_" + this.epoch + ".ser";
+		String filePath = subFolderPath + "\\epoch_" + this.epoch + ".ser";
 		
 		//Write this object to path
 		try{
-			new ObjectOutputStream(new FileOutputStream(path)).defaultWriteObject();
+			writeObject(new ObjectOutputStream(new FileOutputStream(filePath)));
 		}catch(FileNotFoundException e){
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new IOEvent("Save file: \""
-					+ path + " not found", e));
+					+ filePath + " not found", e));
 			}
 		}catch(IOException e){
 			if(Logger.getLogLevel() >= 1){
@@ -405,51 +410,60 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	public void loadLast() {
-		//Get folder ending in highest number
-		File[] files = folder.listFiles();
+		//Get superFolder ending in highest number
+		File[] files = superFolder.listFiles();
 		int max = -1;
 		int num;
-		String path;
+		String filePath;
 		for(File f1 : files){
 			//Genetic_Algorithms\Genetic_Algorithm_x
-			path = f1.getPath();
-			if(path.startsWith(saveFolderNamePrefix)){
+			filePath = f1.getPath();
+			if(filePath.startsWith(subFolderPathPrefix)){
 				//Add number that the path ends with
-				path.replace(saveFolderNamePrefix, "");
-				num = Integer.parseInt(path);
+				filePath = filePath.replace(subFolderPathPrefix, "");
+				num = Integer.parseInt(filePath);
 				if(num > max){
 					max = num;
 				}
 			}
 		}
-		String loadFolderName = saveFolderNamePrefix + max;
-		File loadFolder = new File(loadFolderName);
+		if(max == -1){
+			//no subfolders
+			return;
+		}
+		String subFolderPath = subFolderPathPrefix + max;
+		File folder = new File(subFolderPath);
 		
 		//Get file ending in highest number
-		String loadFileNamePrefix = loadFolderName + "\\epoch_";
-		String loadFileNameSuffix = ".ser";
-		files = loadFolder.listFiles();
+		String filePathPrefix = subFolderPath + "\\epoch_";
+		String filePathSuffix = ".ser";
+		files = folder.listFiles();
 		max = -1;
 		for(File f2 : files){
-			path = f2.getPath();
-			if(path.startsWith(loadFileNamePrefix)
-				&& path.endsWith(loadFileNameSuffix)){
-				path.replace(loadFileNamePrefix, "");
-				path.replace(loadFileNameSuffix, "");
-				num = Integer.parseInt(path);
+			filePath = f2.getPath();
+			if(filePath.startsWith(filePathPrefix)
+				&& filePath.endsWith(filePathSuffix)){
+				filePath = filePath.replace(filePathPrefix, "");
+				filePath = filePath.replace(filePathSuffix, "");
+				num = Integer.parseInt(filePath);
 				if(num > max){
 					max = num;
 				}
 			}
 		}
-		String loadFileName = loadFileNamePrefix + max;
-		File loadFile = new File(loadFileName);
+		if(max == -1){
+			//No files,
+			//could try next best subfolder
+			return;
+		}
+		String fileName = filePathPrefix + max + filePathSuffix;
+		File loadFile = new File(fileName);
 		load(loadFile);
 	}
 	
 	public void load(File loadFile) {
 		try{
-			new ObjectInputStream(new FileInputStream(loadFile)).defaultReadObject();
+			readObject(new ObjectInputStream(new FileInputStream(loadFile)));
 		}catch(FileNotFoundException e){
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new IOEvent("Save file: \""
@@ -464,18 +478,23 @@ public class GeneticAlgorithm implements Serializable {
 				Logger.log(new IOEvent(e.getMessage(), e));
 			}
 		}
-		//TODO validation
 	}
 	
-//	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-//		//TODO put the code in the right methods
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeInt(this.saveDir);
+		out.writeInt(this.epoch);
+		out.writeInt(this.popSize);
+		out.writeObject(this.population);
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+		this.saveDir = in.readInt();
+		this.epoch = in.readInt();
+		this.popSize = in.readInt();
+		this.population = (Brain[]) in.readObject();
+	}
+
+//	private void readObjectNoData() throws ObjectStreamException{
+//		
 //	}
-//	
-//    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
-//    	
-//    }
-//    
-//    private void readObjectNoData() throws ObjectStreamException{
-//    	
-//    }
 }

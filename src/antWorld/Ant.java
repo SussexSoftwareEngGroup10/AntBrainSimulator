@@ -13,7 +13,7 @@ import antBrain.State;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Ant implements Comparable<Ant> {
+public final class Ant implements Comparable<Ant> {
 	enum Colour { BLACK, RED }
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
@@ -23,12 +23,19 @@ public class Ant implements Comparable<Ant> {
 	private final int uid;
 	private final Colour colour;
 	private Brain brain;
-	private int stateNum = 0;
 	private Cell cell;
 	private boolean alive = true;
 	private int direction;
-	private boolean food = false;
+	private boolean hasFood = false;
 	private int rest = 0;
+	
+	//Step local variables as fields to enable inline code
+	//all methods except constructor are final to allow inline code
+	private State state;
+	private Cell senseCell;
+	private Cell newCell;
+	private Ant[] neighbourAnts = new Ant[6];
+	private Ant neighbourAnt;
 	
 	public Ant(int uid, Random ran, int direction, int colour, Cell cell) {
 		this.uid = uid;
@@ -56,7 +63,16 @@ public class Ant implements Comparable<Ant> {
 		this.direction = direction;
 	}
 	
-	public void step() {
+	//TODO alt shift i = inline
+	public final void step() {
+		//Removed local variables and parameters in step() and methods it calls
+		//to enable compiler to write an inline version,
+		//although it has no obligation to do this,
+		//only will if execution time will be reduced
+		//the current state number is not stored,
+		//the state is changed at the end of any method called by step()
+		//(move(), sense()...etc...) 
+		//TODO get rid of this bloody polling
 		if(!this.alive){
 			return;
 		}
@@ -66,215 +82,226 @@ public class Ant implements Comparable<Ant> {
 			return;
 		}
 		
-		State s = this.brain.getState(this.stateNum);
-		
-		int command = 0;
-		try{
-			command = s.getCommand();
-		}catch(NullPointerException e){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new ErrorEvent("Null Command in state: " + e.getMessage(), e));
-			}
-			System.exit(1);
-		}
-
-		switch(command){
+		switch(this.state.getCommand()){
 		//Sense senseDir st1 st2 condition
 		case 0:
-			sense(s);
+			sense();
 			break;
 		//Mark marker st1
 		case 1:
-			mark(s);
+			mark();
 			break;
 		//Unmark marker st1
 		case 2:
-			unmark(s);
+			unmark();
 			break;
 		//PickUp st1 st2
 		case 3:
-			pickUp(s);
+			pickUp();
 			break;
 		//Drop st1
 		case 4:
-			drop(s);
+			drop();
 			break;
 		//Turn turnDir st1
 		case 5:
-			turn(s);
+			turn();
 			break;
 		//Move st1 st2
 		case 6:
-			move(s);
+			move();
 			break;
 		//Flip p st1 st2
 		case 7:
-			flip(s);
+			flip();
 			break;
-		//This should never be reached
 		default:
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Command Argument in Ant step"));
+			//This should not be reached
+			if(this.state.getCommand() == -1){
+				//null command
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new ErrorEvent("Null Command in state"));
+				}
+				//This should never occur, fatal error,
+				//avoid further errors and logging
+				System.exit(1);
+			}else{
+				//command < -1 || > 7
+				if(Logger.getLogLevel() >= 1){
+					Logger.log(new InvalidInputEvent("Illegal Command Argument in Ant step"));
+				}
 			}
 		}
 	}
 
 	//Sense senseDir st1 st2 condition
-	private void sense(State s) {
-		Cell c = null;
-		switch(s.getSenseDir()){
+	private final void sense() {
+		switch(this.state.getSenseDir()){
 		case 0:
-			c = this.cell;
+			this.senseCell = this.cell;
 			break;
 		case 1:
-			c = this.cell.getNeighbour(this.direction);
+			this.senseCell = this.cell.getNeighbour(this.direction);
 			break;
 		case 2:
-			c = this.cell.getNeighbour(this.direction - 1);
+			this.senseCell = this.cell.getNeighbour(this.direction - 1);
 			break;
 		case 3:
-			c = this.cell.getNeighbour(this.direction + 1);
+			this.senseCell = this.cell.getNeighbour(this.direction + 1);
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new InvalidInputEvent("Illegal senseDir Argument in Ant sense"));
 			}
-			c = this.cell;
+			this.senseCell = this.cell;
 		}
 		
-		boolean condition = false;
-		switch(s.getCondition()){
+		//Break after state is altered, state is always altered once per call
+		//removed boolean which was not needed to increase efficiency,
+		//however, the amount of code needed increased and has become obfuscated
+		switch(this.state.getCondition()){
 		//FRIEND
 		case 0:
-			if(c.hasAnt()){
-				if(c.getAnt().getColour() == this.colour.ordinal()){
-					condition = true;
-				}
+			if(this.senseCell.hasAnt()
+				&& this.senseCell.getAnt().getColour() == this.colour.ordinal()){
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//FOE
 		case 1:
-			if(c.hasAnt()){
-				if(c.getAnt().getColour() != this.colour.ordinal()){
-					condition = true;
-				}
+			if(this.senseCell.hasAnt()
+				&& this.senseCell.getAnt().getColour() != this.colour.ordinal()){
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//FRIENDWITHFOOD
 		case 2:
-			if(c.hasAnt()){
-				if(c.getAnt().getColour() == this.colour.ordinal()){
-					if(c.getAnt().hasFood()){
-						condition = true;
-					}
-				}
+			if(this.senseCell.hasAnt()
+				&& this.senseCell.getAnt().getColour() == this.colour.ordinal()
+				&& this.senseCell.getAnt().hasFood()){
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//FOEWITHFOOD
 		case 3:
-			if(c.hasAnt()){
-				if(c.getAnt().getColour() != this.colour.ordinal()){
-					if(c.getAnt().hasFood()){
-						condition = true;
-					}
-				}
+			if(this.senseCell.hasAnt()
+				&& this.senseCell.getAnt().getColour() != this.colour.ordinal()
+				&& this.senseCell.getAnt().hasFood()){
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//FOOD
 		case 4:
-			if(c.hasFood()){
-				condition = true;
+			if(this.senseCell.hasFood()){
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//ROCK
 		case 5:
-			if(c.isRocky()){
-				condition = true;
+			if(this.senseCell.isRocky()){
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//MARKER
 		case 6:
-			if(c.getMarker(this.colour.ordinal(), s.getSenseMarker())){
-				condition = true;
+			if(this.senseCell.getMarker(this.colour.ordinal(), this.state.getSenseMarker())){
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//FOEMARKER
 		case 7:
-			if(c.getAnyMarker(this.colour.ordinal())){
-				condition = true;
+			if(this.senseCell.getAnyMarker(this.colour.ordinal())){
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//HOME
 		case 8:
-			if(c.getAnthill() - 1 == this.colour.ordinal()) {
-				condition = true;
+			if(this.senseCell.getAnthill() - 1 == this.colour.ordinal()) {
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		//FOEHOME
 		case 9:
-			if(c.getAnthill() != 0){
-				if(c.getAnthill() - 1 != this.colour.ordinal()) {
-					condition = true;
-				}
+			if(this.senseCell.getAnthill() != 0
+				&& this.senseCell.getAnthill() - 1 != this.colour.ordinal()) {
+				this.state = this.brain.getState(this.state.getSt1());
+				break;
 			}
+			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
 				Logger.log(new InvalidInputEvent("Illegal Condition Argument in Ant sense"));
 			}
-		}
-		
-		if(condition){
-			this.stateNum = s.getSt1();
-		}else{
-			this.stateNum = s.getSt2();
+			this.state = this.brain.getState(this.state.getSt2());
 		}
 	}
 
 	//Mark marker st1
-	private void mark(State s) {
-		this.cell.mark(this.colour.ordinal(), s.getMarker());
-		this.stateNum = s.getSt1();
+	private final void mark() {
+		this.cell.mark(this.colour.ordinal(), this.state.getMarker());
+		this.state = this.brain.getState(this.state.getSt1());
 	}
 
 	//Unmark marker st1
-	private void unmark(State s) {
-		this.cell.unmark(this.colour.ordinal(), s.getMarker());
-		this.stateNum = s.getSt1();
+	private final void unmark() {
+		this.cell.unmark(this.colour.ordinal(), this.state.getMarker());
+		this.state = this.brain.getState(this.state.getSt1());
 	}
 
 	//PickUp st1 st2
-	private void pickUp(State s) {
-		//If can not carrying food, and food in cell, pick up food and go to st1, else st2
-		if(!this.food && this.cell.hasFood()){
+	private final void pickUp() {
+		//If can not carrying hasFood, and hasFood in cell, pick up hasFood and go to st1, else st2
+		if(!this.hasFood && this.cell.hasFood()){
 			this.cell.takeFood();
-			this.food = true;
-			this.stateNum = s.getSt1();
+			this.hasFood = true;
+			this.state = this.brain.getState(this.state.getSt1());
 		}else{
-			this.stateNum = s.getSt2();
+			this.state = this.brain.getState(this.state.getSt2());
 		}
 	}
 
 	//Drop st1
-	private void drop(State s) {
-		//If can carrying food, and food in cell < max, drop up food and go to st1
-		if(this.food && this.cell.foodCount() < 9){
-			this.cell.giveFood();
-			this.food = false;
-			this.stateNum = s.getSt1();
+	private final void drop() {
+		//Assumes food contained in a cell cannot be > 9
+		//If can carrying hasFood, and hasFood in cell < max, drop up hasFood and go to st1
+		if(this.hasFood){// && this.cell.foodCount() < 9){
+			this.cell.giveFood(1);
+			this.hasFood = false;
+			this.state = this.brain.getState(this.state.getSt1());
 		}
 	}
 	
 	//Turn turnDir st1
-	private void turn(State s) {
-		switch(s.getTurnDir()){
+	private final void turn() {
+		switch(this.state.getTurnDir()){
 		case 0:
+			//Turn anticlockwise
 			this.direction--;
 			if(this.direction < 0){
 				this.direction = 5;
 			}
 			break;
 		case 1:
+			//Turn clockwise
 			this.direction++;
 			if(this.direction > 5){
 				this.direction = 0;
@@ -285,122 +312,129 @@ public class Ant implements Comparable<Ant> {
 				Logger.log(new InvalidInputEvent("Illegal TurnDir Argument in Ant turn"));
 			}
 		}
-		this.stateNum = s.getSt1();
+		this.state = this.brain.getState(this.state.getSt1());
 	}
 	
 	//Move st1 st2
-	private void move(State s) {
+	private final void move() {
 		//If new cell is not rocky and does not contain an ant, move there and go to st1, else st2
-		Cell newCell = this.cell.getNeighbour(this.direction);
-		if(!newCell.isRocky() && !newCell.hasAnt()){
-			newCell.setAnt(this);
+		this.newCell = this.cell.getNeighbour(this.direction);
+		if(!this.newCell.isRocky() && !this.newCell.hasAnt()){
+			//Move to cell
+			this.newCell.setAnt(this);
 			this.cell.setAnt(null);
-			this.cell = newCell;
-			this.stateNum = s.getSt1();
+			this.cell = this.newCell;
+			this.state = this.brain.getState(this.state.getSt1());
 		}else{
-			this.stateNum = s.getSt2();
+			this.state = this.brain.getState(this.state.getSt2());
 		}
-		Ant[] surroundedAnts = antsMovedTo();
-		for(Ant ant : surroundedAnts){
-			if(ant != null){
-				if(ant.isSurrounded()){
-					ant.kill();
-				}
+		
+		//Check 3 neighbour ants for becoming surrounded
+		//removed use of an array, more efficient
+		this.neighbourAnt = antsMovedTo(this.direction - 1);
+		if(this.neighbourAnt != null){
+			if(this.neighbourAnt.isSurrounded()){
+				this.neighbourAnt.kill();
 			}
 		}
+		this.neighbourAnt = antsMovedTo(this.direction);
+		if(this.neighbourAnt != null){
+			if(this.neighbourAnt.isSurrounded()){
+				this.neighbourAnt.kill();
+			}
+		}
+		this.neighbourAnt = antsMovedTo(this.direction + 1);
+		if(this.neighbourAnt != null){
+			if(this.neighbourAnt.isSurrounded()){
+				this.neighbourAnt.kill();
+			}
+		}
+		
 		this.rest = 14;
 	}
 
 	//Flip p st1 st2
-	private void flip(State s) {
-		if(this.ran.nextInt(s.getP()) == 0){
-			this.stateNum = s.getSt1();
+	private final void flip() {
+		if(this.ran.nextInt(this.state.getP()) == 0){
+			this.state = this.brain.getState(this.state.getSt1());
 		}else{
-			this.stateNum = s.getSt2();
+			this.state = this.brain.getState(this.state.getSt2());
 		}
 	}
 	
-	private Ant[] antsMovedTo() {
-		Ant[] ants = new Ant[3];
-		int dir = -1;
-		
-		for(dir = -1; dir <= 1; dir++){
-			//(as can't surround a cell you move away from)
-			ants[dir + 1] = this.cell.getNeighbour(dir).getAnt();
-		}
-		//May return null ants
-		return ants;
+	private final Ant antsMovedTo(int dir) {
+		//May return null ant
+		return this.cell.getNeighbour(dir + 1).getAnt();
 	}
 	
-	private boolean isSurrounded() {
+	private final boolean isSurrounded() {
 		if(neighbourFoes() >= 5){
 			return true;
 		}
 		return false;
 	}
 	
-	public void setBrain(Brain brain) {
+	public final void setBrain(Brain brain) {
 		this.brain = brain;
+		this.state = brain.getState(0);
 	}
 	
-	private int neighbourFoes() {
-		Cell[] neighbours = this.cell.getNeighbours();
-		Ant ant = null;
-		int foes = 0;
-		int i = 0;
-		//For each neighbouring cell
+	private final int neighbourFoes() {
+		//Assumes none of the neighbouring cells are null
+		int i;
 		for(i = 0; i < 6; i++){
+			this.neighbourAnts[i] = this.cell.getNeighbour(i).getAnt();
+		}
+		
+		int foes = 0;
+		//For each neighbouring cell
+		for(Ant ant : this.neighbourAnts){
 			//If the cell contains a foe,
 			//increment number of foes found
-			ant = neighbours[i].getAnt();
-			if(ant != null){
-				if(ant.getColour() != this.colour.ordinal()){
-					foes++;
-				}
+			if(ant != null
+				&& ant.getColour() != this.colour.ordinal()){
+				foes++;
 			}
 		}
 		//All cells must have contained foes
 		return foes;
 	}
 	
-	private void kill() {
+	private final void kill() {
 		this.alive = false;
 		
-		//Drop food carried + 3
-		if(this.food){
-			this.cell.giveFood();
+		//Drop hasFood carried + 3
+		if(this.hasFood){
+			this.cell.giveFood(1);
 		}
-		int i = 0;
-		for(i = 0; i < 3; i++){
-			this.cell.giveFood();
-		}
+		this.cell.giveFood(3);
 		
 		//Remove from world
 		this.cell.setAnt(null);
 		this.cell = null;
 	}
 	
-	public boolean isAlive() {
+	public final boolean isAlive() {
 		return this.alive;
 	}
 	
-	public Cell getCell() {
+	public final Cell getCell() {
 		return this.cell;
 	}
 	
-	public int getUID() {
+	public final int getUID() {
 		return this.uid;
 	}
 	
-	public int getColour() {
+	public final int getColour() {
 		return this.colour.ordinal();
 	}
 	
-	public boolean hasFood() {
-		return this.food;
+	public final boolean hasFood() {
+		return this.hasFood;
 	}
 	
-	public boolean equals(Ant ant) {
+	public final boolean equals(Ant ant) {
 		//This is consistent with the natural ordering of Ant objects,
 		//as given by compareTo
 		//Should never return true, as each engine creates a maximum of 1
@@ -412,7 +446,7 @@ public class Ant implements Comparable<Ant> {
 	}
 	
 	@Override
-	public int compareTo(Ant ant) {
+	public final int compareTo(Ant ant) {
 		//Sorts by UID, lowest first
 		//Returns negative if this instance is less than the argument
 		if(ant.getUID() < this.uid){
@@ -424,7 +458,7 @@ public class Ant implements Comparable<Ant> {
 		}
 	}
 
-	public void setCell(Cell cell) {
+	public final void setCell(Cell cell) {
 		this.cell = cell;
 	}
 }

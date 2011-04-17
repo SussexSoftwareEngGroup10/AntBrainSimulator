@@ -146,10 +146,10 @@ public class Cell {
 		return this.food != 0;
 	}
 	
-	public void giveFood() {
-		if(this.food < 9){
-			this.food++;
-		}
+	public void giveFood(int i) {
+//		if(this.food + i <= 9){
+		this.food += i;
+//		}
 	}
 	
 	public void takeFood() {
@@ -186,7 +186,12 @@ public class Cell {
 			
 		}
 		if(this.food > 0){
+			//Prints the food value,
+			//if it is > 9, prints 9 instead
 			if(this.anthill == 0){ //0 to 9
+				if(this.food > 9){
+					return Integer.toString(9);
+				}
 				return Integer.toString(this.food);
 			}
 			
@@ -195,9 +200,15 @@ public class Cell {
 			//Greek isn't recognised by Notepad or the console (prints '?' instead)
 			//Minimum food value is 1, so -1 from ascii codes
 			if(this.anthill == 1){ //Upper case, 65 for Latin, 913 for Greek
+				if(this.food > 9){
+					return Character.toString((char) (64 + 9));
+				}
 				return Character.toString((char) (64 + this.food));
 			}
 			if(this.anthill == 2){ //Lower case, 97 for Latin, 945 for Greek
+				if(this.food > 9){
+					return Character.toString((char) (96 + 9));
+				}
 				return Character.toString((char) (96 + this.food));
 			}
 			//Else error, cannot be less than 0 or more than 2 anthills

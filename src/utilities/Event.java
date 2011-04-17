@@ -1,9 +1,10 @@
 package utilities;
 
-import java.util.Date;
+import java.util.Calendar;
 
 public abstract class Event extends Throwable {
 	private static final long serialVersionUID = 1L;
+	private Calendar calendar;
 	enum Severity { INFORMATION, WARNING, ERROR }
 	protected Severity severity;
 	
@@ -34,8 +35,17 @@ public abstract class Event extends Throwable {
 		
 		//Time
 		s += "TIME: ";
-		s += new Date();
+		//I believe Calendar is more efficient than Date, and it's wrapper, Time
+//		s += new Date();
+//		s += new Time(System.currentTimeMillis());
+		this.calendar = Calendar.getInstance();
+		s += this.calendar.get(Calendar.HOUR_OF_DAY) + ":"
+		+ this.calendar.get(Calendar.MINUTE) + ":"
+		+ this.calendar.get(Calendar.SECOND);
 		s += ";  ";
+		while(s.length() < 41){
+			s += " ";
+		}
 		
 		//Class name
 		s += "CLASS_NAME: ";

@@ -1,6 +1,6 @@
 package engine;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 
 import utilities.InformationEvent;
@@ -8,6 +8,7 @@ import utilities.Logger;
 
 import antBrain.Brain;
 import antBrain.BrainController;
+import antBrain.GeneticAlgorithm;
 import antWorld.Ant;
 import antWorld.World;
 
@@ -73,6 +74,11 @@ public class DummyEngine {
 	//which equals >16 days
 	//Running a multithreaded version on a server would help
 	//Or changing the compiler settings to optimise for speed of execution
+	//After first improvements, time reduced to >6 days
+	//Start: 100ns
+	//combine ant methods: 80ns
+	//remove excessive isSurrounded() checks: 30ns
+	//removed arrays and a number of variables from the ant code: 30-40ns
 	
 //Method name						  Number of calls							Number of calls				   Number of calls		Duration of	  Duration of all calls		Duration	After first								
 //									  per run, by variable						per run, using defaults		   per run				one call / ns (calls * duration) / ns	per run / %	improvements
@@ -137,37 +143,49 @@ public class DummyEngine {
 		world.setBrain(brain, 1);
 		
 		Ant[] ants = world.getAnts();
-		int i = 0;
 		//Run the simulation
 		int r = 0;
 		if(Logger.getLogLevel() >= 5){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
 		
-		// TIMING
-		ArrayList<Long> times;
-		long mean;
-		times = new ArrayList<Long>();
-		mean = 0;
-		rounds = 10000;
-		// /TIMING
+//		// TIMING
+//		System.gc();
+//		ArrayList<Long> times;
+//		long mean;
+//		times = new ArrayList<Long>();
+//		mean = 0;
+//		// /TIMING
 		
 		for(r = 0; r < rounds; r++){
-			for(i = 0; i < ants.length; i++){
-				Logger.restartTimer();				// TIMING
-				ants[i].step();
-				//alive check is in step(), surrounded and kill are called after move()
-				times.add(Logger.getCurrentTime());	// TIMING
+			for(Ant ant : ants){
+//				// TIMING
+//				System.gc();
+//				Logger.restartTimer();
+//				// /TIMING
+				
+				//alive check is in step(),
+				//surrounded checks and kill are called after move()
+				//Could run a thread here, synchronise step(), simples,
+				//but the threading may slow it down so much that the change is insignificant
+				ant.step();
+				
+				//TODO
+				//no polling, more object reuse (inc. ants, ant, maybe world), factorise,
+				//think about algorithm more, serialize for resuming
+				//JIT, inline(javac -O MyClass), arrays more, no enumerations
+				
+//				times.add(Logger.getCurrentTime());	// TIMING
 			}
 		}
 		
-		// TIMING
-		for(Long t : times){
-			mean += t;
-		}
-		mean = mean / times.size();
-		System.out.println("MEAN: " + mean);
-		// /TIMING
+//		// TIMING
+//		for(Long t : times){
+//			mean += t;
+//		}
+//		mean = mean / times.size();
+//		System.out.println("MEAN: " + mean + "ns");
+//		// /TIMING
 		
 		//Fitness of the GA brain = its food - opponent's food
 		int[] anthillFood = world.getFoodInAnthills();
@@ -175,6 +193,7 @@ public class DummyEngine {
 	}
 	
 	public static void main(String args[]) {
+		GeneticAlgorithm.clearGASers();
 		Logger.clearLogs();
 		Logger.setLogLevel(1.5);
 		
@@ -228,14 +247,13 @@ public class DummyEngine {
 		
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		int r = 0;
-		int i = 0;
 		rounds = 300000;
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
 		for(r = 0; r < rounds; r++){
-			for(i = 0; i < ants.length; i++){
-				ants[i].step();
+			for(Ant ant : ants){
+				ant.step();
 			}
 		}
 		

@@ -1,9 +1,18 @@
 package antBrain;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
 
+import utilities.IOEvent;
 import utilities.InformationEvent;
 import utilities.Logger;
 import utilities.WarningEvent;
@@ -14,16 +23,27 @@ import engine.DummyEngine;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class GeneticAlgorithm {
+public class GeneticAlgorithm implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private static final String folderName = "Genetic_Algorithms";
+	private static final File folder = new File(folderName);
+	private static int gasConstructed = 0;
+	private static final String saveFolderNamePrefix = folderName + "\\" + "Genetic_Algorithm_";
 	private static final Random ran = new Random();
 	private static final int min = Brain.getMinNumOfStates();
 	private static final int max = Brain.getMaxNumOfStates();
 	private static String bestBrainPath = "best.brain";
+	
+	private int saveDir;
 	private Brain[] population;
 	private int popSize;
+	private int epoch;
 	
 	public GeneticAlgorithm() {
-		//No code needed
+		this.saveDir = gasConstructed;
+		gasConstructed++;
+		if(!folder.exists()) folder.mkdir();
+		this.epoch = 0;
 	}
 	
 	public static void setBestBrainPath(String bestBrainPath) {
@@ -59,8 +79,6 @@ public class GeneticAlgorithm {
 				", and a 1/" + mutationRate + " chance of mutation"));
 		}
 		Brain[] newPop;
-		int e = 0;
-		int i = 0;
 		int j = 0;
 		int ran1;
 		int ran2;
@@ -83,15 +101,19 @@ public class GeneticAlgorithm {
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
 		orderByFitness(dummyEngine, rounds);
-
-		for(e = 0; e < epochs; e++){
+		
+		//After constructor, epoch == 0,
+		//after deserialization, epoch == epoch to be run next
+		for(;this.epoch < epochs; this.epoch++){
+			save();
 			//Log progress
-			int frequency = epochs / 100;
-			if(frequency == 0) frequency = 1;
-			for(i = 0; i <= epochs / frequency; i++){
-				if(e == i * frequency){
+			int frequency = epochs / 1000;
+			if(frequency == 0) frequency = 1; //Round up, otherwise divide by zero
+			double d = 0;
+			for(d = 0; d <= epochs / frequency; d += frequency){
+				if(this.epoch == d * frequency){
 					if(Logger.getLogLevel() >= 1.5){
-						Logger.log(new InformationEvent("Completed " + i + " percent of " +
+						Logger.log(new InformationEvent("Completed " + d / 10 + "% of " +
 							"GeneticAlgorithm evolution epochs"));
 					}
 				}
@@ -338,4 +360,122 @@ public class GeneticAlgorithm {
 		//Assumes population is sorted by fitness in ascending order
 		return this.population[this.population.length - 1];
 	}
+	
+	public static void clearGASers() {
+		//Deletes every file beginning with the above prefix and ending with the above suffix
+		File folder = new File(folderName + "\\");
+		File[] files = folder.listFiles();
+		int i = 0;
+		
+		for(i = 0; i < files.length; i++){
+			if(files[i].getPath().startsWith(folderName + "\\" + saveFolderNamePrefix)){
+				files[i].delete();
+			}
+		}
+	}
+	
+	public void resetEpoch() {
+		this.epoch = 0;
+	}
+	
+	public void save() {
+		//TODO want to store this object as "Genetic_Algorithms\Genetic_Algorithm_x\epoch_n.ser"
+		//containing population, popsize, epoch
+		
+		//Setup save folder
+		String saveFolderName = saveFolderNamePrefix + this.saveDir;
+		File saveFolder = new File(saveFolderName); 
+		saveFolder.mkdir();
+		
+		String path = saveFolderName + "\\epoch_" + this.epoch + ".ser";
+		
+		//Write this object to path
+		try{
+			new ObjectOutputStream(new FileOutputStream(path)).defaultWriteObject();
+		}catch(FileNotFoundException e){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new IOEvent("Save file: \""
+					+ path + " not found", e));
+			}
+		}catch(IOException e){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new IOEvent(e.getMessage(), e));
+			}
+		}
+	}
+	
+	public void loadLast() {
+		//Get folder ending in highest number
+		File[] files = folder.listFiles();
+		int max = -1;
+		int num;
+		String path;
+		for(File f1 : files){
+			//Genetic_Algorithms\Genetic_Algorithm_x
+			path = f1.getPath();
+			if(path.startsWith(saveFolderNamePrefix)){
+				//Add number that the path ends with
+				path.replace(saveFolderNamePrefix, "");
+				num = Integer.parseInt(path);
+				if(num > max){
+					max = num;
+				}
+			}
+		}
+		String loadFolderName = saveFolderNamePrefix + max;
+		File loadFolder = new File(loadFolderName);
+		
+		//Get file ending in highest number
+		String loadFileNamePrefix = loadFolderName + "\\epoch_";
+		String loadFileNameSuffix = ".ser";
+		files = loadFolder.listFiles();
+		max = -1;
+		for(File f2 : files){
+			path = f2.getPath();
+			if(path.startsWith(loadFileNamePrefix)
+				&& path.endsWith(loadFileNameSuffix)){
+				path.replace(loadFileNamePrefix, "");
+				path.replace(loadFileNameSuffix, "");
+				num = Integer.parseInt(path);
+				if(num > max){
+					max = num;
+				}
+			}
+		}
+		String loadFileName = loadFileNamePrefix + max;
+		File loadFile = new File(loadFileName);
+		load(loadFile);
+	}
+	
+	public void load(File loadFile) {
+		try{
+			new ObjectInputStream(new FileInputStream(loadFile)).defaultReadObject();
+		}catch(FileNotFoundException e){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new IOEvent("Save file: \""
+					+ loadFile.getPath() + " not found", e));
+			}
+		}catch(ClassNotFoundException e){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new IOEvent(e.getMessage(), e));
+			}
+		}catch(IOException e){
+			if(Logger.getLogLevel() >= 1){
+				Logger.log(new IOEvent(e.getMessage(), e));
+			}
+		}
+		//TODO validation
+	}
+	
+//	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+//		//TODO put the code in the right methods
+//	}
+//	
+//    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
+//    	
+//    }
+//    
+//    private void readObjectNoData() throws ObjectStreamException{
+//    	
+//    }
 }

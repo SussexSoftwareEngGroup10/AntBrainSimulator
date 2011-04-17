@@ -599,22 +599,12 @@ public class World {
 		Cell cell;
 		Ant ant;
 		int colour = -1;
-		int i = 0;
 		int r = 0;
 		int c = 0;
 		int uid = 0;
-		int antsPerAnthill = hexArea(this.anthillSideLength);
 		
-		this.ants = new Ant[this.anthills * antsPerAnthill];
-		this.antsBySpecies = new Ant[this.anthills][antsPerAnthill];
-		
-		//Add different species arrays to antsBySpecies
-		//May result in arrays containing no ants
-		for(i = 0; i < 2; i++){
-			this.antsBySpecies[i] = new Ant[antsPerAnthill];
-		}
-		//Used in the same way as .length for the arrays,
-		//holds the next index to be assigned
+		this.ants = new Ant[this.anthills * hexArea(this.anthillSideLength)];
+		this.antsBySpecies = new Ant[this.anthills][hexArea(this.anthillSideLength)];
 		int[] nextAntIndex = {0, 0};
 		
 		//Put new ants onto each anthill cell, and into the right arrays
@@ -635,12 +625,47 @@ public class World {
 				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell);
 				cell.setAnt(ant);
 				this.ants[nextAntIndex[0] + nextAntIndex[1]] = ant;
-				this.antsBySpecies[colour][nextAntIndex[colour]] = ant;
-				nextAntIndex[colour]++;
-								
+				//Use nextAntIndex[colour] value BEFORE increment (opposite to ++i)
+				this.antsBySpecies[colour][nextAntIndex[colour]++] = ant;
+				
 				uid++;
 			}
 		}
+		
+//		//ArrayList version
+//		//More efficient to store pointers to each ArrayList than get every time
+//		ArrayList<Ant> species0 = new ArrayList<Ant>();
+//		ArrayList<Ant> species1 = new ArrayList<Ant>();
+//		this.antsBySpecies.add(species0);
+//		this.antsBySpecies.add(species1);
+//		
+//		//Put new ants onto each anthill cell, and into the right arrays
+//		for(r = 0; r < this.rows; r++){
+//			for(c = 0; c < this.cols; c++){
+//				colour = -1;
+//				cell = this.cells[r][c];
+//				
+//				if(cell.toChar() == '+'){
+//					colour = 0;
+//				}else if(cell.toChar() == '-'){
+//					colour = 1;
+//				}else{
+//					continue;
+//				}
+//				
+//				//Create and store ant
+//				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell);
+//				cell.setAnt(ant);
+//				this.ants.add(ant);
+//				if(colour == 0){
+//					species0.add(ant);
+//				}else if(colour == 1){
+//					species1.add(ant);
+//				}
+//				
+//				uid++;
+//			}
+//		}
 	}
 	
 	private int hexArea(int n) {

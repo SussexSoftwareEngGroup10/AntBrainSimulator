@@ -1,6 +1,5 @@
 package engine;
 
-
 import java.util.Arrays;
 
 import utilities.InformationEvent;
@@ -8,7 +7,7 @@ import utilities.Logger;
 
 import antBrain.Brain;
 import antBrain.BrainController;
-import antBrain.StepThread;
+import antBrain.AntStepper;
 import antWorld.Ant;
 import antWorld.World;
 
@@ -49,12 +48,12 @@ public class DummyEngine {
 	
 	//GA arguments
 	private static int epochs = 1000;			//Less is quicker, but less likely to generate an improved brain
-	private static int rounds = 300000;			//Less is quicker, but reduces the accuracy of the GA
+	private static int rounds = 300;			//Less is quicker, but reduces the accuracy of the GA
 	private static int popSize = 100;			//Less is quicker, but searches less of the search space for brains
 	private static int elite = 5;				//Less is slower, but avoids getting stuck with lucky starting brain
 	private static int mutationRate = 10;		//Less is more, inverse
 	
-	private StepThread[] stepThreads;
+	private AntStepper[] antSteppers;
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -108,16 +107,6 @@ public class DummyEngine {
 //Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A
 	
-	public void setupStepThreads(int threads) {
-		StepThread st;
-		this.stepThreads = new StepThread[threads];
-		for(int i = 0; i < threads; i++){
-			st = new StepThread();
-			st.setPriority(Thread.MAX_PRIORITY);
-			this.stepThreads[i] = st;
-		}
-	}
-	
 	public void sortByFitness(Brain[] population, int rounds) {
 		tournament(population, rounds);
 	}
@@ -155,19 +144,29 @@ public class DummyEngine {
 		world.setBrain(brain, 1);
 		
 		Ant[] ants = world.getAnts();
-		setupStepThreads(ants.length);
+		
+		//Setup AntSteppers
+		AntStepper st;
+		this.antSteppers = new AntStepper[ants.length];
+		for(int i = 0; i < ants.length; i++){
+			st = new AntStepper(ants[i], 1);
+			st.setPriority(Thread.MAX_PRIORITY);
+			this.antSteppers[i] = st;
+		}
+		
 		//Run the simulation
 		if(Logger.getLogLevel() >= 5){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
 		
-//		// TIMING
-//		System.gc();
+		// TIMING
+		System.gc();
 //		ArrayList<Long> times;
 //		long mean;
 //		times = new ArrayList<Long>();
 //		mean = 0;
-//		// /TIMING
+		Logger.restartTimer();
+		// /TIMING
 		
 		for(int r = 0; r < rounds; r++){
 			for(int a = 0; a < ants.length; a++){
@@ -183,8 +182,10 @@ public class DummyEngine {
 				//Other problems may arise, such as ants being killed half way through a call,
 				//testing is needed
 				//No guarantee about the order ant.step() is executed
-				this.stepThreads[a].stepAnt(ants[a], 1);
 //				ants[a].step();
+				this.antSteppers[a].run();
+				//2143277 - serial
+				//2997924 - parallel
 				
 				//TODO
 				//no polling, more object reuse (inc. ants, ant, maybe world), factorise,
@@ -193,19 +194,27 @@ public class DummyEngine {
 				
 //				times.add(Logger.getCurrentTime());	// TIMING
 				
-				//All the stepThreads should have finished executing,
+				//All the antSteppers should have finished executing,
 				//as they have higher priority than the main thread
 				//However, checking would be a bit of a pain, and slow down the program
+//				for(AntStepper as : this.antSteppers){
+//					try{
+//						as.join();
+//					}catch(InterruptedException e){
+//						e.printStackTrace();
+//					}
+//				}
 			}
 		}
 		
-//		// TIMING
+		// TIMING
+		System.out.println("MEAN: " + Logger.getCurrentTime() + "ns");
 //		for(Long t : times){
 //			mean += t;
 //		}
 //		mean = mean / times.size();
 //		System.out.println("MEAN: " + mean + "ns");
-//		// /TIMING
+		// /TIMING
 		
 		//Fitness of the GA brain = its food - opponent's food
 		int[] anthillFood = world.getFoodInAnthills();

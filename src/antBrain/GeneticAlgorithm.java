@@ -25,7 +25,7 @@ import engine.DummyEngine;
  */
 public class GeneticAlgorithm implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final String superFolderPath = "Genetic_Algorithms";
+	private static final String superFolderPath = "Brain_Populations";
 	private static final File superFolder = new File(superFolderPath);
 	private static int gasConstructed = 0;
 	private static final String subFolderPathPrefix = superFolderPath + "\\" + "Genetic_Algorithm_";
@@ -383,6 +383,7 @@ public class GeneticAlgorithm implements Serializable {
 		File folder = new File(superFolderPath + "\\");
 		File[] files = folder.listFiles();
 		
+		if(files == null) return;
 		for(File f : files){
 			if(f.getPath().startsWith(subFolderPathPrefix)){
 				//Assume f does not contain any directories
@@ -426,6 +427,7 @@ public class GeneticAlgorithm implements Serializable {
 	public void loadLast() {
 		//Get superFolder ending in highest number
 		File[] files = superFolder.listFiles();
+		if(files == null) return;	//No superfolder
 		int max = -1;
 		int num;
 		String filePath;
@@ -442,8 +444,7 @@ public class GeneticAlgorithm implements Serializable {
 			}
 		}
 		if(max == -1){
-			//no subfolders
-			return;
+			return;	//No subfolders
 		}
 		String subFolderPath = subFolderPathPrefix + max;
 		File folder = new File(subFolderPath);

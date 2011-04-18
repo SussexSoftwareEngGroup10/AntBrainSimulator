@@ -103,10 +103,13 @@ public class GeneticAlgorithm implements Serializable {
 		
 		//After constructor, epoch == 0,
 		//after deserialization, epoch == epoch to be run next
+		//Round values up, otherwise divide by zero
+		int tenth = epochs / 10;
+		if(tenth == 0) tenth = 1;
 		int hundredth = epochs / 100;
-		if(hundredth == 0) hundredth = 1;	//Round up, otherwise divide by zero
+		if(hundredth == 0) hundredth = 1;
 		int thousandth = epochs / 1000;
-		if(thousandth == 0) thousandth = 1;	//Round up, otherwise divide by zero
+		if(thousandth == 0) thousandth = 1;
 		double d;
 		for(; this.epoch < epochs; this.epoch++){
 			//TODO these are polling, remove

@@ -63,7 +63,6 @@ public final class Ant implements Comparable<Ant> {
 		this.direction = direction;
 	}
 	
-	//TODO alt shift i = inline
 	public final void step() {
 		//Removed local variables and parameters in step() and methods it calls
 		//to enable compiler to write an inline version,

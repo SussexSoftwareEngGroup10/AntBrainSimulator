@@ -58,12 +58,17 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	public void createPopulation(Brain exampleBrain, int popSize) {
+		//Try to resume last epochs()
+		if(loadLast()){
+			return;
+		}
+		
+		//Otherwise create a new population
 		this.popSize = popSize;
 		this.population = new Brain[popSize];
 		
 		//Fill with number of example brains
-		int i = 0;
-		for(i = 0; i < popSize; i++){
+		for(int i = 0; i < popSize; i++){
 			this.population[i] = exampleBrain.clone();
 		}
 		if(Logger.getLogLevel() >= 2){
@@ -72,10 +77,24 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	public void evolve(DummyEngine dummyEngine, int epochs, int rounds, int elite, int mutationRate) {
+		//Log information on epoch and evolution
 		if(Logger.getLogLevel() >= 1.5){
-			Logger.log(new InformationEvent("Begun GeneticAlgorithm evolution for "
-				+ epochs + " epochs, with " + rounds + " rounds per simulation, an elite of " + elite +
-				", and a 1/" + mutationRate + " chance of mutation"));
+			if(this.epoch == 0){
+				//Starting evolution from a newly created population
+				Logger.log(new InformationEvent("Began GeneticAlgorithm evolution for "
+					+ epochs + " epochs,"
+					+ ", with " + rounds + " rounds per simulation,"
+					+ "an elite of " + elite
+					+ ", and a 1/" + mutationRate + " chance of mutation"));
+			}else{
+				//Resuming evolution from either a serialised object,
+				//or after an evolve() call has been completed on this population
+				Logger.log(new InformationEvent("Resumed GeneticAlgorithm evolution for "
+					+ epochs + " epochs at epoch: " + this.epoch
+					+ ", with " + rounds + " rounds per simulation,"
+					+ "an elite of " + elite
+					+ ", and a 1/" + mutationRate + " chance of mutation"));
+			}
 		}
 		Brain[] newPop;
 		int j = 0;
@@ -99,35 +118,30 @@ public class GeneticAlgorithm implements Serializable {
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
 		orderByFitness(dummyEngine, rounds);
-		loadLast();		//Resume last epochs()
 		
 		//After constructor, epoch == 0,
 		//after deserialization, epoch == epoch to be run next
-		//Round values up, otherwise divide by zero
+		//Round values up, otherwise may get a divide by zero
 		int tenth = epochs / 10;
 		if(tenth == 0) tenth = 1;
 		int hundredth = epochs / 100;
 		if(hundredth == 0) hundredth = 1;
 		int thousandth = epochs / 1000;
 		if(thousandth == 0) thousandth = 1;
-		double d;
 		for(; this.epoch < epochs; this.epoch++){
 			//TODO these are polling, remove
-			for(d = 0; d <= epochs / thousandth; d += thousandth){
-				if(this.epoch == d){
-					//Save every ten epochs,
-					//so JVM can be terminated and resumed
-					save();
-				}
-			}
-			
-			//Log progress
-			for(d = 0; d <= epochs / thousandth; d += thousandth){
+			for(double d = 0; d <= epochs / thousandth; d += thousandth){
+				//Log progress
 				if(this.epoch == d){
 					if(Logger.getLogLevel() >= 1.5){
 						Logger.log(new InformationEvent("Completed " + d / 10 + "% of " +
-							"GeneticAlgorithm evolution epochs"));
+						"GeneticAlgorithm evolution epochs"));
 					}
+				}
+				//Save every epoch,
+				//so JVM can be terminated and resumed
+				if(this.epoch == d){
+					save();
 				}
 			}
 			
@@ -424,10 +438,10 @@ public class GeneticAlgorithm implements Serializable {
 		}
 	}
 	
-	public void loadLast() {
+	public boolean loadLast() {
 		//Get superFolder ending in highest number
 		File[] files = superFolder.listFiles();
-		if(files == null) return;	//No superfolder
+		if(files == null) return false;	//No superfolder
 		int max = -1;
 		int num;
 		String filePath;
@@ -444,7 +458,7 @@ public class GeneticAlgorithm implements Serializable {
 			}
 		}
 		if(max == -1){
-			return;	//No subfolders
+			return false;	//No subfolders
 		}
 		String subFolderPath = subFolderPathPrefix + max;
 		File folder = new File(subFolderPath);
@@ -469,11 +483,12 @@ public class GeneticAlgorithm implements Serializable {
 		if(max == -1){
 			//No files,
 			//could try next best subfolder
-			return;
+			return false;
 		}
 		String fileName = filePathPrefix + max + filePathSuffix;
 		File loadFile = new File(fileName);
 		load(loadFile);
+		return true;
 	}
 	
 	public void load(File loadFile) {

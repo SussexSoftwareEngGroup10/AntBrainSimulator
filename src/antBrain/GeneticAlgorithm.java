@@ -110,8 +110,7 @@ public class GeneticAlgorithm implements Serializable {
 		//However, this can mean becoming stuck in local optima,
 		//and not searching the search space enough, resulting in
 		
-		//Elitism has been tested and works,
-		//It is not necessary, but may give better results
+		//Elitism is not necessary, but may give better results
 		
 		//Each iteration retains the elite,
 		//removes the less fit half of the population and
@@ -522,6 +521,7 @@ public class GeneticAlgorithm implements Serializable {
 		this.epoch = in.readInt();
 		this.popSize = in.readInt();
 		this.population = (Brain[]) in.readObject();
+		//TODO verify variables, log warnings
 	}
 
 //	private void readObjectNoData() throws ObjectStreamException{

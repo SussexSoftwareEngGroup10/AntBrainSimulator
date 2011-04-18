@@ -71,6 +71,9 @@ public final class Ant implements Comparable<Ant> {
 		//the current state number is not stored,
 		//the state is changed at the end of any method called by step()
 		//(move(), sense()...etc...) 
+		//Only sense() and move() are synchronised, as they are the only ones where the ant
+		//is interacting with a cell outside its own
+		
 		//TODO get rid of this bloody polling
 		if(!this.alive){
 			return;
@@ -134,7 +137,7 @@ public final class Ant implements Comparable<Ant> {
 	}
 
 	//Sense senseDir st1 st2 condition
-	private final void sense() {
+	private final synchronized void sense() {
 		switch(this.state.getSenseDir()){
 		case 0:
 			this.senseCell = this.cell;
@@ -315,7 +318,7 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	//Move st1 st2
-	private final void move() {
+	private final synchronized void move() {
 		//If new cell is not rocky and does not contain an ant, move there and go to st1, else st2
 		this.newCell = this.cell.getNeighbour(this.direction);
 		if(!this.newCell.isRocky() && !this.newCell.hasAnt()){

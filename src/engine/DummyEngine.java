@@ -8,6 +8,7 @@ import utilities.Logger;
 
 import antBrain.Brain;
 import antBrain.BrainController;
+import antBrain.StepThread;
 import antWorld.Ant;
 import antWorld.World;
 
@@ -29,6 +30,7 @@ import antWorld.World;
  * @version 1.0
  */
 public class DummyEngine {
+//	private static final Thread main = Thread.currentThread();
 	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
 	
 	//World arguments
@@ -51,6 +53,8 @@ public class DummyEngine {
 	private static int popSize = 100;			//Less is quicker, but searches less of the search space for brains
 	private static int elite = 5;				//Less is slower, but avoids getting stuck with lucky starting brain
 	private static int mutationRate = 10;		//Less is more, inverse
+	
+	private StepThread[] stepThreads;
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -104,6 +108,16 @@ public class DummyEngine {
 //Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A
 	
+	public void setupStepThreads(int threads) {
+		StepThread st;
+		this.stepThreads = new StepThread[threads];
+		for(int i = 0; i < threads; i++){
+			st = new StepThread();
+			st.setPriority(Thread.MAX_PRIORITY);
+			this.stepThreads[i] = st;
+		}
+	}
+	
 	public void sortByFitness(Brain[] population, int rounds) {
 		tournament(population, rounds);
 	}
@@ -141,8 +155,8 @@ public class DummyEngine {
 		world.setBrain(brain, 1);
 		
 		Ant[] ants = world.getAnts();
+		setupStepThreads(ants.length);
 		//Run the simulation
-		int r = 0;
 		if(Logger.getLogLevel() >= 5){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
@@ -155,8 +169,8 @@ public class DummyEngine {
 //		mean = 0;
 //		// /TIMING
 		
-		for(r = 0; r < rounds; r++){
-			for(Ant ant : ants){
+		for(int r = 0; r < rounds; r++){
+			for(int a = 0; a < ants.length; a++){
 //				// TIMING
 //				System.gc();
 //				Logger.restartTimer();
@@ -164,9 +178,13 @@ public class DummyEngine {
 				
 				//alive check is in step(),
 				//surrounded checks and kill are called after move()
-				//Could run a thread here, synchronise step(), simples,
-				//but the threading may slow it down so much that the change is insignificant
-				ant.step();
+				//The threading, in particular, getting the locks on synchronised methods,
+				//may slow it down so much that the change is insignificant
+				//Other problems may arise, such as ants being killed half way through a call,
+				//testing is needed
+				//No guarantee about the order ant.step() is executed
+				this.stepThreads[a].stepAnt(ants[a], 1);
+//				ants[a].step();
 				
 				//TODO
 				//no polling, more object reuse (inc. ants, ant, maybe world), factorise,
@@ -174,6 +192,10 @@ public class DummyEngine {
 				//JIT, inline(javac -O MyClass), arrays more, no enumerations
 				
 //				times.add(Logger.getCurrentTime());	// TIMING
+				
+				//All the stepThreads should have finished executing,
+				//as they have higher priority than the main thread
+				//However, checking would be a bit of a pain, and slow down the program
 			}
 		}
 		

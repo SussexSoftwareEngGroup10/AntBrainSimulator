@@ -95,7 +95,6 @@ public class GameDisplay extends PApplet {
 			zoomer.setZoomScale(1);
 		}
 		zoomer.transform();
-		System.out.println(zoomer.getPanOffset());
 		//TODO - work out how to set limits to the pan offset (will probably need to know size of grid for the right hand side)
 
 		//Draw hexagons

@@ -72,7 +72,6 @@ public class MainWindow {
 		gameDisplay = new GameDisplay();
 		gridDisplayPanel.add(gameDisplay);
 		gameDisplay.init();
-		
 		pane.add(gridDisplayPanel, BorderLayout.NORTH);
 		
 		//Set up JPanel at the bottom to display the control buttons
@@ -137,13 +136,6 @@ public class MainWindow {
 		}
 	}
 	
-	//TODO: maybe create a class for this with this as static method, or have
-	// as part of Logger.log()?
-	public void displayErrorMsg(String msg) {
-		JOptionPane.showMessageDialog(null, msg, "Error!",
-			    JOptionPane.ERROR_MESSAGE);
-	}
-	
 	/**
 	 * Attached to the buttons which need to bring up a file browser window.
 	 * 
@@ -176,12 +168,12 @@ public class MainWindow {
 					if ((clickedBtn == uploadRedBtn || 
 							clickedBtn == uploadBlackBtn) && 
 							!path.contains(".brain")) {
-						displayErrorMsg(
+							GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .brain file expected.");
 					}
 					else if (clickedBtn == uploadWorldBtn &&
 							!path.contains(".world")) {
-						displayErrorMsg(
+							GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .world file expected.");
 					}
 					else {
@@ -213,7 +205,7 @@ public class MainWindow {
 			//If the user does not have permission to access the file
 			catch (SecurityException sE) {
 				if (Logger.getLogLevel() >= 1) {
-					Logger.log(new IOWarningEvent(
+					Logger.log(new IOEvent(
 							"Security violation with file!", sE));
 				}
 			}
@@ -247,7 +239,7 @@ public class MainWindow {
 			}
 			catch (NumberFormatException nFE){
 				if (Logger.getLogLevel() >= 1) {
-					Logger.log(new InvalidInputWarningEvent(
+					Logger.log(new InvalidInputEvent(
 							"Input number of players not an integer!", nFE));
 				}
 			}			

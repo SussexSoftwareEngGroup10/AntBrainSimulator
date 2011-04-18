@@ -8,7 +8,6 @@ import utilities.Logger;
 
 import antBrain.Brain;
 import antBrain.BrainController;
-import antBrain.GeneticAlgorithm;
 import antWorld.Ant;
 import antWorld.World;
 
@@ -32,7 +31,7 @@ import antWorld.World;
 public class DummyEngine {
 	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
 	
-	//World arguments, used by main and GA,
+	//World arguments
 	//easier than passing around values,
 	//obviously need to make dynamic in final version
 	private static int seed = 1;
@@ -48,7 +47,7 @@ public class DummyEngine {
 	
 	//GA arguments
 	private static int epochs = 1000;			//Less is quicker, but less likely to generate an improved brain
-	private static int rounds = 3;			//Less is quicker, but reduces the accuracy of the GA
+	private static int rounds = 300000;			//Less is quicker, but reduces the accuracy of the GA
 	private static int popSize = 100;			//Less is quicker, but searches less of the search space for brains
 	private static int elite = 5;				//Less is slower, but avoids getting stuck with lucky starting brain
 	private static int mutationRate = 10;		//Less is more, inverse
@@ -59,7 +58,6 @@ public class DummyEngine {
 		}
 	}
 	
-	//TODO
 	//How many times GA-related methods are called in each run,
 	//ignoring elite (popSize -= elite)
 	//Variables in descending order and approximate values
@@ -193,7 +191,6 @@ public class DummyEngine {
 	}
 	
 	public static void main(String args[]) {
-		GeneticAlgorithm.clearGASers();
 		Logger.clearLogs();
 		Logger.setLogLevel(1.5);
 		

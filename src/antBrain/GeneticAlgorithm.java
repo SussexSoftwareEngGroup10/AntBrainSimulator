@@ -42,7 +42,6 @@ public class GeneticAlgorithm implements Serializable {
 	public GeneticAlgorithm() {
 		this.saveDir = gasConstructed;
 		gasConstructed++;
-		if(!superFolder.exists()) superFolder.mkdir();
 		this.epoch = 0;
 	}
 	
@@ -94,31 +93,41 @@ public class GeneticAlgorithm implements Serializable {
 		
 		//Elitism has been tested and works,
 		//It is not necessary, but may give better results
-		//when tested on the final DummyEngine
 		
 		//Each iteration retains the elite,
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
 		orderByFitness(dummyEngine, rounds);
+		loadLast();		//Resume last epochs()
 		
 		//After constructor, epoch == 0,
 		//after deserialization, epoch == epoch to be run next
+		int hundredth = epochs / 100;
+		if(hundredth == 0) hundredth = 1;	//Round up, otherwise divide by zero
+		int thousandth = epochs / 1000;
+		if(thousandth == 0) thousandth = 1;	//Round up, otherwise divide by zero
+		double d;
 		for(; this.epoch < epochs; this.epoch++){
-			loadLast();
-			save();
+			//TODO these are polling, remove
+			for(d = 0; d <= epochs / thousandth; d += thousandth){
+				if(this.epoch == d){
+					//Save every ten epochs,
+					//so JVM can be terminated and resumed
+					save();
+				}
+			}
+			
 			//Log progress
-			int frequency = epochs / 1000;
-			if(frequency == 0) frequency = 1; //Round up, otherwise divide by zero
-			double d = 0;
-			for(d = 0; d <= epochs / frequency; d += frequency){
-				if(this.epoch == d * frequency){
+			for(d = 0; d <= epochs / thousandth; d += thousandth){
+				if(this.epoch == d){
 					if(Logger.getLogLevel() >= 1.5){
 						Logger.log(new InformationEvent("Completed " + d / 10 + "% of " +
 							"GeneticAlgorithm evolution epochs"));
 					}
 				}
 			}
+			
 			newPop = new Brain[this.popSize];
 			
 			//Copy over elite to the end
@@ -366,13 +375,12 @@ public class GeneticAlgorithm implements Serializable {
 		this.epoch = 0;
 	}
 	
-	public static void clearGASers() {//FIXME
+	public static void clearSaves() {
 		//Deletes every file beginning with the above prefix and ending with the above suffix
 		File folder = new File(superFolderPath + "\\");
 		File[] files = folder.listFiles();
 		
 		for(File f : files){
-			System.out.println(f.getPath());
 			if(f.getPath().startsWith(subFolderPathPrefix)){
 				//Assume f does not contain any directories
 				for(File sf : f.listFiles()){
@@ -384,10 +392,13 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	public void save() {
-		//TODO want to store this object as "Genetic_Algorithms\Genetic_Algorithm_x\epoch_n.ser"
-		//containing population, popsize, epoch
+		//Only retain the most recent save
+		clearSaves();
 		
 		//Setup save superFolder
+		if(!superFolder.exists()) superFolder.mkdir();
+		
+		//Setup save subFolder
 		String subFolderPath = subFolderPathPrefix + this.saveDir;
 		File subFolder = new File(subFolderPath); 
 		subFolder.mkdir();

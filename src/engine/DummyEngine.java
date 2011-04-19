@@ -150,7 +150,7 @@ public class DummyEngine {
 		this.antSteppers = new AntStepper[ants.length];
 		for(int i = 0; i < ants.length; i++){
 			st = new AntStepper(ants[i], 1);
-			st.setPriority(Thread.MAX_PRIORITY);
+//			st.setPriority(Thread.MAX_PRIORITY);
 			this.antSteppers[i] = st;
 		}
 		
@@ -160,12 +160,12 @@ public class DummyEngine {
 		}
 		
 		// TIMING
-		System.gc();
+//		System.gc();
 //		ArrayList<Long> times;
 //		long mean;
 //		times = new ArrayList<Long>();
 //		mean = 0;
-		Logger.restartTimer();
+//		Logger.restartTimer();
 		// /TIMING
 		
 		for(int r = 0; r < rounds; r++){
@@ -182,10 +182,16 @@ public class DummyEngine {
 				//Other problems may arise, such as ants being killed half way through a call,
 				//testing is needed
 				//No guarantee about the order ant.step() is executed
-//				ants[a].step();
-				this.antSteppers[a].run();
-				//2143277 - serial
-				//2997924 - parallel
+				ants[a].step();
+//				new AntStepper(ants[a], 1).start();
+				//2143277		- serial
+				//2997924		- serial- methods of thread
+				//8181377299	- new threads
+				//TODO use ants.length threads, call start() before now,
+				//somehow make it so the threads execute in parallel when told to,
+				//but don't need to be restarted
+				//I assume calling Thread.start() starts a new concurrent thread,
+				//but calling methods of a Thread doesn't
 				
 				//TODO
 				//no polling, more object reuse (inc. ants, ant, maybe world), factorise,
@@ -197,18 +203,12 @@ public class DummyEngine {
 				//All the antSteppers should have finished executing,
 				//as they have higher priority than the main thread
 				//However, checking would be a bit of a pain, and slow down the program
-//				for(AntStepper as : this.antSteppers){
-//					try{
-//						as.join();
-//					}catch(InterruptedException e){
-//						e.printStackTrace();
-//					}
-//				}
+				Thread.yield();
 			}
 		}
 		
 		// TIMING
-		System.out.println("MEAN: " + Logger.getCurrentTime() + "ns");
+//		System.out.println("MEAN: " + Logger.getCurrentTime() + "ns");
 //		for(Long t : times){
 //			mean += t;
 //		}

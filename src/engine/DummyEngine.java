@@ -34,23 +34,24 @@ public class DummyEngine {
 	//World arguments
 	//easier than passing around values,
 	//obviously need to make dynamic in final version
-	private static int seed = 1;
-	private static int rows = 140;
-	private static int cols = 140;
-	private static int rocks = 13;
-	private static int anthills = 2;
-	private static int anthillSideLength = 7;	//Less means less ants, which is quicker
-	private static int foodBlobCount = 10;
-	private static int foodBlobSideLength = 5;
-	private static int foodBlobCellFoodCount = 5;
-	private static int antInitialDirection = 0;
+	private static final int seed = 1;
+	private static final int rows = 140;
+	private static final int cols = 140;
+	private static final int rocks = 13;
+	private static final int anthills = 2;
+	private static final int anthillSideLength = 7;	//Less means less ants, which is quicker
+	private static final int foodBlobCount = 10;
+	private static final int foodBlobSideLength = 5;
+	private static final int foodBlobCellFoodCount = 5;
+	private static final int antInitialDirection = 0;
 	
 	//GA arguments
-	private static int epochs = 1000;			//Less is quicker, but less likely to generate an improved brain
-	private static int rounds = 300000;			//Less is quicker, but reduces the accuracy of the GA
-	private static int popSize = 100;			//Less is quicker, but searches less of the search space for brains
-	private static int elite = 5;				//Less is slower, but avoids getting stuck with lucky starting brain
-	private static int mutationRate = 10;		//Less is more, inverse
+	private static final int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
+	private static final int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
+	private static final int popSize = 100;					//Less is quicker, but searches less of the search space for brains
+	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
+	private static final int mutationRate = 10;				//Less is more, inverse
+	private static final int stepsPerInterrupt = 1;			//Less is slower, step()s per interrupt()
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -156,7 +157,8 @@ public class DummyEngine {
 //		Logger.restartTimer();
 //		// /TIMING
 		
-		for(int r = 0; r < rounds; r++){
+		int interrupts = rounds / stepsPerInterrupt;
+		for(int r = 0; r < interrupts ; r++){
 			for(Ant ant : ants){
 //				// TIMING
 //				System.gc();
@@ -169,9 +171,9 @@ public class DummyEngine {
 				//may slow it down so much that the change is insignificant
 				//Other problems may arise, such as ants being killed half way through a call,
 				//testing is needed
-//				No guarantee about the order ant.step() is executed
+				//No guarantee about the order ant.step() is executed
 				ant.step();
-//				ant.interrupt();
+//				ant.interrupt();	//steps (rounds / interrupts) step()s
 				
 				//TODO
 				//no polling, more object reuse (inc. ants, ant, maybe world), factorise,
@@ -184,7 +186,7 @@ public class DummyEngine {
 		}
 		
 //		// TIMING
-//		long mean = (Logger.getCurrentTime() / rounds) / ants.length;
+//		long mean = (Logger.getCurrentTime() / 1000) / ants.length;	//for 1 step()
 //		System.out.println(mean + "ns");
 //		for(Long t : times){
 //			mean += t;
@@ -201,6 +203,7 @@ public class DummyEngine {
 	public static void main(String args[]) {
 		Logger.clearLogs();
 		Logger.setLogLevel(1.5);
+		World.setSteps(stepsPerInterrupt);
 		
 //		//Calculate duration of the timing methods
 //		ArrayList<Long> times;
@@ -252,7 +255,6 @@ public class DummyEngine {
 		
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		int r = 0;
-		rounds = 300000;
 		if(Logger.getLogLevel() >= 2){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}

@@ -22,6 +22,7 @@ public final class Ant extends Thread implements Comparable<Ant> {
 	private final int uid;
 	private final Colour colour;
 	private Brain brain;
+	private int steps;
 	private Cell cell;
 	private boolean alive = true;
 	private int direction;
@@ -36,7 +37,7 @@ public final class Ant extends Thread implements Comparable<Ant> {
 	private Ant[] neighbourAnts = new Ant[6];
 	private Ant neighbourAnt;
 	
-	public Ant(int uid, Random ran, int direction, int colour, Cell cell) {
+	public Ant(int uid, Random ran, int direction, int colour, Cell cell, int steps) {
 		this.uid = uid;
 		
 		if(ran == null){
@@ -58,21 +59,24 @@ public final class Ant extends Thread implements Comparable<Ant> {
 			}
 			this.colour = null;
 		}
-		this.cell = cell;
 		this.direction = direction;
+		this.cell = cell;
+		this.steps = steps;
 		start();
 	}
 	
 	@Override
 	public final void run() {
-		//steps when interrupted
+		//Calls step() when interrupted
 		while(true){
 			try{
 				while(true){
 					sleep(Integer.MAX_VALUE);
 				}
 			}catch(InterruptedException e){
-				step();
+				for(int s = 0; s < this.steps; s++){
+					step();
+				}
 			}
 		}
 	}

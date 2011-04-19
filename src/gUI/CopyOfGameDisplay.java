@@ -16,7 +16,7 @@ import antWorld.World;
  * HAVE DIFFERENT IMAGES FOR DIFFERENT SCALES
  * USE THE VALUE RETURN BY THE SCALE OF THE ZOOMER TO SIZE ELEMENTS
  */
-public class GameDisplay extends PApplet {
+public class CopyOfGameDisplay extends PApplet {
 	
 	private static final long serialVersionUID = 1L;
 	private PImage grassTileLarge;
@@ -49,13 +49,17 @@ public class GameDisplay extends PApplet {
 	 * C = D / sqrt(3)
 	 * 
 	 */
+	
+	//TODO: add constants that relate to the zoom scale for small medium and large
 	private int hexWidth; //Corresponds to C
 	private int hexHeight; //Corresponds to D
 	private int hexAngleHeight; //Corresponds to A
 	private int hexVertHeight; //Corresponds to B
+
 		
 	private int numHexCol; //Number of columns (in hexagons) wide
 	private int numHexRow; //Number of rows (in hexagons) high
+	private String largestDimension;
 	private int pixelWidth; //Used to store size of display in pixels
 	private int pixelHeight;
 		
@@ -67,50 +71,103 @@ public class GameDisplay extends PApplet {
 		//Dimensions of display in pixels - change to modify size
 		pixelWidth = 750;
 		pixelHeight = 600;
+		
+		//Number of hexagons in columns and rows - change to modify quantity of hexagons
+		numHexCol = 40;
+		numHexRow = 30;
+		
+		hexWidth = 35;
+		hexHeight = 40;
+		hexAngleHeight = 10;
+		hexVertHeight = 20;
+		
+		if (hexWidth * numHexCol / pixelWidth > (hexAngleHeight + hexVertHeight) * numHexRow / pixelHeight) {
+			largestDimension = "width";
+		}
+		else {
+			largestDimension = "height";
+		}
+		
 		size(pixelWidth, pixelHeight);
 		
 		background(0); //Set background to black
 		smooth(); //Turn on anti aliasing
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
+		
+		//TODO: Refactor into get zoom value method - maybe take into account it's logarithmic?
+		//ADD PANNING?
+		//also need to sort out these values
+		if (largestDimension == "width") {
+			if (pixelWidth <= 20) {
+				zoomer.setZoomScale(0.94);
+			}
+			else if (pixelWidth <= 40) {
+				zoomer.setZoomScale(0.48);
+			}
+			else if (pixelWidth <= 60) {
+				zoomer.setZoomScale(0.32);
+			}
+			else if (pixelWidth <= 80) {
+				zoomer.setZoomScale(0.24);
+			}
+			else if (pixelWidth <= 100) {
+				zoomer.setZoomScale(0.19);
+			}
+			else if (pixelWidth <= 120) {
+				zoomer.setZoomScale(0.16);
+			}
+			else if (pixelWidth <= 140) {
+				zoomer.setZoomScale(0.14);
+			}
+		}
+		else {
+			if (pixelHeight <= 20) {
+				zoomer.setZoomScale(0.94);
+			}
+			else if (pixelHeight <= 40) {
+				zoomer.setZoomScale(0.48);
+			}
+			else if (pixelHeight <= 60) {
+				zoomer.setZoomScale(0.32);
+			}
+			else if (pixelHeight <= 80) {
+				zoomer.setZoomScale(0.24);
+			}
+			else if (pixelHeight <= 100) {
+				zoomer.setZoomScale(0.19);
+			}
+			else if (pixelHeight <= 120) {
+				zoomer.setZoomScale(0.16);
+			}
+			else if (pixelHeight <= 140) {
+				zoomer.setZoomScale(0.14);
+			}
+		}
+		zoomer.setZoomScale(-0.4 * log((float) (0.005 * numHexRow))); //TODO: Just have if statements to set it to pre defined sizes at pre defined amount of hex
 			
 		grassTileLarge = loadImage("resources/grass_tile_large.png");
 		grassTileMedium = loadImage("resources/grass_tile_medium.png");
 		grassTileSmall = loadImage("resources/grass_tile_small.png");
 		blackAnt = loadImage("resources/ant.png");
-		
-		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 100;
-		numHexRow = 100;
-		
-		//Calculates what the size of the hexagons will be using both the height and the width, it then uses the one
-		//whicth doesn't force the hexaons off the edge of the game display.
-		if (calculateHexDimensionsUsingHeight() * (float) (numHexCol + 0.5) > pixelWidth) { 
-			calculateHexDimensionsUsingWidth(); //If using the height made the width of the grid go over the right hand side of the display, use the width
-		}
 	}
 	
 	public void draw() {
 		//Sets an upper and lower bound on the zoom scale - it would be nicer if this was done more smoothly
-		if (zoomer.getZoomScale() >= 22.7) {
-			zoomer.setZoomScale(22.71);
-		}
-		else if (zoomer.getZoomScale() <= 0.9) {
-			zoomer.setZoomScale(1);
-		}
 		zoomer.transform();
 		//TODO - work out how to set limits to the pan offset (will probably need to know size of grid for the right hand side)
-		
+		System.out.println(zoomer.getZoomScale());
+		System.out.println(zoomer.getPanOffset());
 		PImage tile;
-		if (zoomer.getZoomScale() > 15) {
+		//if (zoomer.getZoomScale() > 15) {
 			tile = grassTileLarge;
-		}
-		else if (zoomer.getZoomScale() > 5) {
-			tile = grassTileMedium;
-		}
-		else {
-			tile = grassTileSmall;
-		}
+		//}
+		//else if (zoomer.getZoomScale() > 5) {
+		//	tile = grassTileMedium;
+		//}
+		//else {
+		//	tile = grassTileSmall;
+		//}
 		//Draw hexagons
 		background(0);
 		for (int row = 0; row < numHexRow; row++) {

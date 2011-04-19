@@ -18,7 +18,7 @@ public class MainWindow {
 	DummyEngine gameEngine;
 	
 	//The other GUI components used
-	GameDisplay gameDisplay;
+	CopyOfGameDisplay gameDisplay;
 	ContestWindow contestWindow;
 	StatisticsWindow statisticsWindow;
 	
@@ -69,7 +69,7 @@ public class MainWindow {
 		JPanel gridDisplayPanel = new JPanel();
 		gridDisplayPanel.setLayout(new FlowLayout());
 		
-		gameDisplay = new GameDisplay();
+		gameDisplay = new CopyOfGameDisplay();
 		gridDisplayPanel.add(gameDisplay);
 		gameDisplay.init();
 		pane.add(gridDisplayPanel, BorderLayout.NORTH);

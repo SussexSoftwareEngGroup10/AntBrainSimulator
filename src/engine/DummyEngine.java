@@ -307,4 +307,11 @@ public class DummyEngine {
 		//TODO: Implement (in another class).
 		return null;
 	}
+	
+	//TODO: Implement
+	public Brain run(Brain redBrain, Brain blackBrain, World world) {
+		Brain winner = new Brain();
+		return winner;
+	}
+
 }

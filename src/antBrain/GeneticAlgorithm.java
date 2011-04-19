@@ -36,7 +36,7 @@ public class GeneticAlgorithm implements Serializable {
 	
 	private int saveDir;
 	private int epoch;
-	private int popSize;
+	private int popLen;
 	private Brain[] population;
 	
 	public GeneticAlgorithm() {
@@ -64,7 +64,7 @@ public class GeneticAlgorithm implements Serializable {
 		}
 		
 		//Otherwise create a new population
-		this.popSize = popSize;
+		this.popLen = popSize;
 		this.population = new Brain[popSize];
 		
 		//Fill with number of example brains
@@ -82,17 +82,17 @@ public class GeneticAlgorithm implements Serializable {
 			if(this.epoch == 0){
 				//Starting evolution from a newly created population
 				Logger.log(new InformationEvent("Began GeneticAlgorithm evolution for "
-					+ epochs + " epochs,"
-					+ ", with " + rounds + " rounds per simulation,"
-					+ "an elite of " + elite
+					+ epochs + " epochs"
+					+ ", with " + rounds + " rounds per simulation"
+					+ ", an elite of " + elite
 					+ ", and a 1/" + mutationRate + " chance of mutation"));
 			}else{
 				//Resuming evolution from either a serialised object,
 				//or after an evolve() call has been completed on this population
 				Logger.log(new InformationEvent("Resumed GeneticAlgorithm evolution for "
 					+ epochs + " epochs at epoch: " + this.epoch
-					+ ", with " + rounds + " rounds per simulation,"
-					+ "an elite of " + elite
+					+ ", with " + rounds + " rounds per simulation"
+					+ ", an elite of " + elite
 					+ ", and a 1/" + mutationRate + " chance of mutation"));
 			}
 		}
@@ -144,28 +144,28 @@ public class GeneticAlgorithm implements Serializable {
 				}
 			}
 			
-			newPop = new Brain[this.popSize];
+			newPop = new Brain[this.popLen];
 			
 			//Copy over elite to the end
 			for(j = 0; j < elite; j++){
-				newPop[this.popSize - 1 - j] = this.population[this.popSize -  1 - j];
+				newPop[this.popLen - 1 - j] = this.population[this.popLen -  1 - j];
 			}
 			
 			//Breed good (most fit half of the population, includes the elite)
 			//Fill newPop from beginning to where elite starts
-			for(j = 0; j < this.popSize - elite; j++){
+			for(j = 0; j < this.popLen - elite; j++){
 				// Spawn child from 2 random parents
-				//(popSize / 2) 
-				ran1 = ran.nextInt(this.popSize / 2) + this.popSize / 2;
-				if(this.popSize < 3){
+				//(popLen / 2) 
+				ran1 = ran.nextInt(this.popLen / 2) + this.popLen / 2;
+				if(this.popLen < 3){
 					ran2 = 0;
 				}else{
 					try{
-						ran2 = ran.nextInt((this.popSize / 2) - 1) + this.popSize / 2;
+						ran2 = ran.nextInt((this.popLen / 2) - 1) + this.popLen / 2;
 					}catch(IllegalArgumentException ex){
 						if(Logger.getLogLevel() >= 1){
 							Logger.log(new WarningEvent("Ran arguments in GeneticAlgorithm: " +
-								"ran.nextInt((" + this.popSize + "/ 2) - 1) + " + this.popSize + " / 2", ex));
+								"ran.nextInt((" + this.popLen + "/ 2) - 1) + " + this.popLen + " / 2", ex));
 						}
 						ran2 = 0;
 					}
@@ -181,7 +181,7 @@ public class GeneticAlgorithm implements Serializable {
 			orderByFitness(dummyEngine, rounds);
 			
 			//Write best brain so far to file
-			BrainParser.writeBrainTo(this.population[this.popSize - 1], "ga_result");
+			BrainParser.writeBrainTo(this.population[this.popLen - 1], "ga_result");
 		}
 		if(Logger.getLogLevel() >= 1.5){
 			Logger.log(new InformationEvent("Completed GeneticAlgorithm evolution"));
@@ -512,16 +512,36 @@ public class GeneticAlgorithm implements Serializable {
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.writeInt(this.saveDir);
 		out.writeInt(this.epoch);
-		out.writeInt(this.popSize);
+		out.writeInt(this.popLen);
 		out.writeObject(this.population);
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
 		this.saveDir = in.readInt();
 		this.epoch = in.readInt();
-		this.popSize = in.readInt();
+		this.popLen = in.readInt();
 		this.population = (Brain[]) in.readObject();
-		//TODO verify variables, log warnings
+		
+		//Verification
+		if(this.population == null){
+			Logger.log(new IOEvent("population == null"));
+		}
+		if(this.popLen != this.population.length){
+			Logger.log(new IOEvent("popLen != population.length"));
+			this.popLen = this.population.length;
+		}
+		if(this.saveDir < 0){
+			Logger.log(new IOEvent("saveDir < 0"));
+		}
+		if(this.epoch < 0){
+			Logger.log(new IOEvent("epoch < 0"));
+		}
+		if(this.popLen <= 0){
+			Logger.log(new IOEvent("popLen <= 0"));
+		}
+		if(this.population.length <= 1){
+			Logger.log(new IOEvent("population.length <= 1"));
+		}
 	}
 
 //	private void readObjectNoData() throws ObjectStreamException{

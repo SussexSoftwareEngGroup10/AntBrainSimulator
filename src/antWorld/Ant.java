@@ -7,13 +7,12 @@ import utilities.InvalidInputEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
-import antBrain.State;
 
 /**
  * @author pkew20 / 57116
  * @version 1.0
  */
-public final class Ant implements Comparable<Ant> {
+public final class Ant extends Thread implements Comparable<Ant> {
 	enum Colour { BLACK, RED }
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
@@ -31,7 +30,7 @@ public final class Ant implements Comparable<Ant> {
 	
 	//Step local variables as fields to enable inline code
 	//all methods except constructor are final to allow inline code
-	private State state;
+	private antBrain.State state;	//Thread has a State inner class
 	private Cell senseCell;
 	private Cell newCell;
 	private Ant[] neighbourAnts = new Ant[6];
@@ -61,6 +60,21 @@ public final class Ant implements Comparable<Ant> {
 		}
 		this.cell = cell;
 		this.direction = direction;
+		start();
+	}
+	
+	@Override
+	public final void run() {
+		//steps when interrupted
+		while(true){
+			try{
+				while(true){
+					sleep(Integer.MAX_VALUE);
+				}
+			}catch(InterruptedException e){
+				step();
+			}
+		}
 	}
 	
 	public final void step() {
@@ -416,7 +430,7 @@ public final class Ant implements Comparable<Ant> {
 		this.cell = null;
 	}
 	
-	public final boolean isAlive() {
+	public final boolean isAliveInSim() {
 		return this.alive;
 	}
 	

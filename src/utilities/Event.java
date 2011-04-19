@@ -71,7 +71,7 @@ public abstract class Event extends Throwable {
 		}
 		s += cause;
 		s += ";  ";
-		while(s.length() < 350){
+		while(s.length() < 450){
 			s += " ";
 		}
 		

@@ -70,7 +70,8 @@ public class Logger {
 		int i = 0;
 		
 		for(i = 0; i < files.length; i++){
-			if(files[i].getPath().startsWith(folderName + "\\" + fileNamePrefix) && files[i].getPath().endsWith(fileNameSuffix)){
+			if(files[i].getPath().startsWith(folderName + "\\" + fileNamePrefix)
+				&& files[i].getPath().endsWith(fileNameSuffix)){
 				files[i].delete();
 			}
 		}

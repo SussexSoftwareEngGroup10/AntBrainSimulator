@@ -7,7 +7,6 @@ import utilities.Logger;
 
 import antBrain.Brain;
 import antBrain.BrainController;
-import antBrain.AntStepper;
 import antWorld.Ant;
 import antWorld.World;
 
@@ -48,12 +47,10 @@ public class DummyEngine {
 	
 	//GA arguments
 	private static int epochs = 1000;			//Less is quicker, but less likely to generate an improved brain
-	private static int rounds = 300;			//Less is quicker, but reduces the accuracy of the GA
+	private static int rounds = 300000;			//Less is quicker, but reduces the accuracy of the GA
 	private static int popSize = 100;			//Less is quicker, but searches less of the search space for brains
 	private static int elite = 5;				//Less is slower, but avoids getting stuck with lucky starting brain
 	private static int mutationRate = 10;		//Less is more, inverse
-	
-	private AntStepper[] antSteppers;
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -87,8 +84,8 @@ public class DummyEngine {
 //GeneticAlgorithm.createPopulation() == 1										== 1						   ==                 1 == 			  == 						== 
 //GeneticAlgorithm.evolve()			  == 1										== 1						   ==                 1 == 			  == 						== 
 //GeneticAlgorithm.evolve().loop	  == epochs									== 1,000					   ==             1,000 == 			  == 					  	== 
-//DummyEngine.tournament()			  == epochs									== 1,000					   ==             1,000 == 			  == 					  	== 
-//DummyEngine.tourneySimulation()	  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 			  == 	 				  	== 
+//DummyEngine.contest()				  == epochs									== 1,000					   ==             1,000 == 			  == 					  	== 
+//DummyEngine.contestSimulation()	  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 			  == 	 				  	== 
 //GeneticAlgorithm.breed()			  == epochs									== 1,000					   ==             1,000 == 1,500	  ==              1,500,000 == 0
 //population.sort()					  == epochs									== 1,000					   ==             1,000 == 1,700	  ==              1,700,000 == 0
 //BrainParser.writeBrainTo()		  == epochs									== 1,000					   ==             1,000 == 6,000	  ==              6,000,000 == 0
@@ -108,10 +105,10 @@ public class DummyEngine {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A
 	
 	public void sortByFitness(Brain[] population, int rounds) {
-		tournament(population, rounds);
+		evaluateFitnessContest(population, rounds);
 	}
 	
-	private void tournament(Brain[] population, int rounds) {
+	private void evaluateFitnessContest(Brain[] population, int rounds) {
 		Brain brain;
 		int i = 0;
 		
@@ -122,18 +119,18 @@ public class DummyEngine {
 		//Else use static fitness test (bestBrain field)
 		for(i = 0; i < population.length; i++){
 			brain = population[i];
-			//Brains from previous tournaments may remain in the elite
+			//Brains from previous contests may remain in the elite
 			//their fitness does not need to be calculated again
 			//Only if the fitness test is the same every time,
 			//i.e. tested against the same brain
 			if(brain.getFitness() == 0){
-				brain.setFitness(tourneySimulation(betterBrain, brain, rounds));
+				brain.setFitness(evaluateFitnessContestSimulation(betterBrain, brain, rounds));
 			}
 		}
 		Arrays.sort(population);
 	}
 	
-	private int tourneySimulation(Brain bestBrain, Brain brain, int rounds) {
+	private int evaluateFitnessContestSimulation(Brain bestBrain, Brain brain, int rounds) {
 		//Using a seed to construct a random means the worlds generated will be more
 		//uniform than using cloning, which seems to be slightly slower for some reason
 		World world = new World(seed, rows, cols, rocks, anthills,
@@ -145,31 +142,22 @@ public class DummyEngine {
 		
 		Ant[] ants = world.getAnts();
 		
-		//Setup AntSteppers
-		AntStepper st;
-		this.antSteppers = new AntStepper[ants.length];
-		for(int i = 0; i < ants.length; i++){
-			st = new AntStepper(ants[i], 1);
-//			st.setPriority(Thread.MAX_PRIORITY);
-			this.antSteppers[i] = st;
-		}
-		
 		//Run the simulation
 		if(Logger.getLogLevel() >= 5){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
 		
-		// TIMING
+//		// TIMING
 //		System.gc();
 //		ArrayList<Long> times;
 //		long mean;
 //		times = new ArrayList<Long>();
 //		mean = 0;
 //		Logger.restartTimer();
-		// /TIMING
+//		// /TIMING
 		
 		for(int r = 0; r < rounds; r++){
-			for(int a = 0; a < ants.length; a++){
+			for(Ant ant : ants){
 //				// TIMING
 //				System.gc();
 //				Logger.restartTimer();
@@ -181,17 +169,9 @@ public class DummyEngine {
 				//may slow it down so much that the change is insignificant
 				//Other problems may arise, such as ants being killed half way through a call,
 				//testing is needed
-				//No guarantee about the order ant.step() is executed
-				ants[a].step();
-//				new AntStepper(ants[a], 1).start();
-				//2143277		- serial
-				//2997924		- serial- methods of thread
-				//8181377299	- new threads
-				//TODO use ants.length threads, call start() before now,
-				//somehow make it so the threads execute in parallel when told to,
-				//but don't need to be restarted
-				//I assume calling Thread.start() starts a new concurrent thread,
-				//but calling methods of a Thread doesn't
+//				No guarantee about the order ant.step() is executed
+				ant.step();
+//				ant.interrupt();
 				
 				//TODO
 				//no polling, more object reuse (inc. ants, ant, maybe world), factorise,
@@ -199,22 +179,19 @@ public class DummyEngine {
 				//JIT, inline(javac -O MyClass), arrays more, no enumerations
 				
 //				times.add(Logger.getCurrentTime());	// TIMING
-				
-				//All the antSteppers should have finished executing,
-				//as they have higher priority than the main thread
-				//However, checking would be a bit of a pain, and slow down the program
-				Thread.yield();
 			}
+//			Thread.yield();	//Ensure all ants have completed their step
 		}
 		
-		// TIMING
-//		System.out.println("MEAN: " + Logger.getCurrentTime() + "ns");
+//		// TIMING
+//		long mean = (Logger.getCurrentTime() / rounds) / ants.length;
+//		System.out.println(mean + "ns");
 //		for(Long t : times){
 //			mean += t;
 //		}
 //		mean = mean / times.size();
 //		System.out.println("MEAN: " + mean + "ns");
-		// /TIMING
+//		// /TIMING
 		
 		//Fitness of the GA brain = its food - opponent's food
 		int[] anthillFood = world.getFoodInAnthills();

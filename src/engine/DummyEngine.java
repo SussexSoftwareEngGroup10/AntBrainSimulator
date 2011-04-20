@@ -335,6 +335,7 @@ public class DummyEngine {
 		}
 	}
 	
+	//Phil: I have implemented the below methods, I hope that's what you meant me to do
 	public World generateWorld() {
 		return World.getContestWorld(0);	//random seeded contest world
 	}

@@ -359,7 +359,7 @@ public class DummyEngine {
 		if(anthillFood[0] > anthillFood[1]){
 			return blackBrain;
 		}
-		if(anthillFood[1] < anthillFood[0]){
+		if(anthillFood[1] > anthillFood[0]){
 			return redBrain;
 		}
 		return null;

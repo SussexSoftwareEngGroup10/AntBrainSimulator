@@ -90,12 +90,18 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 	}
 	
 	@Override
+	//Inconsistent with natural ordering, as compareTo uses fitness,
+	//which is arbitrary and relies on randomness, where equals assesses fields
 	public boolean equals(Object o) {
 		Brain b = (Brain) o;
 		//do state by state, not contains
 		int i = 0;
 		for(i = 0; i < maxNumOfStates; i++){
-			if(!this.getState(i).equals(b.getState(i))){
+			try{
+				if(!this.getState(i).equals(b.getState(i))){
+					return false;
+				}
+			}catch(NullPointerException e){
 				return false;
 			}
 		}

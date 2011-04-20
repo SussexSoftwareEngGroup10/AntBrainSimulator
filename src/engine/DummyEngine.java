@@ -9,6 +9,7 @@ import utilities.Logger;
 
 import antBrain.Brain;
 import antBrain.BrainController;
+import antBrain.EvaluateFitnessContestSimulation;
 import antWorld.Ant;
 import antWorld.World;
 
@@ -48,17 +49,19 @@ public class DummyEngine {
 	private static final int antInitialDirection = 0;
 	
 	//GA arguments
-	private static final int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
-	private static final int rounds = 1000;					//Less is quicker, but reduces the accuracy of the GA
-	private static final int popSize = 100;					//Less is quicker, but searches less of the search space for brains
+	private static final int epochs = 100;					//Less is quicker, but less likely to generate an improved brain
+	private static final int rounds = 100;					//Less is quicker, but reduces the accuracy of the GA
+	private static final int popSize = 10;					//Less is quicker, but searches less of the search space for brains
 	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
 	private static final int mutationRate = 10;				//Less is more, inverse
-	private static final int stepsPerSync = 100;			//Less is slower
+	private static final int stepsPerSync = 1;				//Less is slower
 	
-	private final CyclicBarrier stepBarrier =
-		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
-	private final CyclicBarrier endBarrier =
-		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
+//	private final CyclicBarrier stepBarrier =
+//		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
+//	private final CyclicBarrier endBarrier =
+//		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)) + 1);
+	private final CyclicBarrier contestEndBarrier =
+		new CyclicBarrier(popSize + 1);
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -86,8 +89,8 @@ public class DummyEngine {
 	//remove excessive isSurrounded() checks: 30ns
 	//removed arrays and a number of variables from the ant code: 30-40ns
 	
-//Method name						  Number of calls							Number of calls				   Number of calls		Duration of	  Duration of all calls		Duration	After first								
-//									  per run, by variable						per run, using defaults		   per run				one call / ns (calls * duration) / ns	per run / %	improvements
+//Method name						  Number of calls							Number of calls				   Number of calls		Duration of	  Duration of all calls		Duration	After first		After						
+//									  per run, by variable						per run, using defaults		   per run				one call / ns (calls * duration) / ns	per run / %	improvements	multithreading
 //DummyEngine.main()				  == 1										== 1						   ==                 1 == 			  == >1,387,516,889,200,000 == 100
 //GeneticAlgorithm.createPopulation() == 1										== 1						   ==                 1 == 			  == 						== 
 //GeneticAlgorithm.evolve()			  == 1										== 1						   ==                 1 == 			  == 						== 
@@ -108,34 +111,74 @@ public class DummyEngine {
 //GeneticAlgorithm.combineStates()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 700		  ==          3,500,000,000 == 0
 //GeneticAlgorithm.mutateGenes()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 300		  ==          1,500,000,000 == 0
 //Ant.setBrain()					  == epochs * ants     * popSize  * 2		== 1,000 * 250 * 100 * 2	   ==        50,000,000 == 200		  ==         10,000,000,000 == 0
-//Ant.isAlive()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15		== N/A
-//Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40
-//Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A
+//Ant.isAlive()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15		== N/A		
+//Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
+//Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
-	public void sortByFitness(Brain[] population, int rounds) {
-		evaluateFitnessContest(population, rounds);
+	public void sortByFitness(Brain[] population) {
+//		System.gc();
+//		Logger.restartTimer();
+		
+		evaluateFitnessContest(population);
+		
+//		long mean = ((Logger.getCurrentTime() / popSize) / rounds) /
+//			World.hexArea(anthillSideLength);
+//		System.out.println(mean + "ns");
 	}
 	
-	private void evaluateFitnessContest(Brain[] population, int rounds) {
+	private void evaluateFitnessContest(Brain[] population) {
+		//Ants let each other know they've finished a step with the stepBarrier
+		//Ants let their sim know they've finished all steps with the endBarrier
+		//Sims let the engine know they've finished their sim with the contestEndBarrier
 		Brain brain;
-		int i = 0;
+		int i;
 		
 		//Set fitness for each brain against the best brain in the population
 		//Assumes population has been sorted
 		//Dynamic fitness test:
 //		Brain bestBrain = population[population.length - 1];
 		//Else use static fitness test (bestBrain field)
-		for(i = 0; i < population.length; i++){	//TODO thread n sync these
+		
+//		EvaluateFitnessContestSimulation[] sims = new EvaluateFitnessContestSimulation[population.length];
+//		EvaluateFitnessContestSimulation sim;
+		
+//		System.out.println("1");
+		
+		for(i = 0; i < population.length; i++){
 			brain = population[i];
 			//Brains from previous contests may remain in the elite
 			//their fitness does not need to be calculated again
 			//Only if the fitness test is the same every time,
 			//i.e. tested against the same brain
+//			System.out.println("2");
 			if(brain.getFitness() == 0){
+//				sim = new EvaluateFitnessContestSimulation(betterBrain, brain,
+//					this.contestEndBarrier);
+//				sim.start();
+//				sims[i] = sim;
 				brain.setFitness(evaluateFitnessContestSimulation(betterBrain, brain, rounds));
 			}
 		}
+		
+//		System.out.println("3");
+		
+//		try{
+//			this.contestEndBarrier.await();
+//		}catch(InterruptedException e){
+//			e.printStackTrace();
+//		}catch(BrokenBarrierException e){
+//			//All sims have completed their sim
+//		}
+		
+//		System.out.println("4");
+		
+//		for(i = 0; i < population.length; i++){
+//			population[i].setFitness(sims[i].getResult());
+//		}
+		
 		Arrays.sort(population);
+		
+//		System.out.println("5");
 	}
 	
 	private int evaluateFitnessContestSimulation(Brain bestBrain, Brain brain, int rounds) {
@@ -150,9 +193,9 @@ public class DummyEngine {
 		
 		Ant[] ants = world.getAnts();
 		
-		for(Ant ant : ants){
-			ant.setBarriers(this.stepBarrier, this.endBarrier);	//TODO improve
-		}
+//		for(Ant ant : ants){
+//			ant.setBarriers(this.stepBarrier, this.endBarrier);	//TODO improve
+//		}
 		
 		//Run the simulation
 		if(Logger.getLogLevel() >= 5){
@@ -160,18 +203,18 @@ public class DummyEngine {
 		}
 		
 //		// TIMING
-		System.gc();
+//		System.gc();
 //		ArrayList<Long> times;
 //		long mean;
 //		times = new ArrayList<Long>();
 //		mean = 0;
-		Logger.restartTimer();
+//		Logger.restartTimer();
 //		// /TIMING
 		
 //		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		
 //		int interrupts = rounds / stepsPerSync;
-//		for(int r = 0; r < rounds ; r++){
+		for(int r = 0; r < rounds ; r++){
 //		CountDownLatch[] latches = new CountDownLatch[interrupts];
 //		for(int c = 0; c < latches.length; c++){
 //			latches[c] = new CountDownLatch(ants.length);
@@ -189,8 +232,8 @@ public class DummyEngine {
 				//Other problems may arise, such as ants being killed half way through a call,
 				//testing is needed
 				//No guarantee about the order ant.step() is executed
-//				ant.step();
-				ant.start();		//TODO improve
+				ant.step();
+//				ant.start();		//TODO improve
 //				ant.interrupt();	//steps (rounds / interrupts) step()s
 //				ant.start();
 				
@@ -201,26 +244,25 @@ public class DummyEngine {
 				
 //				times.add(Logger.getCurrentTime());	// TIMING
 			}
-			try{
-				this.endBarrier.await();
-			}catch(InterruptedException e){
-				e.printStackTrace();
-			}catch(BrokenBarrierException e){
-				//All ants have completed all of their steps
-			}
+//			try{
+//				this.endBarrier.await();
+//			}catch(InterruptedException e){
+//				e.printStackTrace();
+//			}catch(BrokenBarrierException e){
+//				//All ants have completed all of their steps
+//			}
 //			try{
 //				latches[latches.length - 1].await();
 //			}catch(InterruptedException e){
 //				e.printStackTrace();
 //			}
-//			Thread.yield();	//Ensure all ants have completed their step
-//		}
+		}
 		
 //		Thread.currentThread().setPriority(Thread.NORM_PRIORITY);	//might not work
 		
 //		// TIMING
-		long mean = (Logger.getCurrentTime() / rounds) / ants.length;	//for 1 step()
-		System.out.println(mean + "ns");
+//		long mean = (Logger.getCurrentTime() / rounds) / ants.length;	//for 1 step()
+//		System.out.println(mean + "ns");
 //		for(Long t : times){
 //			mean += t;
 //		}
@@ -238,6 +280,9 @@ public class DummyEngine {
 		Logger.setLogLevel(1.5);
 		//Synchronise number of step() calls in each ant in a world after n calls
 		World.setSteps(stepsPerSync);
+		EvaluateFitnessContestSimulation.setValues(seed, rows, cols, rocks, anthills,
+			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
+			antInitialDirection);
 		
 //		//Calculate duration of the timing methods
 //		ArrayList<Long> times;

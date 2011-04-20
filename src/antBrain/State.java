@@ -848,16 +848,10 @@ public class State implements Serializable {
 	
 	@Override
 	public boolean equals(Object o) {
-		State b = (State) o;
-		int[] genesA = this.getGenes();
-		int[] genesB = b.getGenes();
-		int i = 0;
-		for(i = 0; i < 9; i++){
-			if(genesA[i] != genesB[i]){
-				return false;
-			}
+		if(this.toString().equals(o.toString())){
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override

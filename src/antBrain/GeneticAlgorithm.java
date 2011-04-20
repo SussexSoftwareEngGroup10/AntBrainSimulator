@@ -116,7 +116,7 @@ public class GeneticAlgorithm implements Serializable {
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
-		orderByFitness(dummyEngine, rounds);
+		orderByFitness(dummyEngine);
 		
 		//After constructor, epoch == 0,
 		//after deserialization, epoch == epoch to be run next
@@ -178,7 +178,7 @@ public class GeneticAlgorithm implements Serializable {
 			}
 			this.population = newPop;
 			//Order, ready for next epoch
-			orderByFitness(dummyEngine, rounds);
+			orderByFitness(dummyEngine);
 			
 			//Write best brain so far to file
 			BrainParser.writeBrainTo(this.population[this.popLen - 1], "ga_result");
@@ -188,8 +188,8 @@ public class GeneticAlgorithm implements Serializable {
 		}
 	}
 	
-	private void orderByFitness(DummyEngine dummyEngine, int rounds) {
-		dummyEngine.sortByFitness(this.population, rounds);
+	private void orderByFitness(DummyEngine dummyEngine) {
+		dummyEngine.sortByFitness(this.population);
 	}
 	
 	private Brain breed(Brain brainA, Brain brainB, int mutationConstant) {

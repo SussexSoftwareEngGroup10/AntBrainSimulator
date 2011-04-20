@@ -77,7 +77,7 @@ public class World {
 	 * 
 	 * @return a world which is fit to be used in a tournament
 	 */
-	public static World getTournamentWorld(int seed) {
+	public static World getContestWorld(int seed) {
 		return getRegularWorld(seed, 140, 140, 13);
 	}
 	

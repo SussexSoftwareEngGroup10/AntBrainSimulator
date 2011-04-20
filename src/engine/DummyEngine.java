@@ -336,7 +336,7 @@ public class DummyEngine {
 	}
 	
 	public World generateWorld() {
-		return World.getTournamentWorld(0);	//random seeded world
+		return World.getContestWorld(0);	//random seeded contest world
 	}
 	
 	//Phil: the way I've coded the colours, black comes first, but I can change this if needed

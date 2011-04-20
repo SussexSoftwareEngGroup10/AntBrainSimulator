@@ -6,7 +6,7 @@ package antWorld;
  */
 public class WorldController {
 	public static World getTournamentWorld(int seed) {
-		return World.getTournamentWorld(seed);
+		return World.getContestWorld(seed);
 	}
 	
 	public static World getWorld(int rows, int cols, int rocks, int seed,

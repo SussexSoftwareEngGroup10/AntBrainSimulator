@@ -1,9 +1,11 @@
 package antWorld;
 
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import utilities.ErrorEvent;
-import utilities.InvalidInputEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
@@ -36,6 +38,9 @@ public final class Ant extends Thread implements Comparable<Ant> {
 	private Cell newCell;
 	private Ant[] neighbourAnts = new Ant[6];
 	private Ant neighbourAnt;
+//	private CountDownLatch[] latches;
+	private CyclicBarrier stepBarrier;
+	private CyclicBarrier endBarrier;
 	
 	public Ant(int uid, Random ran, int direction, int colour, Cell cell, int steps) {
 		this.uid = uid;
@@ -55,30 +60,63 @@ public final class Ant extends Thread implements Comparable<Ant> {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Colour Argument in Ant Constructor"));
+				Logger.log(new IllegalArgumentEvent("Illegal Colour Argument in Ant Constructor"));
 			}
 			this.colour = null;
 		}
 		this.direction = direction;
 		this.cell = cell;
 		this.steps = steps;
-		start();
+//		start();
 	}
 	
 	@Override
 	public final void run() {
-		//Calls step() when interrupted
-		while(true){
+		for(int s = 0; s < this.steps; s++){
+			step();
 			try{
-				while(true){
-					sleep(Integer.MAX_VALUE);
-				}
+				this.stepBarrier.await();
 			}catch(InterruptedException e){
-				for(int s = 0; s < this.steps; s++){
-					step();
-				}
+				e.printStackTrace();
+			}catch(BrokenBarrierException e){
+				//All other ants have completed this step
+				//Next step
 			}
+			//Want to wait for all other ants to finish this step() then continue,
+			//can't use sleep,
+			//maybe yield, join
 		}
+		try{
+			//Let the main thread continue when all ants have completed
+			//all of their steps
+			this.endBarrier.await();
+		}catch(InterruptedException e){
+			e.printStackTrace();
+		}catch(BrokenBarrierException e){
+			//Return
+		}
+//		//Calls step() when interrupted
+//		while(true){
+//			try{
+//				while(true){
+//					sleep(Integer.MAX_VALUE);
+//				}
+//			}catch(InterruptedException e){
+//				for(int s = 0; s < this.steps; s++){
+//					step();
+//				}
+//			}
+//		}
+	}
+	
+//	public final void setCountDownLatches(CountDownLatch[] latches) {
+//		this.latches = latches;
+//	}
+	
+	public final void setBarriers(CyclicBarrier stepBarrier, 
+		CyclicBarrier endBarrier) {
+		this.stepBarrier = stepBarrier;
+		this.endBarrier = endBarrier;
 	}
 	
 	public final void step() {
@@ -148,14 +186,14 @@ public final class Ant extends Thread implements Comparable<Ant> {
 			}else{
 				//command < -1 || > 7
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal Command Argument in Ant step"));
+					Logger.log(new IllegalArgumentEvent("Illegal Command Argument in Ant step"));
 				}
 			}
 		}
 	}
 
 	//Sense senseDir st1 st2 condition
-	private final synchronized void sense() {
+	private final void sense() {
 		switch(this.state.getSenseDir()){
 		case 0:
 			this.senseCell = this.cell;
@@ -171,7 +209,7 @@ public final class Ant extends Thread implements Comparable<Ant> {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal senseDir Argument in Ant sense"));
+				Logger.log(new IllegalArgumentEvent("Illegal senseDir Argument in Ant sense"));
 			}
 			this.senseCell = this.cell;
 		}
@@ -269,7 +307,7 @@ public final class Ant extends Thread implements Comparable<Ant> {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Condition Argument in Ant sense"));
+				Logger.log(new IllegalArgumentEvent("Illegal Condition Argument in Ant sense"));
 			}
 			this.state = this.brain.getState(this.state.getSt2());
 		}
@@ -329,14 +367,14 @@ public final class Ant extends Thread implements Comparable<Ant> {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal TurnDir Argument in Ant turn"));
+				Logger.log(new IllegalArgumentEvent("Illegal TurnDir Argument in Ant turn"));
 			}
 		}
 		this.state = this.brain.getState(this.state.getSt1());
 	}
 	
 	//Move st1 st2
-	private final synchronized void move() {
+	private final void move() {
 		//If new cell is not rocky and does not contain an ant, move there and go to st1, else st2
 		this.newCell = this.cell.getNeighbour(this.direction);
 		if(!this.newCell.isRocky() && !this.newCell.hasAnt()){

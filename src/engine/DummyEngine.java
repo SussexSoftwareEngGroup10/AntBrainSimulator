@@ -1,6 +1,8 @@
 package engine;
 
 import java.util.Arrays;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import utilities.InformationEvent;
 import utilities.Logger;
@@ -47,11 +49,17 @@ public class DummyEngine {
 	
 	//GA arguments
 	private static final int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
-	private static final int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
+	private static final int rounds = 1000;					//Less is quicker, but reduces the accuracy of the GA
 	private static final int popSize = 100;					//Less is quicker, but searches less of the search space for brains
 	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
 	private static final int mutationRate = 10;				//Less is more, inverse
-	private static final int stepsPerInterrupt = 1;			//Less is slower, step()s per interrupt()
+	private static final int stepsPerSync = 1;				//Less is slower
+	
+
+	private final CyclicBarrier stepBarrier =
+		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
+	private final CyclicBarrier endBarrier =
+		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -149,16 +157,22 @@ public class DummyEngine {
 		}
 		
 //		// TIMING
-//		System.gc();
+		System.gc();
 //		ArrayList<Long> times;
 //		long mean;
 //		times = new ArrayList<Long>();
 //		mean = 0;
-//		Logger.restartTimer();
+		Logger.restartTimer();
 //		// /TIMING
 		
-		int interrupts = rounds / stepsPerInterrupt;
-		for(int r = 0; r < interrupts ; r++){
+//		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+		
+//		int interrupts = rounds / stepsPerSync;
+//		for(int r = 0; r < rounds ; r++){
+//		CountDownLatch[] latches = new CountDownLatch[interrupts];
+//		for(int c = 0; c < latches.length; c++){
+//			latches[c] = new CountDownLatch(ants.length);
+//		}//When all the ants countDown, ends
 			for(Ant ant : ants){
 //				// TIMING
 //				System.gc();
@@ -172,8 +186,11 @@ public class DummyEngine {
 				//Other problems may arise, such as ants being killed half way through a call,
 				//testing is needed
 				//No guarantee about the order ant.step() is executed
-				ant.step();
+//				ant.step();
+				ant.setBarriers(this.stepBarrier, this.endBarrier);	//TODO improve
+				ant.start();
 //				ant.interrupt();	//steps (rounds / interrupts) step()s
+//				ant.start();
 				
 				//TODO
 				//no polling, more object reuse (inc. ants, ant, maybe world), factorise,
@@ -182,12 +199,26 @@ public class DummyEngine {
 				
 //				times.add(Logger.getCurrentTime());	// TIMING
 			}
+			try{
+				this.endBarrier.await();
+			}catch(InterruptedException e){
+				e.printStackTrace();
+			}catch(BrokenBarrierException e){
+				//All ants have completed all of their steps
+			}
+//			try{
+//				latches[latches.length - 1].await();
+//			}catch(InterruptedException e){
+//				e.printStackTrace();
+//			}
 //			Thread.yield();	//Ensure all ants have completed their step
-		}
+//		}
+		
+//		Thread.currentThread().setPriority(Thread.NORM_PRIORITY);	//might not work
 		
 //		// TIMING
-//		long mean = (Logger.getCurrentTime() / 1000) / ants.length;	//for 1 step()
-//		System.out.println(mean + "ns");
+		long mean = (Logger.getCurrentTime() / rounds) / ants.length;	//for 1 step()
+		System.out.println(mean + "ns");
 //		for(Long t : times){
 //			mean += t;
 //		}
@@ -203,7 +234,8 @@ public class DummyEngine {
 	public static void main(String args[]) {
 		Logger.clearLogs();
 		Logger.setLogLevel(1.5);
-		World.setSteps(stepsPerInterrupt);
+		//Synchronise number of step() calls in each ant in a world after n calls
+		World.setSteps(stepsPerSync);
 		
 //		//Calculate duration of the timing methods
 //		ArrayList<Long> times;

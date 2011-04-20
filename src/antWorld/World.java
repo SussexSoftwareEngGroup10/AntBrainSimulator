@@ -2,7 +2,7 @@ package antWorld;
 
 import java.util.Random;
 
-import utilities.InvalidInputEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
@@ -669,7 +669,7 @@ public class World {
 //		}
 	}
 	
-	private int hexArea(int n) {
+	public static int hexArea(int n) {
 		//Calculates the number of cells in a hex (e.g. anthill) given side length
 		if(n < 1){
 			return 0;
@@ -773,7 +773,7 @@ public class World {
 			break;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal i Argument in World getNeighbour"));
+				Logger.log(new IllegalArgumentEvent("Illegal i Argument in World getNeighbour"));
 			}
 		}
 		return neighbour;

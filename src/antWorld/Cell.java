@@ -1,6 +1,6 @@
 package antWorld;
 
-import utilities.InvalidInputEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 import utilities.WarningEvent;
 
@@ -62,7 +62,7 @@ public class Cell {
 			}catch(NumberFormatException e){
 				//Cell must contain food, otherwise switch would have broken at '.'
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal food argument in Cell setCell", e));
+					Logger.log(new IllegalArgumentEvent("Illegal food argument in Cell setCell", e));
 				}
 			}
 		}

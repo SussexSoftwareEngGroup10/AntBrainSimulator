@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import utilities.InvalidInputEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 /*
@@ -92,7 +92,7 @@ public class State implements Serializable {
 		case SENSE:
 			if(genes[1] < 0 || genes[1] > 3){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal SenseDir ordinal argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal SenseDir ordinal argument in State constructor"));
 				}
 				this.senseDir = toSenseDir(0);
 			}else{
@@ -103,7 +103,7 @@ public class State implements Serializable {
 			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -111,7 +111,7 @@ public class State implements Serializable {
 			}
 			if(genes[6] < 0 || genes[6] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st2 argument in State constructor"));
 				}
 				this.st2 = 0;
 			}else{
@@ -119,7 +119,7 @@ public class State implements Serializable {
 			}
 			if(genes[7] < 0 || genes[7] > 9){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal Condition ordinal argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal Condition ordinal argument in State constructor"));
 				}
 				this.condition = toCondition(0);
 			}else{
@@ -128,7 +128,7 @@ public class State implements Serializable {
 			if(this.condition == Condition.MARKER){
 				if(genes[8] < 0 || genes[8] > 5){
 					if(Logger.getLogLevel() >= 1){
-						Logger.log(new InvalidInputEvent("Illegal SenseMarker argument in State constructor"));
+						Logger.log(new IllegalArgumentEvent("Illegal SenseMarker argument in State constructor"));
 					}
 					this.senseMarker = 0;
 				}else{
@@ -144,7 +144,7 @@ public class State implements Serializable {
 			this.turnDir = null;
 			if(genes[3] < 0 || genes[3] > 5){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal marker argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal marker argument in State constructor"));
 				}
 				this.marker = 0;
 			}else{
@@ -153,7 +153,7 @@ public class State implements Serializable {
 			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -169,7 +169,7 @@ public class State implements Serializable {
 			this.turnDir = null;
 			if(genes[3] < 0 || genes[3] > 5){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal marker argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal marker argument in State constructor"));
 				}
 				this.marker = 0;
 			}else{
@@ -178,7 +178,7 @@ public class State implements Serializable {
 			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -196,7 +196,7 @@ public class State implements Serializable {
 			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -204,7 +204,7 @@ public class State implements Serializable {
 			}
 			if(genes[6] < 0 || genes[6] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st2 argument in State constructor"));
 				}
 				this.st2 = 0;
 			}else{
@@ -221,7 +221,7 @@ public class State implements Serializable {
 			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -236,7 +236,7 @@ public class State implements Serializable {
 			this.senseDir = null;
 			if(genes[2] < 0 || genes[2] > 1){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal TurnDir ordinal argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal TurnDir ordinal argument in State constructor"));
 				}
 				this.turnDir = toTurnDir(0);
 			}else{
@@ -246,7 +246,7 @@ public class State implements Serializable {
 			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -264,7 +264,7 @@ public class State implements Serializable {
 			this.p = -1;
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -272,7 +272,7 @@ public class State implements Serializable {
 			}
 			if(genes[6] < 0 || genes[6] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st2 argument in State constructor"));
 				}
 				this.st2 = 0;
 			}else{
@@ -288,7 +288,7 @@ public class State implements Serializable {
 			this.marker = -1;
 			if(genes[4] < 2 || genes[4] > 10){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.p = 2;
 			}else{
@@ -296,7 +296,7 @@ public class State implements Serializable {
 			}
 			if(genes[5] < 0 || genes[5] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -304,7 +304,7 @@ public class State implements Serializable {
 			}
 			if(genes[6] < 0 || genes[6] > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st2 argument in State constructor"));
 				}
 				this.st2 = 0;
 			}else{
@@ -316,7 +316,7 @@ public class State implements Serializable {
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Command ordinal argument in State constructor"));
+				Logger.log(new IllegalArgumentEvent("Illegal Command ordinal argument in State constructor"));
 			}
 			this.senseDir = null;
 			this.turnDir = null;
@@ -350,7 +350,7 @@ public class State implements Serializable {
 			eVal = Command.valueOf(terms[0].trim().toUpperCase());
 		}catch(IllegalArgumentException e){
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Command Argument in State constructor"));
+				Logger.log(new IllegalArgumentEvent("Illegal Command Argument in State constructor"));
 			}
 		}finally{
 			this.command = (Command) eVal;
@@ -363,7 +363,7 @@ public class State implements Serializable {
 				eVal = SenseDir.valueOf(terms[1].trim().toUpperCase());
 			}catch(IllegalArgumentException e){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal SenseDir ordinal argument in State constructor", e));
+					Logger.log(new IllegalArgumentEvent("Illegal SenseDir ordinal argument in State constructor", e));
 				}
 			}finally{
 				this.senseDir = (SenseDir) eVal;
@@ -374,7 +374,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -383,7 +383,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[3]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st2 argument in State constructor"));
 				}
 				this.st2 = 0;
 			}else{
@@ -393,7 +393,7 @@ public class State implements Serializable {
 				eVal = Condition.valueOf(terms[4].trim().toUpperCase());
 			}catch(IllegalArgumentException e){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal Condition ordinal argument in State constructor", e));
+					Logger.log(new IllegalArgumentEvent("Illegal Condition ordinal argument in State constructor", e));
 				}
 			}finally{
 				this.condition = (Condition) eVal;
@@ -402,7 +402,7 @@ public class State implements Serializable {
 				iVal = Integer.parseInt(terms[5]);
 				if(iVal < 0 || iVal > 5){
 					if(Logger.getLogLevel() >= 1){
-						Logger.log(new InvalidInputEvent("Illegal senseMarker argument in State constructor"));
+						Logger.log(new IllegalArgumentEvent("Illegal senseMarker argument in State constructor"));
 					}
 					this.senseMarker = 0;
 				}else{
@@ -419,7 +419,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > 5){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal marker argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal marker argument in State constructor"));
 				}
 				this.marker = 0;
 			}else{
@@ -429,7 +429,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -446,7 +446,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > 5){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal marker argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal marker argument in State constructor"));
 				}
 				this.marker = 0;
 			}else{
@@ -456,7 +456,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -475,7 +475,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -484,7 +484,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st2 argument in State constructor"));
 				}
 				this.st2 = 0;
 			}else{
@@ -502,7 +502,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -519,7 +519,7 @@ public class State implements Serializable {
 				eVal = TurnDir.valueOf(terms[1].trim().toUpperCase());
 			}catch(IllegalArgumentException e){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal TurnDir ordinal argument in State constructor", e));
+					Logger.log(new IllegalArgumentEvent("Illegal TurnDir ordinal argument in State constructor", e));
 				}
 			}finally{
 				this.turnDir = (TurnDir) eVal;
@@ -529,7 +529,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -548,7 +548,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -557,7 +557,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st2 argument in State constructor"));
 				}
 				this.st2 = 0;
 			}else{
@@ -574,7 +574,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[1]);
 			if(iVal < 2 || iVal > 10){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal p argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal p argument in State constructor"));
 				}
 				this.p = 0;
 			}else{
@@ -583,7 +583,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[2]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st1 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st1 argument in State constructor"));
 				}
 				this.st1 = 0;
 			}else{
@@ -592,7 +592,7 @@ public class State implements Serializable {
 			iVal = Integer.parseInt(terms[3]);
 			if(iVal < 0 || iVal > max){
 				if(Logger.getLogLevel() >= 1){
-					Logger.log(new InvalidInputEvent("Illegal st2 argument in State constructor"));
+					Logger.log(new IllegalArgumentEvent("Illegal st2 argument in State constructor"));
 				}
 				this.st2 = 0;
 			}else{
@@ -604,7 +604,7 @@ public class State implements Serializable {
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Command Argument in State constructor"));
+				Logger.log(new IllegalArgumentEvent("Illegal Command Argument in State constructor"));
 			}
 			this.senseDir = null;
 			this.turnDir = null;
@@ -648,7 +648,7 @@ public class State implements Serializable {
 			return 6;
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal field Argument in State constructor"));
+				Logger.log(new IllegalArgumentEvent("Illegal field Argument in State constructor"));
 			}
 			return -1;
 		}
@@ -678,7 +678,7 @@ public class State implements Serializable {
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Command ordinal Argument in State toCommand"));
+				Logger.log(new IllegalArgumentEvent("Illegal Command ordinal Argument in State toCommand"));
 			}
 		}
 		return null;
@@ -700,7 +700,7 @@ public class State implements Serializable {
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal senseDir ordinal Argument in State toSenseDir"));
+				Logger.log(new IllegalArgumentEvent("Illegal senseDir ordinal Argument in State toSenseDir"));
 			}
 		}
 		return null;
@@ -718,7 +718,7 @@ public class State implements Serializable {
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal turnDir ordinal Argument in State toSenseDir"));
+				Logger.log(new IllegalArgumentEvent("Illegal turnDir ordinal Argument in State toSenseDir"));
 			}
 		}
 		return null;
@@ -752,7 +752,7 @@ public class State implements Serializable {
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Condition ordinal Argument in State toSenseDir"));
+				Logger.log(new IllegalArgumentEvent("Illegal Condition ordinal Argument in State toSenseDir"));
 			}
 		}
 		return null;
@@ -914,7 +914,7 @@ public class State implements Serializable {
 		//This should never be reached
 		default:
 			if(Logger.getLogLevel() >= 1){
-				Logger.log(new InvalidInputEvent("Illegal Command Argument in State toString"));
+				Logger.log(new IllegalArgumentEvent("Illegal Command Argument in State toString"));
 			}
 		}
 		//So far s == "SENSE AHEAD 1 3 FOOD "

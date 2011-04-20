@@ -49,9 +49,9 @@ public class DummyEngine {
 	private static final int antInitialDirection = 0;
 	
 	//GA arguments
-	private static final int epochs = 100;					//Less is quicker, but less likely to generate an improved brain
-	private static final int rounds = 100;					//Less is quicker, but reduces the accuracy of the GA
-	private static final int popSize = 10;					//Less is quicker, but searches less of the search space for brains
+	private static final int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
+	private static final int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
+	private static final int popSize = 100;					//Less is quicker, but searches less of the search space for brains
 	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
 	private static final int mutationRate = 10;				//Less is more, inverse
 	private static final int stepsPerSync = 1;				//Less is slower

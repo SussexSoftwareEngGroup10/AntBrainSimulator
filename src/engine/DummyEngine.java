@@ -336,14 +336,31 @@ public class DummyEngine {
 	}
 	
 	public World generateWorld() {
-		//TODO: Implement (in another class).
-		return null;
+		return World.getTournamentWorld(0);	//random seeded world
 	}
 	
-	//TODO: Implement
-	public Brain run(Brain redBrain, Brain blackBrain, World world) {
-		Brain winner = new Brain();
-		return winner;
-	}
+	//Phil: the way I've coded the colours, black comes first, but I can change this if needed
+	//Also, what do you want to happen if there's a draw? At the moment, null is returned
+	public Brain run(Brain blackBrain, Brain redBrain, World world) {
+		//World now has better brain at 0, GA brain at 1
+		world.setBrain(blackBrain, 0);
+		world.setBrain(redBrain, 1);
 
+		Ant[] ants = world.getAnts();
+
+		for(int r = 0; r < rounds ; r++){
+			for(Ant ant : ants){
+				ant.step();
+			}
+		}
+		
+		int[] anthillFood = world.getFoodInAnthills();
+		if(anthillFood[0] > anthillFood[1]){
+			return blackBrain;
+		}
+		if(anthillFood[1] < anthillFood[0]){
+			return redBrain;
+		}
+		return null;
+	}
 }

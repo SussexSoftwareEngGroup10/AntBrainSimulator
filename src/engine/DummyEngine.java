@@ -53,9 +53,8 @@ public class DummyEngine {
 	private static final int popSize = 100;					//Less is quicker, but searches less of the search space for brains
 	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
 	private static final int mutationRate = 10;				//Less is more, inverse
-	private static final int stepsPerSync = 1;				//Less is slower
+	private static final int stepsPerSync = 100;			//Less is slower
 	
-
 	private final CyclicBarrier stepBarrier =
 		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
 	private final CyclicBarrier endBarrier =
@@ -126,7 +125,7 @@ public class DummyEngine {
 		//Dynamic fitness test:
 //		Brain bestBrain = population[population.length - 1];
 		//Else use static fitness test (bestBrain field)
-		for(i = 0; i < population.length; i++){
+		for(i = 0; i < population.length; i++){	//TODO thread n sync these
 			brain = population[i];
 			//Brains from previous contests may remain in the elite
 			//their fitness does not need to be calculated again
@@ -150,6 +149,10 @@ public class DummyEngine {
 		world.setBrain(brain, 1);
 		
 		Ant[] ants = world.getAnts();
+		
+		for(Ant ant : ants){
+			ant.setBarriers(this.stepBarrier, this.endBarrier);	//TODO improve
+		}
 		
 		//Run the simulation
 		if(Logger.getLogLevel() >= 5){
@@ -187,8 +190,7 @@ public class DummyEngine {
 				//testing is needed
 				//No guarantee about the order ant.step() is executed
 //				ant.step();
-				ant.setBarriers(this.stepBarrier, this.endBarrier);	//TODO improve
-				ant.start();
+				ant.start();		//TODO improve
 //				ant.interrupt();	//steps (rounds / interrupts) step()s
 //				ant.start();
 				

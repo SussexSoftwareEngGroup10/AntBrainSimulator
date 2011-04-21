@@ -82,9 +82,6 @@ public final class Ant extends Thread implements Comparable<Ant> {
 				//All other ants have completed this step
 				//Next step
 			}
-			//Want to wait for all other ants to finish this step() then continue,
-			//can't use sleep,
-			//maybe yield, join
 		}
 		try{
 			//Let the main thread continue when all ants have completed

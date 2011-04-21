@@ -7,10 +7,10 @@ import antWorld.Ant;
 import antWorld.World;
 
 public class EvaluateFitnessContestSimulation extends Thread {
-	private final CyclicBarrier stepBarrier =
-		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
-	private final CyclicBarrier endBarrier =
-		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)) + 1);
+//	private final CyclicBarrier stepBarrier =
+//		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
+//	private final CyclicBarrier endBarrier =
+//		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)) + 1);
 	
 	private static int seed;
 	private static int rows;
@@ -22,6 +22,7 @@ public class EvaluateFitnessContestSimulation extends Thread {
 	private static int foodBlobSideLength;
 	private static int foodBlobCellFoodCount;
 	private static int antInitialDirection;
+	private static int rounds;
 	
 	private Brain blackBrain;
 	private Brain redBrain;
@@ -37,7 +38,7 @@ public class EvaluateFitnessContestSimulation extends Thread {
 	
 	public static void setValues(int seed, int rows, int cols, int rocks, 
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection) {
+		int foodBlobCellFoodCount, int antInitialDirection, int rounds) {
 		EvaluateFitnessContestSimulation.seed = seed;
 		EvaluateFitnessContestSimulation.rows = rows;
 		EvaluateFitnessContestSimulation.cols = cols;
@@ -48,6 +49,7 @@ public class EvaluateFitnessContestSimulation extends Thread {
 		EvaluateFitnessContestSimulation.foodBlobSideLength = foodBlobSideLength;
 		EvaluateFitnessContestSimulation.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		EvaluateFitnessContestSimulation.antInitialDirection = antInitialDirection;
+		EvaluateFitnessContestSimulation.rounds = rounds;
 	}
 	
 	@Override
@@ -63,37 +65,33 @@ public class EvaluateFitnessContestSimulation extends Thread {
 		
 		Ant[] ants = world.getAnts();
 		
-		//Setup barriers
-		for(Ant ant : ants){
-			ant.setBarriers(this.stepBarrier, this.endBarrier);
+		//Setup barriers and run ants for all steps
+		for(int i = 0; i < rounds; i++){
+			for(Ant ant : ants){
+//				ant.setBarriers(this.stepBarrier, this.endBarrier);
+//				ant.start();
+				ant.step();
+			}
 		}
 		
 //		System.out.println("21");
-
-		//Run the simulation
-		for(Ant ant : ants){
-			ant.start();
-		}
 		
-//		System.out.println("22");
-		
-		//Wait for the rest of the ants to finish
-		try{
-			this.endBarrier.await();
-		}catch(InterruptedException e){
-			e.printStackTrace();
-		}catch(BrokenBarrierException e){
-			//All ants have completed all of their steps
-		}
+		//Wait for the ants to finish
+//		try{
+//			this.endBarrier.await();
+//		}catch(InterruptedException e){
+//			e.printStackTrace();
+//		}catch(BrokenBarrierException e){
+//			//All ants have completed all of their steps
+//		}
 		
 		//Fitness of the GA brain = its food - opponent's food
 		int[] anthillFood = world.getFoodInAnthills();
 		this.result = anthillFood[1] - anthillFood[0];
 		
-//		System.out.println("23");
-		
 		//Wait for the rest of the sims to finish
 		try{
+			System.out.println("awaits: " + (this.contestEndBarrier.getNumberWaiting() + 1));
 			this.contestEndBarrier.await();
 		}catch(InterruptedException e){
 			e.printStackTrace();
@@ -101,7 +99,9 @@ public class EvaluateFitnessContestSimulation extends Thread {
 			//All sims have completed their sim
 		}
 		
-//		System.out.println("24");
+//		System.out.println("POS awaits: " + this.contestEndBarrier.getNumberWaiting());
+		
+//		System.out.println("23");
 	}
 	
 	public int getResult() {

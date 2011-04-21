@@ -10,6 +10,7 @@ import utilities.Logger;
 import antBrain.Brain;
 import antBrain.BrainController;
 import antBrain.EvaluateFitnessContestSimulation;
+import antBrain.GeneticAlgorithm;
 import antWorld.Ant;
 import antWorld.World;
 
@@ -49,17 +50,13 @@ public class DummyEngine {
 	private static final int antInitialDirection = 0;
 	
 	//GA arguments
-	private static final int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
-	private static final int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
+	private static final int epochs = 10;					//Less is quicker, but less likely to generate an improved brain
+	private static final int rounds = 1000;				//Less is quicker, but reduces the accuracy of the GA
 	private static final int popSize = 100;					//Less is quicker, but searches less of the search space for brains
 	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
 	private static final int mutationRate = 10;				//Less is more, inverse
 	private static final int stepsPerSync = 1;				//Less is slower
 	
-//	private final CyclicBarrier stepBarrier =
-//		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
-//	private final CyclicBarrier endBarrier =
-//		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)) + 1);
 	private final CyclicBarrier contestEndBarrier =
 		new CyclicBarrier(popSize + 1);
 	
@@ -116,14 +113,15 @@ public class DummyEngine {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
 	public void sortByFitness(Brain[] population) {
-//		System.gc();
-//		Logger.restartTimer();
+		//TODO fix the timing divisions, barrier parties, and other stuff
+		System.gc();
+		Logger.restartTimer();
 		
 		evaluateFitnessContest(population);
 		
-//		long mean = ((Logger.getCurrentTime() / popSize) / rounds) /
-//			World.hexArea(anthillSideLength);
-//		System.out.println(mean + "ns");
+		long mean = ((Logger.getCurrentTime() / popSize) / rounds) /
+			(anthills * World.hexArea(anthillSideLength));
+		System.out.println(mean + "ns");
 	}
 	
 	private void evaluateFitnessContest(Brain[] population) {
@@ -139,10 +137,13 @@ public class DummyEngine {
 //		Brain bestBrain = population[population.length - 1];
 		//Else use static fitness test (bestBrain field)
 		
-//		EvaluateFitnessContestSimulation[] sims = new EvaluateFitnessContestSimulation[population.length];
-//		EvaluateFitnessContestSimulation sim;
+		EvaluateFitnessContestSimulation[] sims = new EvaluateFitnessContestSimulation[population.length];
+		EvaluateFitnessContestSimulation sim;
 		
-//		System.out.println("1");
+		Brain[] betterBrains = new Brain[population.length];
+		for(i = 0; i < population.length; i++){
+			betterBrains[i] = betterBrain.clone();
+		}
 		
 		for(i = 0; i < population.length; i++){
 			brain = population[i];
@@ -150,37 +151,33 @@ public class DummyEngine {
 			//their fitness does not need to be calculated again
 			//Only if the fitness test is the same every time,
 			//i.e. tested against the same brain
-//			System.out.println("2");
 			if(brain.getFitness() == 0){
-//				sim = new EvaluateFitnessContestSimulation(betterBrain, brain,
-//					this.contestEndBarrier);
-//				sim.start();
-//				sims[i] = sim;
-				brain.setFitness(evaluateFitnessContestSimulation(betterBrain, brain, rounds));
+				sim = new EvaluateFitnessContestSimulation(betterBrains[i], brain,
+					this.contestEndBarrier);
+				sim.start();
+				sims[i] = sim;
+//				brain.setFitness(evaluateFitnessContestSimulation(betterBrain, brain, rounds));
 			}
 		}
 		
-//		System.out.println("3");
+		try{
+			//It's the elite, count starts somehow
+			System.out.println("awaits: " + (this.contestEndBarrier.getNumberWaiting() + 1));
+			this.contestEndBarrier.await();
+		}catch(InterruptedException e){
+			e.printStackTrace();
+		}catch(BrokenBarrierException e){
+			//All sims have completed their sim
+		}
 		
-//		try{
-//			this.contestEndBarrier.await();
-//		}catch(InterruptedException e){
-//			e.printStackTrace();
-//		}catch(BrokenBarrierException e){
-//			//All sims have completed their sim
-//		}
-		
-//		System.out.println("4");
-		
-//		for(i = 0; i < population.length; i++){
-//			population[i].setFitness(sims[i].getResult());
-//		}
+		for(i = 0; i < population.length; i++){
+			population[i].setFitness(sims[i].getResult());
+		}
 		
 		Arrays.sort(population);
-		
-//		System.out.println("5");
 	}
 	
+	@SuppressWarnings("unused")
 	private int evaluateFitnessContestSimulation(Brain bestBrain, Brain brain, int rounds) {
 		//Using a seed to construct a random means the worlds generated will be more
 		//uniform than using cloning, which seems to be slightly slower for some reason
@@ -277,12 +274,13 @@ public class DummyEngine {
 	
 	public static void main(String args[]) {
 		Logger.clearLogs();
+		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(1.5);
 		//Synchronise number of step() calls in each ant in a world after n calls
 		World.setSteps(stepsPerSync);
 		EvaluateFitnessContestSimulation.setValues(seed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
-			antInitialDirection);
+			antInitialDirection, rounds);
 		
 //		//Calculate duration of the timing methods
 //		ArrayList<Long> times;
@@ -402,10 +400,12 @@ public class DummyEngine {
 			}
 		}
 		
+		//Black wins
 		int[] anthillFood = world.getFoodInAnthills();
 		if(anthillFood[0] > anthillFood[1]){
 			return blackBrain;
 		}
+		//Red wins
 		if(anthillFood[1] > anthillFood[0]){
 			return redBrain;
 		}

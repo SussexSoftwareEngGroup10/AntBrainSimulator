@@ -51,14 +51,14 @@ public class DummyEngine {
 	
 	//GA arguments
 	private static final int epochs = 10;					//Less is quicker, but less likely to generate an improved brain
-	private static final int rounds = 1000;				//Less is quicker, but reduces the accuracy of the GA
-	private static final int popSize = 100;					//Less is quicker, but searches less of the search space for brains
+	private static final int rounds = 1000;					//Less is quicker, but reduces the accuracy of the GA
+	private static final int popLen = 100;					//Less is quicker, but searches less of the search space for brains
 	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
 	private static final int mutationRate = 10;				//Less is more, inverse
 	private static final int stepsPerSync = 1;				//Less is slower
 	
-	private final CyclicBarrier contestEndBarrier =
-		new CyclicBarrier(popSize + 1);
+	private CyclicBarrier contestEndBarrier =
+		new CyclicBarrier(popLen + 1);
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -67,9 +67,9 @@ public class DummyEngine {
 	}
 	
 	//How many times GA-related methods are called in each run,
-	//ignoring elite (popSize -= elite)
+	//ignoring elite (popLen -= elite)
 	//Variables in descending order and approximate values
-	//rounds,  epochs, ants, popSize, stateNum, k
+	//rounds,  epochs, ants, popLen, stateNum, k
 	//300000, ~1000,  ~250, <100,    <100,     10
 	//The more a method is called, the more efficient it should be
 	//Duration of a time log = 1,130, subtracted this value from every duration
@@ -93,24 +93,24 @@ public class DummyEngine {
 //GeneticAlgorithm.evolve()			  == 1										== 1						   ==                 1 == 			  == 						== 
 //GeneticAlgorithm.evolve().loop	  == epochs									== 1,000					   ==             1,000 == 			  == 					  	== 
 //DummyEngine.contest()				  == epochs									== 1,000					   ==             1,000 == 			  == 					  	== 
-//DummyEngine.contestSimulation()	  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 			  == 	 				  	== 
+//DummyEngine.contestSimulation()	  == epochs * popLen						== 1,000 * 100				   ==           100,000 == 			  == 	 				  	== 
 //GeneticAlgorithm.breed()			  == epochs									== 1,000					   ==             1,000 == 1,500	  ==              1,500,000 == 0
 //population.sort()					  == epochs									== 1,000					   ==             1,000 == 1,700	  ==              1,700,000 == 0
 //BrainParser.writeBrainTo()		  == epochs									== 1,000					   ==             1,000 == 6,000	  ==              6,000,000 == 0
-//Ant.isKill()						  == epochs * ants     * popSize			== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
-//Ant()								  == epochs * ants     * popSize			== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
-//World.setBrain()					  == epochs * popSize  * 2					== 1,000 * 100 * 2			   ==           200,000 == 250		  ==             50,000,000 == 0
-//Brain.setState()					  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 25		  ==            125,000,000 == 0
-//World()							  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 1,750	  ==            175,000,000 == 0
+//Ant.isKill()						  == epochs * ants     * popLen			== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
+//Ant()								  == epochs * ants     * popLen			== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
+//World.setBrain()					  == epochs * popLen  * 2					== 1,000 * 100 * 2			   ==           200,000 == 250		  ==             50,000,000 == 0
+//Brain.setState()					  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 25		  ==            125,000,000 == 0
+//World()							  == epochs * popLen						== 1,000 * 100				   ==           100,000 == 1,750	  ==            175,000,000 == 0
 //GeneticAlgorithm.ranGenes()		  == epochs * stateNum * k					== 1,000 * 100 * 10			   ==         1,000,000 == 400		  ==            400,000,000 == 0
-//State.getValues()					  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 80		  ==            400,000,000 == 0
-//World.getFoodInAnthills()			  == epochs * popSize						== 1,000 * 100				   ==           100,000 == 6,800	  ==            680,000,000 == 0
-//GeneticAlgorithm.combineStates()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 700		  ==          3,500,000,000 == 0
-//GeneticAlgorithm.mutateGenes()	  == epochs * popSize  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 300		  ==          1,500,000,000 == 0
-//Ant.setBrain()					  == epochs * ants     * popSize  * 2		== 1,000 * 250 * 100 * 2	   ==        50,000,000 == 200		  ==         10,000,000,000 == 0
-//Ant.isAlive()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15		== N/A		
-//Ant.step()						  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
-//Ant.isSurrounded()				  == rounds * epochs   * ants     * popSize	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
+//State.getValues()					  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 80		  ==            400,000,000 == 0
+//World.getFoodInAnthills()			  == epochs * popLen						== 1,000 * 100				   ==           100,000 == 6,800	  ==            680,000,000 == 0
+//GeneticAlgorithm.combineStates()	  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 700		  ==          3,500,000,000 == 0
+//GeneticAlgorithm.mutateGenes()	  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 300		  ==          1,500,000,000 == 0
+//Ant.setBrain()					  == epochs * ants     * popLen  * 2		== 1,000 * 250 * 100 * 2	   ==        50,000,000 == 200		  ==         10,000,000,000 == 0
+//Ant.isAlive()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15		== N/A		
+//Ant.step()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
+//Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
 	public void sortByFitness(Brain[] population) {
 		//TODO fix the timing divisions, barrier parties, and other stuff
@@ -119,7 +119,7 @@ public class DummyEngine {
 		
 		evaluateFitnessContest(population);
 		
-		long mean = ((Logger.getCurrentTime() / popSize) / rounds) /
+		long mean = ((Logger.getCurrentTime() / popLen) / rounds) /
 			(anthills * World.hexArea(anthillSideLength));
 		System.out.println(mean + "ns");
 	}
@@ -151,6 +151,10 @@ public class DummyEngine {
 			//their fitness does not need to be calculated again
 			//Only if the fitness test is the same every time,
 			//i.e. tested against the same brain
+			
+			//TODO Either have to use multiple barriers,
+			//or run extra threads to await barrier,
+			//or reset barrier
 			if(brain.getFitness() == 0){
 				sim = new EvaluateFitnessContestSimulation(betterBrains[i], brain,
 					this.contestEndBarrier);
@@ -162,7 +166,8 @@ public class DummyEngine {
 		
 		try{
 			//TODO It's the elite, count start()s somehow
-			System.out.println("awaits: " + (this.contestEndBarrier.getNumberWaiting() + 1));
+			System.out.println("awaits: " + (this.contestEndBarrier.getNumberWaiting() + 1)
+				+ ", out of: " + this.contestEndBarrier.getParties());
 			this.contestEndBarrier.await();
 		}catch(InterruptedException e){
 			e.printStackTrace();
@@ -323,7 +328,7 @@ public class DummyEngine {
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
-		Brain gaBrain = BrainController.getBestGABrain(betterBrain, new DummyEngine(), epochs, rounds, popSize, elite, mutationRate);
+		Brain gaBrain = BrainController.getBestGABrain(betterBrain, new DummyEngine(), epochs, rounds, popLen, elite, mutationRate);
 //		Brain gaBrain = BrainController.readBrainFrom("ga_result");
 		world.setBrain(betterBrain, 0);	//black
 		world.setBrain(gaBrain, 1);		//red

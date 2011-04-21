@@ -91,7 +91,8 @@ public class EvaluateFitnessContestSimulation extends Thread {
 		
 		//Wait for the rest of the sims to finish
 		try{
-			System.out.println("awaits: " + (this.contestEndBarrier.getNumberWaiting() + 1));
+			System.out.println("awaits: " + (this.contestEndBarrier.getNumberWaiting() + 1)
+				+ ", out of: " + this.contestEndBarrier.getParties());
 			this.contestEndBarrier.await();
 		}catch(InterruptedException e){
 			e.printStackTrace();

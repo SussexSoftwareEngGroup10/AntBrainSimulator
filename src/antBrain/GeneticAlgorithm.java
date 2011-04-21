@@ -57,22 +57,24 @@ public class GeneticAlgorithm implements Serializable {
 		return bestBrainPath;
 	}
 	
-	public void createPopulation(Brain exampleBrain, int popSize) {
+	public void createPopulation(Brain exampleBrain, int popLen) {
 		//Try to resume last epochs()
 		if(loadLast()){
 			return;
 		}
 		
+		this.epoch = 0;
+		
 		//Otherwise create a new population
-		this.popLen = popSize;
-		this.population = new Brain[popSize];
+		this.popLen = popLen;
+		this.population = new Brain[popLen];
 		
 		//Fill with number of example brains
-		for(int i = 0; i < popSize; i++){
+		for(int i = 0; i < popLen; i++){
 			this.population[i] = exampleBrain.clone();
 		}
 		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("New GeneticAlgorithm Brain population of size " + popSize + " created"));
+			Logger.log(new InformationEvent("New GeneticAlgorithm Brain population of size " + popLen + " created"));
 		}
 	}
 	

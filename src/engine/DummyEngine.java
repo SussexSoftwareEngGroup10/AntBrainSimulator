@@ -161,7 +161,7 @@ public class DummyEngine {
 		}
 		
 		try{
-			//It's the elite, count starts somehow
+			//TODO It's the elite, count start()s somehow
 			System.out.println("awaits: " + (this.contestEndBarrier.getNumberWaiting() + 1));
 			this.contestEndBarrier.await();
 		}catch(InterruptedException e){

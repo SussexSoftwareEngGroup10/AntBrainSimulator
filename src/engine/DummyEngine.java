@@ -12,7 +12,6 @@ import utilities.Logger;
 import antBrain.Brain;
 import antBrain.BrainController;
 import antBrain.EvaluateFitnessContestSimulation;
-import antBrain.GeneticAlgorithm;
 import antWorld.Ant;
 import antWorld.World;
 

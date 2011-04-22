@@ -137,6 +137,7 @@ public class DummyEngine {
 		//Else use static fitness test (bestBrain field)
 		
 		//Multi-Threaded
+		//TODO time more, roughly down from 3:30 to 2:00 with threads
 		//Get popLen permits, restore as runs complete
 		this.sem.acquireUninterruptibly(popLen);
 		
@@ -359,8 +360,8 @@ public class DummyEngine {
 		
 		//TODO remove console prints, eventually, from here and Logger
 		System.out.println(world);
-		System.out.println("---Better Brain---\n" + betterBrain);
-		System.out.println("---GA Brain---\n" + gaBrain);
+		System.out.println("---better_example.brain---\n" + betterBrain);
+		System.out.println("---ga_result.brain---\n" + gaBrain);
 		System.out.print("GA Brain ");
 		if(gaBrain.equals(betterBrain)){
 			System.out.print("=");
@@ -370,7 +371,7 @@ public class DummyEngine {
 		System.out.println("= Better Brain");
 		
 		if(Logger.getLogLevel() >= 1){
-			Logger.log(new InformationEvent("Virtual Machine terminated"));
+			Logger.log(new InformationEvent("Virtual Machine terminated normally"));
 		}
 	}
 	

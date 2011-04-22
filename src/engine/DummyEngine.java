@@ -33,35 +33,40 @@ import antWorld.World;
  * @version 1.0
  */
 public class DummyEngine {
-	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
-	
 	//World arguments
-	//easier than passing around values,
-	//obviously need to make dynamic in final version
-	private static final int seed = 1;
-	private static final int rows = 140;
-	private static final int cols = 140;
-	private static final int rocks = 13;
-	private static final int anthills = 2;
-	private static final int anthillSideLength = 7;	//Less means less ants, which is quicker
-	private static final int foodBlobCount = 10;
-	private static final int foodBlobSideLength = 5;
-	private static final int foodBlobCellFoodCount = 5;
-	private static final int antInitialDirection = 0;
+	private int seed;
+	private int rows;
+	private int cols;
+	private int rocks;
+	private int anthills;
+	private int anthillSideLength;
+	private int foodBlobCount;
+	private int foodBlobSideLength;
+	private int foodBlobCellFoodCount;
+	private int antInitialDirection;
 	
-	//GA arguments
-	private static final int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
-	private static final int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
-	private static final int popLen = 100;					//Less is quicker, but searches less of the search space for brains
-	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
-	private static final int mutationRate = 10;				//Less is more, inverse
-	private static final int stepsPerSync = 1;				//Less is slower
+	//Simulation arguments (not GA-only arguments)
+	private int rounds;
 	
-	private ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 2, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen));
-	private Semaphore sem = new Semaphore(popLen, true);
+	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
+	private ThreadPoolExecutor pool = null;
+	private Semaphore sem = null;
 	
-	public DummyEngine() {
+	public DummyEngine(int seed, int rows, int cols, int rocks, int anthills,
+		int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
+		int foodBlobCellFoodCount, int antInitialDirection, int rounds) {
+		this.seed = seed;
+		this.rows = rows;
+		this.cols = cols;
+		this.rocks = rocks;
+		this.anthills = anthills;
+		this.anthillSideLength = anthillSideLength;
+		this.foodBlobCount = foodBlobCount;
+		this.foodBlobSideLength = foodBlobSideLength;
+		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		this.antInitialDirection = antInitialDirection;
+		this.rounds = rounds;
+		
 		if(Logger.getLogLevel() >= 3){
 			Logger.log(new InformationEvent("New Engine object constructed"));
 		}
@@ -114,11 +119,23 @@ public class DummyEngine {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
 	public void sortByFitness(Brain[] population) {
-		//Gave up using CyclicBarriers, as the elite ruined the parties
+		//TODO make sure 2 evolves can be run using 1 GA
+		if(this.pool == null){
+			this.pool = new ThreadPoolExecutor(2, 2, 1,
+				TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(population.length));
+		}
+		if(this.sem == null){
+			this.sem = new Semaphore(population.length, true);
+		}
+
 //		System.gc();
 //		Logger.restartTimer();
 		
+		//Ensure all Brains have a fitness
 		evaluateFitnessContest(population);
+		
+		//Sort by fitness calculated
+		Arrays.sort(population);
 		
 //		long mean = ((Logger.getCurrentTime() / (popLen - elite)) / rounds) /
 //			(anthills * World.hexArea(anthillSideLength));
@@ -139,7 +156,7 @@ public class DummyEngine {
 		//Multi-Threaded
 		//TODO time more, roughly down from 3:30 to 2:00 with threads
 		//Get popLen permits, restore as runs complete
-		this.sem.acquireUninterruptibly(popLen);
+		this.sem.acquireUninterruptibly(population.length);
 		
 		for(Brain brain : population){
 			if(brain.getFitness() == 0){
@@ -151,8 +168,8 @@ public class DummyEngine {
 		}
 		
 		//Await completion of all calls
-		this.sem.acquireUninterruptibly(popLen);
-		this.sem.release(popLen);
+		this.sem.acquireUninterruptibly(population.length);
+		this.sem.release(population.length);
 		
 		//Single-Threaded
 //		Brain brain;
@@ -167,18 +184,15 @@ public class DummyEngine {
 //				brain.setFitness(evaluateFitnessContestSimulation(betterBrain, brain, rounds));
 //			}
 //		}
-		
-		//Sort by the fitnesses calculated
-		Arrays.sort(population);
 	}
 	
 	@SuppressWarnings("unused")
 	private int evaluateFitnessContestSimulation(Brain bestBrain, Brain brain, int rounds) {
 		//Using a seed to construct a random means the worlds generated will be more
 		//uniform than using cloning, which seems to be slightly slower for some reason
-		World world = new World(seed, rows, cols, rocks, anthills,
-			anthillSideLength, foodBlobCount, foodBlobSideLength,
-			foodBlobCellFoodCount, antInitialDirection);
+		World world = new World(this.seed, this.rows, this.cols, this.rocks, this.anthills,
+			this.anthillSideLength, this.foodBlobCount, this.foodBlobSideLength,
+			this.foodBlobCellFoodCount, this.antInitialDirection);
 		//World now has better brain at 0, GA brain at 1
 		world.setBrain(bestBrain, 0);
 		world.setBrain(brain, 1);
@@ -268,11 +282,34 @@ public class DummyEngine {
 	}
 	
 	public static void main(String args[]) {
+		//TODO combine GA and regular sim methods
+		
+		//Setup variables
+		Brain betterBrain = BrainController.readBrainFrom("better_example");
+		//World arguments
+		//easier than passing around values,
+		//obviously need to make dynamic in final version
+		int seed = 1;
+		int rows = 140;
+		int cols = 140;
+		int rocks = 13;
+		int anthills = 2;
+		int anthillSideLength = 7;	//Less means less ants, which is quicker
+		int foodBlobCount = 10;
+		int foodBlobSideLength = 5;
+		int foodBlobCellFoodCount = 5;
+		int antInitialDirection = 0;
+		//GA arguments
+		int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
+		int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
+		int popLen = 100;					//Less is quicker, but searches less of the search space for brains
+		int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
+		int mutationRate = 10;				//Less is more, inverse
+		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();
-		Logger.setLogLevel(1.5);
+		Logger.setLogLevel(6);
 		//Synchronise number of step() calls in each ant in a world after n calls
-		World.setSteps(stepsPerSync);
 		EvaluateFitnessContestSimulation.setValues(seed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
@@ -296,6 +333,23 @@ public class DummyEngine {
 //			System.out.println("MEAN: " + mean);
 //		}
 		
+		
+		
+		//Black is the default brain, read in from file
+		//Red is the best one found by the GeneticAlgorithm with parameters specified
+		//The better red does relative to black, the better the GA is
+		
+		//Evolve and get the best brain from the GeneticAlgorithm
+		//betterBrain is a decent place to start from
+		//but more likely to get stuck there in the optima,
+		//blankBrain is a worse starting point, it would take longer to get to a good brain,
+		//but it encourages the brains generated to be more random
+		DummyEngine dummyEngine = new DummyEngine(seed, rows, cols, rocks, anthills,
+			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
+			antInitialDirection, rounds);
+		Brain gaBrain = BrainController.getBestGABrain(betterBrain, dummyEngine, epochs, rounds, popLen, elite, mutationRate);
+//		Brain gaBrain = BrainController.readBrainFrom("ga_result");
+		
 		//Setup world
 		//Seed is also used to determine ant moves,
 		//so exactly the same simulation can be replayed
@@ -308,18 +362,6 @@ public class DummyEngine {
 			foodBlobCellFoodCount, antInitialDirection);
 		
 		//Setup brains
-		//Black is the default brain, read in from file
-		//Red is the best one found by the GeneticAlgorithm with parameters specified
-		//The better red does relative to black, the better the GA is
-//		Brain blankBrain = BrainController.readBrainFrom("blank");
-		
-		//Evolve and get the best brain from the GeneticAlgorithm
-		//betterBrain is a decent place to start from
-		//but more likely to get stuck there in the optima,
-		//blankBrain is a worse starting point, it would take longer to get to a good brain,
-		//but it encourages the brains generated to be more random
-		Brain gaBrain = BrainController.getBestGABrain(betterBrain, new DummyEngine(), epochs, rounds, popLen, elite, mutationRate);
-//		Brain gaBrain = BrainController.readBrainFrom("ga_result");
 		world.setBrain(betterBrain, 0);	//black
 		world.setBrain(gaBrain, 1);		//red
 		
@@ -389,7 +431,7 @@ public class DummyEngine {
 
 		Ant[] ants = world.getAnts();
 
-		for(int r = 0; r < rounds ; r++){
+		for(int r = 0; r < this.rounds ; r++){
 			for(Ant ant : ants){
 				ant.step();
 			}

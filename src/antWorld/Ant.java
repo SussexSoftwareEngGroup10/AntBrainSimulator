@@ -1,8 +1,6 @@
 package antWorld;
 
 import java.util.Random;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
 import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
@@ -14,7 +12,7 @@ import antBrain.Brain;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public final class Ant extends Thread implements Comparable<Ant> {
+public final class Ant implements Comparable<Ant> {
 	enum Colour { BLACK, RED }
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
@@ -24,7 +22,6 @@ public final class Ant extends Thread implements Comparable<Ant> {
 	private final int uid;
 	private final Colour colour;
 	private Brain brain;
-	private int steps;
 	private Cell cell;
 	private boolean alive = true;
 	private int direction;
@@ -38,10 +35,8 @@ public final class Ant extends Thread implements Comparable<Ant> {
 	private Cell newCell;
 	private Ant[] neighbourAnts = new Ant[6];
 	private Ant neighbourAnt;
-	private CyclicBarrier stepBarrier;
-	private CyclicBarrier endBarrier;
 	
-	public Ant(int uid, Random ran, int direction, int colour, Cell cell, int steps) {
+	public Ant(int uid, Random ran, int direction, int colour, Cell cell) {
 		this.uid = uid;
 		
 		if(ran == null){
@@ -65,55 +60,6 @@ public final class Ant extends Thread implements Comparable<Ant> {
 		}
 		this.direction = direction;
 		this.cell = cell;
-		this.steps = steps;
-	}
-	
-	@Override
-	public final void run() {
-		//TODO either use more efficient classes like executors and semaphores,
-		//or get rid of multithreading
-		for(int s = 0; s < this.steps; s++){
-			step();
-			try{
-				this.stepBarrier.await();
-			}catch(InterruptedException e){
-				e.printStackTrace();
-			}catch(BrokenBarrierException e){
-				//All other ants have completed this step
-				//Next step
-			}
-		}
-		try{
-			//Let the main thread continue when all ants have completed
-			//all of their steps
-			this.endBarrier.await();
-		}catch(InterruptedException e){
-			e.printStackTrace();
-		}catch(BrokenBarrierException e){
-			//Return
-		}
-//		//Calls step() when interrupted
-//		while(true){
-//			try{
-//				while(true){
-//					sleep(Integer.MAX_VALUE);
-//				}
-//			}catch(InterruptedException e){
-//				for(int s = 0; s < this.steps; s++){
-//					step();
-//				}
-//			}
-//		}
-	}
-	
-//	public final void setCountDownLatches(CountDownLatch[] latches) {
-//		this.latches = latches;
-//	}
-	
-	public final void setBarriers(CyclicBarrier stepBarrier, 
-		CyclicBarrier endBarrier) {
-		this.stepBarrier = stepBarrier;
-		this.endBarrier = endBarrier;
 	}
 	
 	public final void step() {
@@ -469,7 +415,7 @@ public final class Ant extends Thread implements Comparable<Ant> {
 		this.cell = null;
 	}
 	
-	public final boolean isAliveInSim() {
+	public final boolean isAlive() {
 		return this.alive;
 	}
 	

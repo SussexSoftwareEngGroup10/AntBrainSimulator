@@ -5,6 +5,10 @@ import java.util.concurrent.Semaphore;
 import antWorld.Ant;
 import antWorld.World;
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public class EvaluateFitnessContestSimulation implements Runnable {
 	private static int seed;
 	private static int rows;
@@ -57,16 +61,18 @@ public class EvaluateFitnessContestSimulation implements Runnable {
 		
 		Ant[] ants = world.getAnts();
 		
-		//Run ants for all steps
+		//Run ants for all steps, serial / in this thread
 		for(int i = 0; i < rounds; i++){
 			for(Ant ant : ants){
 				ant.step();
 			}
 		}
 		
+		//Store the result as the fitness of the red (GA) brain
 		int[] anthillFood = world.getFoodInAnthills();
 		this.redBrain.setFitness(anthillFood[1] - anthillFood[0]);
 		
+		//Let the main thread know that this simulation has completed
 		this.sem.release();
 	}
 }

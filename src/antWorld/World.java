@@ -37,7 +37,6 @@ Example World:
  * @version 1.0
  */
 public class World {
-	public static int steps = 1;
 	//Using a seed means that the same world can be reproduced
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
 	private final int seed;
@@ -623,7 +622,7 @@ public class World {
 				}
 				
 				//Create and store ant
-				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell, steps);
+				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell);
 				cell.setAnt(ant);
 				this.ants[nextAntIndex[0] + nextAntIndex[1]] = ant;
 				//Use nextAntIndex[colour] value BEFORE increment (opposite to ++i)
@@ -678,10 +677,6 @@ public class World {
 			return 1;
 		}
 		return hexArea(n - 1) + ((n - 1) * 6);
-	}
-	
-	public static void setSteps(int steps) {
-		World.steps = steps;
 	}
 	
 	public void setBrain(Brain brain, int i) {

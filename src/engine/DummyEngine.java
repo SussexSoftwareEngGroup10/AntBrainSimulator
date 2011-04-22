@@ -11,7 +11,8 @@ import utilities.Logger;
 
 import antBrain.Brain;
 import antBrain.BrainController;
-import antBrain.EvaluateFitnessContestSimulation;
+import antBrain.GeneticAlgorithm;
+import antBrain.Simulation;
 import antWorld.Ant;
 import antWorld.World;
 
@@ -151,8 +152,9 @@ public class DummyEngine {
 		this.semaphore.acquireUninterruptibly(population.length);
 		
 		for(Brain brain : population){
+			//If a seed is used, fitness will not change with multiple simulations
 			if(brain.getFitness() == 0){
-				this.threadPoolExecutor.execute(new EvaluateFitnessContestSimulation(betterBrain,
+				this.threadPoolExecutor.execute(new Simulation(betterBrain,
 					brain, this.semaphore));
 			}else{
 				//Brains in the elite will already have a fitness,
@@ -211,13 +213,18 @@ public class DummyEngine {
 	}
 	
 	public static void main(String args[]) {
-		//TODO combine GA and regular sim methods
+		//TODO remove console prints, from down there \/, and Logger
+		//TODO combine GA and regular sim methods, bit of a pain
 		//TODO time more, roughly down from 3:30 to 2:00 with threads
 		//TODO make sure 2 evolve()s can be run using 1 GA
 		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
 		//or at least allow a size parameter
 		//TODO remove / improve logging and saving polling in GeneticAlgorithm.evolve()
 		//TODO remove polling in Ant.step()
+		//TODO fix % logging in GeneticAlgorithm.evolve()
+		//TODO put the new logging stuff in ifs
+		//TODO remove static methods and variables to allow multiple engines
+		//TODO have another go at a dynamic fitness test
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
@@ -227,23 +234,23 @@ public class DummyEngine {
 		int cols = 140;
 		int rocks = 13;
 		int anthills = 2;
-		int anthillSideLength = 7;			//Less means less ants, which is quicker
+		int anthillSideLength = 7;	//More means more ants, which is slower
 		int foodBlobCount = 10;
 		int foodBlobSideLength = 5;
 		int foodBlobCellFoodCount = 5;
 		int antInitialDirection = 0;
 		//GA arguments
-		int epochs = 1010;					//Less is quicker, but less likely to generate an improved brain
-		int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
-		int popLen = 100;					//Less is quicker, but searches less of the search space for brains
-		int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
-		int mutationRate = 10;				//Less is more, inverse
+		int epochs = 200;			//More is slower, and more likely to generate an improved brain
+		int rounds = 300000;		//More is slower, and increases the accuracy of the GA
+		int popLen = 50;			//More is slower, and searches more of the search space for brains
+		int elite = 5;				//More is faster, but increases the likelihood of getting stuck with lucky starting brain
+		int mutationRate = 5;		//More is less change per epoch
 		
+		//Static class setup
 		Logger.clearLogs();
-//		GeneticAlgorithm.clearSaves();
+		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(6);
-		//Synchronise number of step() calls in each ant in a world after n calls
-		EvaluateFitnessContestSimulation.setValues(seed, rows, cols, rocks, anthills,
+		Simulation.setValues(seed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
 		
@@ -312,7 +319,6 @@ public class DummyEngine {
 			}
 		}
 		
-		//TODO remove console prints, eventually, from here and Logger
 		System.out.println(world);
 		System.out.println("---better_example.brain---\n" + betterBrain);
 		System.out.println("---ga_result.brain---\n" + gaBrain);

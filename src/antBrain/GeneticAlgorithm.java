@@ -15,6 +15,7 @@ import java.util.Set;
 import utilities.IOEvent;
 import utilities.InformationEvent;
 import utilities.Logger;
+import utilities.TimeEvent;
 import utilities.WarningEvent;
 
 import engine.DummyEngine;
@@ -131,7 +132,7 @@ public class GeneticAlgorithm implements Serializable {
 		if(thousandth == 0) thousandth = 1;
 		for(; this.epoch < epochs; this.epoch++){
 			//Timing
-			System.out.println("Epoch: " + this.epoch + " Time: " + Logger.getCurrentTime() + "ns");
+			Logger.log(new TimeEvent("Time from start of epoch " + (this.epoch - 1) + " to start of epoch " + this.epoch));
 			System.gc();
 			Logger.restartTimer();
 			
@@ -199,11 +200,25 @@ public class GeneticAlgorithm implements Serializable {
 		//Calculates the fitness of all Brains with no fitness,
 		//then orders by fitness in ascending order
 		dummyEngine.sortByFitness(this.population);
-		System.out.println("Max fitness: " + maxFitness());
+		Logger.log(new InformationEvent("Fitnesses: max: " + maxFitness()
+			+ " ; avg: " + avgFitness() + " ; min: " + minFitness()));
 	}
 	
+	//The fitness methods do not assume population is ordered by fitness
 	private int maxFitness() {
 		return maxFitnessBrain().getFitness();
+	}
+	
+	private int avgFitness() {
+		int total = 0;
+		for(int i = 1; i < this.population.length; i++){
+			total += this.population[i].getFitness();
+		}
+		return total / this.population.length;
+	}
+	
+	private int minFitness() {
+		return minFitnessBrain().getFitness();
 	}
 	
 	private Brain maxFitnessBrain() {
@@ -214,6 +229,16 @@ public class GeneticAlgorithm implements Serializable {
 			}
 		}
 		return this.population[maxIndex];
+	}
+	
+	private Brain minFitnessBrain() {
+		int minIndex = 0;
+		for(int i = 1; i < this.population.length; i++){
+			if(this.population[i].getFitness() < this.population[minIndex].getFitness()){
+				minIndex = i;
+			}
+		}
+		return this.population[minIndex];
 	}
 	
 	private Brain breed(Brain brainA, Brain brainB, int mutationConstant) {
@@ -538,7 +563,7 @@ public class GeneticAlgorithm implements Serializable {
 		out.writeInt(this.popLen);
 		out.writeObject(this.population);
 	}
-
+	
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
 		this.saveDir = in.readInt();
 		this.epoch = in.readInt();
@@ -566,8 +591,4 @@ public class GeneticAlgorithm implements Serializable {
 			Logger.log(new IOEvent("population.length <= 1"));
 		}
 	}
-
-//	private void readObjectNoData() throws ObjectStreamException{
-//		
-//	}
 }

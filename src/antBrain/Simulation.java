@@ -9,7 +9,7 @@ import antWorld.World;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class EvaluateFitnessContestSimulation implements Runnable {
+public class Simulation implements Runnable {
 	private static int seed;
 	private static int rows;
 	private static int cols;
@@ -26,7 +26,7 @@ public class EvaluateFitnessContestSimulation implements Runnable {
 	private Brain redBrain;
 	private Semaphore sem;
 	
-	public EvaluateFitnessContestSimulation(Brain blackBrain, Brain redBrain, Semaphore sem) {
+	public Simulation(Brain blackBrain, Brain redBrain, Semaphore sem) {
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
 		this.sem = sem;
@@ -35,17 +35,17 @@ public class EvaluateFitnessContestSimulation implements Runnable {
 	public static void setValues(int seed, int rows, int cols, int rocks, 
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int rounds) {
-		EvaluateFitnessContestSimulation.seed = seed;
-		EvaluateFitnessContestSimulation.rows = rows;
-		EvaluateFitnessContestSimulation.cols = cols;
-		EvaluateFitnessContestSimulation.rocks = rocks;
-		EvaluateFitnessContestSimulation.anthills = anthills;
-		EvaluateFitnessContestSimulation.anthillSideLength = anthillSideLength;
-		EvaluateFitnessContestSimulation.foodBlobCount = foodBlobCount;
-		EvaluateFitnessContestSimulation.foodBlobSideLength = foodBlobSideLength;
-		EvaluateFitnessContestSimulation.foodBlobCellFoodCount = foodBlobCellFoodCount;
-		EvaluateFitnessContestSimulation.antInitialDirection = antInitialDirection;
-		EvaluateFitnessContestSimulation.rounds = rounds;
+		Simulation.seed = seed;
+		Simulation.rows = rows;
+		Simulation.cols = cols;
+		Simulation.rocks = rocks;
+		Simulation.anthills = anthills;
+		Simulation.anthillSideLength = anthillSideLength;
+		Simulation.foodBlobCount = foodBlobCount;
+		Simulation.foodBlobSideLength = foodBlobSideLength;
+		Simulation.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		Simulation.antInitialDirection = antInitialDirection;
+		Simulation.rounds = rounds;
 	}
 	
 	@Override

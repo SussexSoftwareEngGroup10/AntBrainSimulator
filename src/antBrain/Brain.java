@@ -48,6 +48,8 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 		return maxNumOfStates;
 	}
 	
+	//Brain objects should never be modified outside
+	//GeneticAlgorithm.evolve() and BrainParser.readBrainFrom()
 	public void setState(State state) {
 		this.states.put(state.getStateNum(), state);
 	}
@@ -138,14 +140,10 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 		out.writeObject(this.states);
 		out.writeInt(this.fitness);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
 		this.states = (HashMap<Integer, State>) in.readObject();
 		this.fitness = in.readInt();
 	}
-
-//	private void readObjectNoData() throws ObjectStreamException{
-//		
-//	}
 }

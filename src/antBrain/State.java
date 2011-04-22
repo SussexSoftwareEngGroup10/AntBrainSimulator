@@ -946,8 +946,7 @@ public class State implements Serializable {
 		out.writeInt(this.senseMarker);
 	}
 	
-	@SuppressWarnings("unused")
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+	private void readObject(ObjectInputStream in) throws IOException {
 		this.command = toCommand(in.readInt());
 		this.senseDir = toSenseDir(in.readInt());
 		this.turnDir = toTurnDir(in.readInt());
@@ -958,8 +957,4 @@ public class State implements Serializable {
 		this.condition = toCondition(in.readInt());
 		this.senseMarker = in.readInt();
 	}
-	
-//	private void readObjectNoData() throws ObjectStreamException{
-//		
-//	}
 }

@@ -11,14 +11,14 @@ public class TimeEvent extends InformationEvent {
 	private static final long serialVersionUID = 1L;
 	
 	public TimeEvent(String message) {
-		super("TIME: " + (System.nanoTime() - Logger.getStartTime()) + "  ; MESSAGE: " + message);
+		super("TIME: " + (Logger.getCurrentTime()) + "ns  ; MESSAGE: " + message);
 	}
 
 	public TimeEvent(String message, Throwable cause) {
-		super("TIME: " + (System.nanoTime() - Logger.getStartTime()) + "  ; MESSAGE: " + message, cause);
+		super("TIME: " + (Logger.getCurrentTime()) + "ns  ; MESSAGE: " + message, cause);
 	}
 	
 	public TimeEvent(long time, String message) {
-		super("TIME: " + time + "  ; MESSAGE: " + message);
+		super("TIME: " + time + "ns  ; MESSAGE: " + message);
 	}
 }

@@ -38,7 +38,6 @@ public final class Ant extends Thread implements Comparable<Ant> {
 	private Cell newCell;
 	private Ant[] neighbourAnts = new Ant[6];
 	private Ant neighbourAnt;
-//	private CountDownLatch[] latches;
 	private CyclicBarrier stepBarrier;
 	private CyclicBarrier endBarrier;
 	
@@ -67,11 +66,12 @@ public final class Ant extends Thread implements Comparable<Ant> {
 		this.direction = direction;
 		this.cell = cell;
 		this.steps = steps;
-//		start();
 	}
 	
 	@Override
 	public final void run() {
+		//TODO either use more efficient classes like executors and semaphores,
+		//or get rid of multithreading
 		for(int s = 0; s < this.steps; s++){
 			step();
 			try{

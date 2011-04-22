@@ -116,14 +116,14 @@ public class DummyEngine {
 	
 	public void sortByFitness(Brain[] population) {
 		//Gave up using CyclicBarriers, as the elite ruined the parties
-		System.gc();
-		Logger.restartTimer();
+//		System.gc();
+//		Logger.restartTimer();
 		
 		evaluateFitnessContest(population);
 		
-		long mean = ((Logger.getCurrentTime() / (popLen - elite)) / rounds) /
-			(anthills * World.hexArea(anthillSideLength));
-		System.out.println(mean + "ns");
+//		long mean = ((Logger.getCurrentTime() / (popLen - elite)) / rounds) /
+//			(anthills * World.hexArea(anthillSideLength));
+//		System.out.println(mean + "ns");
 	}
 	
 	private void evaluateFitnessContest(Brain[] population) {
@@ -168,6 +168,7 @@ public class DummyEngine {
 //			}
 //		}
 		
+		//Sort by the fitnesses calculated
 		Arrays.sort(population);
 	}
 	
@@ -268,7 +269,7 @@ public class DummyEngine {
 	
 	public static void main(String args[]) {
 		Logger.clearLogs();
-		GeneticAlgorithm.clearSaves();
+//		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(1.5);
 		//Synchronise number of step() calls in each ant in a world after n calls
 		World.setSteps(stepsPerSync);

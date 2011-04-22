@@ -48,9 +48,10 @@ public class DummyEngine {
 	//Simulation arguments (not GA-only arguments)
 	private int rounds;
 	
+	//GA variables
 	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
-	private ThreadPoolExecutor pool = null;
-	private Semaphore sem = null;
+	private ThreadPoolExecutor threadPoolExecutor = null;
+	private Semaphore semaphore = null;
 	
 	public DummyEngine(int seed, int rows, int cols, int rocks, int anthills,
 		int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
@@ -119,27 +120,19 @@ public class DummyEngine {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
 	public void sortByFitness(Brain[] population) {
-		//TODO make sure 2 evolves can be run using 1 GA
-		if(this.pool == null){
-			this.pool = new ThreadPoolExecutor(2, 2, 1,
+		if(this.threadPoolExecutor == null){
+			this.threadPoolExecutor = new ThreadPoolExecutor(2, 2, 1,
 				TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(population.length));
 		}
-		if(this.sem == null){
-			this.sem = new Semaphore(population.length, true);
+		if(this.semaphore == null){
+			this.semaphore = new Semaphore(population.length, true);
 		}
-
-//		System.gc();
-//		Logger.restartTimer();
 		
 		//Ensure all Brains have a fitness
 		evaluateFitnessContest(population);
 		
-		//Sort by fitness calculated
+		//Sort by fitnesses calculated
 		Arrays.sort(population);
-		
-//		long mean = ((Logger.getCurrentTime() / (popLen - elite)) / rounds) /
-//			(anthills * World.hexArea(anthillSideLength));
-//		System.out.println(mean + "ns");
 	}
 	
 	private void evaluateFitnessContest(Brain[] population) {
@@ -154,24 +147,25 @@ public class DummyEngine {
 		//Else use static fitness test (bestBrain field)
 		
 		//Multi-Threaded
-		//TODO time more, roughly down from 3:30 to 2:00 with threads
 		//Get popLen permits, restore as runs complete
-		this.sem.acquireUninterruptibly(population.length);
+		this.semaphore.acquireUninterruptibly(population.length);
 		
 		for(Brain brain : population){
 			if(brain.getFitness() == 0){
-				this.pool.execute(new EvaluateFitnessContestSimulation(betterBrain,
-					brain, this.sem));
+				this.threadPoolExecutor.execute(new EvaluateFitnessContestSimulation(betterBrain,
+					brain, this.semaphore));
 			}else{
-				this.sem.release();
+				//Brains in the elite will already have a fitness,
+				//however, the flag still needs to be released
+				this.semaphore.release();
 			}
 		}
 		
 		//Await completion of all calls
-		this.sem.acquireUninterruptibly(population.length);
-		this.sem.release(population.length);
+		this.semaphore.acquireUninterruptibly(population.length);
+		this.semaphore.release(population.length);
 		
-		//Single-Threaded
+//		//Single-Threaded
 //		Brain brain;
 //		int i;
 //		for(i = 0; i < population.length; i++){
@@ -199,82 +193,17 @@ public class DummyEngine {
 		
 		Ant[] ants = world.getAnts();
 		
-//		for(Ant ant : ants){
-//			ant.setBarriers(this.stepBarrier, this.endBarrier);	//TODO improve
-//		}
-		
 		//Run the simulation
 		if(Logger.getLogLevel() >= 5){
 			Logger.log(new InformationEvent("Begun simulation"));
 		}
-		
-//		// TIMING
-//		System.gc();
-//		ArrayList<Long> times;
-//		long mean;
-//		times = new ArrayList<Long>();
-//		mean = 0;
-//		Logger.restartTimer();
-//		// /TIMING
-		
-//		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-		
-//		int interrupts = rounds / stepsPerSync;
 		for(int r = 0; r < rounds ; r++){
-//		CountDownLatch[] latches = new CountDownLatch[interrupts];
-//		for(int c = 0; c < latches.length; c++){
-//			latches[c] = new CountDownLatch(ants.length);
-//		}//When all the ants countDown, ends
 			for(Ant ant : ants){
-//				// TIMING
-//				System.gc();
-//				Logger.restartTimer();
-//				// /TIMING
-				
-				//alive check is in step(),
-				//surrounded checks and kill are called after move()
-				//The threading, in particular, getting the locks on synchronised methods,
-				//may slow it down so much that the change is insignificant
-				//Other problems may arise, such as ants being killed half way through a call,
-				//testing is needed
-				//No guarantee about the order ant.step() is executed
+				//For efficiency, alive check is in step(),
+				//And surrounded checks and kill are called after move()
 				ant.step();
-//				ant.start();		//TODO improve
-//				ant.interrupt();	//steps (rounds / interrupts) step()s
-//				ant.start();
-				
-				//TODO
-				//no polling, more object reuse (inc. ants, ant, maybe world), factorise,
-				//think about algorithm more, serialize for resuming
-				//JIT, inline(javac -O MyClass), arrays more, no enumerations
-				
-//				times.add(Logger.getCurrentTime());	// TIMING
 			}
-//			try{
-//				this.endBarrier.await();
-//			}catch(InterruptedException e){
-//				e.printStackTrace();
-//			}catch(BrokenBarrierException e){
-//				//All ants have completed all of their steps
-//			}
-//			try{
-//				latches[latches.length - 1].await();
-//			}catch(InterruptedException e){
-//				e.printStackTrace();
-//			}
 		}
-		
-//		Thread.currentThread().setPriority(Thread.NORM_PRIORITY);	//might not work
-		
-//		// TIMING
-//		long mean = (Logger.getCurrentTime() / rounds) / ants.length;	//for 1 step()
-//		System.out.println(mean + "ns");
-//		for(Long t : times){
-//			mean += t;
-//		}
-//		mean = mean / times.size();
-//		System.out.println("MEAN: " + mean + "ns");
-//		// /TIMING
 		
 		//Fitness of the GA brain = its food - opponent's food
 		int[] anthillFood = world.getFoodInAnthills();
@@ -283,24 +212,28 @@ public class DummyEngine {
 	
 	public static void main(String args[]) {
 		//TODO combine GA and regular sim methods
+		//TODO time more, roughly down from 3:30 to 2:00 with threads
+		//TODO make sure 2 evolve()s can be run using 1 GA
+		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
+		//or at least allow a size parameter
+		//TODO remove / improve logging and saving polling in GeneticAlgorithm.evolve()
+		//TODO remove polling in Ant.step()
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
 		//World arguments
-		//easier than passing around values,
-		//obviously need to make dynamic in final version
 		int seed = 1;
 		int rows = 140;
 		int cols = 140;
 		int rocks = 13;
 		int anthills = 2;
-		int anthillSideLength = 7;	//Less means less ants, which is quicker
+		int anthillSideLength = 7;			//Less means less ants, which is quicker
 		int foodBlobCount = 10;
 		int foodBlobSideLength = 5;
 		int foodBlobCellFoodCount = 5;
 		int antInitialDirection = 0;
 		//GA arguments
-		int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
+		int epochs = 1010;					//Less is quicker, but less likely to generate an improved brain
 		int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
 		int popLen = 100;					//Less is quicker, but searches less of the search space for brains
 		int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
@@ -313,27 +246,6 @@ public class DummyEngine {
 		EvaluateFitnessContestSimulation.setValues(seed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
-		
-//		//Calculate duration of the timing methods
-//		ArrayList<Long> times;
-//		long mean = 0;
-//		int i = 0;
-//		int j = 0;
-//		for(i = 0; i < 10; i++){
-//			times = new ArrayList<Long>();
-//			mean = 0;
-//			for(j = 0; j < 10000000; j++){
-//				Logger.restartTimer();
-//				times.add(Logger.getCurrentTime());
-//			}
-//			for(Long t : times){
-//				mean += t;
-//			}
-//			mean = mean / times.size();
-//			System.out.println("MEAN: " + mean);
-//		}
-		
-		
 		
 		//Black is the default brain, read in from file
 		//Red is the best one found by the GeneticAlgorithm with parameters specified

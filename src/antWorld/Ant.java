@@ -72,8 +72,6 @@ public final class Ant implements Comparable<Ant> {
 		//(move(), sense()...etc...) 
 		//Only sense() and move() are synchronised, as they are the only ones where the ant
 		//is interacting with a cell outside its own
-		
-		//TODO get rid of this bloody polling
 		if(!this.alive){
 			return;
 		}

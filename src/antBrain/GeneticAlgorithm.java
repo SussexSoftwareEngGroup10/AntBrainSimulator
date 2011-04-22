@@ -130,7 +130,12 @@ public class GeneticAlgorithm implements Serializable {
 		int thousandth = epochs / 1000;
 		if(thousandth == 0) thousandth = 1;
 		for(; this.epoch < epochs; this.epoch++){
-			//TODO these are polling, remove
+			//Timing
+			System.out.println("Epoch: " + this.epoch + " Time: " + Logger.getCurrentTime() + "ns");
+			System.gc();
+			Logger.restartTimer();
+			
+			//Logging and saving
 			for(double d = 0; d <= epochs / thousandth; d += thousandth){
 				//Log progress
 				if(this.epoch == d){
@@ -225,13 +230,12 @@ public class GeneticAlgorithm implements Serializable {
 		//The size of the brain resulting from evolution will reflect on the
 		//size which provides the best fitness
 		//i.e. size, in itself, is not inherently good
-//		int targetSize = max;
-		int targetSize = 50; //TODO do it properly, nextInt(5) - 2
 		//Can't grow or shrink brains, which is bad
 		//Numbering of states, and their pointers are fixed,
 		//so reducing the size by removing a state would be a real pain,
 		//as changing every pointer would be inefficient,
 		//and leaving gaps might break some methods
+		int targetSize = 50;
 		
 		//Keep targetSize within limits
 		if(targetSize < min){

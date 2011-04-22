@@ -1,8 +1,10 @@
 package engine;
 
 import java.util.Arrays;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import utilities.InformationEvent;
 import utilities.Logger;
@@ -32,7 +34,6 @@ import antWorld.World;
  * @version 1.0
  */
 public class DummyEngine {
-//	private static final Thread main = Thread.currentThread();
 	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
 	
 	//World arguments
@@ -50,15 +51,16 @@ public class DummyEngine {
 	private static final int antInitialDirection = 0;
 	
 	//GA arguments
-	private static final int epochs = 10;					//Less is quicker, but less likely to generate an improved brain
-	private static final int rounds = 1000;					//Less is quicker, but reduces the accuracy of the GA
+	private static final int epochs = 1000;					//Less is quicker, but less likely to generate an improved brain
+	private static final int rounds = 300000;				//Less is quicker, but reduces the accuracy of the GA
 	private static final int popLen = 100;					//Less is quicker, but searches less of the search space for brains
 	private static final int elite = 5;						//Less is slower, but avoids getting stuck with lucky starting brain
 	private static final int mutationRate = 10;				//Less is more, inverse
 	private static final int stepsPerSync = 1;				//Less is slower
 	
-	private CyclicBarrier contestEndBarrier =
-		new CyclicBarrier(popLen + 1);
+	private ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 2, 1,
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen));
+	private Semaphore sem = new Semaphore(popLen, true);
 	
 	public DummyEngine() {
 		if(Logger.getLogLevel() >= 3){
@@ -113,13 +115,13 @@ public class DummyEngine {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
 	public void sortByFitness(Brain[] population) {
-		//TODO fix the timing divisions, barrier parties, and other stuff
+		//Gave up using CyclicBarriers, as the elite ruined the parties
 		System.gc();
 		Logger.restartTimer();
 		
 		evaluateFitnessContest(population);
 		
-		long mean = ((Logger.getCurrentTime() / popLen) / rounds) /
+		long mean = ((Logger.getCurrentTime() / (popLen - elite)) / rounds) /
 			(anthills * World.hexArea(anthillSideLength));
 		System.out.println(mean + "ns");
 	}
@@ -128,8 +130,6 @@ public class DummyEngine {
 		//Ants let each other know they've finished a step with the stepBarrier
 		//Ants let their sim know they've finished all steps with the endBarrier
 		//Sims let the engine know they've finished their sim with the contestEndBarrier
-		Brain brain;
-		int i;
 		
 		//Set fitness for each brain against the best brain in the population
 		//Assumes population has been sorted
@@ -137,47 +137,36 @@ public class DummyEngine {
 //		Brain bestBrain = population[population.length - 1];
 		//Else use static fitness test (bestBrain field)
 		
-		EvaluateFitnessContestSimulation[] sims = new EvaluateFitnessContestSimulation[population.length];
-		EvaluateFitnessContestSimulation sim;
+		//Multi-Threaded
+		//Get popLen permits, restore as runs complete
+		this.sem.acquireUninterruptibly(popLen);
 		
-		Brain[] betterBrains = new Brain[population.length];
-		for(i = 0; i < population.length; i++){
-			betterBrains[i] = betterBrain.clone();
-		}
-		
-		for(i = 0; i < population.length; i++){
-			brain = population[i];
-			//Brains from previous contests may remain in the elite
-			//their fitness does not need to be calculated again
-			//Only if the fitness test is the same every time,
-			//i.e. tested against the same brain
-			
-			//TODO Either have to use multiple barriers,
-			//or run extra threads to await barrier,
-			//or reset barrier
+		for(Brain brain : population){
 			if(brain.getFitness() == 0){
-				sim = new EvaluateFitnessContestSimulation(betterBrains[i], brain,
-					this.contestEndBarrier);
-				sim.start();
-				sims[i] = sim;
-//				brain.setFitness(evaluateFitnessContestSimulation(betterBrain, brain, rounds));
+				this.pool.execute(new EvaluateFitnessContestSimulation(betterBrain,
+					brain, this.sem));
+			}else{
+				this.sem.release();
 			}
 		}
 		
-		try{
-			//TODO It's the elite, count start()s somehow
-			System.out.println("awaits: " + (this.contestEndBarrier.getNumberWaiting() + 1)
-				+ ", out of: " + this.contestEndBarrier.getParties());
-			this.contestEndBarrier.await();
-		}catch(InterruptedException e){
-			e.printStackTrace();
-		}catch(BrokenBarrierException e){
-			//All sims have completed their sim
-		}
+		//Await completion of all calls
+		this.sem.acquireUninterruptibly(popLen);
+		this.sem.release(popLen);
 		
-		for(i = 0; i < population.length; i++){
-			population[i].setFitness(sims[i].getResult());
-		}
+		//Single-Threaded
+//		Brain brain;
+//		int i;
+//		for(i = 0; i < population.length; i++){
+//			brain = population[i];
+//			//Brains from previous contests may remain in the elite
+//			//their fitness does not need to be calculated again
+//			//Only if the fitness test is the same every time,
+//			//i.e. tested against the same brain
+//			if(brain.getFitness() == 0){
+//				brain.setFitness(evaluateFitnessContestSimulation(betterBrain, brain, rounds));
+//			}
+//		}
 		
 		Arrays.sort(population);
 	}

@@ -106,6 +106,8 @@ public class Logger {
 	}
 	
 	public static long getCurrentTime() {
+		//If there has been one, returns the time since the last restartTimer() call,
+		//else time since start of main()
 		return System.nanoTime() - restartTime - timeLogTime;
 	}
 	

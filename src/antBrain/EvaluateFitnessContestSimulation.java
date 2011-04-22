@@ -1,17 +1,11 @@
 package antBrain;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Semaphore;
 
 import antWorld.Ant;
 import antWorld.World;
 
-public class EvaluateFitnessContestSimulation extends Thread {
-//	private final CyclicBarrier stepBarrier =
-//		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)));
-//	private final CyclicBarrier endBarrier =
-//		new CyclicBarrier(anthills * (World.hexArea(anthillSideLength)) + 1);
-	
+public class EvaluateFitnessContestSimulation implements Runnable {
 	private static int seed;
 	private static int rows;
 	private static int cols;
@@ -26,14 +20,13 @@ public class EvaluateFitnessContestSimulation extends Thread {
 	
 	private Brain blackBrain;
 	private Brain redBrain;
-	private CyclicBarrier contestEndBarrier;
+	private Semaphore sem;
 	private int result;
 	
-	public EvaluateFitnessContestSimulation(Brain blackBrain, Brain redBrain,
-		CyclicBarrier contestEndBarrier) {
+	public EvaluateFitnessContestSimulation(Brain blackBrain, Brain redBrain, Semaphore sem) {
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
-		this.contestEndBarrier = contestEndBarrier;
+		this.sem = sem;
 	}
 	
 	public static void setValues(int seed, int rows, int cols, int rocks, 
@@ -52,8 +45,58 @@ public class EvaluateFitnessContestSimulation extends Thread {
 		EvaluateFitnessContestSimulation.rounds = rounds;
 	}
 	
+//	@Override
+//	public Object call() {
+//		//Using a seed to construct a random means the worlds generated will be more
+//		//uniform than using cloning, which seems to be slightly slower for some reason
+//		World world = new World(seed, rows, cols, rocks, anthills,
+//			anthillSideLength, foodBlobCount, foodBlobSideLength,
+//			foodBlobCellFoodCount, antInitialDirection);
+//		//World now has better brain at 0, GA brain at 1
+//		world.setBrain(this.blackBrain, 0);
+//		world.setBrain(this.redBrain, 1);
+//		
+//		Ant[] ants = world.getAnts();
+//		
+//		//Run ants for all steps
+//		for(int i = 0; i < rounds; i++){
+//			for(Ant ant : ants){
+//				ant.step();
+//			}
+//		}
+//		
+//		int[] anthillFood = world.getFoodInAnthills();
+//		this.redBrain.setFitness(anthillFood[1] - anthillFood[0]);
+//		
+//		return null;
+//	}
+	
 	@Override
 	public void run() {
+		//Using a seed to construct a random means the worlds generated will be more
+		//uniform than using cloning, which seems to be slightly slower for some reason
+		World world = new World(seed, rows, cols, rocks, anthills,
+			anthillSideLength, foodBlobCount, foodBlobSideLength,
+			foodBlobCellFoodCount, antInitialDirection);
+		//World now has better brain at 0, GA brain at 1
+		world.setBrain(this.blackBrain, 0);
+		world.setBrain(this.redBrain, 1);
+		
+		Ant[] ants = world.getAnts();
+		
+		//Run ants for all steps
+		for(int i = 0; i < rounds; i++){
+			for(Ant ant : ants){
+				ant.step();
+			}
+		}
+		
+		int[] anthillFood = world.getFoodInAnthills();
+		this.redBrain.setFitness(anthillFood[1] - anthillFood[0]);
+		
+		this.sem.release();
+		
+		/* OLD CODE
 		//Using a seed to construct a random means the worlds generated will be more
 		//uniform than using cloning, which seems to be slightly slower for some reason
 		World world = new World(seed, rows, cols, rocks, anthills,
@@ -73,8 +116,6 @@ public class EvaluateFitnessContestSimulation extends Thread {
 				ant.step();
 			}
 		}
-		
-//		System.out.println("21");
 		
 		//Wait for the ants to finish
 //		try{
@@ -99,10 +140,7 @@ public class EvaluateFitnessContestSimulation extends Thread {
 		}catch(BrokenBarrierException e){
 			//All sims have completed their sim
 		}
-		
-//		System.out.println("POS awaits: " + this.contestEndBarrier.getNumberWaiting());
-		
-//		System.out.println("23");
+		*/
 	}
 	
 	public int getResult() {

@@ -123,7 +123,7 @@ public class GeneticAlgorithm implements Serializable {
 		
 		//After constructor, epoch == 0,
 		//after deserialization, epoch == epoch to be run next
-		//Round values up, otherwise may get a divide by zero
+		//Round values up from zero, otherwise may get a divide by zero
 		int tenth = epochs / 10;
 		if(tenth == 0) tenth = 1;
 		int hundredth = epochs / 100;
@@ -132,24 +132,31 @@ public class GeneticAlgorithm implements Serializable {
 		if(thousandth == 0) thousandth = 1;
 		for(; this.epoch < epochs; this.epoch++){
 			//Timing
-			Logger.log(new TimeEvent("Time from start of epoch " + (this.epoch - 1) + " to start of epoch " + this.epoch));
-			System.gc();
-			Logger.restartTimer();
+			if(Logger.getLogLevel() >= 1.5){
+				Logger.log(new TimeEvent("For epoch " + (this.epoch - 1)));
+				//Does not clear garbage, doing so would increase accuracy of timing,
+				//but reduce efficiency of execution
+				Logger.restartTimer();
+			}
 			
 			//Logging and saving
-			for(double d = 0; d <= epochs / thousandth; d += thousandth){
-				//Log progress
-				if(this.epoch == d){
-					if(Logger.getLogLevel() >= 1.5){
-						Logger.log(new InformationEvent("Completed " + d / 10 + "% of " +
-						"GeneticAlgorithm evolution epochs"));
-					}
+			//if epoch is a multiple of epochs / 1000
+			//if the remainder given when the
+			//current epoch is divided by epochs / 1000 (0.1%) is 0
+			if((this.epoch + 1) % tenth == 0){
+				if(Logger.getLogLevel() >= 1.5){
+					Logger.log(new InformationEvent("Completed "
+						+ (double) (this.epoch + 1) / (double) epochs * 100
+						+ "% of GeneticAlgorithm evolution epochs"));
 				}
 				//Save every epoch,
 				//so JVM can be terminated and resumed
-				if(this.epoch == d){
-					save();
-				}
+				save();
+			}
+			
+			//Start next epoch
+			if(Logger.getLogLevel() >= 2){
+				Logger.log(new InformationEvent("Beginning epoch " + this.epoch));
 			}
 			
 			newPop = new Brain[this.popLen];
@@ -200,8 +207,10 @@ public class GeneticAlgorithm implements Serializable {
 		//Calculates the fitness of all Brains with no fitness,
 		//then orders by fitness in ascending order
 		dummyEngine.sortByFitness(this.population);
-		Logger.log(new InformationEvent("Fitnesses: max: " + maxFitness()
-			+ " ; avg: " + avgFitness() + " ; min: " + minFitness()));
+		if(Logger.getLogLevel() >= 1.5){
+			Logger.log(new InformationEvent("Fitnesses: max: " + maxFitness()
+				+ " ; avg: " + avgFitness() + " ; min: " + minFitness()));
+		}
 	}
 	
 	//The fitness methods do not assume population is ordered by fitness

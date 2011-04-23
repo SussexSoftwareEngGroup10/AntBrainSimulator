@@ -219,17 +219,21 @@ public class DummyEngine {
 		//TODO make sure 2 evolve()s can be run using 1 GA
 		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
 		//or at least allow a size parameter
+		//TODO start GA at epoch 1, end at epochs, not epochs - 1
 		//TODO remove / improve logging and saving polling in GeneticAlgorithm.evolve()
 		//TODO remove polling in Ant.step()
 		//TODO fix % logging in GeneticAlgorithm.evolve()
 		//TODO put the new logging stuff in ifs
 		//TODO remove static methods and variables to allow multiple engines
 		//TODO have another go at a dynamic fitness test
+		//TODO make it so reading in a brain zeroes epoch, or something,
+		//so you can evolve the same amount twice without doubling epochs
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
 		//World arguments
-		int seed = 1;
+		int trainSeed = 1;
+		int testSeed = 2;
 		int rows = 140;
 		int cols = 140;
 		int rocks = 13;
@@ -240,17 +244,17 @@ public class DummyEngine {
 		int foodBlobCellFoodCount = 5;
 		int antInitialDirection = 0;
 		//GA arguments
-		int epochs = 200;			//More is slower, and more likely to generate an improved brain
+		int epochs = 20;			//More is slower, and more likely to generate an improved brain
 		int rounds = 300000;		//More is slower, and increases the accuracy of the GA
 		int popLen = 50;			//More is slower, and searches more of the search space for brains
 		int elite = 5;				//More is faster, but increases the likelihood of getting stuck with lucky starting brain
-		int mutationRate = 5;		//More is less change per epoch
+		int mutationRate = 20;		//More is less change per epoch
 		
 		//Static class setup
 		Logger.clearLogs();
 		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(6);
-		Simulation.setValues(seed, rows, cols, rocks, anthills,
+		Simulation.setValues(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
 		
@@ -263,7 +267,7 @@ public class DummyEngine {
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
-		DummyEngine dummyEngine = new DummyEngine(seed, rows, cols, rocks, anthills,
+		DummyEngine dummyEngine = new DummyEngine(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
 		Brain gaBrain = BrainController.getBestGABrain(betterBrain, dummyEngine, epochs, rounds, popLen, elite, mutationRate);
@@ -276,7 +280,7 @@ public class DummyEngine {
 		//(possibly) fairer and quicker, but less random, evolution
 		//more efficient to test all GA population brains against
 		//the betterBrain with seed == 1
-		World world = new World(seed, rows, cols, rocks, anthills,
+		World world = new World(testSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength,
 			foodBlobCellFoodCount, antInitialDirection);
 		
@@ -298,7 +302,7 @@ public class DummyEngine {
 		}
 		
 		
-		if(Logger.getLogLevel() >= 3){
+		if(Logger.getLogLevel() >= 2){
 			Ant[][] antPlayers = world.getAntsBySpecies();
 			int[] survivors = world.survivingAntsBySpecies();
 			if(survivors.length > 0){

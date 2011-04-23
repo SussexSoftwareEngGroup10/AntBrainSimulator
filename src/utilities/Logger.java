@@ -11,16 +11,21 @@ import java.io.PrintStream;
  * @version 1.0
  */
 public class Logger {
-	//How long it takes the time logging methods to execute
-	private static final long timeLogTime = 1130;
-	//0 == no logging
-	//1 == warnings and errors (default)
-	//2 == timing and beginning and ending
-	//simulation and engine
-	//3 == statistics about a simulation
-	//4 == actions of each ant
-	//5 == breeding results in each GA evolve
-	private static double logLevel = 1;
+	//Logging level constants
+	public static final int NOLOGGING = 0;
+	public static final int ERRORLOGGING = 1;
+	public static final int WARNINGLOGGING = 2;
+	//TODO make these more intuitive
+	public static final int INFOLOGGING1 = 3;
+	public static final int INFOLOGGING2 = 4;
+	public static final int INFOLOGGING3 = 5;
+	public static final int INFOLOGGING4 = 6;
+	public static final int INFOLOGGING5 = 7;
+	public static final int INFOLOGGING6 = 8;
+	public static final int INFOLOGGING7 = 9;
+	public static final int ALLLOGGING = 10;
+	
+	private static int logLevel = 1;
 	private static final long startTime = System.nanoTime();
 	private static long restartTime = startTime;
 	private static final long sizeLimit = 10000000; //10MB
@@ -86,19 +91,19 @@ public class Logger {
 		System.setErr(logErr);
 		
 		//Write the toString of e to a log file
-		System.out.println(e.toString());//TODO
+		System.out.println(e.toString());
 		System.err.println(e.toString());
 		
 		//Reset printing to the console
 		System.setErr(sysErr);
 	}
 	
-	public static double getLogLevel() {
-		return logLevel;
+	public static int getLogLevel() {
+		return logLevel;//TODO
 	}
 	
-	public static void setLogLevel(double d) {
-		Logger.logLevel = d;
+	public static void setLogLevel(int logLevel) {
+		Logger.logLevel = logLevel;
 	}
 	
 	public static void restartTimer() {
@@ -108,7 +113,7 @@ public class Logger {
 	public static long getCurrentTime() {
 		//If there has been one, returns the time since the last restartTimer() call,
 		//else time since start of main()
-		return System.nanoTime() - restartTime - timeLogTime;
+		return System.nanoTime() - restartTime;
 	}
 	
 	public static void logCurrentTime(String message) {

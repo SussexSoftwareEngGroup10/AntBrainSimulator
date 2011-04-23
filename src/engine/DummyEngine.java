@@ -227,6 +227,7 @@ public class DummyEngine {
 			//so you can evolve the same amount twice without doubling epochs
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed()
+		//TODO improve epoch_x.ser saving so you don't need to move to and from desktop
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");

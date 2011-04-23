@@ -51,6 +51,7 @@ public class DummyEngine {
 	//GA variables
 	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
 	private ThreadPoolExecutor threadPoolExecutor = null;
+	private static final int cpus = Runtime.getRuntime().availableProcessors();
 	private Semaphore semaphore = null;
 	
 	public DummyEngine(int seed, int rows, int cols, int rocks, int anthills,
@@ -121,7 +122,7 @@ public class DummyEngine {
 	
 	public void sortByFitness(Brain[] population) {
 		if(this.threadPoolExecutor == null){
-			this.threadPoolExecutor = new ThreadPoolExecutor(2, 2, 1,
+			this.threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
 				TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(population.length));
 		}
 		if(this.semaphore == null){

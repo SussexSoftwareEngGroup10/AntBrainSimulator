@@ -897,6 +897,7 @@ public class State implements Serializable {
 		out.writeInt(this.st2);
 		out.writeInt(getCondition());
 		out.writeInt(this.senseMarker);
+		out.writeInt(this.stateNum);
 	}
 	
 	private void readObject(ObjectInputStream in) throws IOException {
@@ -909,5 +910,6 @@ public class State implements Serializable {
 		this.st2 = in.readInt();
 		this.condition = toCondition(in.readInt());
 		this.senseMarker = in.readInt();
+		this.stateNum = in.readInt();
 	}
 }

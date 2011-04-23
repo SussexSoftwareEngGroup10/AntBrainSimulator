@@ -229,6 +229,8 @@ public class DummyEngine {
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed()
 		//TODO improve epoch_x.ser saving so you don't need to move to and from desktop
 		//TODO fix "STATE 0" in brains in states
+		//TODO increase GeneticAlgorithm.breed() efficiency
+		//TODO logger % still doesn't work
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
@@ -249,7 +251,7 @@ public class DummyEngine {
 		int antInitialDirection = 0;
 		//GA arguments
 		//More is slower, and more likely to generate an improved brain
-		int epochs = 1300;
+		int epochs = 1305;
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains

@@ -50,8 +50,8 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 	
 	//Brain objects should never be modified outside
 	//GeneticAlgorithm.evolve() and BrainParser.readBrainFrom()
-	public void setState(State state) {
-		this.states.put(state.getStateNum(), state);
+	public void setState(int stateNum, State state) {
+		this.states.put(stateNum, state);
 	}
 	
 	public State getState(int i) {
@@ -115,9 +115,9 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 		int sa = this.getFitness();
 		int sb = b.getFitness();
 		
-		if(sa < sb)		return -1;
-		if(sa == sb)	return 0;
-		/*if(sa > sb)*/	return 1;
+		if(sa < sb) return -1;
+		if(sa == sb) return 0;
+		return 1;
 	}
 	
 	@Override

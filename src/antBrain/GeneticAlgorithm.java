@@ -302,7 +302,8 @@ public class GeneticAlgorithm implements Serializable {
 		
 		for(i = 0; i < statesC.size(); i++){
 			//Put new states into brain to be returned
-			brainC.setState(statesC.get(i));
+			State state = statesC.get(i);
+			brainC.setState(state.getStateNum(), state);
 		}
 		return brainC;
 	}

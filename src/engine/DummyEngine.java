@@ -228,6 +228,7 @@ public class DummyEngine {
 		//TODO make it so reading in a brain zeroes epoch, or something,
 		//so you can evolve the same amount twice without doubling epochs
 		//TODO logging
+		//TODO test effects of changing targetStates in breed 
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
@@ -244,15 +245,15 @@ public class DummyEngine {
 		int foodBlobCellFoodCount = 5;
 		int antInitialDirection = 0;
 		//GA arguments
-		int epochs = 20;			//More is slower, and more likely to generate an improved brain
-		int rounds = 3;		//More is slower, and increases the accuracy of the GA
+		int epochs = 1300;			//More is slower, and more likely to generate an improved brain
+		int rounds = 300000;		//More is slower, and increases the accuracy of the GA
 		int popLen = 50;			//More is slower, and searches more of the search space for brains
 		int elite = 5;				//More is faster, but increases the likelihood of getting stuck with lucky starting brain
 		int mutationRate = 20;		//More is less change per epoch
 		
 		//Static class setup
 		Logger.clearLogs();
-		GeneticAlgorithm.clearSaves();
+//		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(6);
 		Simulation.setValues(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,

@@ -149,10 +149,11 @@ public class GeneticAlgorithm implements Serializable {
 						+ (double) (this.epoch + 1) / (double) epochs * 100
 						+ "% of GeneticAlgorithm evolution epochs"));
 				}
-				//Save every epoch,
-				//so JVM can be terminated and resumed
-				save();
+				
 			}
+			//Save every epoch,
+			//so JVM can be terminated and resumed
+			save();
 			
 			//Start next epoch
 			if(Logger.getLogLevel() >= 2){

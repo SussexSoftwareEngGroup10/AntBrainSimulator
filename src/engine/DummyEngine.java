@@ -6,7 +6,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import utilities.InformationEvent;
+import utilities.InformationHighEvent;
+import utilities.InformationLowEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
@@ -69,9 +70,7 @@ public class DummyEngine {
 		this.antInitialDirection = antInitialDirection;
 		this.rounds = rounds;
 		
-		if(Logger.getLogLevel() >= 3){
-			Logger.log(new InformationEvent("New Engine object constructed"));
-		}
+		Logger.log(new InformationLowEvent("New Engine object constructed"));
 	}
 	
 	//How many times GA-related methods are called in each run,
@@ -105,8 +104,8 @@ public class DummyEngine {
 //GeneticAlgorithm.breed()			  == epochs									== 1,000					   ==             1,000 == 1,500	  ==              1,500,000 == 0
 //population.sort()					  == epochs									== 1,000					   ==             1,000 == 1,700	  ==              1,700,000 == 0
 //BrainParser.writeBrainTo()		  == epochs									== 1,000					   ==             1,000 == 6,000	  ==              6,000,000 == 0
-//Ant.isKill()						  == epochs * ants     * popLen			== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
-//Ant()								  == epochs * ants     * popLen			== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
+//Ant.isKill()						  == epochs * ants     * popLen				== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
+//Ant()								  == epochs * ants     * popLen				== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
 //World.setBrain()					  == epochs * popLen  * 2					== 1,000 * 100 * 2			   ==           200,000 == 250		  ==             50,000,000 == 0
 //Brain.setState()					  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 25		  ==            125,000,000 == 0
 //World()							  == epochs * popLen						== 1,000 * 100				   ==           100,000 == 1,750	  ==            175,000,000 == 0
@@ -196,9 +195,8 @@ public class DummyEngine {
 		Ant[] ants = world.getAnts();
 		
 		//Run the simulation
-		if(Logger.getLogLevel() >= 5){
-			Logger.log(new InformationEvent("Begun simulation"));
-		}
+		Logger.log(new InformationLowEvent("Begun simulation"));
+		
 		for(int r = 0; r < rounds ; r++){
 			for(Ant ant : ants){
 				//For efficiency, alive check is in step(),
@@ -216,45 +214,54 @@ public class DummyEngine {
 		//TODO remove console prints, from down there \/, and Logger
 		//TODO combine GA and regular sim methods, bit of a pain
 		//TODO time more, roughly down from 3:30 to 2:00 with threads
-		//TODO make sure 2 evolve()s can be run using 1 GA
+		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
 		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
-		//or at least allow a size parameter
+			//or at least allow a size parameter
 		//TODO start GA at epoch 1, end at epochs, not epochs - 1
-		//TODO remove / improve logging and saving polling in GeneticAlgorithm.evolve()
 		//TODO remove polling in Ant.step()
-		//TODO fix % logging in GeneticAlgorithm.evolve()
 		//TODO remove static methods and variables to allow multiple engines
+		//TODO possibly switch from static to singleton,
+			//depending on increase in method call length
 		//TODO have another go at a dynamic fitness test
 		//TODO make it so reading in a brain zeroes epoch, or something,
-		//so you can evolve the same amount twice without doubling epochs
-		//TODO logging
-		//TODO test effects of changing targetStates in breed 
+			//so you can evolve the same amount twice without doubling epochs
+		//TODO add more information logging
+		//TODO test effects of changing targetStates in GeneticAlgorithm.breed()
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
 		//World arguments
-		int trainSeed = 1;			//Used by the GA to train Brains
-		int testSeed = 0;			//Used here to test Brains
+		//Used by the GA to train Brains
+		int trainSeed = 1;
+		//Used here to test Brain
+		int testSeed = 0;
 		int rows = 140;
 		int cols = 140;
 		int rocks = 13;
 		int anthills = 2;
-		int anthillSideLength = 7;	//More means more ants, which is slower
+		//More means more ants, which is slower
+		int anthillSideLength = 7;
 		int foodBlobCount = 10;
 		int foodBlobSideLength = 5;
 		int foodBlobCellFoodCount = 5;
 		int antInitialDirection = 0;
 		//GA arguments
-		int epochs = 1300;			//More is slower, and more likely to generate an improved brain
-		int rounds = 300000;		//More is slower, and increases the accuracy of the GA
-		int popLen = 100;			//More is slower, and searches more of the search space for brains
-		int elite = 5;				//More is faster, but increases the likelihood of getting stuck with lucky starting brain
-		int mutationRate = 20;		//More is less change per epoch
+		//More is slower, and more likely to generate an improved brain
+		int epochs = 1300;
+		//More is slower, and increases the accuracy of the GA
+		int rounds = 300000;
+		//More is slower, and searches more of the search space for brains
+		int popLen = 100;
+		//More is faster, but increases the likelihood of getting stuck
+		//with lucky starting brain
+		int elite = 5;
+		//More is less change per epoch
+		int mutationRate = 20;
 		
 		//Static class setup
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();
-		Logger.setLogLevel(6);
+		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
 		Simulation.setValues(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
@@ -271,7 +278,8 @@ public class DummyEngine {
 		DummyEngine dummyEngine = new DummyEngine(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
-		Brain gaBrain = BrainController.getBestGABrain(betterBrain, dummyEngine, epochs, rounds, popLen, elite, mutationRate);
+		Brain gaBrain = BrainController.getBestGABrain(
+			betterBrain, dummyEngine, epochs, rounds, popLen, elite, mutationRate);
 //		Brain gaBrain = BrainController.readBrainFrom("ga_result");
 		
 		//Setup world
@@ -293,9 +301,8 @@ public class DummyEngine {
 		
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		int r = 0;
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("Begun simulation"));
-		}
+		Logger.log(new InformationLowEvent("Begun simulation"));
+		
 		for(r = 0; r < rounds; r++){
 			for(Ant ant : ants){
 				ant.step();
@@ -303,25 +310,27 @@ public class DummyEngine {
 		}
 		
 		
-		if(Logger.getLogLevel() >= 2){
-			Ant[][] antPlayers = world.getAntsBySpecies();
-			int[] survivors = world.survivingAntsBySpecies();
-			if(survivors.length > 0){
-				int blackAnts = antPlayers[0].length;
-				Logger.log(new InformationEvent("Surviving black ants: " + survivors[0] + "/" + blackAnts));
-			}
-			if(survivors.length > 1){
-				int redAnts = antPlayers[1].length;
-				Logger.log(new InformationEvent("Surviving red   ants: " + survivors[1] + "/" + redAnts  ));
-			}
+		Ant[][] antPlayers = world.getAntsBySpecies();
+		int[] survivors = world.survivingAntsBySpecies();
+		if(survivors.length > 0){
+			int blackAnts = antPlayers[0].length;
+			Logger.log(new InformationHighEvent("Surviving black ants: "
+				+ survivors[0] + "/" + blackAnts));
+		}
+		if(survivors.length > 1){
+			int redAnts = antPlayers[1].length;
+			Logger.log(new InformationHighEvent("Surviving red   ants: "
+				+ survivors[1] + "/" + redAnts  ));
+		}
 
-			int[] anthillFood = world.getFoodInAnthills();
-			if(anthillFood.length > 0){
-				Logger.log(new InformationEvent("Food in black anthill: " + anthillFood[0]));
-			}
-			if(anthillFood.length > 1){
-				Logger.log(new InformationEvent("Food in red   anthill: " + anthillFood[1]));
-			}
+		int[] anthillFood = world.getFoodInAnthills();
+		if(anthillFood.length > 0){
+			Logger.log(new InformationHighEvent("Food in black anthill: "
+				+ anthillFood[0]));
+		}
+		if(anthillFood.length > 1){
+			Logger.log(new InformationHighEvent("Food in red   anthill: "
+				+ anthillFood[1]));
 		}
 		
 		System.out.println(world);
@@ -335,9 +344,7 @@ public class DummyEngine {
 		}
 		System.out.println("= Better Brain");
 		
-		if(Logger.getLogLevel() >= 1){
-			Logger.log(new InformationEvent("Virtual Machine terminated normally"));
-		}
+		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 	
 	//Phil: I have implemented the below methods, I hope that's what you meant me to do

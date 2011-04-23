@@ -11,21 +11,11 @@ import java.io.PrintStream;
  * @version 1.0
  */
 public class Logger {
-	//Logging level constants
-	public static final int NOLOGGING = 0;
-	public static final int ERRORLOGGING = 1;
-	public static final int WARNINGLOGGING = 2;
-	//TODO make these more intuitive
-	public static final int INFOLOGGING1 = 3;
-	public static final int INFOLOGGING2 = 4;
-	public static final int INFOLOGGING3 = 5;
-	public static final int INFOLOGGING4 = 6;
-	public static final int INFOLOGGING5 = 7;
-	public static final int INFOLOGGING6 = 8;
-	public static final int INFOLOGGING7 = 9;
-	public static final int ALLLOGGING = 10;
+	//Use these outside this class so that new levels can be inserted
+	public enum LogLevel { NO_LOGGING, ERROR_LOGGING, WARNING_LOGGING, TIME_LOGGING,
+	HIGH_LOGGING, NORM_LOGGING, LOW_LOGGING, ALL_LOGGING}
 	
-	private static int logLevel = 1;
+	private static LogLevel logLevel = LogLevel.NO_LOGGING;
 	private static final long startTime = System.nanoTime();
 	private static long restartTime = startTime;
 	private static final long sizeLimit = 10000000; //10MB
@@ -82,27 +72,45 @@ public class Logger {
 		}
 	}
 	
-	public static void log(Event e) {
+	public static void log(Event event) {
 		if(file == null || file.length() >= sizeLimit){
 			nextLogFile();
+		}
+		
+		//Write to file if class has a high enough priority to be logged
+		LogLevel logLevel;
+		if(event instanceof ErrorEvent){
+			logLevel = LogLevel.ERROR_LOGGING;
+		}else if(event instanceof WarningEvent){
+			logLevel = LogLevel.WARNING_LOGGING;
+		}else if(event instanceof TimeEvent){
+			logLevel = LogLevel.TIME_LOGGING;
+		}else if(event instanceof InformationHighEvent){
+			logLevel = LogLevel.HIGH_LOGGING;
+		}else if(event instanceof InformationNormEvent){
+			logLevel = LogLevel.NORM_LOGGING;
+		}else if(event instanceof InformationLowEvent){
+			logLevel = LogLevel.LOW_LOGGING;
+		}else{
+			logLevel = LogLevel.ALL_LOGGING;
+		}
+		
+		if(logLevel.ordinal() > Logger.logLevel.ordinal()){
+			return;
 		}
 		
 		//Setup writing to log file
 		System.setErr(logErr);
 		
 		//Write the toString of e to a log file
-		System.out.println(e.toString());
-		System.err.println(e.toString());
+		System.out.println(event.toString());
+		System.err.println(event.toString());
 		
 		//Reset printing to the console
 		System.setErr(sysErr);
 	}
 	
-	public static int getLogLevel() {
-		return logLevel;//TODO
-	}
-	
-	public static void setLogLevel(int logLevel) {
+	public static void setLogLevel(LogLevel logLevel) {
 		Logger.logLevel = logLevel;
 	}
 	

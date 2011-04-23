@@ -767,9 +767,8 @@ public class World {
 			}
 			break;
 		default:
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new IllegalArgumentEvent("Illegal i Argument in World getNeighbour"));
-			}
+			Logger.log(new IllegalArgumentEvent("Illegal i " +
+				"argument in World getNeighbour"));
 		}
 		return neighbour;
 	}

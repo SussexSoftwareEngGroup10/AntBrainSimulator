@@ -13,7 +13,9 @@ import java.util.Random;
 import java.util.Set;
 
 import utilities.IOEvent;
-import utilities.InformationEvent;
+import utilities.InformationHighEvent;
+import utilities.InformationLowEvent;
+import utilities.InformationNormEvent;
 import utilities.Logger;
 import utilities.TimeEvent;
 import utilities.WarningEvent;
@@ -29,7 +31,8 @@ public class GeneticAlgorithm implements Serializable {
 	private static final String superFolderPath = "brain_populations";
 	private static final File superFolder = new File(superFolderPath);
 	private static int gasConstructed = 0;
-	private static final String subFolderPathPrefix = superFolderPath + "\\" + "genetic_algorithm_";
+	private static final String subFolderPathPrefix =
+		superFolderPath + "\\" + "genetic_algorithm_";
 	private static final Random ran = new Random();
 	private static final int min = Brain.getMinNumOfStates();
 	private static final int max = Brain.getMaxNumOfStates();
@@ -47,11 +50,9 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	public static void setBestBrainPath(String bestBrainPath) {
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("Path for the writing of Brain objects " +
-				"resulting from GeneticAlgorithm.writeBrain() changed to " + bestBrainPath));
-		}
 		GeneticAlgorithm.bestBrainPath = bestBrainPath;
+		Logger.log(new InformationNormEvent("Path for the writing of Brain objects " +
+			"resulting from GeneticAlgorithm.writeBrain() changed to " + bestBrainPath));
 	}
 	
 	public static String getBestBrainPath() {
@@ -74,30 +75,28 @@ public class GeneticAlgorithm implements Serializable {
 		for(int i = 0; i < popLen; i++){
 			this.population[i] = exampleBrain.clone();
 		}
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("New GeneticAlgorithm Brain population of size " + popLen + " created"));
-		}
+		Logger.log(new InformationNormEvent("New GeneticAlgorithm Brain population of size "
+			+ popLen + " created"));
 	}
 	
-	public void evolve(DummyEngine dummyEngine, int epochs, int rounds, int elite, int mutationRate) {
+	public void evolve(DummyEngine dummyEngine, int epochs, int rounds,
+		int elite, int mutationRate) {
 		//Log information on epoch and evolution
-		if(Logger.getLogLevel() >= 1.5){
-			if(this.epoch == 0){
-				//Starting evolution from a newly created population
-				Logger.log(new InformationEvent("Began GeneticAlgorithm evolution for "
-					+ epochs + " epochs"
-					+ ", with " + rounds + " rounds per simulation"
-					+ ", an elite of " + elite
-					+ ", and a 1/" + mutationRate + " chance of mutation"));
-			}else{
-				//Resuming evolution from either a serialised object,
-				//or after an evolve() call has been completed on this population
-				Logger.log(new InformationEvent("Resumed GeneticAlgorithm evolution for "
-					+ epochs + " epochs at epoch: " + this.epoch
-					+ ", with " + rounds + " rounds per simulation"
-					+ ", an elite of " + elite
-					+ ", and a 1/" + mutationRate + " chance of mutation"));
-			}
+		if(this.epoch == 0){
+			//Starting evolution from a newly created population
+			Logger.log(new InformationHighEvent("Began GeneticAlgorithm evolution for "
+				+ epochs + " epochs"
+				+ ", with " + rounds + " rounds per simulation"
+				+ ", an elite of " + elite
+				+ ", and a 1/" + mutationRate + " chance of mutation"));
+		}else{
+			//Resuming evolution from either a serialised object,
+			//or after an evolve() call has been completed on this population
+			Logger.log(new InformationHighEvent("Resumed GeneticAlgorithm evolution for "
+				+ epochs + " epochs at epoch: " + this.epoch
+				+ ", with " + rounds + " rounds per simulation"
+				+ ", an elite of " + elite
+				+ ", and a 1/" + mutationRate + " chance of mutation"));
 		}
 		Brain[] newPop;
 		int j = 0;
@@ -132,23 +131,19 @@ public class GeneticAlgorithm implements Serializable {
 		if(thousandth == 0) thousandth = 1;
 		for(; this.epoch < epochs; this.epoch++){
 			//Timing
-			if(Logger.getLogLevel() >= 1.5){
-				Logger.log(new TimeEvent("For epoch " + (this.epoch - 1)));
-				//Does not clear garbage, doing so would increase accuracy of timing,
-				//but reduce efficiency of execution
-				Logger.restartTimer();
-			}
+			Logger.log(new TimeEvent("For epoch " + (this.epoch - 1)));
+			//Does not clear garbage, doing so would increase accuracy of timing,
+			//but reduce efficiency of execution
+			Logger.restartTimer();
 			
 			//Logging and saving
 			//if epoch is a multiple of epochs / 1000
 			//if the remainder given when the
 			//current epoch is divided by epochs / 1000 (0.1%) is 0
-			if((this.epoch + 1) % tenth == 0){
-				if(Logger.getLogLevel() >= 1.5){
-					Logger.log(new InformationEvent("Completed "
-						+ (double) (this.epoch + 1) / (double) epochs * 100
-						+ "% of GeneticAlgorithm evolution epochs"));
-				}
+			if((this.epoch + 1) % thousandth == 0){
+				Logger.log(new InformationHighEvent("Completed "
+					+ (double) (this.epoch + 1) / (double) epochs * 100
+					+ "% of GeneticAlgorithm evolution epochs"));
 			}
 			
 			//Save every epoch,
@@ -156,9 +151,7 @@ public class GeneticAlgorithm implements Serializable {
 			save();
 			
 			//Start next epoch
-			if(Logger.getLogLevel() >= 2){
-				Logger.log(new InformationEvent("Beginning epoch " + this.epoch));
-			}
+			Logger.log(new InformationLowEvent("Beginning epoch " + this.epoch));
 			
 			newPop = new Brain[this.popLen];
 			
@@ -179,10 +172,9 @@ public class GeneticAlgorithm implements Serializable {
 					try{
 						ran2 = ran.nextInt((this.popLen / 2) - 1) + this.popLen / 2;
 					}catch(IllegalArgumentException ex){
-						if(Logger.getLogLevel() >= 1){
-							Logger.log(new WarningEvent("Ran arguments in GeneticAlgorithm: " +
-								"ran.nextInt((" + this.popLen + "/ 2) - 1) + " + this.popLen + " / 2", ex));
-						}
+						Logger.log(new WarningEvent("Ran arguments in GeneticAlgorithm: " +
+							"ran.nextInt((" + this.popLen + "/ 2) - 1) + "
+							+ this.popLen + " / 2", ex));
 						ran2 = 0;
 					}
 				}
@@ -199,19 +191,15 @@ public class GeneticAlgorithm implements Serializable {
 			//Write best brain so far to file
 			BrainParser.writeBrainTo(this.population[this.popLen - 1], "ga_result");
 		}
-		if(Logger.getLogLevel() >= 1.5){
-			Logger.log(new InformationEvent("Completed GeneticAlgorithm evolution"));
-		}
+		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
 	}
 	
 	private void sortByFitness(DummyEngine dummyEngine) {
 		//Calculates the fitness of all Brains with no fitness,
 		//then orders by fitness in ascending order
 		dummyEngine.sortByFitness(this.population);
-		if(Logger.getLogLevel() >= 1.5){
-			Logger.log(new InformationEvent("Fitnesses: max: " + maxFitness()
-				+ " ; avg: " + avgFitness() + " ; min: " + minFitness()));
-		}
+		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness()
+			+ " ; avg: " + avgFitness() + " ; min: " + minFitness()));
 	}
 	
 	//The fitness methods do not assume population is ordered by fitness
@@ -274,16 +262,12 @@ public class GeneticAlgorithm implements Serializable {
 		
 		//Keep targetSize within limits
 		if(targetSize < min){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new WarningEvent("Brain bred containing the" +
-					"minimum number of states (" + min + ")"));
-			}
+			Logger.log(new WarningEvent("Brain bred containing the" +
+				"minimum number of states (" + min + ")"));
 			targetSize = min;
 		}else if(targetSize > max){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new WarningEvent("Brain bred containing the" +
-					"maximum number of states (" + max + ")"));
-			}
+			Logger.log(new WarningEvent("Brain bred containing the" +
+				"maximum number of states (" + max + ")"));
 			targetSize = max;
 		}
 		
@@ -323,7 +307,8 @@ public class GeneticAlgorithm implements Serializable {
 		return brainC;
 	}
 	
-	private State combineStates(int index, State sa, State sb, int states, int mutationConstant) {
+	private State combineStates(int index, State sa, State sb,
+		int states, int mutationConstant) {
 		int[] ga = sa.getGenes();
 		int[] gb = sb.getGenes();
 		int[] gc = new int[9];
@@ -382,7 +367,8 @@ public class GeneticAlgorithm implements Serializable {
 		
 		//Changing the entire command is 10 times less likely than changing a parameter
 		//The value 10 is arbitrary
-		//This is not evolution as it does not use any of the genes present in either of the parents
+		//This is not evolution as it does not use any of the genes
+		//present in either of the parents
 		int i = 0;
 		if(ran.nextInt(mutationConstant * 10) == 0){
 			return ranGenes(states);
@@ -438,9 +424,8 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	public Brain getBestBrain() {
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("Returned the Brain with the highest fitness generated by GeneticAlgorithm"));
-		}
+			Logger.log(new InformationLowEvent("Returned the Brain with the" +
+				"highest fitness generated by GeneticAlgorithm"));
 		//Assumes population is sorted by fitness in ascending order
 		return this.population[this.population.length - 1];
 	}
@@ -484,14 +469,10 @@ public class GeneticAlgorithm implements Serializable {
 		try{
 			writeObject(new ObjectOutputStream(new FileOutputStream(filePath)));
 		}catch(FileNotFoundException e){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new IOEvent("Save file: \""
-					+ filePath + " not found", e));
-			}
+			Logger.log(new IOEvent("Save file: \""
+				+ filePath + " not found", e));
 		}catch(IOException e){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new IOEvent(e.getMessage(), e));
-			}
+			Logger.log(new IOEvent(e.getMessage(), e));
 		}
 	}
 	
@@ -552,18 +533,12 @@ public class GeneticAlgorithm implements Serializable {
 		try{
 			readObject(new ObjectInputStream(new FileInputStream(loadFile)));
 		}catch(FileNotFoundException e){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new IOEvent("Save file: \""
-					+ loadFile.getPath() + " not found", e));
-			}
+			Logger.log(new IOEvent("Save file: \""
+				+ loadFile.getPath() + " not found", e));
 		}catch(ClassNotFoundException e){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new IOEvent(e.getMessage(), e));
-			}
+			Logger.log(new IOEvent(e.getMessage(), e));
 		}catch(IOException e){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new IOEvent(e.getMessage(), e));
-			}
+			Logger.log(new IOEvent(e.getMessage(), e));
 		}
 	}
 	

@@ -61,9 +61,8 @@ public class Cell {
 				this.anthill = 0;
 			}catch(NumberFormatException e){
 				//Cell must contain food, otherwise switch would have broken at '.'
-				if(Logger.getLogLevel() >= 1){
-					Logger.log(new IllegalArgumentEvent("Illegal food argument in Cell setCell", e));
-				}
+				Logger.log(new IllegalArgumentEvent("Illegal food " +
+					"argument in Cell setCell", e));
 			}
 		}
 	}
@@ -212,9 +211,7 @@ public class Cell {
 				return Character.toString((char) (96 + this.food));
 			}
 			//Else error, cannot be less than 0 or more than 2 anthills
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new WarningEvent("Cell anthill value not 0, 1 or 2"));
-			}
+			Logger.log(new WarningEvent("Cell anthill value not 0, 1 or 2"));
 			return null; 
 			
 		}

@@ -13,7 +13,8 @@ public class BrainController {
 		return BrainParser.readBrainFrom(path);
 	}
 	
-	public static Brain getBestGABrain(Brain exampleBrain, DummyEngine dummyEngine, int epochs, int rounds, int popSize, int elite, int mutationRate) {
+	public static Brain getBestGABrain(Brain exampleBrain, DummyEngine dummyEngine,
+		int epochs, int rounds, int popSize, int elite, int mutationRate) {
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		geneticAlgorithm.createPopulation(exampleBrain, popSize);
 		geneticAlgorithm.evolve(dummyEngine, epochs, rounds, elite, mutationRate);

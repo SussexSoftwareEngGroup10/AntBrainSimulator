@@ -5,7 +5,7 @@ import java.util.Calendar;
 public abstract class Event extends Throwable {
 	private static final long serialVersionUID = 1L;
 	private Calendar calendar;
-	enum Severity { INFORMATION, WARNING, ERROR }
+	protected enum Severity { INFORMATION, WARNING, ERROR }
 	protected Severity severity;
 	
 	public Event(String message) {

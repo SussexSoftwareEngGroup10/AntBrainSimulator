@@ -58,9 +58,7 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 		try{
 			return this.states.get(i);
 		}catch(NullPointerException npe){
-			if(Logger.getLogLevel() >= 1){
-				Logger.log(new WarningEvent("Null state " + i + " returned in Brain"));
-			}
+			Logger.log(new WarningEvent("Null state " + i + " returned in Brain"));
 			return null;
 		}
 	}

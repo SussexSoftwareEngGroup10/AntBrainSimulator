@@ -13,7 +13,7 @@ import antBrain.Brain;
  * @version 1.0
  */
 public final class Ant implements Comparable<Ant> {
-	enum Colour { BLACK, RED }
+	protected enum Colour { BLACK, RED }
 	
 	//Random is passed from world, all ants in world, and world itself use the same Random,
 	//with the same seed, so exactly the same game can be replicated
@@ -53,9 +53,8 @@ public final class Ant implements Comparable<Ant> {
 			this.colour = Colour.RED;
 			break;
 		default:
-			if(Logger.getLogLevel() >= Logger.WARNINGLOGGING){
-				Logger.log(new IllegalArgumentEvent("Illegal Colour Argument in Ant Constructor"));
-			}
+			Logger.log(new IllegalArgumentEvent("Illegal Colour " +
+				"argument in Ant Constructor"));
 			this.colour = null;
 		}
 		this.direction = direction;
@@ -118,17 +117,14 @@ public final class Ant implements Comparable<Ant> {
 			//This should not be reached
 			if(this.state.getCommand() == -1){
 				//null command
-				if(Logger.getLogLevel() >= Logger.WARNINGLOGGING){
-					Logger.log(new ErrorEvent("Null Command in state"));
-				}
+				Logger.log(new ErrorEvent("Null Command in state"));
 				//This should never occur, fatal error,
 				//avoid further errors and logging
 				System.exit(1);
 			}else{
 				//command < -1 || > 7
-				if(Logger.getLogLevel() >= Logger.WARNINGLOGGING){
-					Logger.log(new IllegalArgumentEvent("Illegal Command Argument in Ant step"));
-				}
+				Logger.log(new IllegalArgumentEvent("Illegal Command " +
+					"argument in Ant step"));
 			}
 		}
 	}
@@ -149,9 +145,8 @@ public final class Ant implements Comparable<Ant> {
 			this.senseCell = this.cell.getNeighbour(this.direction + 1);
 			break;
 		default:
-			if(Logger.getLogLevel() >= Logger.WARNINGLOGGING){
-				Logger.log(new IllegalArgumentEvent("Illegal senseDir Argument in Ant sense"));
-			}
+			Logger.log(new IllegalArgumentEvent("Illegal senseDir " +
+				"argument in Ant sense"));
 			this.senseCell = this.cell;
 		}
 		
@@ -247,9 +242,7 @@ public final class Ant implements Comparable<Ant> {
 			this.state = this.brain.getState(this.state.getSt2());
 			break;
 		default:
-			if(Logger.getLogLevel() >= Logger.WARNINGLOGGING){
-				Logger.log(new IllegalArgumentEvent("Illegal Condition Argument in Ant sense"));
-			}
+			Logger.log(new IllegalArgumentEvent("Illegal Condition Argument in Ant sense"));
 			this.state = this.brain.getState(this.state.getSt2());
 		}
 	}
@@ -268,7 +261,8 @@ public final class Ant implements Comparable<Ant> {
 
 	//PickUp st1 st2
 	private final void pickUp() {
-		//If can not carrying hasFood, and hasFood in cell, pick up hasFood and go to st1, else st2
+		//If can not carrying hasFood, and hasFood in cell,
+		//pick up hasFood and go to st1, else st2
 		if(!this.hasFood && this.cell.hasFood()){
 			this.cell.takeFood();
 			this.hasFood = true;
@@ -307,16 +301,15 @@ public final class Ant implements Comparable<Ant> {
 			}
 			break;
 		default:
-			if(Logger.getLogLevel() >= Logger.WARNINGLOGGING){
-				Logger.log(new IllegalArgumentEvent("Illegal TurnDir Argument in Ant turn"));
-			}
+			Logger.log(new IllegalArgumentEvent("Illegal TurnDir Argument in Ant turn"));
 		}
 		this.state = this.brain.getState(this.state.getSt1());
 	}
 	
 	//Move st1 st2
 	private final void move() {
-		//If new cell is not rocky and does not contain an ant, move there and go to st1, else st2
+		//If new cell is not rocky and does not contain an ant,
+		//move there and go to st1, else st2
 		this.newCell = this.cell.getNeighbour(this.direction);
 		if(!this.newCell.isRocky() && !this.newCell.hasAnt()){
 			//Move to cell

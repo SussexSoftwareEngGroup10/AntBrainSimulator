@@ -8,7 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import utilities.IOEvent;
-import utilities.InformationEvent;
+import utilities.InformationHighEvent;
+import utilities.InformationLowEvent;
 import utilities.Logger;
 
 /**
@@ -22,9 +23,8 @@ public class BrainParser {
 	
 	public static Brain readBrainFrom(String name) {
 		String path = folderName + "\\" + name + "" + fileNameSuffix;
-		if(Logger.getLogLevel() >= 3){
-			Logger.log(new InformationEvent("Begun reading Brain object from \"" + path + "\""));
-		}
+		Logger.log(new InformationLowEvent("Begun reading Brain " +
+			"object from \"" + path + "\""));
 		if(!folder.exists()){
 			folder.mkdir();
 		}
@@ -42,7 +42,8 @@ public class BrainParser {
 			//Read in the file 1 line at a time, creating a State from each line
 			while(true){
 				line = br.readLine();
-				//Gives: "Sense Ahead 1 3 Food  ; state 0:  [SEARCH] is there food in front of me?"
+				//Gives: "Sense Ahead 1 3 Food  ; state 0:
+				//[SEARCH] is there food in front of me?"
 				
 				if(line == null){
 					//End of file has been reached
@@ -50,7 +51,8 @@ public class BrainParser {
 				}
 				
 				lineParts = line.split(";");
-				//Gives: "Sense Ahead 1 3 Food  "," state 0:  [SEARCH] is there food in front of me?"
+				//Gives: "Sense Ahead 1 3 Food  "," state 0:
+				//[SEARCH] is there food in front of me?"
 				
 				lineParts[0] = lineParts[0].trim();
 				//Gives: "Sense Ahead 1 3 Food"
@@ -65,17 +67,14 @@ public class BrainParser {
 		}catch(IOException e){
 			Logger.log(new IOEvent(e.getMessage(), e));
 		}
-		if(Logger.getLogLevel() >= 2){
-			Logger.log(new InformationEvent("Completed reading Brain object from \"" + path + "\""));
-		}
+		Logger.log(new InformationHighEvent("Completed reading Brain " +
+			"object from \"" + path + "\""));
 		return brain;
 	}
 	
 	public static void writeBrainTo(Brain brain, String name) {
 		String path = folderName + "\\" + name + "" + fileNameSuffix;
-		if(Logger.getLogLevel() >= 3){
-			Logger.log(new InformationEvent("Begun writing Brain object to \"" + path + "\""));
-		}
+		Logger.log(new InformationLowEvent("Begun writing Brain object to \"" + path + "\""));
 		if(!folder.exists()){
 			folder.mkdir();
 		}
@@ -95,9 +94,8 @@ public class BrainParser {
 		}catch(IOException e){
 			Logger.log(new IOEvent(e.getMessage(), e));
 		}
-		if(Logger.getLogLevel() >= 3){
-			Logger.log(new InformationEvent("Completed writing Brain object to \"" + path + "\""));
-		}
+		Logger.log(new InformationHighEvent("Completed writing Brain " +
+			"object to \"" + path + "\""));
 	}
 	
 	/**

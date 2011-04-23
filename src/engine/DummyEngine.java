@@ -232,8 +232,8 @@ public class DummyEngine {
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
 		//World arguments
-		int trainSeed = 1;
-		int testSeed = 2;
+		int trainSeed = 1;			//Used by the GA to train Brains
+		int testSeed = 0;			//Used here to test Brains
 		int rows = 140;
 		int cols = 140;
 		int rocks = 13;
@@ -246,7 +246,7 @@ public class DummyEngine {
 		//GA arguments
 		int epochs = 1300;			//More is slower, and more likely to generate an improved brain
 		int rounds = 300000;		//More is slower, and increases the accuracy of the GA
-		int popLen = 50;			//More is slower, and searches more of the search space for brains
+		int popLen = 100;			//More is slower, and searches more of the search space for brains
 		int elite = 5;				//More is faster, but increases the likelihood of getting stuck with lucky starting brain
 		int mutationRate = 20;		//More is less change per epoch
 		

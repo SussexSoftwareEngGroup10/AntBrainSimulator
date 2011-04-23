@@ -228,6 +228,7 @@ public class DummyEngine {
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed()
 		//TODO improve epoch_x.ser saving so you don't need to move to and from desktop
+		//TODO fix "STATE 0" in brains in states
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");

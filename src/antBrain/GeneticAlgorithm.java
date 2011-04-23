@@ -26,10 +26,10 @@ import engine.DummyEngine;
  */
 public class GeneticAlgorithm implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final String superFolderPath = "Brain_Populations";
+	private static final String superFolderPath = "brain_populations";
 	private static final File superFolder = new File(superFolderPath);
 	private static int gasConstructed = 0;
-	private static final String subFolderPathPrefix = superFolderPath + "\\" + "Genetic_Algorithm_";
+	private static final String subFolderPathPrefix = superFolderPath + "\\" + "genetic_algorithm_";
 	private static final Random ran = new Random();
 	private static final int min = Brain.getMinNumOfStates();
 	private static final int max = Brain.getMaxNumOfStates();

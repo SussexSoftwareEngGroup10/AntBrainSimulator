@@ -223,11 +223,11 @@ public class DummyEngine {
 		//TODO remove / improve logging and saving polling in GeneticAlgorithm.evolve()
 		//TODO remove polling in Ant.step()
 		//TODO fix % logging in GeneticAlgorithm.evolve()
-		//TODO put the new logging stuff in ifs
 		//TODO remove static methods and variables to allow multiple engines
 		//TODO have another go at a dynamic fitness test
 		//TODO make it so reading in a brain zeroes epoch, or something,
 		//so you can evolve the same amount twice without doubling epochs
+		//TODO logging
 		
 		//Setup variables
 		Brain betterBrain = BrainController.readBrainFrom("better_example");
@@ -245,7 +245,7 @@ public class DummyEngine {
 		int antInitialDirection = 0;
 		//GA arguments
 		int epochs = 20;			//More is slower, and more likely to generate an improved brain
-		int rounds = 300000;		//More is slower, and increases the accuracy of the GA
+		int rounds = 3;		//More is slower, and increases the accuracy of the GA
 		int popLen = 50;			//More is slower, and searches more of the search space for brains
 		int elite = 5;				//More is faster, but increases the likelihood of getting stuck with lucky starting brain
 		int mutationRate = 20;		//More is less change per epoch

@@ -148,6 +148,7 @@ public class DummyEngine {
 		//Set fitness for each brain against the best brain in the population
 		//Assumes population has been sorted
 		//Dynamic fitness test:
+		//This doesn't work, as all Brains may not have a fitness
 //		Brain bestBrain = population[population.length - 1];
 		//Else use static fitness test (bestBrain field)
 		

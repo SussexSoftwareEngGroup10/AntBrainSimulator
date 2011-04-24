@@ -29,7 +29,7 @@ public class BrainParser {
 		if(!folder.exists()){
 			folder.mkdir();
 		}
-		Brain brain = new Brain();
+		Brain brain = new Brain(30);
 		BufferedReader br;
 		File f = new File(path);
 		String line;

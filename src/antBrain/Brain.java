@@ -23,8 +23,8 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 	private HashMap<Integer, State> states;
 	private int fitness;
 	
-	public Brain() {
-		this.states = new HashMap<Integer, State>();
+	public Brain(int initialCapacity) {
+		this.states = new HashMap<Integer, State>(initialCapacity);
 	}
 	
 	/**

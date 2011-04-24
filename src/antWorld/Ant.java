@@ -7,6 +7,7 @@ import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
+import antBrain.State;
 
 /**
  * @author pkew20 / 57116
@@ -30,7 +31,7 @@ public final class Ant implements Comparable<Ant> {
 	
 	//Step local variables as fields to enable inline code
 	//all methods except constructor are final to allow inline code
-	private antBrain.State state;	//Thread has a State inner class
+	private State state;
 	private Cell senseCell;
 	private Cell newCell;
 	private Ant[] neighbourAnts = new Ant[6];

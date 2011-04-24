@@ -119,19 +119,21 @@ public class DummyEngine {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
 	public Brain getBestGABrain(Brain exampleBrain,	int epochs, int rounds,
-		int popSize, int elite, int mutationRate, String path) {
+		int popLen, int elite, int mutationRate, String path) {
+		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen));
+		Semaphore semaphore = new Semaphore(popLen, true);
+		
 		this.trainingBrain = BrainParser.readBrainFrom(path);
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-		geneticAlgorithm.createPopulation(exampleBrain, popSize);
-		geneticAlgorithm.evolve(this, epochs, rounds, elite, mutationRate);
+		geneticAlgorithm.createPopulation(exampleBrain, popLen);
+		geneticAlgorithm.evolve(this, threadPoolExecutor, semaphore,
+			epochs, rounds, elite, mutationRate);
 		return geneticAlgorithm.getBestBrain();
 	}
 	
-	public void sortByFitness(Brain[] population) {
-		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(population.length));
-		Semaphore semaphore = new Semaphore(population.length, true);
-		
+	public void sortByFitness(ThreadPoolExecutor threadPoolExecutor,
+			Semaphore semaphore, Brain[] population) {
 		//Ensure all Brains have a fitness
 		evaluateFitnessContest(threadPoolExecutor, semaphore, population);
 		
@@ -233,7 +235,6 @@ public class DummyEngine {
 		//TODO improve epoch_x.ser saving so you don't need to move to and from desktop
 		//TODO increase GeneticAlgorithm.breed() efficiency
 		//TODO logger % still doesn't work, maybe give up and log every epoch
-		//TODO give collections initial capacities, increase efficiency
 		
 		//Setup variables
 		//World arguments

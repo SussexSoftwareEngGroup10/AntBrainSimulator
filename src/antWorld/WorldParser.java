@@ -16,30 +16,16 @@ import utilities.Logger;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class WorldParser {
-	//Singleton, only ever one instance
-	private static WorldParser worldParser;
-	
-	private final String folderName = "worlds";
-	private final File folder = new File(this.folderName);
-	private final String fileNameSuffix = ".world";
-	
-	private WorldParser() {
-		//No code needed
-	}
-	
-	public static WorldParser getWorldParser() {
-		if(worldParser == null){
-			worldParser = new WorldParser();
-		}
-		return worldParser;
-	}
+public final class WorldParser {
+	private static final String folderName = "worlds";
+	private static final File folder = new File(folderName);
+	private static final String fileNameSuffix = ".world";
 	
 	public static World readWorldFrom(String name) {
-		String path = getWorldParser().folderName + "\\" + name + "" + getWorldParser().fileNameSuffix;
+		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
-		if(!getWorldParser().folder.exists()){
-			getWorldParser().folder.mkdir();
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		BufferedReader br;
 		File f = new File(path);
@@ -100,10 +86,10 @@ public class WorldParser {
 	}
 	
 	public static void writeWorldTo(World world, String name) {
-		String path = getWorldParser().folderName + "\\" + name + "" + getWorldParser().fileNameSuffix;
+		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun writing World object to \"" + path + "\""));
-		if(!getWorldParser().folder.exists()){
-			getWorldParser().folder.mkdir();
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		File outputFile = new File(path);
 		

@@ -17,31 +17,17 @@ import utilities.Logger;
  * @version 1.0
  */
 public class BrainParser {
-	//Singleton, only ever one instance
-	private static BrainParser brainParser;
-	
-	private final String folderName = "brains";
-	private final File folder = new File(this.folderName);
-	private final String fileNameSuffix = ".brain";
-	
-	private BrainParser() {
-		//No code needed
-	}
-	
-	public static BrainParser getBrainParser() {
-		if(brainParser == null){
-			brainParser = new BrainParser();
-		}
-		return brainParser;
-	}
+	private static final String folderName = "brains";
+	private static final File folder = new File(folderName);
+	private static final String fileNameSuffix = ".brain";
 	
 	public static Brain readBrainFrom(String name) {
-		String path = getBrainParser().folderName + "\\"
-			+ name + "" + getBrainParser().fileNameSuffix;
+		String path = folderName + "\\"
+			+ name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun reading Brain " +
 			"object from \"" + path + "\""));
-		if(!getBrainParser().folder.exists()){
-			getBrainParser().folder.mkdir();
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		Brain brain = new Brain();
 		BufferedReader br;
@@ -88,11 +74,11 @@ public class BrainParser {
 	}
 	
 	public static void writeBrainTo(Brain brain, String name) {
-		String path = getBrainParser().folderName + "\\"
-			+ name + "" + getBrainParser().fileNameSuffix;
+		String path = folderName + "\\"
+			+ name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun writing Brain object to \"" + path + "\""));
-		if(!getBrainParser().folder.exists()){
-			getBrainParser().folder.mkdir();
+		if(!folder.exists()){
+			folder.mkdir();
 		}
 		File outputFile = new File(path);
 		

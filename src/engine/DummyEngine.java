@@ -51,10 +51,8 @@ public class DummyEngine {
 	private int rounds;
 	
 	//GA variables
-	private static final Brain betterBrain = BrainParser.readBrainFrom("better_example");
-	private ThreadPoolExecutor threadPoolExecutor = null;
+	private static final Brain trainingBrain = BrainParser.readBrainFrom("better_example");
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
-	private Semaphore semaphore = null;
 	
 	public DummyEngine(int seed, int rows, int cols, int rocks, int anthills,
 		int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
@@ -120,23 +118,28 @@ public class DummyEngine {
 //Ant.step()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
+	public Brain getBestGABrain(Brain exampleBrain,	int epochs, int rounds,
+		int popSize, int elite, int mutationRate) {
+		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+		geneticAlgorithm.createPopulation(exampleBrain, popSize);
+		geneticAlgorithm.evolve(this, epochs, rounds, elite, mutationRate);
+		return geneticAlgorithm.getBestBrain();
+	}
+	
 	public void sortByFitness(Brain[] population) {
-		if(this.threadPoolExecutor == null){
-			this.threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-				TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(population.length));
-		}
-		if(this.semaphore == null){
-			this.semaphore = new Semaphore(population.length, true);
-		}
+		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(population.length));
+		Semaphore semaphore = new Semaphore(population.length, true);
 		
 		//Ensure all Brains have a fitness
-		evaluateFitnessContest(population);
+		evaluateFitnessContest(threadPoolExecutor, semaphore, population);
 		
 		//Sort by fitnesses calculated
 		Arrays.sort(population);
 	}
 	
-	private void evaluateFitnessContest(Brain[] population) {
+	private void evaluateFitnessContest(ThreadPoolExecutor threadPoolExecutor,
+		Semaphore semaphore, Brain[] population) {
 		//Ants let each other know they've finished a step with the stepBarrier
 		//Ants let their sim know they've finished all steps with the endBarrier
 		//Sims let the engine know they've finished their sim with the contestEndBarrier
@@ -149,23 +152,23 @@ public class DummyEngine {
 		
 		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
-		this.semaphore.acquireUninterruptibly(population.length);
+		semaphore.acquireUninterruptibly(population.length);
 		
 		for(Brain brain : population){
 			//If a seed is used, fitness will not change with multiple simulations
 			if(brain.getFitness() == 0){
-				this.threadPoolExecutor.execute(new Simulation(betterBrain,
-					brain, this.semaphore));
+				threadPoolExecutor.execute(new Simulation(trainingBrain,
+					brain, semaphore));
 			}else{
 				//Brains in the elite will already have a fitness,
 				//however, the flag still needs to be released
-				this.semaphore.release();
+				semaphore.release();
 			}
 		}
 		
 		//Await completion of all calls
-		this.semaphore.acquireUninterruptibly(population.length);
-		this.semaphore.release(population.length);
+		semaphore.acquireUninterruptibly(population.length);
+		semaphore.release(population.length);
 		
 //		//Single-Threaded
 //		Brain brain;
@@ -177,7 +180,7 @@ public class DummyEngine {
 //			//Only if the fitness test is the same every time,
 //			//i.e. tested against the same brain
 //			if(brain.getFitness() == 0){
-//				brain.setFitness(evaluateFitnessContestSimulation(betterBrain, brain, rounds));
+//				brain.setFitness(evaluateFitnessContestSimulation(trainingBrain, brain, rounds));
 //			}
 //		}
 	}
@@ -211,15 +214,6 @@ public class DummyEngine {
 		return anthillFood[1] - anthillFood[0];
 	}
 	
-	//TODO
-	public Brain getBestGABrain(Brain exampleBrain,	int epochs, int rounds,
-		int popSize, int elite, int mutationRate) {
-		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-		geneticAlgorithm.createPopulation(exampleBrain, popSize);
-		geneticAlgorithm.evolve(this, epochs, rounds, elite, mutationRate);
-		return geneticAlgorithm.getBestBrain();
-	}
-	
 	public static void main(String args[]) {
 		//TODO remove console prints, from down there \/, and Logger
 		//TODO combine GA and regular sim methods, bit of a pain
@@ -228,9 +222,6 @@ public class DummyEngine {
 			//or at least allow a numOfStates parameter
 		//TODO start GA at epoch 1, end at epochs, not epochs - 1
 		//TODO remove polling in Ant.step()
-		//TODO remove static methods and variables to allow multiple engines
-		//TODO possibly switch from static to singleton,
-			//depending on increase in method call length
 		//TODO have another go at a dynamic fitness test
 		//TODO make it so reading in a brain zeroes epoch, or something,
 			//so you can evolve the same amount twice without doubling epochs
@@ -284,14 +275,14 @@ public class DummyEngine {
 		//The better red does relative to black, the better the GA is
 		
 		//Evolve and get the best brain from the GeneticAlgorithm
-		//betterBrain is a decent place to start from
+		//trainingBrain is a decent place to start from
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
 		DummyEngine dummyEngine = new DummyEngine(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
-		Brain gaBrain = dummyEngine.getBestGABrain(betterBrain, epochs,
+		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, epochs,
 			rounds, popLen, elite, mutationRate);
 //		Brain gaBrain = BrainController.readBrainFrom("ga_result");
 		
@@ -301,13 +292,13 @@ public class DummyEngine {
 		//could use a seeded world for every GA game,
 		//(possibly) fairer and quicker, but less random, evolution
 		//more efficient to test all GA population brains against
-		//the betterBrain with seed == 1
+		//the trainingBrain with seed == 1
 		World world = new World(testSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength,
 			foodBlobCellFoodCount, antInitialDirection);
 		
 		//Setup brains
-		world.setBrain(betterBrain, 0);	//black
+		world.setBrain(trainingBrain, 0);	//black
 		world.setBrain(gaBrain, 1);		//red
 		
 		Ant[] ants = world.getAnts();
@@ -347,10 +338,10 @@ public class DummyEngine {
 		}
 		
 		System.out.println(world);
-		System.out.println("---better_example.brain---\n" + betterBrain);
+		System.out.println("---better_example.brain---\n" + trainingBrain);
 		System.out.println("---ga_result.brain---\n" + gaBrain);
 		System.out.print("GA Brain ");
-		if(gaBrain.equals(betterBrain)){
+		if(gaBrain.equals(trainingBrain)){
 			System.out.print("=");
 		}else{
 			System.out.print("!");

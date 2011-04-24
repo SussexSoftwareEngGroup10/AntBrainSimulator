@@ -6,9 +6,6 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import utilities.Logger;
-import utilities.WarningEvent;
-
 /**
  * @author pkew20 / 57116
  * @version 1.0
@@ -38,16 +35,6 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	
 	public static int getMaxNumOfStates() {
 		return maxNumOfStates;
-	}
-	
-	@Override
-	public State get(Object key) {
-		try{
-			return super.get(key);
-		}catch(NullPointerException npe){
-			Logger.log(new WarningEvent("Null state " + key + " returned in Brain"));
-			return null;
-		}
 	}
 	
 	public int getFitness() {

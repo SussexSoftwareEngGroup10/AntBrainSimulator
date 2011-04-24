@@ -142,6 +142,13 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 	@SuppressWarnings("unchecked")
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
 		this.states = (HashMap<Integer, State>) in.readObject();
+		
+		//Update stateNums of States according to position in Brain
+		Set<Integer> keys = this.states.keySet();
+		for(Integer key : keys){
+			this.states.get(key).setStateNum(key);
+		}
+		
 		this.fitness = in.readInt();
 	}
 }

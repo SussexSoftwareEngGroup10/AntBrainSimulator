@@ -792,6 +792,10 @@ public class State implements Serializable {
 		return this.senseMarker;
 	}
 	
+	protected void setStateNum(int stateNum) {
+		this.stateNum = stateNum;
+	}
+	
 	public int getStateNum() {
 		return this.stateNum;
 	}

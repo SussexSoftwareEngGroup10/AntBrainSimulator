@@ -11,7 +11,8 @@ import utilities.InformationLowEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
-import antBrain.BrainController;
+import antBrain.BrainParser;
+import antBrain.GeneticAlgorithm;
 import antBrain.Simulation;
 import antWorld.Ant;
 import antWorld.World;
@@ -50,7 +51,7 @@ public class DummyEngine {
 	private int rounds;
 	
 	//GA variables
-	private static final Brain betterBrain = BrainController.readBrainFrom("better_example");
+	private static final Brain betterBrain = BrainParser.readBrainFrom("better_example");
 	private ThreadPoolExecutor threadPoolExecutor = null;
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
 	private Semaphore semaphore = null;
@@ -210,13 +211,21 @@ public class DummyEngine {
 		return anthillFood[1] - anthillFood[0];
 	}
 	
+	//TODO
+	public Brain getBestGABrain(Brain exampleBrain,	int epochs, int rounds,
+		int popSize, int elite, int mutationRate) {
+		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+		geneticAlgorithm.createPopulation(exampleBrain, popSize);
+		geneticAlgorithm.evolve(this, epochs, rounds, elite, mutationRate);
+		return geneticAlgorithm.getBestBrain();
+	}
+	
 	public static void main(String args[]) {
 		//TODO remove console prints, from down there \/, and Logger
 		//TODO combine GA and regular sim methods, bit of a pain
-		//TODO time more, roughly down from 3:30 to 2:00 with threads
 		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
 		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
-			//or at least allow a size parameter
+			//or at least allow a numOfStates parameter
 		//TODO start GA at epoch 1, end at epochs, not epochs - 1
 		//TODO remove polling in Ant.step()
 		//TODO remove static methods and variables to allow multiple engines
@@ -226,14 +235,13 @@ public class DummyEngine {
 		//TODO make it so reading in a brain zeroes epoch, or something,
 			//so you can evolve the same amount twice without doubling epochs
 		//TODO add more information logging
-		//TODO test effects of changing targetStates in GeneticAlgorithm.breed()
+		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
 		//TODO improve epoch_x.ser saving so you don't need to move to and from desktop
-		//TODO fix "STATE 0" in brains in states
 		//TODO increase GeneticAlgorithm.breed() efficiency
-		//TODO logger % still doesn't work
+		//TODO logger % still doesn't work //may be fixed, test
+		//TODO give collections initial capacities, increase efficiency
 		
 		//Setup variables
-		Brain betterBrain = BrainController.readBrainFrom("better_example");
 		//World arguments
 		//Used by the GA to train Brains
 		int trainSeed = 1;
@@ -249,9 +257,10 @@ public class DummyEngine {
 		int foodBlobSideLength = 5;
 		int foodBlobCellFoodCount = 5;
 		int antInitialDirection = 0;
+		
 		//GA arguments
 		//More is slower, and more likely to generate an improved brain
-		int epochs = 1305;
+		int epochs = 1306;
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains
@@ -282,8 +291,8 @@ public class DummyEngine {
 		DummyEngine dummyEngine = new DummyEngine(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
-		Brain gaBrain = BrainController.getBestGABrain(
-			betterBrain, dummyEngine, epochs, rounds, popLen, elite, mutationRate);
+		Brain gaBrain = dummyEngine.getBestGABrain(betterBrain, epochs,
+			rounds, popLen, elite, mutationRate);
 //		Brain gaBrain = BrainController.readBrainFrom("ga_result");
 		
 		//Setup world

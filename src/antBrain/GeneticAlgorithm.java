@@ -65,7 +65,7 @@ public class GeneticAlgorithm implements Serializable {
 			return;
 		}
 		
-		this.epoch = 0;
+		this.epoch = 1;
 		
 		//Otherwise create a new population
 		this.popLen = popLen;
@@ -82,7 +82,7 @@ public class GeneticAlgorithm implements Serializable {
 	public void evolve(DummyEngine dummyEngine, int epochs, int rounds,
 		int elite, int mutationRate) {
 		//Log information on epoch and evolution
-		if(this.epoch == 0){
+		if(this.epoch == 1){
 			//Starting evolution from a newly created population
 			Logger.log(new InformationHighEvent("Began GeneticAlgorithm evolution for "
 				+ epochs + " epochs"
@@ -120,16 +120,16 @@ public class GeneticAlgorithm implements Serializable {
 		//the population is the same size as when it began the iteration
 		sortByFitness(dummyEngine);
 		
+		//Round values up from zero, otherwise may get a divide by zero
+		@SuppressWarnings("unused")
+		double tenth = epochs / 10;
+		@SuppressWarnings("unused")
+		double hundredth = epochs / 100;
+		double thousandth = epochs / 1000;
+		
 		//After constructor, epoch == 0,
 		//after deserialization, epoch == epoch to be run next
-		//Round values up from zero, otherwise may get a divide by zero
-		int tenth = epochs / 10;
-		if(tenth == 0) tenth = 1;
-		int hundredth = epochs / 100;
-		if(hundredth == 0) hundredth = 1;
-		int thousandth = epochs / 1000;
-		if(thousandth == 0) thousandth = 1;
-		for(; this.epoch < epochs; this.epoch++){
+		for(; this.epoch <= epochs; this.epoch++){
 			//Timing
 			Logger.log(new TimeEvent("For epoch " + (this.epoch - 1)));
 			//Does not clear garbage, doing so would increase accuracy of timing,
@@ -140,9 +140,9 @@ public class GeneticAlgorithm implements Serializable {
 			//if epoch is a multiple of epochs / 1000
 			//if the remainder given when the
 			//current epoch is divided by epochs / 1000 (0.1%) is 0
-			if((this.epoch + 1) % thousandth == 0){
+			if((this.epoch) % thousandth == 0){
 				Logger.log(new InformationHighEvent("Completed "
-					+ (double) (this.epoch + 1) / (double) epochs * 100
+					+ (this.epoch) / (double) epochs * 100
 					+ "% of GeneticAlgorithm evolution epochs"));
 			}
 			

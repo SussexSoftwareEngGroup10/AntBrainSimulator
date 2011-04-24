@@ -10,9 +10,9 @@ import java.io.PrintStream;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Logger {
+public final class Logger {
 	//Singleton, only ever one instance
-	private static Logger logger;
+	private static Logger logger = new Logger();
 	
 	//Use these outside this class so that new levels can be inserted
 	public enum LogLevel { NO_LOGGING, ERROR_LOGGING, WARNING_LOGGING, TIME_LOGGING,
@@ -35,61 +35,58 @@ public class Logger {
 	}
 	
 	public static Logger getLogger() {
-		if(logger == null){
-			logger = new Logger();
-		}
 		return logger;
 	}
 	
 	private static void nextLogFile() {
-		if(!getLogger().folder.exists()){
-			getLogger().folder.mkdir();
+		if(!logger.folder.exists()){
+			logger.folder.mkdir();
 		}
 		
 		//Sets up the writer to a new log file
 		int i = -1;
 		do{
 			i++;
-			getLogger().file = new File(getLogger().folderName + "\\"
-				+ getLogger().fileNamePrefix + "" + i + "" + getLogger().fileNameSuffix);
-		}while(getLogger().file.exists());
+			logger.file = new File(logger.folderName + "\\"
+				+ logger.fileNamePrefix + "" + i + "" + logger.fileNameSuffix);
+		}while(logger.file.exists());
 		
 		//Create log file
 		try{
-			getLogger().file.createNewFile();
+			logger.file.createNewFile();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
 		
 		//Setup print stream to file
 		try {
-			getLogger().logErr = new PrintStream(new FileOutputStream(getLogger().file));
+			logger.logErr = new PrintStream(new FileOutputStream(logger.file));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public static File getLog() {
-		return getLogger().file;
+		return logger.file;
 	}
 	
 	public static void clearLogs() {
 		//Deletes every file beginning with the above prefix and ending with the above suffix
-		File folder = new File(getLogger().folderName + "\\");
+		File folder = new File(logger.folderName + "\\");
 		File[] files = folder.listFiles();
 		int i = 0;
 		
 		for(i = 0; i < files.length; i++){
-			if(files[i].getPath().startsWith(getLogger().folderName
-				+ "\\" + getLogger().fileNamePrefix)
-				&& files[i].getPath().endsWith(getLogger().fileNameSuffix)){
+			if(files[i].getPath().startsWith(logger.folderName
+				+ "\\" + logger.fileNamePrefix)
+				&& files[i].getPath().endsWith(logger.fileNameSuffix)){
 				files[i].delete();
 			}
 		}
 	}
 	
 	public static void log(Event event) {
-		if(getLogger().file == null || getLogger().file.length() >= getLogger().sizeLimit){
+		if(logger.file == null || logger.file.length() >= logger.sizeLimit){
 			nextLogFile();
 		}
 		
@@ -111,33 +108,33 @@ public class Logger {
 			logLevel = LogLevel.ALL_LOGGING;
 		}
 		
-		if(logLevel.ordinal() > getLogger().logLevel.ordinal()){
+		if(logLevel.ordinal() > logger.logLevel.ordinal()){
 			return;
 		}
 		
 		//Setup writing to log file
-		System.setErr(getLogger().logErr);
+		System.setErr(logger.logErr);
 		
 		//Write the toString of e to a log file
 		System.out.println(event.toString());
 		System.err.println(event.toString());
 		
 		//Reset printing to the console
-		System.setErr(getLogger().sysErr);
+		System.setErr(logger.sysErr);
 	}
 	
 	public static void setLogLevel(LogLevel logLevel) {
-		getLogger().logLevel = logLevel;
+		logger.logLevel = logLevel;
 	}
 	
 	public static void restartTimer() {
-		getLogger().restartTime = System.nanoTime();
+		logger.restartTime = System.nanoTime();
 	}
 	
 	public static long getCurrentTime() {
 		//If there has been one, returns the time since the last restartTimer() call,
 		//else time since start of main()
-		return System.nanoTime() - getLogger().restartTime;
+		return System.nanoTime() - logger.restartTime;
 	}
 	
 	public static void logCurrentTime(String message) {
@@ -146,6 +143,6 @@ public class Logger {
 	}
 	
 	public static long getStartTime() {
-		return getLogger().startTime;
+		return logger.startTime;
 	}
 }

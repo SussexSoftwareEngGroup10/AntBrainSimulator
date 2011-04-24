@@ -17,12 +17,10 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	private static final long serialVersionUID = 1L;
 	private static final int minNumOfStates = 3;
 	private static final int maxNumOfStates = 500;//10000;
-//	private HashMap<Integer, State> states;
 	private int fitness;
 	
 	public Brain(int initialCapacity) {
 		super(initialCapacity);
-//		this.states = new HashMap<Integer, State>(initialCapacity);
 	}
 	
 	/**
@@ -32,12 +30,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	 */
 	protected Brain(HashMap<Integer, State> states) {
 		super(states);
-//		this.states = states;
 	}
-	
-//	public int getNumOfStates() {
-//		return this.states.size();
-//	}
 	
 	public static int getMinNumOfStates() {
 		return minNumOfStates;
@@ -47,29 +40,15 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		return maxNumOfStates;
 	}
 	
-	//Brain objects should never be modified outside
-	//GeneticAlgorithm.evolve() and BrainParser.readBrainFrom()
-//	public void setState(int stateNum, State state) {
-//		this.states.put(stateNum, state);
-//	}
-	
-	public State get(int i) {//State(int i) {
+	@Override
+	public State get(Object key) {
 		try{
-			return super.get(i);
-//			return this.states.get(i);
+			return super.get(key);
 		}catch(NullPointerException npe){
-			Logger.log(new WarningEvent("Null state " + i + " returned in Brain"));
+			Logger.log(new WarningEvent("Null state " + key + " returned in Brain"));
 			return null;
 		}
 	}
-	
-//	public Set<Integer> getKeys() {
-//		return this.states.keySet();
-//	}
-//	
-//	public Collection<State> getValues() {
-//		return this.states.values();
-//	}
 	
 	public int getFitness() {
 		return this.fitness;
@@ -82,7 +61,6 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	@Override
 	public Brain clone() {
 		return (Brain) super.clone();
-//		return new Brain(this.states);
 	}
 
 	@Override

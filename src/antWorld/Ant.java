@@ -159,105 +159,105 @@ public final class Ant implements Comparable<Ant> {
 		case 0:
 			if(this.senseCell.hasAnt()
 				&& this.senseCell.getAnt().getColour() == this.colour.ordinal()){
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//FOE
 		case 1:
 			if(this.senseCell.hasAnt()
 				&& this.senseCell.getAnt().getColour() != this.colour.ordinal()){
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//FRIENDWITHFOOD
 		case 2:
 			if(this.senseCell.hasAnt()
 				&& this.senseCell.getAnt().getColour() == this.colour.ordinal()
 				&& this.senseCell.getAnt().hasFood()){
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//FOEWITHFOOD
 		case 3:
 			if(this.senseCell.hasAnt()
 				&& this.senseCell.getAnt().getColour() != this.colour.ordinal()
 				&& this.senseCell.getAnt().hasFood()){
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//FOOD
 		case 4:
 			if(this.senseCell.hasFood()){
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//ROCK
 		case 5:
 			if(this.senseCell.isRocky()){
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//MARKER
 		case 6:
 			if(this.senseCell.getMarker(this.colour.ordinal(), this.state.getSenseMarker())){
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//FOEMARKER
 		case 7:
 			if(this.senseCell.getAnyMarker(this.colour.ordinal())){
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//HOME
 		case 8:
 			if(this.senseCell.getAnthill() - 1 == this.colour.ordinal()) {
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		//FOEHOME
 		case 9:
 			if(this.senseCell.getAnthill() != 0
 				&& this.senseCell.getAnthill() - 1 != this.colour.ordinal()) {
-				this.state = this.brain.getState(this.state.getSt1());
+				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 			break;
 		default:
 			Logger.log(new IllegalArgumentEvent("Illegal Condition Argument in Ant sense"));
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 		}
 	}
 
 	//Mark marker st1
 	private final void mark() {
 		this.cell.mark(this.colour.ordinal(), this.state.getMarker());
-		this.state = this.brain.getState(this.state.getSt1());
+		this.state = this.brain.get(this.state.getSt1());
 	}
 
 	//Unmark marker st1
 	private final void unmark() {
 		this.cell.unmark(this.colour.ordinal(), this.state.getMarker());
-		this.state = this.brain.getState(this.state.getSt1());
+		this.state = this.brain.get(this.state.getSt1());
 	}
 
 	//PickUp st1 st2
@@ -267,9 +267,9 @@ public final class Ant implements Comparable<Ant> {
 		if(!this.hasFood && this.cell.hasFood()){
 			this.cell.takeFood();
 			this.hasFood = true;
-			this.state = this.brain.getState(this.state.getSt1());
+			this.state = this.brain.get(this.state.getSt1());
 		}else{
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 		}
 	}
 
@@ -280,7 +280,7 @@ public final class Ant implements Comparable<Ant> {
 		if(this.hasFood){// && this.cell.foodCount() < 9){
 			this.cell.giveFood(1);
 			this.hasFood = false;
-			this.state = this.brain.getState(this.state.getSt1());
+			this.state = this.brain.get(this.state.getSt1());
 		}
 	}
 	
@@ -304,7 +304,7 @@ public final class Ant implements Comparable<Ant> {
 		default:
 			Logger.log(new IllegalArgumentEvent("Illegal TurnDir Argument in Ant turn"));
 		}
-		this.state = this.brain.getState(this.state.getSt1());
+		this.state = this.brain.get(this.state.getSt1());
 	}
 	
 	//Move st1 st2
@@ -317,9 +317,9 @@ public final class Ant implements Comparable<Ant> {
 			this.newCell.setAnt(this);
 			this.cell.setAnt(null);
 			this.cell = this.newCell;
-			this.state = this.brain.getState(this.state.getSt1());
+			this.state = this.brain.get(this.state.getSt1());
 		}else{
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 		}
 		
 		//Check 3 neighbour ants for becoming surrounded
@@ -349,9 +349,9 @@ public final class Ant implements Comparable<Ant> {
 	//Flip p st1 st2
 	private final void flip() {
 		if(this.ran.nextInt(this.state.getP()) == 0){
-			this.state = this.brain.getState(this.state.getSt1());
+			this.state = this.brain.get(this.state.getSt1());
 		}else{
-			this.state = this.brain.getState(this.state.getSt2());
+			this.state = this.brain.get(this.state.getSt2());
 		}
 	}
 	
@@ -369,7 +369,7 @@ public final class Ant implements Comparable<Ant> {
 	
 	public final void setBrain(Brain brain) {
 		this.brain = brain;
-		this.state = brain.getState(0);
+		this.state = brain.get(0);
 	}
 	
 	private final int neighbourFoes() {

@@ -133,7 +133,7 @@ public class DummyEngine {
 	}
 	
 	public void sortByFitness(ThreadPoolExecutor threadPoolExecutor,
-			Semaphore semaphore, Brain[] population) {
+		Semaphore semaphore, Brain[] population) {
 		//Ensure all Brains have a fitness
 		evaluateFitnessContest(threadPoolExecutor, semaphore, population);
 		
@@ -225,22 +225,19 @@ public class DummyEngine {
 		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
 		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
-		//TODO start GA at epoch 1, end at epochs, not epochs - 1
 		//TODO remove polling in Ant.step()
 		//TODO have another go at a dynamic fitness test
 		//TODO make it so reading in a brain zeroes epoch, or something,
 			//so you can evolve the same amount twice without doubling epochs
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
-		//TODO improve epoch_x.ser saving so you don't need to move to and from desktop
-		//TODO increase GeneticAlgorithm.breed() efficiency
-		//TODO logger % still doesn't work, maybe give up and log every epoch
+		//TODO logger % still doesn't work, maybe give up and log every epoch //may be fixed
 		
 		//Setup variables
 		//World arguments
 		//Used by the GA to train Brains
 		int trainSeed = 1;
-		//Used here to test Brain
+		//Used here to test resulting Brain
 		int testSeed = 0;
 		int rows = 140;
 		int cols = 140;
@@ -255,16 +252,16 @@ public class DummyEngine {
 		
 		//GA arguments
 		//More is slower, and more likely to generate an improved brain
-		int epochs = 1307;
+		int epochs = 2;
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains
-		int popLen = 100;
+		int popLen = 50;
 		//More is faster, but increases the likelihood of getting stuck
 		//with lucky starting brain
 		int elite = 5;
 		//More is less change per epoch
-		int mutationRate = 20;
+		int mutationRate = 50;
 		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
 		
 		//Static class setup
@@ -318,7 +315,6 @@ public class DummyEngine {
 			}
 		}
 		
-		
 		Ant[][] antPlayers = world.getAntsBySpecies();
 		int[] survivors = world.survivingAntsBySpecies();
 		if(survivors.length > 0){
@@ -346,12 +342,13 @@ public class DummyEngine {
 		System.out.println("---better_example.brain---\n" + trainingBrain);
 		System.out.println("---ga_result.brain---\n" + gaBrain);
 		System.out.print("GA Brain ");
-		if(gaBrain.equals(trainingBrain)){
-			System.out.print("=");
-		}else{
-			System.out.print("!");
-		}
-		System.out.println("= Better Brain");
+		
+//		if(gaBrain.equals(trainingBrain)){
+//			System.out.print("=");
+//		}else{
+//			System.out.print("!");
+//		}
+//		System.out.println("= Better Brain");
 		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}

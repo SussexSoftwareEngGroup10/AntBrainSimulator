@@ -62,7 +62,7 @@ public class BrainParser {
 				lineParts[1] = lineParts[1].trim();
 				stateNum = getStateNum(lineParts[1]);
 				
-				brain.setState(stateNum, new State(stateNum, lineParts[0]));
+				brain.put(stateNum, new State(stateNum, lineParts[0]));
 			}
 			br.close();
 		}catch(IOException e){

@@ -3,11 +3,8 @@ package antBrain;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 
 import utilities.Logger;
 import utilities.WarningEvent;
@@ -16,15 +13,16 @@ import utilities.WarningEvent;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Brain implements Cloneable, Comparable<Brain>, Serializable {
+public class Brain extends HashMap<Integer, State> implements Comparable<Brain> {
 	private static final long serialVersionUID = 1L;
 	private static final int minNumOfStates = 3;
-	private static final int maxNumOfStates = 10000;
-	private HashMap<Integer, State> states;
+	private static final int maxNumOfStates = 500;//10000;
+//	private HashMap<Integer, State> states;
 	private int fitness;
 	
 	public Brain(int initialCapacity) {
-		this.states = new HashMap<Integer, State>(initialCapacity);
+		super(initialCapacity);
+//		this.states = new HashMap<Integer, State>(initialCapacity);
 	}
 	
 	/**
@@ -33,12 +31,13 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 	 * @param states
 	 */
 	protected Brain(HashMap<Integer, State> states) {
-		this.states = states;
+		super(states);
+//		this.states = states;
 	}
 	
-	public int getNumOfStates() {
-		return this.states.size();
-	}
+//	public int getNumOfStates() {
+//		return this.states.size();
+//	}
 	
 	public static int getMinNumOfStates() {
 		return minNumOfStates;
@@ -50,26 +49,27 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 	
 	//Brain objects should never be modified outside
 	//GeneticAlgorithm.evolve() and BrainParser.readBrainFrom()
-	public void setState(int stateNum, State state) {
-		this.states.put(stateNum, state);
-	}
+//	public void setState(int stateNum, State state) {
+//		this.states.put(stateNum, state);
+//	}
 	
-	public State getState(int i) {
+	public State get(int i) {//State(int i) {
 		try{
-			return this.states.get(i);
+			return super.get(i);
+//			return this.states.get(i);
 		}catch(NullPointerException npe){
 			Logger.log(new WarningEvent("Null state " + i + " returned in Brain"));
 			return null;
 		}
 	}
 	
-	public Set<Integer> getKeys() {
-		return this.states.keySet();
-	}
-	
-	public Collection<State> getValues() {
-		return this.states.values();
-	}
+//	public Set<Integer> getKeys() {
+//		return this.states.keySet();
+//	}
+//	
+//	public Collection<State> getValues() {
+//		return this.states.values();
+//	}
 	
 	public int getFitness() {
 		return this.fitness;
@@ -81,7 +81,8 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 	
 	@Override
 	public Brain clone() {
-		return new Brain(this.states);
+		return (Brain) super.clone();
+//		return new Brain(this.states);
 	}
 
 	@Override
@@ -98,7 +99,7 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 		int i = 0;
 		for(i = 0; i < maxNumOfStates; i++){
 			try{
-				if(!this.getState(i).equals(b.getState(i))){
+				if(!this.get(i).equals(b.get(i))){
 					return false;
 				}
 			}catch(NullPointerException e){
@@ -124,31 +125,30 @@ public class Brain implements Cloneable, Comparable<Brain>, Serializable {
 	public String toString() {
 		String s = "";
 		//Prints in state order
-		Object[] keys = this.states.keySet().toArray();
+		Object[] keys = super.keySet().toArray();
 		Arrays.sort(keys);
 		int i = 0;
 		
 		for(i = 0; i < keys.length; i++){
-			s += this.states.get(keys[i]) + "\r\n";
+			s += get(keys[i]) + "\r\n";
 		}
 		return s;
 	}
 	
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeObject(this.states);
+		out.writeInt(size());
+		for(Integer key : keySet()){
+			out.writeInt(key);
+			out.writeObject(get(key));
+		}
 		out.writeInt(this.fitness);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-		this.states = (HashMap<Integer, State>) in.readObject();
-		
-		//Update stateNums of States according to position in Brain
-		Set<Integer> keys = this.states.keySet();
-		for(Integer key : keys){
-			this.states.get(key).setStateNum(key);
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		int size = in.readInt();
+		for(int i = 0; i < size; i++){
+			put(in.readInt(), (State) in.readObject());
 		}
-		
 		this.fitness = in.readInt();
 	}
 }

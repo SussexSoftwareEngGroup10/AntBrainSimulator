@@ -118,15 +118,15 @@ public class DummyEngine {
 //Ant.step()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
-	public Brain getBestGABrain(Brain exampleBrain,	int epochs, int rounds,
-		int popLen, int elite, int mutationRate, String path) {
+	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int epochs,
+		int rounds, int popLen, int elite, int mutationRate) {
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
 			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen));
 		Semaphore semaphore = new Semaphore(popLen, true);
 		
-		this.trainingBrain = BrainParser.readBrainFrom(path);
+		this.trainingBrain = trainingBrain;
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-		geneticAlgorithm.createPopulation(exampleBrain, popLen);
+		geneticAlgorithm.createPopulation(startBrain, popLen);
 		geneticAlgorithm.evolve(this, threadPoolExecutor, semaphore,
 			epochs, rounds, elite, mutationRate);
 		return geneticAlgorithm.getBestBrain();
@@ -149,10 +149,23 @@ public class DummyEngine {
 		
 		//Set fitness for each brain against the best brain in the population
 		//Assumes population has been sorted
+		//Static fitness test:
+		Brain trainingBrain = this.trainingBrain;
+		
 		//Dynamic fitness test:
-		//This doesn't work, as all Brains may not have a fitness
-//		Brain bestBrain = population[population.length - 1];
-		//Else use static fitness test (bestBrain field)
+		//Get the brain in the population with the highest fitness, if any have one
+		int i = 0;
+		do{
+			i++;
+			if(i > population.length){
+				//If there is no elite, or this is the first epoch,
+				//no brains will have a fitness,
+				//In these cases, the static Brain test must be used instead
+				trainingBrain = this.trainingBrain;
+				break;
+			}
+			trainingBrain = population[population.length - i];
+		}while(trainingBrain.getFitness() == 0);
 		
 		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
@@ -160,14 +173,14 @@ public class DummyEngine {
 		
 		for(Brain brain : population){
 			//If a seed is used, fitness will not change with multiple simulations
-			if(brain.getFitness() == 0){
-				threadPoolExecutor.execute(new Simulation(this.trainingBrain, 
-						brain, semaphore));
-			}else{
+//			if(brain.getFitness() == 0){
+				threadPoolExecutor.execute(new Simulation(trainingBrain, 
+					brain, semaphore));
+//			}else{
 				//Brains in the elite will already have a fitness,
 				//however, the flag still needs to be released
-				semaphore.release();
-			}
+//				semaphore.release();
+//			}
 		}
 		
 		//Await completion of all calls
@@ -220,18 +233,16 @@ public class DummyEngine {
 	}
 	
 	public static void main(String args[]) {
-		//TODO remove console prints, from down there \/, and Logger
 		//TODO combine GA and regular sim methods, bit of a pain
 		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
 		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step()
-		//TODO have another go at a dynamic fitness test
+		//TODO have another go at a dynamic fitness test //done, improve with parameters
 		//TODO make it so reading in a brain zeroes epoch, or something,
 			//so you can evolve the same amount twice without doubling epochs
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
-		//TODO logger % still doesn't work, maybe give up and log every epoch //may be fixed
 		
 		//Setup variables
 		//World arguments
@@ -252,7 +263,7 @@ public class DummyEngine {
 		
 		//GA arguments
 		//More is slower, and more likely to generate an improved brain
-		int epochs = 2;
+		int epochs = 1000;
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains
@@ -261,13 +272,11 @@ public class DummyEngine {
 		//with lucky starting brain
 		int elite = 5;
 		//More is less change per epoch
-		int mutationRate = 50;
-		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
+		int mutationRate = 25;
 		
-		//Static class setup
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();
-		Logger.setLogLevel(Logger.LogLevel.ALL_LOGGING);
+		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
 		Simulation.setValues(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
@@ -281,11 +290,12 @@ public class DummyEngine {
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
+		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
 		DummyEngine dummyEngine = new DummyEngine(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);
-		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, epochs,
-			rounds, popLen, elite, mutationRate, "better_example");
+		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain, epochs,
+			rounds, popLen, elite, mutationRate);
 //		Brain gaBrain = BrainController.readBrainFrom("ga_result");
 		
 		//Setup world

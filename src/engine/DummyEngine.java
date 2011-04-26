@@ -154,6 +154,8 @@ public class DummyEngine {
 		
 		//Dynamic fitness test:
 		//Get the brain in the population with the highest fitness, if any have one
+		//TODO dynamic test is unreliable, need to incorporate static test,
+		//however, slow, may need to switch to static only
 		int i = 0;
 		do{
 			i++;
@@ -174,8 +176,8 @@ public class DummyEngine {
 		for(Brain brain : population){
 			//If a seed is used, fitness will not change with multiple simulations
 //			if(brain.getFitness() == 0){
-				threadPoolExecutor.execute(new Simulation(trainingBrain, 
-					brain, semaphore));
+				threadPoolExecutor.execute(
+					new Simulation(trainingBrain, brain, semaphore));
 //			}else{
 				//Brains in the elite will already have a fitness,
 				//however, the flag still needs to be released

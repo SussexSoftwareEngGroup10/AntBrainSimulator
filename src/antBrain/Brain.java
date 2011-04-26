@@ -13,8 +13,8 @@ import java.util.HashMap;
 public class Brain extends HashMap<Integer, State> implements Comparable<Brain> {
 	private static final long serialVersionUID = 1L;
 	private static final int minNumOfStates = 3;
-	private static final int maxNumOfStates = 500;//10000;
-	private int fitness;
+	private static final int maxNumOfStates = 50;//10000;
+	private int fitness = 0;
 	
 	public Brain(int initialCapacity) {
 		super(initialCapacity);

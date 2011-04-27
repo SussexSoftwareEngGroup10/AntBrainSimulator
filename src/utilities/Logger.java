@@ -116,8 +116,8 @@ public final class Logger {
 		System.setErr(logger.logErr);
 		
 		//Write the toString of e to a log file
-		System.out.println(event.toString());
-		System.err.println(event.toString());
+//		System.out.println(event.toString());
+//		System.err.println(event.toString());
 		
 		//Reset printing to the console
 		System.setErr(logger.sysErr);

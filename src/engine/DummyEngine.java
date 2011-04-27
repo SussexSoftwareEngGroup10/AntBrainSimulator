@@ -156,17 +156,17 @@ public class DummyEngine {
 		//Get the brain in the population with the highest fitness, if any have one
 		//TODO dynamic test is unreliable, need to incorporate static test,
 		//however, slow, may need to switch to static only
-		int i = 0;
+		int i = population.length;
 		do{
-			i++;
-			if(i > population.length){
+			if(i <= 0){
 				//If there is no elite, or this is the first epoch,
 				//no brains will have a fitness,
 				//In these cases, the static Brain test must be used instead
 				trainingBrain = this.trainingBrain;
 				break;
 			}
-			trainingBrain = population[population.length - i];
+			i--;
+			trainingBrain = population[i];
 		}while(trainingBrain.getFitness() == 0);
 		
 		//Multi-Threaded

@@ -165,10 +165,8 @@ public class ContestWindow {
 			}
 			//If the user does not have permission to access the file
 			catch (SecurityException sE) {
-				if (Logger.getLogLevel() >= 1) {
-					Logger.log(new IOEvent(
-							"Security violation with file!", sE));
-				}
+				Logger.log(new IOEvent(
+						"Security violation with file!", sE));
 			}
 		}
 	}

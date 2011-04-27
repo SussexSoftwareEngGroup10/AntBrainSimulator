@@ -245,6 +245,7 @@ public class DummyEngine {
 			//so you can evolve the same amount twice without doubling epochs
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
+		//TODO javadoc
 		
 		//Setup variables
 		//World arguments

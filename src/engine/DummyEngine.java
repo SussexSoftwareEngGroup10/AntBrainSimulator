@@ -266,7 +266,7 @@ public class DummyEngine {
 		
 		//GA arguments
 		//More is slower, and more likely to generate an improved brain
-		int epochs = 1500000;
+		int epochs = 2000;
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains
@@ -294,7 +294,6 @@ public class DummyEngine {
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
 		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
-		System.out.println("FLARGLLLLLLLLLLLLLLLLLLLLL" + epochs);
 		DummyEngine dummyEngine = new DummyEngine(trainSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
 			antInitialDirection, rounds);

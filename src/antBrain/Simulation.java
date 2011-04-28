@@ -70,7 +70,9 @@ public class Simulation implements Runnable {
 		
 		//Store the result as the fitness of the red (GA) brain
 		int[] anthillFood = world.getFoodInAnthills();
-		this.redBrain.setFitness(anthillFood[1] - anthillFood[0]);
+		
+		//Increment fitness by score
+		this.redBrain.setFitness(this.redBrain.getFitness() + anthillFood[1] - anthillFood[0]);
 		
 		//Let the main thread know that this simulation has completed
 		this.sem.release();

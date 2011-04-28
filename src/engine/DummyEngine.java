@@ -121,8 +121,8 @@ public class DummyEngine {
 	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int epochs,
 		int rounds, int popLen, int elite, int mutationRate) {
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen));
-		Semaphore semaphore = new Semaphore(popLen, true);
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen * 2));
+		Semaphore semaphore = new Semaphore(popLen * 2, true);
 		
 		this.trainingBrain = trainingBrain;
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
@@ -149,45 +149,39 @@ public class DummyEngine {
 		
 		//Set fitness for each brain against the best brain in the population
 		//Assumes population has been sorted
-		//Static fitness test:
-		Brain trainingBrain = this.trainingBrain;
-		
-		//Dynamic fitness test:
 		//Get the brain in the population with the highest fitness, if any have one
-		//TODO dynamic test is unreliable, need to incorporate static test,
-		//however, slow, may need to switch to static only
-//		int i = population.length;
-//		do{
-//			if(i <= 0){
-//				//If there is no elite, or this is the first epoch,
-//				//no brains will have a fitness,
-//				//In these cases, the static Brain test must be used instead
-//				trainingBrain = this.trainingBrain;
-//				break;
-//			}
-//			i--;
-//			trainingBrain = population[i];
-//		}while(trainingBrain.getFitness() == 0);
+		int i = population.length;
+		Brain trainingBrain;
+		do{
+			if(i <= 0){
+				//If there is no elite, or this is the first epoch,
+				//no brains will have a fitness,
+				//In these cases, the static Brain test must be used instead
+				trainingBrain = this.trainingBrain;
+				break;
+			}
+			i--;
+			trainingBrain = population[i];
+		}while(trainingBrain.getFitness() == 0);
 		
 		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
-		semaphore.acquireUninterruptibly(population.length);
+		semaphore.acquireUninterruptibly(population.length * 2);
 		
+		//Set fitness for every brain in population
 		for(Brain brain : population){
-			//If a seed is used, fitness will not change with multiple simulations
-//			if(brain.getFitness() == 0){
-				threadPoolExecutor.execute(
-					new Simulation(trainingBrain, brain, semaphore));
-//			}else{
-				//Brains in the elite will already have a fitness,
-				//however, the flag still needs to be released
-//				semaphore.release();
-//			}
+			brain.setFitness(0);
+			//Absolute fitness test
+			threadPoolExecutor.execute(
+				new Simulation(this.trainingBrain, brain, semaphore));
+			//Relative fitness test
+			threadPoolExecutor.execute(
+				new Simulation(trainingBrain, brain, semaphore));
 		}
 		
 		//Await completion of all calls
-		semaphore.acquireUninterruptibly(population.length);
-		semaphore.release(population.length);
+		semaphore.acquireUninterruptibly(population.length * 2);
+		semaphore.release(population.length * 2);
 		
 //		//Single-Threaded
 //		Brain brain;
@@ -246,6 +240,7 @@ public class DummyEngine {
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
 		//TODO javadoc
+		//TODO reusing Worlds would increase efficiency
 		
 		//Setup variables
 		//World arguments

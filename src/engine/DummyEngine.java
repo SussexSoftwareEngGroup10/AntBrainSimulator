@@ -234,9 +234,6 @@ public class DummyEngine {
 		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step()
-		//TODO have another go at a dynamic fitness test //done, improve with parameters
-		//TODO make it so reading in a brain zeroes epoch, or something,
-			//so you can evolve the same amount twice without doubling epochs
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
 		//TODO javadoc

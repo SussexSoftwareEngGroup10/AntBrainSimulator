@@ -14,7 +14,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	private static final long serialVersionUID = 1L;
 	private static final int minNumOfStates = 1;
 	private static final int maxNumOfStates = 50;//10000;
-	private int fitness = 0;
+	private int absoluteFitness = 0;
+	private int relativeFitness = 0;
 	
 	public Brain(int initialCapacity) {
 		super(initialCapacity);
@@ -38,11 +39,15 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	public int getFitness() {
-		return this.fitness;
+		return this.absoluteFitness + this.relativeFitness;
 	}
 	
-	public void setFitness(int fitness) {
-		this.fitness = fitness;
+	public void setAbsoluteFitness(int absoluteFitness) {
+		this.absoluteFitness = absoluteFitness;
+	}
+	
+	public void setRelativeFitness(int relativeFitness) {
+		this.relativeFitness = relativeFitness;
 	}
 	
 	@Override
@@ -106,7 +111,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 			out.writeInt(key);
 			out.writeObject(get(key));
 		}
-		out.writeInt(this.fitness);
+		out.writeInt(this.absoluteFitness);
+		out.writeInt(this.relativeFitness);
 	}
 	
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -114,6 +120,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		for(int i = 0; i < size; i++){
 			put(in.readInt(), (State) in.readObject());
 		}
-		this.fitness = in.readInt();
+		setAbsoluteFitness(in.readInt());
+		setRelativeFitness(in.readInt());
 	}
 }

@@ -242,6 +242,7 @@ public class DummyEngine {
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
 		//TODO javadoc
 		//TODO reusing Worlds and bits of sims would increase efficiency
+		//TODO remove unused states, and lower state numbers
 		
 		//Setup variables
 		//World arguments
@@ -262,7 +263,7 @@ public class DummyEngine {
 		
 		//GA arguments
 		//More is slower, and more likely to generate an improved brain
-		int epochs = 610;
+		int epochs = 5000;
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains
@@ -271,7 +272,7 @@ public class DummyEngine {
 		//with lucky starting brain
 		int elite = 5;
 		//More is less change per epoch
-		int mutationRate = 50;
+		int mutationRate = 100;
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

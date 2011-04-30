@@ -64,21 +64,28 @@ public class GeneticAlgorithm implements Serializable {
 	public void createPopulation(Brain startBrain, int popLen) {
 		//Try to resume last epochs()
 		if(loadLast()){
-			return;
+			//Otherwise create a new population
+			this.popLen = popLen;
+			Brain[] newPopulation = new Brain[popLen];
+			for(int i = 0; i < popLen; i++){
+				if(i < this.population.length){
+					newPopulation[i] = this.population[i];
+				}else{
+					newPopulation[i] = startBrain.clone();
+				}
+			}
+			this.population = newPopulation;
+		}else{
+			this.epoch = 1;
+			this.popLen = popLen;
+			this.population = new Brain[popLen];
+			//Fill with number of example brains
+			for(int i = 0; i < popLen; i++){
+				this.population[i] = startBrain.clone();
+			}
+			Logger.log(new InformationNormEvent("New GeneticAlgorithm Brain population of size "
+				+ popLen + " created"));
 		}
-		
-		this.epoch = 1;
-		
-		//Otherwise create a new population
-		this.popLen = popLen;
-		this.population = new Brain[popLen];
-		
-		//Fill with number of example brains
-		for(int i = 0; i < popLen; i++){
-			this.population[i] = startBrain.clone();
-		}
-		Logger.log(new InformationNormEvent("New GeneticAlgorithm Brain population of size "
-			+ popLen + " created"));
 	}
 	
 	public void evolve(DummyEngine dummyEngine, ThreadPoolExecutor threadPoolExecutor,
@@ -89,6 +96,7 @@ public class GeneticAlgorithm implements Serializable {
 			Logger.log(new InformationHighEvent("Began GeneticAlgorithm evolution for "
 				+ epochs + " epochs"
 				+ ", with " + rounds + " rounds per simulation"
+				+ ", " + this.population.length + " brains in the population"
 				+ ", an elite of " + elite
 				+ ", and a 1/" + mutationRate + " chance of mutation"));
 		}else{
@@ -97,6 +105,7 @@ public class GeneticAlgorithm implements Serializable {
 			Logger.log(new InformationHighEvent("Resumed GeneticAlgorithm evolution for "
 				+ epochs + " epochs at epoch: " + this.epoch
 				+ ", with " + rounds + " rounds per simulation"
+				+ ", " + this.population.length + " brains in the population"
 				+ ", an elite of " + elite
 				+ ", and a 1/" + mutationRate + " chance of mutation"));
 		}
@@ -122,15 +131,7 @@ public class GeneticAlgorithm implements Serializable {
 		//the population is the same size as when it began the iteration
 		sortByFitness(threadPoolExecutor, semaphore, dummyEngine);
 		
-		//Round values up from zero, otherwise may get a divide by zero
-		@SuppressWarnings("unused")
-		double tenth = epochs / 10;
-		@SuppressWarnings("unused")
-		double hundredth = epochs / 100;
-		@SuppressWarnings("unused")
-		double thousandth = epochs / 1000;
-		
-		//After constructor, epoch == 0,
+		//After constructor, epoch == 1,
 		//after deserialization, epoch == epoch to be run next
 		for(; this.epoch <= epochs; this.epoch++){
 			//Timing
@@ -248,7 +249,7 @@ public class GeneticAlgorithm implements Serializable {
 		//so reducing the size by removing a state would be a real pain,
 		//as changing every pointer would be inefficient,
 		//and leaving gaps might break some methods
-		int targetSize = Math.max(brainA.size(), brainB.size()) + ran.nextInt(2);
+		int targetSize = 10000;//Math.max(brainA.size(), brainB.size()) + ran.nextInt(2);
 		//Keep targetSize within limits
 		if(targetSize < min){
 			Logger.log(new InformationLowEvent("Brain bred containing the " +

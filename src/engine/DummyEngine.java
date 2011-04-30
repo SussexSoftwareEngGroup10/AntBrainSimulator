@@ -267,12 +267,12 @@ public class DummyEngine {
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains
-		int popLen = 50;
+		int popLen = 100;
 		//More is faster, but increases the likelihood of getting stuck
 		//with lucky starting brain
 		int elite = 5;
 		//More is less change per epoch
-		int mutationRate = 100;
+		int mutationRate = 10;
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class Brain extends HashMap<Integer, State> implements Comparable<Brain> {
 	private static final long serialVersionUID = 1L;
 	private static final int minNumOfStates = 1;
-	private static final int maxNumOfStates = 50;//10000;
+	private static final int maxNumOfStates = 10000;
 	private int absoluteFitness = 0;
 	private int relativeFitness = 0;
 	

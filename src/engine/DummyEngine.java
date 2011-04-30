@@ -52,7 +52,7 @@ public class DummyEngine {
 	
 	//GA variables
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
-	private Brain trainingBrain;
+	private Brain absoluteTrainingBrain;
 	
 	public DummyEngine(int seed, int rows, int cols, int rocks, int anthills,
 		int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
@@ -124,7 +124,7 @@ public class DummyEngine {
 			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen * 2));
 		Semaphore semaphore = new Semaphore(popLen * 2, true);
 		
-		this.trainingBrain = trainingBrain;
+		this.absoluteTrainingBrain = trainingBrain;
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		geneticAlgorithm.createPopulation(startBrain, popLen);
 		geneticAlgorithm.evolve(this, threadPoolExecutor, semaphore,
@@ -151,18 +151,18 @@ public class DummyEngine {
 		//Assumes population has been sorted
 		//Get the brain in the population with the highest fitness, if any have one
 		int i = population.length;
-		Brain trainingBrain;
+		Brain relativeTrainingBrain;
 		do{
 			if(i <= 0){
 				//If there is no elite, or this is the first epoch,
 				//no brains will have a fitness,
 				//In these cases, the static Brain test must be used instead
-				trainingBrain = this.trainingBrain;
+				relativeTrainingBrain = this.absoluteTrainingBrain;
 				break;
 			}
 			i--;
-			trainingBrain = population[i];
-		}while(trainingBrain.getFitness() == 0);
+			relativeTrainingBrain = population[i];
+		}while(relativeTrainingBrain.getFitness() == 0);
 		
 		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
@@ -170,13 +170,17 @@ public class DummyEngine {
 		
 		//Set fitness for every brain in population
 		for(Brain brain : population){
-			brain.setFitness(0);
-			//Absolute fitness test
-			threadPoolExecutor.execute(
-				new Simulation(this.trainingBrain, brain, semaphore));
+			if(brain.getFitness() == 0){
+				//Not in elite
+				//Absolute fitness test
+				threadPoolExecutor.execute(
+					new Simulation(this.absoluteTrainingBrain, brain, semaphore, true));
+			}else{
+				semaphore.release();
+			}
 			//Relative fitness test
 			threadPoolExecutor.execute(
-				new Simulation(trainingBrain, brain, semaphore));
+				new Simulation(relativeTrainingBrain, brain, semaphore, false));
 		}
 		
 		//Await completion of all calls
@@ -194,7 +198,7 @@ public class DummyEngine {
 //			//i.e. tested against the same brain
 //			if(brain.getFitness() == 0){
 //				brain.setFitness(evaluateFitnessContestSimulation(
-//					trainingBrain, brain, rounds));
+//					absoluteTrainingBrain, brain, rounds));
 //			}
 //		}
 	}
@@ -237,7 +241,7 @@ public class DummyEngine {
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
 		//TODO javadoc
-		//TODO reusing Worlds would increase efficiency
+		//TODO reusing Worlds and bits of sims would increase efficiency
 		
 		//Setup variables
 		//World arguments
@@ -258,7 +262,7 @@ public class DummyEngine {
 		
 		//GA arguments
 		//More is slower, and more likely to generate an improved brain
-		int epochs = 2000;
+		int epochs = 610;
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains
@@ -267,7 +271,7 @@ public class DummyEngine {
 		//with lucky starting brain
 		int elite = 5;
 		//More is less change per epoch
-		int mutationRate = 25;
+		int mutationRate = 50;
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();
@@ -281,7 +285,7 @@ public class DummyEngine {
 		//The better red does relative to black, the better the GA is
 		
 		//Evolve and get the best brain from the GeneticAlgorithm
-		//trainingBrain is a decent place to start from
+		//absoluteTrainingBrain is a decent place to start from
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
@@ -299,7 +303,7 @@ public class DummyEngine {
 		//could use a seeded world for every GA game,
 		//(possibly) fairer and quicker, but less random, evolution
 		//more efficient to test all GA population brains against
-		//the trainingBrain with seed == 1
+		//the absoluteTrainingBrain with seed == 1
 		World world = new World(testSeed, rows, cols, rocks, anthills,
 			anthillSideLength, foodBlobCount, foodBlobSideLength,
 			foodBlobCellFoodCount, antInitialDirection);
@@ -348,7 +352,7 @@ public class DummyEngine {
 		System.out.println("---ga_result.brain---\n" + gaBrain);
 		System.out.print("GA Brain ");
 		
-//		if(gaBrain.equals(trainingBrain)){
+//		if(gaBrain.equals(absoluteTrainingBrain)){
 //			System.out.print("=");
 //		}else{
 //			System.out.print("!");

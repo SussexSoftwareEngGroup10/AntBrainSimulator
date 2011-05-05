@@ -171,6 +171,7 @@ public class Cell {
 	
 	@Override
 	public String toString() {
+		//Ant
 		if(hasAnt()){
 			if(this.ant.getColour() == 0){
 				return "=";
@@ -180,10 +181,13 @@ public class Cell {
 			}
 		}
 		
+		//Rock
 		if(this.rocky){
 			return "#";
 			
 		}
+		
+		//Food
 		if(this.food > 0){
 			//Prints the food value,
 			//if it is > 9, prints 9 instead
@@ -213,8 +217,9 @@ public class Cell {
 			//Else error, cannot be less than 0 or more than 2 anthills
 			Logger.log(new WarningEvent("Cell anthill value not 0, 1 or 2"));
 			return null; 
-			
 		}
+		
+		//Anthill
 		if(this.anthill > 0){
 			if(this.anthill == 1){
 				return "+";
@@ -223,6 +228,19 @@ public class Cell {
 				return "-";
 			}
 		}
+		
+		//Markers
+		for(boolean marker : this.markers[0]){
+			if(marker){
+				return "/";
+			}
+		}
+		for(boolean marker : this.markers[1]){
+			if(marker){
+				return "\\";
+			}
+		}
+		
 		return ".";
 	}
 }

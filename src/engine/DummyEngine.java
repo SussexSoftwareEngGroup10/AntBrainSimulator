@@ -244,7 +244,6 @@ public class DummyEngine {
 		//TODO reusing Worlds and bits of sims would increase efficiency
 		//TODO multithread breed() and trim()
 		//TODO test kills and food fitness
-		//TODO compacter before trim() on brains
 		//TODO use jar on linux server
 		
 		//Setup variables
@@ -301,6 +300,7 @@ public class DummyEngine {
 			rounds, popLen, elite, mutationRate);
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result");
 		
+		//Compact and remove null and unreachable states
 		trainingBrain.trim();
 		gaBrain.trim();
 		

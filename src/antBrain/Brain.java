@@ -50,6 +50,71 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		this.relativeFitness = relativeFitness;
 	}
 	
+	public void trim() {//FIXME print lots
+		//True if reached from state 0
+		boolean[] states = new boolean[maxNumOfStates];
+		checkBranch(states, 0);
+		//Remove backwards so as not to alter numbering
+		for(int stateNum = maxNumOfStates - 1; stateNum >= 0; stateNum--){
+			if(!states[stateNum]){
+				removeState(stateNum);
+			}
+		}
+	}
+	
+	//Recursive method that checks for unreachable states
+	private void checkBranch(boolean[] states, int stateNum) {
+		if(get(stateNum) == null || states[stateNum]){
+			return;
+		}
+		states[stateNum] = true;
+		checkBranch(states, get(stateNum).getSt1());
+		
+		int command = get(stateNum).getCommand();
+		if(command == 0 || command == 3 || command == 6 || command == 7){
+			checkBranch(states, get(stateNum).getSt2());
+		}
+	}
+	
+	private void removeState(int removeStateNum) {
+		//Change state references in preceding states
+		for(int s = 0; s < removeStateNum; s++){
+			State state = get(s);
+			if(state == null){
+				remove(s);
+			}else{
+				int[] genes = state.getGenes();
+				if(genes[5] > removeStateNum){
+					genes[5]--;
+				}
+				if(genes[6] > removeStateNum){
+					genes[6]--;
+				}
+				put(s, new State(s, genes));
+			}
+		}
+		
+		//Remove specified state
+		remove(removeStateNum);
+		
+		//Change state references and state numbers in proceding states
+		for(int s = removeStateNum; s < maxNumOfStates - 1; s++){
+			State state = get(s + 1);
+			if(state == null){
+				remove(s);
+			}else{
+				int[] genes = state.getGenes();
+				if(genes[5] > removeStateNum){
+					genes[5]--;
+				}
+				if(genes[6] > removeStateNum){
+					genes[6]--;
+				}
+				put(s, new State(s, genes));
+			}
+		}
+	}
+	
 	@Override
 	public Brain clone() {
 		return (Brain) super.clone();
@@ -60,9 +125,9 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		return super.hashCode();
 	}
 	
-	@Override
 	//Inconsistent with natural ordering, as compareTo uses fitness,
 	//which is arbitrary and relies on randomness, where equals assesses fields
+	@Override
 	public boolean equals(Object o) {
 		Brain b = (Brain) o;
 		//do state by state, not contains

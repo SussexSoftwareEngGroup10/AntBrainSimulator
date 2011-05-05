@@ -269,7 +269,7 @@ public class DummyEngine {
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains
-		int popLen = 100;
+		int popLen = 50;
 		//More is faster, but increases the likelihood of getting stuck
 		//with lucky starting brain
 		int elite = 5;

@@ -187,6 +187,8 @@ public class GeneticAlgorithm implements Serializable {
 			this.population = newPop;
 			//Order, ready for next epoch
 			sortByFitness(threadPoolExecutor, semaphore, dummyEngine);
+			
+			BrainParser.writeBrainTo(this.population[this.popLen - 1], "ga_result");
 		}
 		//Write best brain so far to file
 		BrainParser.writeBrainTo(this.population[this.popLen - 1], "ga_result");

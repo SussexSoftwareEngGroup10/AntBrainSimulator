@@ -3,7 +3,9 @@ package antBrain;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -50,14 +52,26 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		this.relativeFitness = relativeFitness;
 	}
 	
-	public void trim() {//FIXME print lots
+	public void trim() {
 		//True if reached from state 0
 		boolean[] states = new boolean[maxNumOfStates];
 		checkBranch(states, 0);
-		//Remove backwards so as not to alter numbering
-		for(int stateNum = maxNumOfStates - 1; stateNum >= 0; stateNum--){
-			if(!states[stateNum]){
-				removeState(stateNum);
+		
+		ArrayList<Integer> keys = new ArrayList<Integer>(keySet());
+		
+		//Descending order
+		Collections.sort(keys);
+		Collections.reverse(keys);
+		
+		for(Integer key : keys){
+			State state = get(key);
+			//Remove null states
+			if(state == null){
+				removeState(key);
+			}
+			//Remove unreachable states
+			if(!states[key]){
+				removeState(key);
 			}
 		}
 	}

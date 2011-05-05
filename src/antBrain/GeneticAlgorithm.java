@@ -67,9 +67,10 @@ public class GeneticAlgorithm implements Serializable {
 			//Otherwise create a new population
 			this.popLen = popLen;
 			Brain[] newPopulation = new Brain[popLen];
+			//Reverses order of population
 			for(int i = 0; i < popLen; i++){
 				if(i < this.population.length){
-					newPopulation[i] = this.population[i];
+					newPopulation[i] = this.population[this.population.length - 1 - i];
 				}else{
 					newPopulation[i] = startBrain.clone();
 				}

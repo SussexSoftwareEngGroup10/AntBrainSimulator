@@ -235,14 +235,17 @@ public class DummyEngine {
 	public static void main(String args[]) {
 		//TODO combine GA and regular sim methods, bit of a pain
 		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
-		//TODO Brain number of states in GeneticAlgorithm.breed(), allow removal of states
+		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step()
 		//TODO add more information logging
-		//TODO test effects of changing targetStates in GeneticAlgorithm.breed() //QA
+		//TODO test effects of changing targetStates in GeneticAlgorithm.breed()
 		//TODO javadoc
 		//TODO reusing Worlds and bits of sims would increase efficiency
-		//TODO remove unused states, and lower state numbers
+		//TODO multithread breed() and trim()
+		//TODO test kills and food fitness
+		//TODO compacter before trim() on brains
+		//TODO use jar on linux server
 		
 		//Setup variables
 		//World arguments
@@ -296,7 +299,11 @@ public class DummyEngine {
 			antInitialDirection, rounds);
 		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain, epochs,
 			rounds, popLen, elite, mutationRate);
-//		Brain gaBrain = BrainController.readBrainFrom("ga_result");
+//		Brain gaBrain = BrainParser.readBrainFrom("ga_result");
+		
+		trainingBrain.trim();
+		gaBrain.trim();
+		
 		
 		//Setup world
 		//Seed is also used to determine ant moves,
@@ -325,6 +332,7 @@ public class DummyEngine {
 			}
 		}
 		
+		//Ant results
 		Ant[][] antPlayers = world.getAntsBySpecies();
 		int[] survivors = world.survivingAntsBySpecies();
 		if(survivors.length > 0){
@@ -337,7 +345,8 @@ public class DummyEngine {
 			Logger.log(new InformationHighEvent("Surviving red   ants: "
 				+ survivors[1] + "/" + redAnts  ));
 		}
-
+		
+		//Food results
 		int[] anthillFood = world.getFoodInAnthills();
 		if(anthillFood.length > 0){
 			Logger.log(new InformationHighEvent("Food in black anthill: "
@@ -351,14 +360,6 @@ public class DummyEngine {
 		System.out.println(world);
 		System.out.println("---better_example.brain---\n" + trainingBrain);
 		System.out.println("---ga_result.brain---\n" + gaBrain);
-		System.out.print("GA Brain ");
-		
-//		if(gaBrain.equals(absoluteTrainingBrain)){
-//			System.out.print("=");
-//		}else{
-//			System.out.print("!");
-//		}
-//		System.out.println("= Better Brain");
 		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}

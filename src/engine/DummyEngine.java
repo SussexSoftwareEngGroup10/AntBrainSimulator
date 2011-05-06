@@ -245,11 +245,12 @@ public class DummyEngine {
 		//TODO multithread breed() and trim()
 		//TODO test kills and food fitness
 		//TODO use jar on linux server
+		//TODO fix writing so files aren't corrupted when prog terminates in write
 		
 		//Setup variables
 		//World arguments
 		//Used by the GA to train Brains
-		int trainSeed = 1;
+		int trainSeed = 0;
 		//Used here to test resulting Brain
 		int testSeed = 0;
 		int rows = 140;

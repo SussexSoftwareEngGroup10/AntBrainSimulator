@@ -232,12 +232,12 @@ public class Cell {
 		//Markers
 		for(boolean marker : this.markers[0]){
 			if(marker){
-				return "/";
+				return "[";
 			}
 		}
 		for(boolean marker : this.markers[1]){
 			if(marker){
-				return "\\";
+				return "]";
 			}
 		}
 		

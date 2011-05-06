@@ -272,7 +272,7 @@ public class DummyEngine {
 		int popLen = 50;
 		//More is faster, but increases the likelihood of getting stuck
 		//with lucky starting brain
-		int elite = 5;
+		int elite = popLen / 10;
 		//More is less change per epoch
 		int mutationRate = 10;
 		

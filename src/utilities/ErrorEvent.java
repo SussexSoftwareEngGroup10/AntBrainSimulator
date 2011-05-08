@@ -10,14 +10,24 @@ package utilities;
 public class ErrorEvent extends Event {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param message
+	 */
 	public ErrorEvent(String message) {
 		super(message);
 	}
 	
+	/**
+	 * @param message
+	 * @param cause
+	 */
 	public ErrorEvent(String message, Throwable cause) {
 		super(message, cause);
 	}
 	
+	/* (non-Javadoc)
+	 * @see utilities.Event#setSeverity()
+	 */
 	@Override
 	protected void setSeverity() {
 		this.severity = Severity.ERROR;

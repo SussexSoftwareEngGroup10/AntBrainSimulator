@@ -22,6 +22,11 @@ public class Cell {
 	private Cell[] neighbours;
 	private Ant ant;
 	
+	/**
+	 * @param row
+	 * @param col
+	 * @param c
+	 */
 	public Cell(int row, int col, char c) {
 		this.row = row;
 		this.col = col;
@@ -29,6 +34,9 @@ public class Cell {
 		setCell(c);
 	}
 	
+	/**
+	 * @param c
+	 */
 	public void setCell(char c) {
 		switch(c) {
 		case '#':
@@ -67,14 +75,24 @@ public class Cell {
 		}
 	}
 	
+	/**
+	 * @param neighbours
+	 */
 	public void setNeighbours(Cell[] neighbours) {
 		this.neighbours = neighbours;
 	}
 	
+	/**
+	 * @return
+	 */
 	public Cell[] getNeighbours() {
 		return this.neighbours;
 	}
 	
+	/**
+	 * @param direction
+	 * @return
+	 */
 	public Cell getNeighbour(int direction) {
 		if(direction < 0){
 			return this.neighbours[direction + 6];
@@ -85,30 +103,56 @@ public class Cell {
 		return this.neighbours[direction];
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getRow() {
 		return this.row;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getCol() {
 		return this.col;
 	}
 	
+	/**
+	 * @param specieses
+	 */
 	public void setupMarkers(int specieses) {
 		this.markers = new boolean[specieses][6];
 	}
 	
+	/**
+	 * @param species
+	 * @param i
+	 */
 	public void mark(int species, int i) {
 		this.markers[species][i] = true;
 	}
 	
+	/**
+	 * @param species
+	 * @param i
+	 */
 	public void unmark(int species, int i) {
 		this.markers[species][i] = false;
 	}
 	
+	/**
+	 * @param species
+	 * @param i
+	 * @return
+	 */
 	public boolean getMarker(int species, int i) {
 		return this.markers[species][i];
 	}
 	
+	/**
+	 * @param notSpecies
+	 * @return
+	 */
 	public boolean getAnyMarker(int notSpecies) {
 		//returns true if any marker not of species notSpecies is true
 		int i = 0;
@@ -125,65 +169,91 @@ public class Cell {
 		return false;
 	}
 	
+	/**
+	 * @param ant
+	 */
 	public void setAnt(Ant ant) {
 		this.ant = ant;
 	}
 	
+	/**
+	 * @return
+	 */
 	public Ant getAnt() {
 		return this.ant;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isRocky() {
 		return this.rocky;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int foodCount() {
 		return this.food;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean hasFood() {
 		return this.food != 0;
 	}
 	
-	public void giveFood(int i) {
+	/**
+	 * @param i
+	 */
+	public void dropFood(int i) {
+		//Removed food limit of 9 per cell
 //		if(this.food + i <= 9){
 		this.food += i;
 //		}
 	}
 	
-	public void takeFood() {
+	/**
+	 * 
+	 */
+	public void pickupFood() {
 		if(this.food > 0){
 			this.food--;
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getAnthill() {
 		return this.anthill;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean hasAnt() {
 		return this.ant != null;
 	}
 	
+	/**
+	 * @return
+	 */
 	public char toChar() {
-		return toString().charAt(0);
-	}
-	
-	@Override
-	public String toString() {
 		//Ant
 		if(hasAnt()){
 			if(this.ant.getColour() == 0){
-				return "=";
+				return '=';
 			}
 			if(this.ant.getColour() == 1){
-				return "|";
+				return '|';
 			}
 		}
 		
 		//Rock
 		if(this.rocky){
-			return "#";
+			return '#';
 			
 		}
 		
@@ -193,9 +263,9 @@ public class Cell {
 			//if it is > 9, prints 9 instead
 			if(this.anthill == 0){ //0 to 9
 				if(this.food > 9){
-					return Integer.toString(9);
+					return 48 + 9;
 				}
-				return Integer.toString(this.food);
+				return (char) (this.food + 48);
 			}
 			
 			//Otherwise, food must be in an anthill
@@ -204,43 +274,51 @@ public class Cell {
 			//Minimum food value is 1, so -1 from ascii codes
 			if(this.anthill == 1){ //Upper case, 65 for Latin, 913 for Greek
 				if(this.food > 9){
-					return Character.toString((char) (64 + 9));
+					return (char) (64 + 9);
 				}
-				return Character.toString((char) (64 + this.food));
+				return (char) (64 + this.food);
 			}
 			if(this.anthill == 2){ //Lower case, 97 for Latin, 945 for Greek
 				if(this.food > 9){
-					return Character.toString((char) (96 + 9));
+					return (char) (96 + 9);
 				}
-				return Character.toString((char) (96 + this.food));
+				return (char) (96 + this.food);
 			}
 			//Else error, cannot be less than 0 or more than 2 anthills
 			Logger.log(new WarningEvent("Cell anthill value not 0, 1 or 2"));
-			return null; 
+			return 0;	//Null char value
 		}
 		
 		//Anthill
 		if(this.anthill > 0){
 			if(this.anthill == 1){
-				return "+";
+				return '+';
 			}
 			if(this.anthill == 2){
-				return "-";
+				return '-';
 			}
 		}
 		
 		//Markers
 		for(boolean marker : this.markers[0]){
 			if(marker){
-				return "[";
+				return '[';
 			}
 		}
 		for(boolean marker : this.markers[1]){
 			if(marker){
-				return "]";
+				return ']';
 			}
 		}
 		
-		return ".";
+		return '.';
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return Character.toString(toChar());
 	}
 }

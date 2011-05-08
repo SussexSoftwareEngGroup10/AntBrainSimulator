@@ -19,6 +19,9 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	private int absoluteFitness = 0;
 	private int relativeFitness = 0;
 	
+	/**
+	 * @param initialCapacity
+	 */
 	public Brain(int initialCapacity) {
 		super(initialCapacity);
 	}
@@ -32,26 +35,46 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		super(states);
 	}
 	
+	/**
+	 * @return the minimum number of states a brain can contain
+	 */
 	public static int getMinNumOfStates() {
 		return minNumOfStates;
 	}
-	
+
+	/**
+	 * @return the maximum number of states a brain can contain
+	 */
 	public static int getMaxNumOfStates() {
 		return maxNumOfStates;
 	}
 	
+	/**
+	 * @return an arbitrary value used to compare brain objects
+	 */
 	public int getFitness() {
 		return this.absoluteFitness + this.relativeFitness;
 	}
 	
+	/**
+	 * @param absoluteFitness
+	 */
 	public void setAbsoluteFitness(int absoluteFitness) {
 		this.absoluteFitness = absoluteFitness;
 	}
 	
+	/**
+	 * @param relativeFitness
+	 */
 	public void setRelativeFitness(int relativeFitness) {
 		this.relativeFitness = relativeFitness;
 	}
 	
+	/**
+	 * Removes unreachable states and compacts the brain by lowering state numbers
+	 * to the minimum possible so that there are no gaps and the state numbers
+	 * start at 0 and end at (the number of states - 1)
+	 */
 	public void trim() {
 		//True if reached from state 0
 		boolean[] states = new boolean[maxNumOfStates];
@@ -76,7 +99,11 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		}
 	}
 	
-	//Recursive method that checks for unreachable states
+	/**
+	 * Sets the boolean value of every state reachable from stateNum to true
+	 * @param states
+	 * @param stateNum
+	 */
 	private void checkBranch(boolean[] states, int stateNum) {
 		if(get(stateNum) == null || states[stateNum]){
 			return;
@@ -90,6 +117,11 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		}
 	}
 	
+	/**
+	 * Removes the state specified and compacts the states by decrementing the state
+	 * numbers of all following states and altering references to them to reflect this
+	 * @param removeStateNum
+	 */
 	private void removeState(int removeStateNum) {
 		//Change state references in preceding states
 		for(int s = 0; s < removeStateNum; s++){
@@ -129,18 +161,28 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.HashMap#clone()
+	 */
 	@Override
 	public Brain clone() {
 		return (Brain) super.clone();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.AbstractMap#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode();
 	}
 	
-	//Inconsistent with natural ordering, as compareTo uses fitness,
-	//which is arbitrary and relies on randomness, where equals assesses fields
+	/* (non-Javadoc)
+	 * @see java.util.AbstractMap#equals(java.lang.Object)
+	 * 
+	 * Inconsistent with natural ordering, as compareTo uses fitness,
+	 * which is arbitrary and relies on randomness, where equals assesses fields
+	 */
 	@Override
 	public boolean equals(Object o) {
 		Brain b = (Brain) o;
@@ -158,10 +200,12 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(Brain b) {
 		//Order by fitness, lowest to highest
-		//so if this < b, return -1
 		int sa = this.getFitness();
 		int sb = b.getFitness();
 		
@@ -170,6 +214,9 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		return 1;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.AbstractMap#toString()
+	 */
 	@Override
 	public String toString() {
 		String s = "";
@@ -184,6 +231,10 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		return s;
 	}
 	
+	/**
+	 * @param out
+	 * @throws IOException
+	 */
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.writeInt(size());
 		for(Integer key : keySet()){
@@ -194,6 +245,11 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		out.writeInt(this.relativeFitness);
 	}
 	
+	/**
+	 * @param in
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		int size = in.readInt();
 		for(int i = 0; i < size; i++){

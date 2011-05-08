@@ -37,6 +37,13 @@ public final class Ant implements Comparable<Ant> {
 	private Ant[] neighbourAnts = new Ant[6];
 	private Ant neighbourAnt;
 	
+	/**
+	 * @param uid
+	 * @param ran
+	 * @param direction
+	 * @param colour
+	 * @param cell
+	 */
 	public Ant(int uid, Random ran, int direction, int colour, Cell cell) {
 		this.uid = uid;
 		
@@ -62,6 +69,9 @@ public final class Ant implements Comparable<Ant> {
 		this.cell = cell;
 	}
 	
+	/**
+	 * Execute the current state, then move to next state
+	 */
 	public final void step() {
 		//Removed local variables and parameters in step() and methods it calls
 		//to enable compiler to write an inline version,
@@ -129,8 +139,11 @@ public final class Ant implements Comparable<Ant> {
 			}
 		}
 	}
-
-	//Sense senseDir st1 st2 condition
+	
+	/**
+	 * e.g.
+	 * Sense senseDir st1 st2 condition
+	 */
 	private final void sense() {
 		switch(this.state.getSenseDir()){
 		case 0:
@@ -247,44 +260,59 @@ public final class Ant implements Comparable<Ant> {
 			this.state = this.brain.get(this.state.getSt2());
 		}
 	}
-
-	//Mark marker st1
+	
+	/**
+	 * e.g.
+	 * Mark marker st1
+	 */
 	private final void mark() {
 		this.cell.mark(this.colour.ordinal(), this.state.getMarker());
 		this.state = this.brain.get(this.state.getSt1());
 	}
-
-	//Unmark marker st1
+	
+	/**
+	 * e.g.
+	 * Unmark marker st1
+	 */
 	private final void unmark() {
 		this.cell.unmark(this.colour.ordinal(), this.state.getMarker());
 		this.state = this.brain.get(this.state.getSt1());
 	}
-
-	//PickUp st1 st2
+	
+	/**
+	 * e.g.
+	 * PickUp st1 st2
+	 */
 	private final void pickUp() {
 		//If can not carrying hasFood, and hasFood in cell,
 		//pick up hasFood and go to st1, else st2
 		if(!this.hasFood && this.cell.hasFood()){
-			this.cell.takeFood();
+			this.cell.pickupFood();
 			this.hasFood = true;
 			this.state = this.brain.get(this.state.getSt1());
 		}else{
 			this.state = this.brain.get(this.state.getSt2());
 		}
 	}
-
-	//Drop st1
+	
+	/**
+	 * e.g.
+	 * Drop st1
+	 */
 	private final void drop() {
 		//Assumes food contained in a cell cannot be > 9
 		//If can carrying hasFood, and hasFood in cell < max, drop up hasFood and go to st1
 		if(this.hasFood){// && this.cell.foodCount() < 9){
-			this.cell.giveFood(1);
+			this.cell.dropFood(1);
 			this.hasFood = false;
 			this.state = this.brain.get(this.state.getSt1());
 		}
 	}
 	
-	//Turn turnDir st1
+	/**
+	 * e.g.
+	 * Turn turnDir st1
+	 */
 	private final void turn() {
 		switch(this.state.getTurnDir()){
 		case 0:
@@ -307,7 +335,10 @@ public final class Ant implements Comparable<Ant> {
 		this.state = this.brain.get(this.state.getSt1());
 	}
 	
-	//Move st1 st2
+	/**
+	 * e.g.
+	 * Move st1 st2
+	 */
 	private final void move() {
 		//If new cell is not rocky and does not contain an ant,
 		//move there and go to st1, else st2
@@ -345,8 +376,11 @@ public final class Ant implements Comparable<Ant> {
 		
 		this.rest = 14;
 	}
-
-	//Flip p st1 st2
+	
+	/**
+	 * e.g.
+	 * Flip p st1 st2
+	 */
 	private final void flip() {
 		if(this.ran.nextInt(this.state.getP()) == 0){
 			this.state = this.brain.get(this.state.getSt1());
@@ -355,11 +389,18 @@ public final class Ant implements Comparable<Ant> {
 		}
 	}
 	
+	/**
+	 * @param dir
+	 * @return
+	 */
 	private final Ant antsMovedTo(int dir) {
 		//May return null ant
 		return this.cell.getNeighbour(dir + 1).getAnt();
 	}
 	
+	/**
+	 * @return
+	 */
 	private final boolean isSurrounded() {
 		if(neighbourFoes() >= 5){
 			return true;
@@ -367,11 +408,17 @@ public final class Ant implements Comparable<Ant> {
 		return false;
 	}
 	
+	/**
+	 * @param brain
+	 */
 	public final void setBrain(Brain brain) {
 		this.brain = brain;
 		this.state = brain.get(0);
 	}
 	
+	/**
+	 * @return
+	 */
 	private final int neighbourFoes() {
 		//Assumes none of the neighbouring cells are null
 		int i;
@@ -393,40 +440,69 @@ public final class Ant implements Comparable<Ant> {
 		return foes;
 	}
 	
+	/**
+	 * 
+	 */
 	private final void kill() {
 		this.alive = false;
 		
 		//Drop hasFood carried + 3
 		if(this.hasFood){
-			this.cell.giveFood(1);
+			this.cell.dropFood(1);
 		}
-		this.cell.giveFood(3);
+		this.cell.dropFood(3);
 		
 		//Remove from world
 		this.cell.setAnt(null);
 		this.cell = null;
 	}
 	
+	/**
+	 * @return
+	 */
 	public final boolean isAlive() {
 		return this.alive;
 	}
 	
+	/**
+	 * @return
+	 */
 	public final Cell getCell() {
 		return this.cell;
 	}
 	
+	/**
+	 * @return
+	 */
 	public final int getUID() {
 		return this.uid;
 	}
 	
+	/**
+	 * @return
+	 */
 	public final int getColour() {
 		return this.colour.ordinal();
 	}
 	
+	/**
+	 * @return
+	 */
 	public final boolean hasFood() {
 		return this.hasFood;
 	}
+
+	/**
+	 * @param cell
+	 */
+	public final void setCell(Cell cell) {
+		this.cell = cell;
+	}
 	
+	/**
+	 * @param ant
+	 * @return
+	 */
 	public final boolean equals(Ant ant) {
 		//This is consistent with the natural ordering of Ant objects,
 		//as given by compareTo
@@ -438,6 +514,9 @@ public final class Ant implements Comparable<Ant> {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public final int compareTo(Ant ant) {
 		//Sorts by UID, lowest first
@@ -449,9 +528,5 @@ public final class Ant implements Comparable<Ant> {
 		}else{//if(ant.getUID() > uid){
 			return 1;
 		}
-	}
-
-	public final void setCell(Cell cell) {
-		this.cell = cell;
 	}
 }

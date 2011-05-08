@@ -21,6 +21,10 @@ public final class WorldParser {
 	private static final File folder = new File(folderName);
 	private static final String fileNameSuffix = ".world";
 	
+	/**
+	 * @param name
+	 * @return the world in the file "name"
+	 */
 	public static World readWorldFrom(String name) {
 		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
@@ -85,6 +89,10 @@ public final class WorldParser {
 		return world;
 	}
 	
+	/**
+	 * @param world
+	 * @param name name to give the file
+	 */
 	public static void writeWorldTo(World world, String name) {
 		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun writing World object to \"" + path + "\""));

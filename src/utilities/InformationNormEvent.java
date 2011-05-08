@@ -10,10 +10,17 @@ package utilities;
 public class InformationNormEvent extends InformationEvent {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param message
+	 */
 	public InformationNormEvent(String message) {
 		super(message);
 	}
 
+	/**
+	 * @param message
+	 * @param cause
+	 */
 	public InformationNormEvent(String message, Throwable cause) {
 		super(message, cause);
 	}

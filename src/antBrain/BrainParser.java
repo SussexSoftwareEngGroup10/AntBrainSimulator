@@ -21,6 +21,10 @@ public class BrainParser {
 	private static final File folder = new File(folderName);
 	private static final String fileNameSuffix = ".brain";
 	
+	/**
+	 * @param name
+	 * @return
+	 */
 	public static Brain readBrainFrom(String name) {
 		String path = folderName + "\\"
 			+ name + "" + fileNameSuffix;
@@ -73,6 +77,10 @@ public class BrainParser {
 		return brain;
 	}
 	
+	/**
+	 * @param brain
+	 * @param name
+	 */
 	public static void writeBrainTo(Brain brain, String name) {
 		String path = folderName + "\\"
 			+ name + "" + fileNameSuffix;

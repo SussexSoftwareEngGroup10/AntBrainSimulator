@@ -10,10 +10,17 @@ package utilities;
 public class IllegalArgumentEvent extends WarningEvent {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * @param message
+	 */
 	public IllegalArgumentEvent(String message) {
 		super(message);
 	}
 	
+	/**
+	 * @param message
+	 * @param cause
+	 */
 	public IllegalArgumentEvent(String message, Throwable cause) {
 		super(message, cause);
 	}

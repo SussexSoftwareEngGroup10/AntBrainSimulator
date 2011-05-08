@@ -36,35 +36,31 @@ public class GeneticAlgorithm implements Serializable {
 	private static final String subFolderPathPrefix =
 		superFolderPath + "\\" + "genetic_algorithm_";
 	private static final Random ran = new Random();
-	private static final int min = Brain.getMinNumOfStates();
-	private static final int max = Brain.getMaxNumOfStates();
-	private static String trainingBrainPath = "best.brain";
 	
+	//Persistent object variables which are read and written when the object is serialised
 	private int saveDir;
 	private int epoch;
 	private int popLen;
 	private Brain[] population;
 	
+	/**
+	 * 
+	 */
 	public GeneticAlgorithm() {
 		this.saveDir = gasConstructed;
 		gasConstructed++;
 		this.epoch = 0;
 	}
 	
-	public static void setBestBrainPath(String trainingBrainPath) {
-		GeneticAlgorithm.trainingBrainPath = trainingBrainPath;
-		Logger.log(new InformationNormEvent("Path for the writing of Brain objects " +
-			"resulting from GeneticAlgorithm.writeBrain() changed to " + trainingBrainPath));
-	}
-	
-	public static String getBestBrainPath() {
-		return trainingBrainPath;
-	}
-	
+	/**
+	 * Creates a new population of brain objects ready to be evolved by evolve()
+	 * 
+	 * @param startBrain the default starting brain for new brains in the population
+	 * @param popLen the number of brains in the population
+	 */
 	public void createPopulation(Brain startBrain, int popLen) {
 		//Try to resume last epochs()
 		if(loadLast()){
-			//Otherwise create a new population
 			this.popLen = popLen;
 			Brain[] newPopulation = new Brain[popLen];
 			//Reverses order of population
@@ -72,15 +68,18 @@ public class GeneticAlgorithm implements Serializable {
 				if(i < this.population.length){
 					newPopulation[i] = this.population[this.population.length - 1 - i];
 				}else{
+					//If there are more brains required than there are in the
+					//population read in from loadLast(), create new brains
 					newPopulation[i] = startBrain.clone();
 				}
 			}
 			this.population = newPopulation;
 		}else{
+			//Otherwise create an entirely new population
 			this.epoch = 1;
 			this.popLen = popLen;
 			this.population = new Brain[popLen];
-			//Fill with number of example brains
+			//Fill with number of startBrains
 			for(int i = 0; i < popLen; i++){
 				this.population[i] = startBrain.clone();
 			}
@@ -89,6 +88,15 @@ public class GeneticAlgorithm implements Serializable {
 		}
 	}
 	
+	/**
+	 * @param dummyEngine the engine object to be used to determine the fitness of brains
+	 * @param threadPoolExecutor used to determine brain fitnesses concurrently
+	 * @param semaphore used to determine brain fitnesses concurrently
+	 * @param epochs number of times to evolve the population
+	 * @param rounds number of rounds in one simulation
+	 * @param elite number of brains from the old population to retain in the new population
+	 * @param mutationRate the chance of altering any part of any command in any brain
+	 */
 	public void evolve(DummyEngine dummyEngine, ThreadPoolExecutor threadPoolExecutor,
 		Semaphore semaphore, int epochs, int rounds, int elite, int mutationRate) {
 		//Log information on epoch and evolution
@@ -133,7 +141,7 @@ public class GeneticAlgorithm implements Serializable {
 		sortByFitness(threadPoolExecutor, semaphore, dummyEngine);
 		
 		//After constructor, epoch == 1,
-		//after deserialization, epoch == epoch to be run next
+		//after deserialisation, epoch == epoch to be run next
 		for(; this.epoch <= epochs; this.epoch++){
 			//Timing
 			Logger.log(new TimeEvent("for epoch " + (this.epoch - 1)));
@@ -149,6 +157,8 @@ public class GeneticAlgorithm implements Serializable {
 			//Save every epoch,
 			//so JVM can be terminated and resumed
 			save();
+			//Write best brain so far to file
+			BrainParser.writeBrainTo(this.population[this.popLen - 1], "ga_result");
 			
 			//Start next epoch
 			Logger.log(new InformationLowEvent("Beginning epoch " + this.epoch));
@@ -187,14 +197,17 @@ public class GeneticAlgorithm implements Serializable {
 			this.population = newPop;
 			//Order, ready for next epoch
 			sortByFitness(threadPoolExecutor, semaphore, dummyEngine);
-			
-			BrainParser.writeBrainTo(this.population[this.popLen - 1], "ga_result");
 		}
 		//Write best brain so far to file
 		BrainParser.writeBrainTo(this.population[this.popLen - 1], "ga_result");
 		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
 	}
 	
+	/**
+	 * @param threadPoolExecutor
+	 * @param semaphore
+	 * @param dummyEngine
+	 */
 	private void sortByFitness(ThreadPoolExecutor threadPoolExecutor,
 		Semaphore semaphore, DummyEngine dummyEngine) {
 		//Calculates the fitness of all Brains with no fitness,
@@ -204,11 +217,9 @@ public class GeneticAlgorithm implements Serializable {
 			+ ";  avg: " + avgFitness() + ";  min: " + minFitness()));
 	}
 	
-	//The fitness methods do not assume population is ordered by fitness
-	private int maxFitness() {
-		return maxFitnessBrain().getFitness();
-	}
-	
+	/**
+	 * @return
+	 */
 	private int avgFitness() {
 		int total = 0;
 		for(int i = 1; i < this.population.length; i++){
@@ -217,10 +228,24 @@ public class GeneticAlgorithm implements Serializable {
 		return total / this.population.length;
 	}
 	
+	/**
+	 * @return
+	 */
+	private int maxFitness() {
+		return maxFitnessBrain().getFitness();
+	}
+	
+	/**
+	 * @return
+	 */
 	private int minFitness() {
 		return minFitnessBrain().getFitness();
 	}
 	
+	/**
+	 * Does not assume population is ordered by fitness
+	 * @return
+	 */
 	private Brain maxFitnessBrain() {
 		int maxIndex = 0;
 		for(int i = 1; i < this.population.length; i++){
@@ -231,6 +256,10 @@ public class GeneticAlgorithm implements Serializable {
 		return this.population[maxIndex];
 	}
 	
+	/**
+	 * Does not assume population is ordered by fitness
+	 * @return
+	 */
 	private Brain minFitnessBrain() {
 		int minIndex = 0;
 		for(int i = 1; i < this.population.length; i++){
@@ -241,6 +270,12 @@ public class GeneticAlgorithm implements Serializable {
 		return this.population[minIndex];
 	}
 	
+	/**
+	 * @param brainA
+	 * @param brainB
+	 * @param mutationConstant
+	 * @return a new brain containing possibly altered states from A, B and new entirely states
+	 */
 	private Brain breed(Brain brainA, Brain brainB, int mutationConstant) {
 		//The target Brain should contain a sensible number of states,
 		//it is not necessary for its size to change in the same direction on every breed
@@ -254,14 +289,14 @@ public class GeneticAlgorithm implements Serializable {
 		//and leaving gaps might break some methods
 		int targetSize = 10000;//Math.max(brainA.size(), brainB.size()) + ran.nextInt(2);
 		//Keep targetSize within limits
-		if(targetSize < min){
+		if(targetSize < Brain.getMinNumOfStates()){
 			Logger.log(new InformationLowEvent("Brain bred containing the " +
-				"minimum number of states (" + min + ")"));
-			targetSize = min;
-		}else if(targetSize > max){
+				"minimum number of states (" + Brain.getMinNumOfStates() + ")"));
+			targetSize = Brain.getMinNumOfStates();
+		}else if(targetSize > Brain.getMaxNumOfStates()){
 			Logger.log(new InformationLowEvent("Brain bred containing the " +
-				"maximum number of states (" + max + ")"));
-			targetSize = max;
+				"maximum number of states (" + Brain.getMaxNumOfStates() + ")"));
+			targetSize = Brain.getMaxNumOfStates();
 		}
 		
 		Brain brainC = new Brain(targetSize);
@@ -288,13 +323,13 @@ public class GeneticAlgorithm implements Serializable {
 				stateC = combineStates(i, stateA, stateB, targetSize, mutationConstant);
 			//Mutate A
 			}else if(stateA != null){
-				stateC = mutateState(i, stateA, targetSize, mutationConstant);
+				stateC = new State(i, mutateGenes(stateA.getGenes(), targetSize, mutationConstant));
 			//Mutate B
 			}else if(stateB != null){
-				stateC = mutateState(i, stateB, targetSize, mutationConstant);
+				stateC = new State(i, mutateGenes(stateB.getGenes(), targetSize, mutationConstant));
 			//New random state
 			}else{
-				stateC = ranState(statesC.size(), targetSize);
+				stateC = new State(statesC.size(), ranGenes(targetSize));
 			}
 			statesC.add(stateC);
 		}
@@ -307,6 +342,14 @@ public class GeneticAlgorithm implements Serializable {
 		return brainC;
 	}
 	
+	/**
+	 * @param index
+	 * @param sa
+	 * @param sb
+	 * @param states
+	 * @param mutationConstant
+	 * @return a state containing parts of A, B and new parts
+	 */
 	private State combineStates(int index, State sa, State sb,
 		int states, int mutationConstant) {
 		int[] ga = sa.getGenes();
@@ -352,10 +395,12 @@ public class GeneticAlgorithm implements Serializable {
 		return new State(index, gc);
 	}
 	
-	private State mutateState(int index, State c, int states, int mutationConstant) {
-		return new State(index, mutateGenes(c.getGenes(), states, mutationConstant));
-	}
-	
+	/**
+	 * @param gc
+	 * @param states
+	 * @param mutationConstant
+	 * @return
+	 */
 	private int[] mutateGenes(int[] gc, int states, int mutationConstant) {
 		//All data is discrete, not continuous,
 		//so adding or subtracting a small amount is meaningless
@@ -377,7 +422,7 @@ public class GeneticAlgorithm implements Serializable {
 			if(ran.nextInt(mutationConstant) == 0){
 				//Sometimes replace value with a new random value
 				if(i == 4){
-					//P < 2 makes no sense
+					//P < 2 makes no sense (ran.nextInt(<= 1))
 					gc[i] = ran.nextInt(values[i] - 2) + 2;
 				}else{
 					gc[i] = ran.nextInt(values[i]);
@@ -394,10 +439,10 @@ public class GeneticAlgorithm implements Serializable {
 		return gc;
 	}
 	
-	private State ranState(int index, int states) {
-		return new State(index, ranGenes(states));
-	}
-	
+	/**
+	 * @param states
+	 * @return genes as used by a state, but with logical random values
+	 */
 	private int[] ranGenes(int states) {
 		int[] values = State.getValues(states);
 		int[] gc = new int[9];
@@ -423,17 +468,26 @@ public class GeneticAlgorithm implements Serializable {
 		return gc;
 	}
 	
+	/**
+	 * @return
+	 */
 	public Brain getBestBrain() {
-			Logger.log(new InformationLowEvent("Returned the Brain with the "
-				+ "highest fitness generated by GeneticAlgorithm"));
+		Logger.log(new InformationLowEvent("Returned the Brain with the "
+			+ "highest fitness generated by GeneticAlgorithm"));
 		//Assumes population is sorted by fitness in ascending order
 		return this.population[this.population.length - 1];
 	}
 	
+	/**
+	 * 
+	 */
 	public void resetEpoch() {
 		this.epoch = 0;
 	}
 	
+	/**
+	 * Delete all save files
+	 */
 	public static void clearSaves() {
 		//Deletes every file beginning with the above prefix and ending with the above suffix
 		File folder = new File(superFolderPath + "\\");
@@ -451,7 +505,10 @@ public class GeneticAlgorithm implements Serializable {
 		}
 	}
 	
-	public void save() {
+	/**
+	 * Serialise this object to a file
+	 */
+	private void save() {
 		//Only retain the most recent save
 		clearSaves();
 		
@@ -476,7 +533,10 @@ public class GeneticAlgorithm implements Serializable {
 		}
 	}
 	
-	public boolean loadLast() {
+	/**
+	 * @return deduce the last written file, and read it in
+	 */
+	private boolean loadLast() {
 		//Get superFolder ending in highest number
 		File[] files = superFolder.listFiles();
 		if(files == null) return false;	//No superfolder
@@ -496,7 +556,7 @@ public class GeneticAlgorithm implements Serializable {
 			}
 		}
 		if(max == -1){
-			return false;	//No subfolders
+			return false;				//No subfolders
 		}
 		String subFolderPath = subFolderPathPrefix + max;
 		File folder = new File(subFolderPath);
@@ -529,7 +589,10 @@ public class GeneticAlgorithm implements Serializable {
 		return true;
 	}
 	
-	public void load(File loadFile) {
+	/**
+	 * @param loadFile read the file specified and alter object variables accordingly
+	 */
+	private void load(File loadFile) {
 		try{
 			readObject(new ObjectInputStream(new FileInputStream(loadFile)));
 		}catch(FileNotFoundException e){
@@ -542,6 +605,10 @@ public class GeneticAlgorithm implements Serializable {
 		}
 	}
 	
+	/**
+	 * @param out
+	 * @throws IOException
+	 */
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.writeInt(this.saveDir);
 		out.writeInt(this.epoch);
@@ -549,6 +616,11 @@ public class GeneticAlgorithm implements Serializable {
 		out.writeObject(this.population);
 	}
 	
+	/**
+	 * @param in
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
 		this.saveDir = in.readInt();
 		this.epoch = in.readInt();

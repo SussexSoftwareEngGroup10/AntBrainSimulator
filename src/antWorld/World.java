@@ -364,6 +364,9 @@ public class World {
 		}
 	}
 	
+	/**
+	 * @return set the first and last rows and columns as rocks
+	 */
 	private boolean setBorderRocks() {
 		if(!checkBorderClear()){
 			return false;
@@ -415,6 +418,12 @@ public class World {
 		return true;
 	}
 	
+	/**
+	 * @param cell
+	 * @param recurseNum
+	 * @param recurseDepth
+	 * @param ch
+	 */
 	private void setHexRecurse(Cell cell, int recurseNum, int recurseDepth, char ch) {
 		//Need both checks to allow for hexes
 		//containing elements on first or last rows or columns
@@ -444,6 +453,14 @@ public class World {
 		}
 	}
 	
+	/**
+	 * @param row
+	 * @param col
+	 * @param height
+	 * @param width
+	 * @param ch
+	 * @return
+	 */
 	private boolean setRect(int row, int col, int height, int width, char ch) {
 		if(!checkRectClear(row, col, height, width)){
 			return false;
@@ -460,6 +477,12 @@ public class World {
 		return true;
 	}
 	
+	/**
+	 * @param row
+	 * @param col
+	 * @param ch
+	 * @return
+	 */
 	private boolean setCell(int row, int col, char ch) {
 		if(!checkCellClear(row, col)){
 			return false;
@@ -469,6 +492,9 @@ public class World {
 		return true;
 	}
 	
+	/**
+	 * @return
+	 */
 	private boolean checkBorderClear() {
 		int r = 0;
 		int c = 0;
@@ -528,6 +554,12 @@ public class World {
 			}
 		}
 		
+	/**
+	 * @param cell
+	 * @param recurseNum
+	 * @param recurseDepth
+	 * @return
+	 */
 	private boolean checkHexClearRecurse(Cell cell, int recurseNum, int recurseDepth) {
 		if(cell == null){
 			return false;
@@ -578,6 +610,11 @@ public class World {
 		return true;
 	}
 	
+	/**
+	 * @param row
+	 * @param col
+	 * @return
+	 */
 	private boolean checkCellClear(int row, int col) {
 		int r = 0;
 		int c = 0;
@@ -668,6 +705,10 @@ public class World {
 //		}
 	}
 	
+	/**
+	 * @param n
+	 * @return
+	 */
 	public static int hexArea(int n) {
 		//Calculates the number of cells in a hex (e.g. anthill) given side length
 		if(n < 1){
@@ -679,20 +720,33 @@ public class World {
 		return hexArea(n - 1) + ((n - 1) * 6);
 	}
 	
+	/**
+	 * @param brain
+	 * @param i
+	 */
 	public void setBrain(Brain brain, int i) {
 		for(Ant ant : this.antsBySpecies[i]){
 			ant.setBrain(brain);
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public Cell[][] getWorld() {
 		return this.cells;
 	}
 	
+	/**
+	 * @return
+	 */
 	public Ant[] getAnts() {
 		return this.ants;
 	}
 	
+	/**
+	 * @return
+	 */
 	public Ant[][] getAntsBySpecies() {
 		return this.antsBySpecies;
 	}
@@ -713,6 +767,11 @@ public class World {
 		return neighbours;
 	}
 	
+	/**
+	 * @param cell
+	 * @param i
+	 * @return
+	 */
 	private Cell getNeighbour(Cell cell, int i) {
 		Cell neighbour = null;
 		int r = cell.getRow();
@@ -773,10 +832,16 @@ public class World {
 		return neighbour;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getSeed() {
 		return this.seed;
 	}
 	
+	/**
+	 * @return the amount of food in each anthill
+	 */
 	public int[] getFoodInAnthills() {
 		int[] totals = new int[this.antsBySpecies.length];
 		
@@ -797,6 +862,9 @@ public class World {
 		return totals;
 	}
 	
+	/**
+	 * @return the number of surviving ants in each species
+	 */
 	public int[] survivingAntsBySpecies() {
 		int[] survivors = new int[this.antsBySpecies.length];
 		int i = 0;
@@ -811,6 +879,9 @@ public class World {
 		return survivors;
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getAttributes() {
 		String s = "";
 		int i = 0;
@@ -837,6 +908,9 @@ public class World {
 		return s;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		//Returns the world in a format identical to that found in a readable text file,

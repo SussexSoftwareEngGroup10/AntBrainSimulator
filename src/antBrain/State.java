@@ -79,7 +79,7 @@ public class State implements Serializable {
 	private int stateNum;
 	
 	/**
-	 * Constructer used by the Genetic Algorithm, gives increased efficiency
+	 * Constructor used by the Genetic Algorithm, gives increased efficiency
 	 * 
 	 * @param stateNum
 	 * @param genes
@@ -311,7 +311,7 @@ public class State implements Serializable {
 	}
 	
 	/**
-	 * General constructer used when reading in States from file
+	 * General constructor used when reading in States from file
 	 * 
 	 * @param stateNum
 	 * @param stateString
@@ -577,6 +577,10 @@ public class State implements Serializable {
 		}
 	}
 	
+	/**
+	 * @param states maximum stateNum for st1 and st2
+	 * @return number of values for each part of a state
+	 */
 	public static int[] getValues(int states) {
 		int[] values = new int[9];
 		int i = 0;
@@ -586,24 +590,38 @@ public class State implements Serializable {
 		return values;
 	}
 	
+	/**
+	 * @param states
+	 * @param field
+	 * @return
+	 */
 	public static int getValue(int states, int field) {
 		switch(field){
+		//command
 		case 0:
 			return 8;
+		//senseDir
 		case 1:
 			return 4;
+		//turnDir
 		case 2:
 			return 2;
+		//marker
 		case 3:
 			return 6;
+		//p
 		case 4:
 			return 10;
+		//st1
 		case 5:
 			return states;
+		//st2
 		case 6:
 			return states;
+		//condition
 		case 7:
 			return 10;
+		//senseMarker
 		case 8:
 			return 6;
 		default:
@@ -613,6 +631,10 @@ public class State implements Serializable {
 		}
 	}
 	
+	/**
+	 * @param i
+	 * @return
+	 */
 	private static Command toCommand(int i) {
 		//SENSE, MARK, UNMARK, PICKUP, DROP, TURN, MOVE, FLIP
 		switch(i){
@@ -642,6 +664,10 @@ public class State implements Serializable {
 		return null;
 	}
 	
+	/**
+	 * @param i
+	 * @return
+	 */
 	private static SenseDir toSenseDir(int i) {
 		//HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD
 		switch(i){
@@ -663,6 +689,10 @@ public class State implements Serializable {
 		return null;
 	}
 	
+	/**
+	 * @param i
+	 * @return
+	 */
 	private static TurnDir toTurnDir(int i) {
 		//LEFT, RIGHT
 		switch(i){
@@ -680,6 +710,10 @@ public class State implements Serializable {
 		return null;
 	}
 	
+	/**
+	 * @param i
+	 * @return
+	 */
 	private static Condition toCondition(int i) {
 		//FRIEND, FOE, FRIENDWITHFOOD, FOEWITHFOOD,	FOOD, ROCK, MARKER, FOEMARKER, HOME, FOEHOME
 		switch(i){
@@ -744,6 +778,9 @@ public class State implements Serializable {
 		return genes;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getCommand() {
 		if(this.command == null){
 			return -1;
@@ -751,6 +788,9 @@ public class State implements Serializable {
 		return this.command.ordinal();
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getSenseDir() {
 		if(this.senseDir == null){
 			return -1;
@@ -758,6 +798,9 @@ public class State implements Serializable {
 		return this.senseDir.ordinal();
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getTurnDir() {
 		if(this.turnDir == null){
 			return -1;
@@ -765,22 +808,37 @@ public class State implements Serializable {
 		return this.turnDir.ordinal();
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getMarker() {
 		return this.marker;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getP() {
 		return this.p;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getSt1() {
 		return this.st1;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getSt2() {
 		return this.st2;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getCondition() {
 		if(this.condition == null){
 			return -1;
@@ -788,23 +846,38 @@ public class State implements Serializable {
 		return this.condition.ordinal();
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getSenseMarker() {
 		return this.senseMarker;
 	}
 	
+	/**
+	 * @param stateNum
+	 */
 	protected void setStateNum(int stateNum) {
 		this.stateNum = stateNum;
 	}
 	
+	/**
+	 * @return
+	 */
 	public int getStateNum() {
 		return this.stateNum;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(this.toString().equals(o.toString())){
@@ -813,6 +886,9 @@ public class State implements Serializable {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		String s = "";
@@ -890,8 +966,12 @@ public class State implements Serializable {
 		return s;
 	}
 	
-	//The getters and setters for the enums allow for null values
+	/**
+	 * @param out
+	 * @throws IOException
+	 */
 	private void writeObject(ObjectOutputStream out) throws IOException {
+		//The getters and setters for the enums allow for null values
 		out.writeInt(getCommand());
 		out.writeInt(getSenseDir());
 		out.writeInt(getTurnDir());
@@ -904,6 +984,10 @@ public class State implements Serializable {
 		out.writeInt(this.stateNum);
 	}
 	
+	/**
+	 * @param in
+	 * @throws IOException
+	 */
 	private void readObject(ObjectInputStream in) throws IOException {
 		this.command = toCommand(in.readInt());
 		this.senseDir = toSenseDir(in.readInt());

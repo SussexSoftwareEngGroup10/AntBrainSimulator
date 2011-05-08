@@ -2,25 +2,42 @@ package utilities;
 
 import java.util.Calendar;
 
+/**
+ * @author pkew20 / 57116
+ * @version 1.0
+ */
 public abstract class Event extends Throwable {
 	private static final long serialVersionUID = 1L;
 	private Calendar calendar;
 	protected enum Severity { INFORMATION, WARNING, ERROR }
 	protected Severity severity;
 	
+	/**
+	 * @param message
+	 */
 	public Event(String message) {
 		super(message);
 		setSeverity();
 	}
 	
+	/**
+	 * @param message
+	 * @param cause
+	 */
 	public Event(String message, Throwable cause) {
 		//Adds the stack trace from the cause to that of this instance
 		super(message, cause);
 		setSeverity();
 	}
 	
+	/**
+	 * Enables concrete subclasses to set which severity to assign the field
+	 */
 	protected abstract void setSeverity();
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Throwable#toString()
+	 */
 	@Override
 	public String toString() {
 		String s = "";

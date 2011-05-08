@@ -30,14 +30,23 @@ public final class Logger {
 	private PrintStream logErr;
 	private File file;
 	
+	/**
+	 * 
+	 */
 	private Logger() {
 		//No code needed
 	}
 	
+	/**
+	 * @return
+	 */
 	public static Logger getLogger() {
 		return logger;
 	}
 	
+	/**
+	 * 
+	 */
 	private static void nextLogFile() {
 		if(!logger.folder.exists()){
 			logger.folder.mkdir();
@@ -66,10 +75,16 @@ public final class Logger {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public static File getLog() {
 		return logger.file;
 	}
 	
+	/**
+	 * 
+	 */
 	public static void clearLogs() {
 		//Deletes every file beginning with the above prefix and ending with the above suffix
 		File folder = new File(logger.folderName + "\\");
@@ -85,6 +100,9 @@ public final class Logger {
 		}
 	}
 	
+	/**
+	 * @param event
+	 */
 	public static void log(Event event) {
 		if(logger.file == null || logger.file.length() >= logger.sizeLimit){
 			nextLogFile();
@@ -123,25 +141,40 @@ public final class Logger {
 		System.setErr(logger.sysErr);
 	}
 	
+	/**
+	 * @param logLevel
+	 */
 	public static void setLogLevel(LogLevel logLevel) {
 		logger.logLevel = logLevel;
 	}
 	
+	/**
+	 * 
+	 */
 	public static void restartTimer() {
 		logger.restartTime = System.nanoTime();
 	}
 	
+	/**
+	 * @return
+	 */
 	public static long getCurrentTime() {
 		//If there has been one, returns the time since the last restartTimer() call,
 		//else time since start of main()
 		return System.nanoTime() - logger.restartTime;
 	}
 	
+	/**
+	 * @param message
+	 */
 	public static void logCurrentTime(String message) {
 		//Logs time since custom point, rather than the default time since a point
 		Logger.log(new TimeEvent(getCurrentTime(), message));
 	}
 	
+	/**
+	 * @return
+	 */
 	public static long getStartTime() {
 		return logger.startTime;
 	}

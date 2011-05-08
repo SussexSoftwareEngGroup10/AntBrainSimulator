@@ -27,6 +27,12 @@ public final class Simulation implements Runnable {
 	private final Semaphore semaphore;
 	private final boolean isAbsolute;
 	
+	/**
+	 * @param blackBrain
+	 * @param redBrain
+	 * @param semaphore
+	 * @param isAbsolute
+	 */
 	public Simulation(Brain blackBrain, Brain redBrain, Semaphore semaphore, boolean isAbsolute) {
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
@@ -34,6 +40,19 @@ public final class Simulation implements Runnable {
 		this.isAbsolute = isAbsolute;
 	}
 	
+	/**
+	 * @param seed
+	 * @param rows
+	 * @param cols
+	 * @param rocks
+	 * @param anthills
+	 * @param anthillSideLength
+	 * @param foodBlobCount
+	 * @param foodBlobSideLength
+	 * @param foodBlobCellFoodCount
+	 * @param antInitialDirection
+	 * @param rounds
+	 */
 	public static final void setValues(int seed, int rows, int cols, int rocks, 
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int rounds) {
@@ -50,6 +69,9 @@ public final class Simulation implements Runnable {
 		Simulation.rounds = rounds;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public final void run() {
 		//Using a seed to construct a random means the worlds generated will be more

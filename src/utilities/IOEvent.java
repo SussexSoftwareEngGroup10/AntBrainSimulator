@@ -10,10 +10,17 @@ package utilities;
 public class IOEvent extends WarningEvent {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param message
+	 */
 	public IOEvent(String message) {
 		super(message);
 	}
 	
+	/**
+	 * @param message
+	 * @param cause
+	 */
 	public IOEvent(String message, Throwable cause) {
 		super(message, cause);
 	}

@@ -54,6 +54,19 @@ public class DummyEngine {
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
 	private Brain absoluteTrainingBrain;
 	
+	/**
+	 * @param seed
+	 * @param rows
+	 * @param cols
+	 * @param rocks
+	 * @param anthills
+	 * @param anthillSideLength
+	 * @param foodBlobCount
+	 * @param foodBlobSideLength
+	 * @param foodBlobCellFoodCount
+	 * @param antInitialDirection
+	 * @param rounds
+	 */
 	public DummyEngine(int seed, int rows, int cols, int rocks, int anthills,
 		int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int rounds) {
@@ -118,6 +131,16 @@ public class DummyEngine {
 //Ant.step()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	
+	/**
+	 * @param startBrain
+	 * @param trainingBrain
+	 * @param epochs
+	 * @param rounds
+	 * @param popLen
+	 * @param elite
+	 * @param mutationRate
+	 * @return
+	 */
 	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int epochs,
 		int rounds, int popLen, int elite, int mutationRate) {
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
@@ -132,6 +155,11 @@ public class DummyEngine {
 		return geneticAlgorithm.getBestBrain();
 	}
 	
+	/**
+	 * @param threadPoolExecutor
+	 * @param semaphore
+	 * @param population
+	 */
 	public void sortByFitness(ThreadPoolExecutor threadPoolExecutor,
 		Semaphore semaphore, Brain[] population) {
 		//Ensure all Brains have a fitness
@@ -141,6 +169,11 @@ public class DummyEngine {
 		Arrays.sort(population);
 	}
 	
+	/**
+	 * @param threadPoolExecutor
+	 * @param semaphore
+	 * @param population
+	 */
 	private void evaluateFitnessContest(ThreadPoolExecutor threadPoolExecutor,
 		Semaphore semaphore, Brain[] population) {
 		//Ants let each other know they've finished a step with the stepBarrier
@@ -203,6 +236,14 @@ public class DummyEngine {
 //		}
 	}
 	
+	/**
+	 * Single-threaded basic version of simulation in separate method
+	 * 
+	 * @param bestBrain
+	 * @param brain
+	 * @param rounds
+	 * @return
+	 */
 	@SuppressWarnings("unused")
 	private int evaluateFitnessContestSimulation(Brain bestBrain, Brain brain, int rounds) {
 		//Using a seed to construct a random means the worlds generated will be more
@@ -232,6 +273,9 @@ public class DummyEngine {
 		return anthillFood[1] - anthillFood[0];
 	}
 	
+	/**
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		//TODO combine GA and regular sim methods, bit of a pain
 		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
@@ -240,7 +284,6 @@ public class DummyEngine {
 		//TODO remove polling in Ant.step()
 		//TODO add more information logging
 		//TODO test effects of changing targetStates in GeneticAlgorithm.breed()
-		//TODO javadoc
 		//TODO reusing Worlds and bits of sims would increase efficiency
 		//TODO multithread breed() and trim()
 		//TODO test kills and food fitness
@@ -365,13 +408,24 @@ public class DummyEngine {
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 	
-	//Phil: I have implemented the below methods, I hope that's what you meant me to do
+	/**
+	 * Phil: I have implemented the below methods, I hope that's what you meant me to do
+	 * 
+	 * @return
+	 */
 	public World generateWorld() {
 		return World.getContestWorld(0);	//random seeded contest world
 	}
 	
-	//Phil: the way I've coded the colours, black comes first, but I can change this if needed
-	//Also, what do you want to happen if there's a draw? At the moment, null is returned
+	/**
+	 * Phil: the way I've coded the colours, black comes first, but I can change this if needed
+	 * Also, what do you want to happen if there's a draw? At the moment, null is returned
+	 * 
+	 * @param blackBrain
+	 * @param redBrain
+	 * @param world
+	 * @return
+	 */
 	public Brain run(Brain blackBrain, Brain redBrain, World world) {
 		//World now has better brain at 0, GA brain at 1
 		world.setBrain(blackBrain, 0);

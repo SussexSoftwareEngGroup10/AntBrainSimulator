@@ -10,14 +10,25 @@ package utilities;
 public class TimeEvent extends InformationEvent {
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * @param message
+	 */
 	public TimeEvent(String message) {
 		super("TIME: " + (Logger.getCurrentTime()) + "ns;  MESSAGE: " + message);
 	}
 
+	/**
+	 * @param message
+	 * @param cause
+	 */
 	public TimeEvent(String message, Throwable cause) {
 		super("TIME: " + (Logger.getCurrentTime()) + "ns;  MESSAGE: " + message, cause);
 	}
 	
+	/**
+	 * @param time
+	 * @param message
+	 */
 	public TimeEvent(long time, String message) {
 		super("TIME: " + time + "ns;  MESSAGE: " + message);
 	}

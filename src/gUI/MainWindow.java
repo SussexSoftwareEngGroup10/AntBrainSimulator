@@ -39,7 +39,6 @@ public class MainWindow {
 	 * Constructs a new MainWindow and draws it to the screen.
 	 */
 	public MainWindow() {
-		gameEngine = new DummyEngine();
 		drawGUI();
 	}
 		
@@ -61,7 +60,7 @@ public class MainWindow {
 		//Set up the main frame with a border layout
 		JFrame window = new JFrame("Ant Brain Simulator");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setSize(800,700);
+		window.setSize(800,850);
 		Container pane = window.getContentPane();
 		pane.setLayout(new BorderLayout());
 		
@@ -204,10 +203,8 @@ public class MainWindow {
 			}
 			//If the user does not have permission to access the file
 			catch (SecurityException sE) {
-				if (Logger.getLogLevel() >= 1) {
-					Logger.log(new IOEvent(
-							"Security violation with file!", sE));
-				}
+				Logger.log(new IOEvent(
+						"Security violation with file!", sE));
 			}
 		}
 	}
@@ -238,10 +235,8 @@ public class MainWindow {
 				contestWindow = new ContestWindow(numberOfPlayers);
 			}
 			catch (NumberFormatException nFE){
-				if (Logger.getLogLevel() >= 1) {
-					Logger.log(new InvalidInputEvent(
-							"Input number of players not an integer!", nFE));
-				}
+				Logger.log(new IllegalArgumentEvent(
+					"Input number of players not an integer!", nFE));
 			}			
 		}
 	}

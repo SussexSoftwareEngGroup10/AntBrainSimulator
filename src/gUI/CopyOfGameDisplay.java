@@ -69,19 +69,19 @@ public class CopyOfGameDisplay extends PApplet {
 
 	public void setup() {
 		//Dimensions of display in pixels - change to modify size
-		pixelWidth = 750;
-		pixelHeight = 600;
+		pixelWidth = 700;
+		pixelHeight = 700;
 		
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 40;
-		numHexRow = 30;
+		numHexCol = 50;
+		numHexRow = 5;
 		
 		hexWidth = 35;
 		hexHeight = 40;
 		hexAngleHeight = 10;
 		hexVertHeight = 20;
 		
-		if (hexWidth * numHexCol / pixelWidth > (hexAngleHeight + hexVertHeight) * numHexRow / pixelHeight) {
+		if ((numHexCol * hexWidth) + (hexWidth / 2)> (numHexRow * hexHeight) + hexAngleHeight) {
 			largestDimension = "width";
 		}
 		else {
@@ -95,56 +95,54 @@ public class CopyOfGameDisplay extends PApplet {
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
 		
-		//TODO: Refactor into get zoom value method - maybe take into account it's logarithmic?
-		//ADD PANNING?
-		//also need to sort out these values
-		if (largestDimension == "width") {
-			if (pixelWidth <= 20) {
+		//TODO: Refactor into get zoom value method
+		//ADD PANNING
+		if (largestDimension.equals("width")) {
+			if (numHexCol <= 20) {
 				zoomer.setZoomScale(0.94);
 			}
-			else if (pixelWidth <= 40) {
+			else if (numHexCol <= 40) {
 				zoomer.setZoomScale(0.48);
 			}
-			else if (pixelWidth <= 60) {
+			else if (numHexCol <= 60) {
 				zoomer.setZoomScale(0.32);
 			}
-			else if (pixelWidth <= 80) {
+			else if (numHexCol <= 80) {
 				zoomer.setZoomScale(0.24);
 			}
-			else if (pixelWidth <= 100) {
+			else if (numHexCol <= 100) {
 				zoomer.setZoomScale(0.19);
 			}
-			else if (pixelWidth <= 120) {
+			else if (numHexCol <= 120) {
 				zoomer.setZoomScale(0.16);
 			}
-			else if (pixelWidth <= 140) {
+			else if (numHexCol <= 140) {
 				zoomer.setZoomScale(0.14);
 			}
 		}
 		else {
-			if (pixelHeight <= 20) {
+			if (numHexRow <= 20) {
 				zoomer.setZoomScale(0.94);
 			}
-			else if (pixelHeight <= 40) {
+			else if (numHexRow <= 40) {
 				zoomer.setZoomScale(0.48);
 			}
-			else if (pixelHeight <= 60) {
+			else if (numHexRow <= 60) {
 				zoomer.setZoomScale(0.32);
 			}
-			else if (pixelHeight <= 80) {
+			else if (numHexRow <= 80) {
 				zoomer.setZoomScale(0.24);
 			}
-			else if (pixelHeight <= 100) {
+			else if (numHexRow <= 100) {
 				zoomer.setZoomScale(0.19);
 			}
-			else if (pixelHeight <= 120) {
+			else if (numHexRow <= 120) {
 				zoomer.setZoomScale(0.16);
 			}
-			else if (pixelHeight <= 140) {
+			else if (numHexRow <= 140) {
 				zoomer.setZoomScale(0.14);
 			}
 		}
-		zoomer.setZoomScale(-0.4 * log((float) (0.005 * numHexRow))); //TODO: Just have if statements to set it to pre defined sizes at pre defined amount of hex
 			
 		grassTileLarge = loadImage("resources/grass_tile_large.png");
 		grassTileMedium = loadImage("resources/grass_tile_medium.png");
@@ -156,18 +154,21 @@ public class CopyOfGameDisplay extends PApplet {
 		//Sets an upper and lower bound on the zoom scale - it would be nicer if this was done more smoothly
 		zoomer.transform();
 		//TODO - work out how to set limits to the pan offset (will probably need to know size of grid for the right hand side)
-		System.out.println(zoomer.getZoomScale());
-		System.out.println(zoomer.getPanOffset());
+		
+		//System.out.println(zoomer.getZoomScale());
+		//System.out.println(zoomer.getPanOffset());
+		
+		//Work out which size images to use.
 		PImage tile;
-		//if (zoomer.getZoomScale() > 15) {
+		if (zoomer.getZoomScale() * (numHexCol / 2) > 17) {
 			tile = grassTileLarge;
-		//}
-		//else if (zoomer.getZoomScale() > 5) {
-		//	tile = grassTileMedium;
-		//}
-		//else {
-		//	tile = grassTileSmall;
-		//}
+		}
+		else if (zoomer.getZoomScale() * (numHexCol / 2) > 4.5){
+			tile = grassTileMedium;
+		}
+		else {
+			tile = grassTileSmall;
+		}
 		//Draw hexagons
 		background(0);
 		for (int row = 0; row < numHexRow; row++) {
@@ -176,7 +177,7 @@ public class CopyOfGameDisplay extends PApplet {
 			    	image(tile, col * hexWidth, row * (hexVertHeight + hexAngleHeight), hexWidth, hexHeight);
 			    }
 			    else {
-			    	image(tile, col * hexWidth + (hexWidth / 2), row  * (hexVertHeight + hexAngleHeight), hexWidth, hexHeight);
+			    	image(tile, col * hexWidth + ((hexWidth / 2) + 0), row  * (hexVertHeight + hexAngleHeight), hexWidth, hexHeight);
 			    }
 			}
 		}

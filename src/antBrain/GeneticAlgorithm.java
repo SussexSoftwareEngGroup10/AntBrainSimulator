@@ -40,7 +40,7 @@ public class GeneticAlgorithm implements Serializable {
 	private static final Random ran = new Random();
 	
 	//Persistent object variables which are read and written when the object is serialised
-	private int saveDir;
+	private transient int saveDir;
 	private int epoch;
 	private int popLen;
 	private Brain[] population;
@@ -631,7 +631,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * @throws IOException
 	 */
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeInt(this.saveDir);
+//		out.writeInt(this.saveDir);
 		out.writeInt(this.epoch);
 		out.writeInt(this.popLen);
 		out.writeObject(this.population);
@@ -642,8 +642,9 @@ public class GeneticAlgorithm implements Serializable {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-		this.saveDir = in.readInt();
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		this.saveDir = gasConstructed;
+		gasConstructed++;
 		this.epoch = in.readInt();
 		this.popLen = in.readInt();
 		this.population = (Brain[]) in.readObject();

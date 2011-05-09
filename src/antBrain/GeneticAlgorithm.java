@@ -289,7 +289,7 @@ public class GeneticAlgorithm implements Serializable {
 		//so reducing the size by removing a state would be a real pain,
 		//as changing every pointer would be inefficient,
 		//and leaving gaps might break some methods
-		int targetSize = 10000;//Math.max(brainA.size(), brainB.size()) + ran.nextInt(2);
+		int targetSize = 50;//Math.max(brainA.size(), brainB.size()) + ran.nextInt(2);
 		//Keep targetSize within limits
 		if(targetSize < Brain.getMinNumOfStates()){
 			Logger.log(new InformationLowEvent("Brain bred containing the " +
@@ -640,6 +640,8 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
+	 * A FileFilter which only accepts files in the appropriate folder with the .ser extension
+	 * 
 	 * @author pkew20 / 57116
 	 * @version 1.0
 	 */

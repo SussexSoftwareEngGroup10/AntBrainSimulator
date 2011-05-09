@@ -289,6 +289,7 @@ public class DummyEngine {
 		//TODO test kills and food fitness
 		//TODO use jar on linux server
 		//TODO fix writing so files aren't corrupted when prog terminates in write
+		//TODO fitness to include black <=> red, then can fix seed, but twice as slow
 		
 		//Setup variables
 		//World arguments

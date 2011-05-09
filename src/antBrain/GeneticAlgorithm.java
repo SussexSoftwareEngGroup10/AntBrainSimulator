@@ -494,15 +494,13 @@ public class GeneticAlgorithm implements Serializable {
 		File folder = new File(subFolderPathPrefix + this.saveDir);
 		//Get all .ser files in this GA's save folder
 		File[] files = folder.listFiles(new SerFilter());
-		System.out.println("PRE");
 		if(files == null) return;
-		System.out.println("MED " + files.length);
+		
 		Arrays.sort(files);
 		//.ser files are now in alphabetical order
 		for(int i = 0; i < files.length - toRetain; i++){
 			files[i].delete();
 		}
-		System.out.println("POS");
 	}
 	
 	/**

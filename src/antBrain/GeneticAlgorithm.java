@@ -631,7 +631,6 @@ public class GeneticAlgorithm implements Serializable {
 	 * @throws IOException
 	 */
 	private void writeObject(ObjectOutputStream out) throws IOException {
-//		out.writeInt(this.saveDir);
 		out.writeInt(this.epoch);
 		out.writeInt(this.popLen);
 		out.writeObject(this.population);

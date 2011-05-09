@@ -1,6 +1,7 @@
 package gUI;
 
 import processing.core.*;
+
 import org.gicentre.utils.move.*; 
 
 import antWorld.World;
@@ -50,7 +51,6 @@ public class CopyOfGameDisplay extends PApplet {
 	 * 
 	 */
 	
-	//TODO: add constants that relate to the zoom scale for small medium and large
 	private int hexWidth; //Corresponds to C
 	private int hexHeight; //Corresponds to D
 	private int hexAngleHeight; //Corresponds to A
@@ -62,10 +62,6 @@ public class CopyOfGameDisplay extends PApplet {
 	private String largestDimension;
 	private int pixelWidth; //Used to store size of display in pixels
 	private int pixelHeight;
-		
-	public static void main(String args[]) {
-		PApplet.main(new String[] { "--present", "gUI.GameDisplay" });
-	}
 
 	public void setup() {
 		//Dimensions of display in pixels - change to modify size
@@ -73,9 +69,9 @@ public class CopyOfGameDisplay extends PApplet {
 		pixelHeight = 700;
 		
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 50;
-		numHexRow = 5;
-		
+		numHexCol = 80;
+		numHexRow = 139;
+
 		hexWidth = 35;
 		hexHeight = 40;
 		hexAngleHeight = 10;
@@ -95,29 +91,46 @@ public class CopyOfGameDisplay extends PApplet {
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
 		
-		//TODO: Refactor into get zoom value method
-		//ADD PANNING
+		setInitialPanAndZoom();
+		
+		grassTileLarge = loadImage("resources/grass_tile_large.png");
+		grassTileMedium = loadImage("resources/grass_tile_medium.png");
+		grassTileSmall = loadImage("resources/grass_tile_small.png");
+		blackAnt = loadImage("resources/ant.png");
+	}
+	
+	/*
+	 * Method with hard coded values for the initial zoom and pan
+	 * of the zoomer based on number of hexagons.
+	 */
+	private void setInitialPanAndZoom() {
 		if (largestDimension.equals("width")) {
 			if (numHexCol <= 20) {
 				zoomer.setZoomScale(0.94);
 			}
 			else if (numHexCol <= 40) {
 				zoomer.setZoomScale(0.48);
+				zoomer.setPanOffset(-160, -160);
 			}
 			else if (numHexCol <= 60) {
 				zoomer.setZoomScale(0.32);
+				zoomer.setPanOffset(-220, -220);
 			}
 			else if (numHexCol <= 80) {
 				zoomer.setZoomScale(0.24);
+				zoomer.setPanOffset(-250, -250);
 			}
 			else if (numHexCol <= 100) {
 				zoomer.setZoomScale(0.19);
+				zoomer.setPanOffset(-270, -270);
 			}
 			else if (numHexCol <= 120) {
 				zoomer.setZoomScale(0.16);
+				zoomer.setPanOffset(-280, -280);
 			}
 			else if (numHexCol <= 140) {
 				zoomer.setZoomScale(0.14);
+				zoomer.setPanOffset(-290, -290);
 			}
 		}
 		else {
@@ -126,34 +139,35 @@ public class CopyOfGameDisplay extends PApplet {
 			}
 			else if (numHexRow <= 40) {
 				zoomer.setZoomScale(0.48);
+				zoomer.setPanOffset(-160, -160);
 			}
 			else if (numHexRow <= 60) {
 				zoomer.setZoomScale(0.32);
+				zoomer.setPanOffset(-220, -220);
 			}
 			else if (numHexRow <= 80) {
 				zoomer.setZoomScale(0.24);
+				zoomer.setPanOffset(-250, -250);
 			}
 			else if (numHexRow <= 100) {
 				zoomer.setZoomScale(0.19);
+				zoomer.setPanOffset(-270, -270);
 			}
 			else if (numHexRow <= 120) {
 				zoomer.setZoomScale(0.16);
+				zoomer.setPanOffset(-280, -280);
 			}
 			else if (numHexRow <= 140) {
 				zoomer.setZoomScale(0.14);
+				zoomer.setPanOffset(-290, -290);
 			}
 		}
-			
-		grassTileLarge = loadImage("resources/grass_tile_large.png");
-		grassTileMedium = loadImage("resources/grass_tile_medium.png");
-		grassTileSmall = loadImage("resources/grass_tile_small.png");
-		blackAnt = loadImage("resources/ant.png");
 	}
 	
 	public void draw() {
-		//Sets an upper and lower bound on the zoom scale - it would be nicer if this was done more smoothly
 		zoomer.transform();
-		//TODO - work out how to set limits to the pan offset (will probably need to know size of grid for the right hand side)
+		//TODO: this formula doesn't always apply when there are larger numbers of hex
+		//TODO: add upper and lower bounds to if statement where camera won't soom
 		
 		//System.out.println(zoomer.getZoomScale());
 		//System.out.println(zoomer.getPanOffset());
@@ -191,28 +205,6 @@ public class CopyOfGameDisplay extends PApplet {
 			}
 		}
 		*/
-	}
-	
-	//Methods for finding out the dimensions of the hexagons; one uses the height, the other uses the width
-	private int calculateHexDimensionsUsingHeight() {
-		float third = (float) (1) / (float) (3);
-		hexAngleHeight = (int) ((pixelHeight / (float) (numHexRow + third)) * third);
-		hexVertHeight = hexAngleHeight * 2;
-		hexHeight = hexAngleHeight * 4;
-		//Trigonometry to work out the width
-		hexWidth = (int) ((hexAngleHeight * tan(radians(60))) * 2);
-		
-		return hexWidth; //Returned for use in the if statement when this is called
-	}
-	
-	//Inverse of the above method
-	private int calculateHexDimensionsUsingWidth() {
-		hexWidth = (int) (pixelWidth / (float) (numHexCol + 0.5));
-		hexAngleHeight = (int) (hexWidth / 2 * tan(radians(30)));
-		hexVertHeight = hexAngleHeight * 2;
-		hexHeight = (hexAngleHeight * 4);
-		
-		return hexHeight;
 	}
 
 	//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)

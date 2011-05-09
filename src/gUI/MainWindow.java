@@ -80,14 +80,15 @@ public class MainWindow {
 		startGameBtn = new JButton("Start Game");
 		startGameBtn.setEnabled(false);
 		contestBtn = new JButton("Contest Mode");
-		contestBtn.addActionListener(new contestListener());
+		contestBtn.addActionListener(new ContestListener());
 		uploadRedBtn = new JButton("Upload Red Brain");
-		uploadRedBtn.addActionListener(new fileBrowseListener());
+		uploadRedBtn.addActionListener(new FileBrowseListener());
 		uploadBlackBtn = new JButton("Upload Black Brain");
-		uploadBlackBtn.addActionListener(new fileBrowseListener());
+		uploadBlackBtn.addActionListener(new FileBrowseListener());
 		uploadWorldBtn = new JButton("Upload World");
-		uploadWorldBtn.addActionListener(new fileBrowseListener());
+		uploadWorldBtn.addActionListener(new FileBrowseListener());
 		genWorldBtn = new JButton("Generate World");
+		genWorldBtn.addActionListener(new WorldGenListener(this));
 		
 		controlPanel.add(startGameBtn);
 		controlPanel.add(uploadRedBtn);
@@ -135,12 +136,20 @@ public class MainWindow {
 		}
 	}
 	
+	public void setupNewWorldStandardWorld(int rows, int cols, int rocks) {
+		//TODO: Implement
+	}
+	
+	public void setupNewContestWorld() {
+		//TODO: Implement
+	}
+	
 	/**
 	 * Attached to the buttons which need to bring up a file browser window.
 	 * 
 	 * @author will
 	 */
-	public class fileBrowseListener implements ActionListener 
+	public class FileBrowseListener implements ActionListener 
 	{
 		/**
 		 * Displays the file chooser box when the browse button is 
@@ -214,7 +223,7 @@ public class MainWindow {
 	 * 
 	 * @author will
 	 */
-	public class contestListener implements ActionListener {
+	public class ContestListener implements ActionListener {
 		/**
 		 * Brings up a dialog box to select the amount of contest participants
 		 * and then builds the contest window based on the amount of 
@@ -246,15 +255,18 @@ public class MainWindow {
 	 * 
 	 * @author will
 	 */
-	public class worldGenListener implements ActionListener {
+	public class WorldGenListener implements ActionListener {
+		MainWindow mainWindow;
 		/**
 		 * Generates a new random world and displays it.
 		 * 
 		 * @param e The triggering event.
 		 */
+		public WorldGenListener(MainWindow mainWindow) {
+			this.mainWindow = mainWindow;
+		}
 		public void actionPerformed(ActionEvent e) {
-			World generatedWorld = gameEngine.generateWorld();
-			gameDisplay.displayNewWorld(generatedWorld);
+			new WorldGenerateWindow(mainWindow);
 		}
 	}
 }

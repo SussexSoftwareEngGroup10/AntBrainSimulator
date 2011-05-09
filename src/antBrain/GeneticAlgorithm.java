@@ -40,9 +40,9 @@ public class GeneticAlgorithm implements Serializable {
 	private static final Random ran = new Random();
 	
 	private transient int saveDir;
+	private transient int popLen;
 	//Persistent object variables which are read and written when the object is serialised
 	private int epoch;
-	private int popLen;
 	private Brain[] population;
 	
 	/**
@@ -609,7 +609,6 @@ public class GeneticAlgorithm implements Serializable {
 	 */
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.writeInt(this.epoch);
-		out.writeInt(this.popLen);
 		out.writeObject(this.population);
 	}
 	
@@ -619,32 +618,25 @@ public class GeneticAlgorithm implements Serializable {
 	 * @throws ClassNotFoundException
 	 */
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		this.saveDir = gasConstructed;
-		gasConstructed++;
+		//Persistent variables
 		this.epoch = in.readInt();
-		this.popLen = in.readInt();
 		this.population = (Brain[]) in.readObject();
 		
 		//Verification
 		if(this.population == null){
 			Logger.log(new IOEvent("population == null"));
 		}
-		if(this.popLen != this.population.length){
-			Logger.log(new IOEvent("popLen != population.length"));
-			this.popLen = this.population.length;
-		}
-		if(this.saveDir < 0){
-			Logger.log(new IOEvent("saveDir < 0"));
+		if(this.population.length <= 1){
+			Logger.log(new IOEvent("population.length <= 1"));
 		}
 		if(this.epoch < 0){
 			Logger.log(new IOEvent("epoch < 0"));
 		}
-		if(this.popLen <= 0){
-			Logger.log(new IOEvent("popLen <= 0"));
-		}
-		if(this.population.length <= 1){
-			Logger.log(new IOEvent("population.length <= 1"));
-		}
+		
+		//Transient variables
+		this.saveDir = gasConstructed;
+		gasConstructed++;
+		this.popLen = this.population.length;
 	}
 	
 	/**

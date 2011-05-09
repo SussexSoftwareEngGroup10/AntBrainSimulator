@@ -39,8 +39,8 @@ public class GeneticAlgorithm implements Serializable {
 		superFolderPath + "\\" + "genetic_algorithm_";
 	private static final Random ran = new Random();
 	
-	//Persistent object variables which are read and written when the object is serialised
 	private transient int saveDir;
+	//Persistent object variables which are read and written when the object is serialised
 	private int epoch;
 	private int popLen;
 	private Brain[] population;
@@ -504,29 +504,6 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * @author pkew20 / 57116
-	 * @version 1.0
-	 */
-	protected class SerFilter implements FileFilter {
-		/**
-		 * 
-		 */
-		public SerFilter() {
-			//No code needed
-		}
-		
-		/* (non-Javadoc)
-		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
-		 * 
-		 * True if startsWith subFolderPathPrefix and endsWith ".ser"
-		 */
-		@Override
-		public boolean accept(File pathname) {
-			return pathname.getPath().startsWith(subFolderPathPrefix) && pathname.getPath().endsWith(".ser");
-		}
-	}
-	
-	/**
 	 * Serialise this object to a file
 	 */
 	private void save() {
@@ -667,6 +644,29 @@ public class GeneticAlgorithm implements Serializable {
 		}
 		if(this.population.length <= 1){
 			Logger.log(new IOEvent("population.length <= 1"));
+		}
+	}
+	
+	/**
+	 * @author pkew20 / 57116
+	 * @version 1.0
+	 */
+	protected class SerFilter implements FileFilter {
+		/**
+		 * 
+		 */
+		public SerFilter() {
+			//No code needed
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+		 * 
+		 * True if startsWith subFolderPathPrefix and endsWith ".ser"
+		 */
+		@Override
+		public boolean accept(File pathname) {
+			return pathname.getPath().startsWith(subFolderPathPrefix) && pathname.getPath().endsWith(".ser");
 		}
 	}
 }

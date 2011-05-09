@@ -309,7 +309,7 @@ public class DummyEngine {
 		
 		//GA arguments
 		//More is slower, and more likely to generate an improved brain
-		int epochs = 5000;
+		int epochs = Integer.MAX_VALUE;
 		//More is slower, and increases the accuracy of the GA
 		int rounds = 300000;
 		//More is slower, and searches more of the search space for brains

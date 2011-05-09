@@ -144,8 +144,8 @@ public class DummyEngine {
 	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int epochs,
 		int rounds, int popLen, int elite, int mutationRate) {
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen * 2));
-		Semaphore semaphore = new Semaphore(popLen * 2, true);
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen * 4));
+		Semaphore semaphore = new Semaphore(popLen * 4, true);
 		
 		this.absoluteTrainingBrain = trainingBrain;
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
@@ -199,26 +199,30 @@ public class DummyEngine {
 		
 		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
-		semaphore.acquireUninterruptibly(population.length * 2);
+		semaphore.acquireUninterruptibly(population.length * 4);
 		
 		//Set fitness for every brain in population
 		for(Brain brain : population){
 			if(brain.getFitness() == 0){
 				//Not in elite
-				//Absolute fitness test
+				//Absolute fitness tests
 				threadPoolExecutor.execute(
-					new Simulation(this.absoluteTrainingBrain, brain, semaphore, true));
+					new Simulation(this.absoluteTrainingBrain, brain, semaphore, 0));
+				threadPoolExecutor.execute(
+					new Simulation(brain, this.absoluteTrainingBrain, semaphore, 1));
 			}else{
-				semaphore.release();
+				semaphore.release(2);
 			}
-			//Relative fitness test
+			//Relative fitness tests
 			threadPoolExecutor.execute(
-				new Simulation(relativeTrainingBrain, brain, semaphore, false));
+				new Simulation(relativeTrainingBrain, brain, semaphore, 2));
+			threadPoolExecutor.execute(
+				new Simulation(brain, relativeTrainingBrain, semaphore, 3));
 		}
 		
 		//Await completion of all calls
-		semaphore.acquireUninterruptibly(population.length * 2);
-		semaphore.release(population.length * 2);
+		semaphore.acquireUninterruptibly(population.length * 4);
+		semaphore.release(population.length * 4);
 		
 //		//Single-Threaded
 //		Brain brain;
@@ -294,7 +298,7 @@ public class DummyEngine {
 		//Setup variables
 		//World arguments
 		//Used by the GA to train Brains
-		int trainSeed = 0;
+		int trainSeed = 1;
 		//Used here to test resulting Brain
 		int testSeed = 0;
 		int rows = 140;

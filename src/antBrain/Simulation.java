@@ -25,7 +25,7 @@ public final class Simulation implements Runnable {
 	private final Brain blackBrain;
 	private final Brain redBrain;
 	private final Semaphore semaphore;
-	private final boolean isAbsolute;
+	private final int fitness;
 	
 	/**
 	 * @param blackBrain
@@ -33,11 +33,11 @@ public final class Simulation implements Runnable {
 	 * @param semaphore
 	 * @param isAbsolute
 	 */
-	public Simulation(Brain blackBrain, Brain redBrain, Semaphore semaphore, boolean isAbsolute) {
+	public Simulation(Brain blackBrain, Brain redBrain, Semaphore semaphore, int fitness) {
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
 		this.semaphore = semaphore;
-		this.isAbsolute = isAbsolute;
+		this.fitness = fitness;
 	}
 	
 	/**
@@ -95,12 +95,8 @@ public final class Simulation implements Runnable {
 		//Store the result as the fitness of the red (GA) brain
 		int[] anthillFood = world.getFoodInAnthills();
 		
-		if(this.isAbsolute){
-			//Increment fitness by score
-			this.redBrain.setAbsoluteFitness(anthillFood[1] - anthillFood[0]);
-		}else{
-			this.redBrain.setRelativeFitness(anthillFood[1] - anthillFood[0]);
-		}
+		//Increment fitness by score
+		this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
 		
 		//Let the main thread know that this simulation has completed
 		this.semaphore.release();

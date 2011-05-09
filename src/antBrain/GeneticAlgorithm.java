@@ -1,6 +1,7 @@
 package antBrain;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -486,22 +488,43 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * Delete all save files
+	 * Delete all except latest toRetain save files
 	 */
-	public static void clearSaves() {
-		//Deletes every file beginning with the above prefix and ending with the above suffix
-		File folder = new File(superFolderPath + "\\");
-		File[] files = folder.listFiles();
-		
+	public void clearSaves(int toRetain) {
+		File folder = new File(subFolderPathPrefix + this.saveDir);
+		//Get all .ser files in this GA's save folder
+		File[] files = folder.listFiles(new SerFilter());
+		System.out.println("PRE");
 		if(files == null) return;
-		for(File f : files){
-			if(f.getPath().startsWith(subFolderPathPrefix)){
-				//Assume f does not contain any directories
-				for(File sf : f.listFiles()){
-					sf.delete();
-				}
-				f.delete();
-			}
+		System.out.println("MED " + files.length);
+		Arrays.sort(files);
+		//.ser files are now in alphabetical order
+		for(int i = 0; i < files.length - toRetain; i++){
+			files[i].delete();
+		}
+		System.out.println("POS");
+	}
+	
+	/**
+	 * @author pkew20 / 57116
+	 * @version 1.0
+	 */
+	protected class SerFilter implements FileFilter {
+		/**
+		 * 
+		 */
+		public SerFilter() {
+			//No code needed
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+		 * 
+		 * True if startsWith subFolderPathPrefix and endsWith ".ser"
+		 */
+		@Override
+		public boolean accept(File pathname) {
+			return pathname.getPath().startsWith(subFolderPathPrefix) && pathname.getPath().endsWith(".ser");
 		}
 	}
 	
@@ -509,8 +532,8 @@ public class GeneticAlgorithm implements Serializable {
 	 * Serialise this object to a file
 	 */
 	private void save() {
-		//Only retain the most recent save
-		clearSaves();
+		//Only retain the 4 most recent saves (and this save)
+		clearSaves(4);
 		
 		//Setup save superFolder
 		if(!superFolder.exists()) superFolder.mkdir();

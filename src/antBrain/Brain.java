@@ -16,8 +16,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	private static final long serialVersionUID = 1L;
 	private static final int minNumOfStates = 1;
 	private static final int maxNumOfStates = 10000;
-	private int absoluteFitness = 0;
-	private int relativeFitness = 0;
+	private final int[] fitnesses = new int[4];
 	
 	/**
 	 * @param initialCapacity
@@ -53,21 +52,18 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	 * @return an arbitrary value used to compare brain objects
 	 */
 	public int getFitness() {
-		return this.absoluteFitness + this.relativeFitness;
+		int t = 0;
+		for(int i : this.fitnesses){
+			t += i;
+		}
+		return t;
 	}
 	
 	/**
-	 * @param absoluteFitness
+	 * @param fitness
 	 */
-	public void setAbsoluteFitness(int absoluteFitness) {
-		this.absoluteFitness = absoluteFitness;
-	}
-	
-	/**
-	 * @param relativeFitness
-	 */
-	public void setRelativeFitness(int relativeFitness) {
-		this.relativeFitness = relativeFitness;
+	public void setFitness(int i, int fitness) {
+		this.fitnesses[i] = fitness;
 	}
 	
 	/**
@@ -241,8 +237,9 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 			out.writeInt(key);
 			out.writeObject(get(key));
 		}
-		out.writeInt(this.absoluteFitness);
-		out.writeInt(this.relativeFitness);
+		for(int i : this.fitnesses){
+			out.writeInt(i);
+		}
 	}
 	
 	/**
@@ -255,7 +252,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		for(int i = 0; i < size; i++){
 			put(in.readInt(), (State) in.readObject());
 		}
-		setAbsoluteFitness(in.readInt());
-		setRelativeFitness(in.readInt());
+		for(int i = 0; i < this.fitnesses.length; i++){
+			this.fitnesses[i] = in.readInt();
+		}
 	}
 }

@@ -295,6 +295,7 @@ public class DummyEngine {
 		//TODO fix writing so files aren't corrupted when prog terminates in write
 		//TODO fitness to include black <=> red, then can fix seed, but twice as slow
 		//TODO fix io
+		//TODO fix save clear order
 		
 //		Flipper flipper = new Flipper(12345);
 //		int n = Integer.MAX_VALUE;

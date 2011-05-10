@@ -1,7 +1,7 @@
 package antWorld;
 
-import java.util.Random;
 
+import engine.Flipper;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
@@ -40,7 +40,7 @@ public class World {
 	//Using a seed means that the same world can be reproduced
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
 	private final int seed;
-	private final Random ran;
+	private final Flipper ran;
 	
 	private final int rows;
 	private final int cols;
@@ -117,11 +117,11 @@ public class World {
 		int foodBlobCellFoodCount, int antInitialDirection) {
 		//Can either use a random or predefined seed
 		if(seed == 0){
-			this.seed = new Random().nextInt(Integer.MAX_VALUE);
+			this.seed = (int) (Math.random() * Integer.MAX_VALUE + 1);
 		}else{
 			this.seed = seed;
 		}
-		this.ran = new Random(this.seed);
+		this.ran = new Flipper(this.seed);
 		
 		this.rows = rows;
 		this.cols = cols;
@@ -323,8 +323,8 @@ public class World {
 			failCount--;
 			do{
 				failCount++;
-				ranRow = this.ran.nextInt(this.rows - 2) + 1;
-				ranCol = this.ran.nextInt(this.cols - 2) + 1;
+				ranRow = this.ran.randomInt(this.rows - 2) + 1;
+				ranCol = this.ran.randomInt(this.cols - 2) + 1;
 			}while(!setHex(ranRow, ranCol, this.anthillSideLength, '+'));
 		}
 		
@@ -333,8 +333,8 @@ public class World {
 			failCount--;
 			do{
 				failCount++;
-				ranRow = this.ran.nextInt(this.rows - 2) + 1;
-				ranCol = this.ran.nextInt(this.cols - 2) + 1;
+				ranRow = this.ran.randomInt(this.rows - 2) + 1;
+				ranCol = this.ran.randomInt(this.cols - 2) + 1;
 			}while(!setHex(ranRow, ranCol, this.anthillSideLength, '-'));
 		}
 		
@@ -347,8 +347,8 @@ public class World {
 			failCount--;
 			do{
 				failCount++;
-				ranRow = this.ran.nextInt(this.rows - 2) + 1;
-				ranCol = this.ran.nextInt(this.cols - 2) + 1;
+				ranRow = this.ran.randomInt(this.rows - 2) + 1;
+				ranCol = this.ran.randomInt(this.cols - 2) + 1;
 			}while(!setRect(ranRow, ranCol,	this.foodBlobSideLength,
 				this.foodBlobSideLength, (char) (this.foodBlobCellFoodCount + 48)));
 		}
@@ -358,8 +358,8 @@ public class World {
 			failCount--;
 			do{
 				failCount++;
-				ranRow = this.ran.nextInt(this.rows - 2) + 1;
-				ranCol = this.ran.nextInt(this.cols - 2) + 1;
+				ranRow = this.ran.randomInt(this.rows - 2) + 1;
+				ranCol = this.ran.randomInt(this.cols - 2) + 1;
 			}while(!setCell(ranRow, ranCol, '#'));
 		}
 	}

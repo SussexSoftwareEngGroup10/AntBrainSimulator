@@ -30,10 +30,7 @@ public class BrainParser {
 			+ name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun reading Brain " +
 			"object from \"" + path + "\""));
-		if(!folder.exists()){
-			folder.mkdir();
-		}
-		Brain brain = new Brain(30);
+		Brain brain = new Brain(50);
 		BufferedReader br;
 		File f = new File(path);
 		String line;

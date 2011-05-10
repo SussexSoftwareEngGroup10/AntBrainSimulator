@@ -6,25 +6,31 @@ package engine;
  */
 public class Flipper {
 	private static final long serialVersionUID = 1L;
-	private static final int xs = 1000;
-	private final int[] s = new int[xs + 4];
-	private final double[] x = new double[xs];
+	private int s;
 	private int i = -1;
 	
 	/**
 	 * @param seed
 	 */
 	public Flipper(int seed) {
-		//s series setup
-		this.s[0] = seed;
-		for(int i = 1; i < this.s.length; i++){
-			this.s[i] = this.s[i - 1] * 22695477 + 1;
+		this.s = seed;
+		for(int i = 0; i < 3; i++){
+			nextS();
 		}
-		
-		//x series setup
-		for(int i = 0; i < this.x.length; i++){
-			this.x[i] = mod((this.s[i + 4] / 65536), 16384);
-		}
+	}
+	
+	/**
+	 * 
+	 */
+	private int nextS() {
+		return this.s = this.s * 22695477 + 1;
+	}
+	
+	/**
+	 * 
+	 */
+	private int nextX() {
+		return mod((nextS() / 65536), 16384);
 	}
 	
 	/**
@@ -32,10 +38,10 @@ public class Flipper {
 	 * @param y
 	 * @return
 	 */
-	private double mod(double x, double y) {//TODO try without
-		double r = x % y;
+	private int mod(int x, int y) {
+		int r = x % y;
 	    if(r < 0){
-	        r += y;
+	        return r + y - 1;
 	    }
 	    return r;
 	}
@@ -46,6 +52,6 @@ public class Flipper {
 	 */
 	public int randomInt(int n) {
 		this.i++;
-		return (int) Math.round(mod(this.x[this.i], n));
+		return Math.round(mod(nextX(), n));
 	}
 }

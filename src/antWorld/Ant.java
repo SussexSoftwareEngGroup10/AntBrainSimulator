@@ -1,7 +1,6 @@
 package antWorld;
 
-import java.util.Random;
-
+import engine.Flipper;
 import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
@@ -19,7 +18,7 @@ public final class Ant implements Comparable<Ant> {
 	//Random is passed from world, all ants in world, and world itself use the same Random,
 	//with the same seed, so exactly the same game can be replicated
 	//If no Random is passed, generate a new Random with random seed
-	private final Random ran;
+	private final Flipper ran;
 	private final int uid;
 	private final Colour colour;
 	private Brain brain;
@@ -44,11 +43,11 @@ public final class Ant implements Comparable<Ant> {
 	 * @param colour
 	 * @param cell
 	 */
-	public Ant(int uid, Random ran, int direction, int colour, Cell cell) {
+	public Ant(int uid, Flipper ran, int direction, int colour, Cell cell) {
 		this.uid = uid;
 		
 		if(ran == null){
-			this.ran = new Random();
+			this.ran = new Flipper((int) (Math.random() * Integer.MAX_VALUE + 1));
 		}else{
 			this.ran = ran;
 		}
@@ -382,7 +381,7 @@ public final class Ant implements Comparable<Ant> {
 	 * Flip p st1 st2
 	 */
 	private final void flip() {
-		if(this.ran.nextInt(this.state.getP()) == 0){
+		if(this.ran.randomInt(this.state.getP()) == 0){
 			this.state = this.brain.get(this.state.getSt1());
 		}else{
 			this.state = this.brain.get(this.state.getSt2());

@@ -28,9 +28,6 @@ public final class WorldParser {
 	public static World readWorldFrom(String name) {
 		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
-		if(!folder.exists()){
-			folder.mkdir();
-		}
 		BufferedReader br;
 		File f = new File(path);
 		String line;

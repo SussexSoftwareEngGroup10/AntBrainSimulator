@@ -34,7 +34,7 @@ public class GeneticAlgorithm implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final String superFolderPath = "brain_populations";
 	private static final File superFolder = new File(superFolderPath);
-	private static int gasConstructed = 0;
+	private static int instances = 0;
 	private static final String subFolderPathPrefix =
 		superFolderPath + "\\" + "genetic_algorithm_";
 	private static final Random ran = new Random();
@@ -49,8 +49,8 @@ public class GeneticAlgorithm implements Serializable {
 	 * 
 	 */
 	public GeneticAlgorithm() {
-		this.saveDir = gasConstructed;
-		gasConstructed++;
+		this.saveDir = instances;
+		instances++;
 		this.epoch = 0;
 	}
 	
@@ -638,8 +638,8 @@ public class GeneticAlgorithm implements Serializable {
 		}
 		
 		//Transient variables
-		this.saveDir = gasConstructed;
-		gasConstructed++;
+		this.saveDir = instances;
+		instances++;
 		this.popLen = this.population.length;
 	}
 	

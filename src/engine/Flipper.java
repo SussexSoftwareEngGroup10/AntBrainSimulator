@@ -8,8 +8,8 @@ public class Flipper {
 	private static final long serialVersionUID = 1L;
 	private static final int xs = 1000;
 	private final int[] s = new int[xs + 4];
-	private final int[] x = new int[xs];
-	private int i = 0;
+	private final double[] x = new double[xs];
+	private int i = -1;
 	
 	/**
 	 * @param seed
@@ -28,24 +28,24 @@ public class Flipper {
 	}
 	
 	/**
-	 * @param n
-	 * @return
-	 */
-	public int nextInt(int n) {
-		this.i++;
-		return mod(this.x[this.i], n);
-	}
-	
-	/**
 	 * @param x
 	 * @param y
 	 * @return
 	 */
-	private int mod(int x, int y) {
-	    int r = x % y;
+	private double mod(double x, double y) {//TODO try without
+		double r = x % y;
 	    if(r < 0){
 	        r += y;
 	    }
 	    return r;
+	}
+	
+	/**
+	 * @param n
+	 * @return
+	 */
+	public int randomInt(int n) {
+		this.i++;
+		return (int) Math.round(mod(this.x[this.i], n));
 	}
 }

@@ -295,6 +295,13 @@ public class DummyEngine {
 		//TODO fix writing so files aren't corrupted when prog terminates in write
 		//TODO fitness to include black <=> red, then can fix seed, but twice as slow
 		
+//		Flipper flipper = new Flipper(12345);
+//		int n = Integer.MAX_VALUE;
+//		for(int i = 0; i < 46; i++){
+//			System.out.println(flipper.randomInt(n));
+//		}
+//		return;
+		
 		//Setup variables
 		//World arguments
 		//Used by the GA to train Brains

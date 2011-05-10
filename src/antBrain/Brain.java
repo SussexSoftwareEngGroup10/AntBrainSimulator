@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import utilities.Logger;
+import utilities.WarningEvent;
+
 /**
  * @author pkew20 / 57116
  * @version 1.0
@@ -159,6 +162,16 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 				put(s, new State(s, genes));
 			}
 		}
+	}
+	
+	@Override
+	public State put(Integer key, State value) {
+		if(key > maxNumOfStates){
+			Logger.log(new WarningEvent("Brain key: " + key
+				+ " for State: " + value + " > " + maxNumOfStates));
+			return value;
+		}
+		return super.put(key, value);
 	}
 	
 	/* (non-Javadoc)

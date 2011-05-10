@@ -39,7 +39,7 @@ public class GeneticAlgorithm implements Serializable {
 		superFolderPath + "\\" + "genetic_algorithm_";
 	private static final Random ran = new Random();
 	
-	private transient int saveDir;
+	private transient int instance;
 	private transient int popLen;
 	//Persistent object variables which are read and written when the object is serialised
 	private int epoch;
@@ -49,7 +49,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * 
 	 */
 	public GeneticAlgorithm() {
-		this.saveDir = instances;
+		this.instance = instances;
 		instances++;
 		this.epoch = 0;
 	}
@@ -495,7 +495,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * Delete all except latest toRetain save files
 	 */
 	public void clearSaves(int toRetain) {
-		File folder = new File(subFolderPathPrefix + this.saveDir);
+		File folder = new File(subFolderPathPrefix + this.instance);
 		//Get all .ser files in this GA's save folder
 		File[] files = folder.listFiles(new SerFilter());
 		if(files == null) return;
@@ -518,7 +518,7 @@ public class GeneticAlgorithm implements Serializable {
 		if(!superFolder.exists()) superFolder.mkdir();
 		
 		//Setup save subFolder
-		String subFolderPath = subFolderPathPrefix + this.saveDir;
+		String subFolderPath = subFolderPathPrefix + this.instance;
 		File subFolder = new File(subFolderPath); 
 		subFolder.mkdir();
 		
@@ -638,7 +638,7 @@ public class GeneticAlgorithm implements Serializable {
 		}
 		
 		//Transient variables
-		this.saveDir = instances;
+		this.instance = instances;
 		instances++;
 		this.popLen = this.population.length;
 	}

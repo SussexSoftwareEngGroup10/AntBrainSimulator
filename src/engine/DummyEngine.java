@@ -333,8 +333,6 @@ public class DummyEngine {
 	}
 	
 	/**
-	 * Phil: I have implemented the below methods, I hope that's what you meant me to do
-	 * 
 	 * @return
 	 */
 	public World generateWorld() {
@@ -342,23 +340,12 @@ public class DummyEngine {
 	}
 	
 	/**
-	 * Phil: the way I've coded the colours, black comes first, but I can change this if needed
-	 * Also, what do you want to happen if there's a draw? At the moment, null is returned
-	 * 
 	 * @param blackBrain
 	 * @param redBrain
 	 * @param world
 	 * @return
 	 */
 	public Brain simulate(Brain blackBrain, Brain redBrain, World world) {
-		//Setup world
-		//Seed is also used to determine ant moves,
-		//so exactly the same simulation can be replayed
-		//could use a seeded world for every GA game,
-		//(possibly) fairer and quicker, but less random, evolution
-		//more efficient to test all GA population brains against
-		//the absoluteTrainingBrain with seed == 1
-		
 		//Setup brains
 		world.setBrain(blackBrain, 0);
 		world.setBrain(redBrain, 1);
@@ -369,15 +356,15 @@ public class DummyEngine {
 		new Simulation(blackBrain, redBrain, null, 0, world, this.rounds).run();
 		
 		//Ant results
-		Ant[][] antPlayers = world.getAntsBySpecies();
+		Ant[][] antsBySpecies = world.getAntsBySpecies();
 		int[] survivors = world.survivingAntsBySpecies();
 		if(survivors.length > 0){
-			int blackAnts = antPlayers[0].length;
+			int blackAnts = antsBySpecies[0].length;
 			Logger.log(new InformationHighEvent("Surviving black ants: "
 				+ survivors[0] + "/" + blackAnts));
 		}
 		if(survivors.length > 1){
-			int redAnts = antPlayers[1].length;
+			int redAnts = antsBySpecies[1].length;
 			Logger.log(new InformationHighEvent("Surviving red   ants: "
 				+ survivors[1] + "/" + redAnts  ));
 		}

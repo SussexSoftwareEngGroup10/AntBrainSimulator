@@ -161,8 +161,9 @@ public class GeneticAlgorithm implements Serializable {
 			save();
 			//Write best brain so far to file
 			Brain b = this.population[this.popLen - 1].clone();
+			BrainParser.writeBrainTo(b, "ga_result_full");
 			b.trim();
-			BrainParser.writeBrainTo(b, "ga_result");
+			BrainParser.writeBrainTo(b, "ga_result_trimmed");
 			
 			//Start next epoch
 			Logger.log(new InformationLowEvent("Beginning epoch " + this.epoch));
@@ -204,8 +205,9 @@ public class GeneticAlgorithm implements Serializable {
 		}
 		//Write best brain so far to file
 		Brain b = this.population[this.popLen - 1].clone();
+		BrainParser.writeBrainTo(b, "ga_result_full");
 		b.trim();
-		BrainParser.writeBrainTo(b, "ga_result");
+		BrainParser.writeBrainTo(b, "ga_result_trimmed");
 		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
 	}
 	

@@ -80,8 +80,8 @@ public class GameDisplay extends PApplet {
 		blackAnt = loadImage("resources/ant.png");
 		
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 100;
-		numHexRow = 100;
+		numHexCol = 10;
+		numHexRow = 10;
 		
 		//Calculates what the size of the hexagons will be using both the height and the width, it then uses the one
 		//whicth doesn't force the hexaons off the edge of the game display.

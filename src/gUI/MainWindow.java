@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.io.File;
 import utilities.*;
 import engine.DummyEngine;
-import antWorld.World;
 
 /**
  * This class displays the main window GUI.  It display a window with the main

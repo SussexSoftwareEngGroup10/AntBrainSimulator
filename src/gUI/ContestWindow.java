@@ -99,11 +99,11 @@ public class ContestWindow {
 		
 		JPanel goPanel = new JPanel();
 		goPanel.setLayout(new FlowLayout());
+		JButton goBtn = new JButton("Go");
 		JButton cancelBtn = new JButton("Cancel");
 		cancelBtn.addActionListener(new CloseListener());
-		JButton goBtn = new JButton("Go");
-		goPanel.add(cancelBtn);
 		goPanel.add(goBtn);
+		goPanel.add(cancelBtn);
 		pane.add(goPanel, BorderLayout.SOUTH);
 		
 		//Pack the window so that the size varies based on the number of

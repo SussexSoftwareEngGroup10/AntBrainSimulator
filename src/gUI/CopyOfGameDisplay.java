@@ -24,8 +24,11 @@ public class CopyOfGameDisplay extends PApplet {
 	private PImage grassTileMedium;
 	private PImage grassTileSmall;
 	private PImage blackAnt;
+	
+	public enum ImageDrawScales { SMALL, MEDIUM, LARGE }
+	private ImageDrawScales currentImageScale = ImageDrawScales.MEDIUM;
 		
-	ZoomPan zoomer; //Class for zooming and panning
+	private ZoomPan zoomer; //Class for zooming and panning
 	
 	/*
 	 * Image below shows the variable which denote hexagon dimensions.
@@ -69,8 +72,8 @@ public class CopyOfGameDisplay extends PApplet {
 		pixelHeight = 700;
 		
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 80;
-		numHexRow = 139;
+		numHexCol = 104;
+		numHexRow = 140;
 
 		hexWidth = 35;
 		hexHeight = 40;
@@ -169,20 +172,23 @@ public class CopyOfGameDisplay extends PApplet {
 		//TODO: this formula doesn't always apply when there are larger numbers of hex
 		//TODO: add upper and lower bounds to if statement where camera won't soom
 		
+		System.out.println(zoomer.getZoomScale() * (numHexCol / 2));
 		//System.out.println(zoomer.getZoomScale());
 		//System.out.println(zoomer.getPanOffset());
 		
 		//Work out which size images to use.
-		PImage tile;
-		if (zoomer.getZoomScale() * (numHexCol / 2) > 17) {
+		updateImageScale();
+		PImage tile; //TODO: refactor into helper method
+		if (currentImageScale == ImageDrawScales.LARGE) {
 			tile = grassTileLarge;
 		}
-		else if (zoomer.getZoomScale() * (numHexCol / 2) > 4.5){
+		else if (currentImageScale == ImageDrawScales.MEDIUM) {
 			tile = grassTileMedium;
 		}
 		else {
 			tile = grassTileSmall;
 		}
+		
 		//Draw hexagons
 		background(0);
 		for (int row = 0; row < numHexRow; row++) {
@@ -205,6 +211,56 @@ public class CopyOfGameDisplay extends PApplet {
 			}
 		}
 		*/
+	}
+	
+	/*
+	 * Updates the scale at which images should be drawn for.
+	 */
+	private void updateImageScale() {
+		if (numHexCol < 35) {
+			if (zoomer.getZoomScale() * (numHexCol / 2) > 16.5) {
+				currentImageScale = ImageDrawScales.LARGE;
+			}
+			else if (zoomer.getZoomScale() * (numHexCol / 2) > 4.3){
+				currentImageScale = ImageDrawScales.MEDIUM;
+			}
+			else {
+				currentImageScale = ImageDrawScales.SMALL;
+			}
+		}
+		else if (numHexCol < 70) {
+			if (zoomer.getZoomScale() * (numHexCol / 2) > 22.2) {
+				currentImageScale = ImageDrawScales.LARGE;
+			}
+			else if (zoomer.getZoomScale() * (numHexCol / 2) > 7.6){
+				currentImageScale = ImageDrawScales.MEDIUM;
+			}
+			else {
+				currentImageScale = ImageDrawScales.SMALL;
+			}
+		}
+		else if (numHexCol < 105) {
+			if (zoomer.getZoomScale() * (numHexCol / 2) > 32.6) {
+				currentImageScale = ImageDrawScales.LARGE;
+			}
+			else if (zoomer.getZoomScale() * (numHexCol / 2) > 13){
+				currentImageScale = ImageDrawScales.MEDIUM;
+			}
+			else {
+				currentImageScale = ImageDrawScales.SMALL;
+			}
+		}
+		else {
+			if (zoomer.getZoomScale() * (numHexCol / 2) > 44.4) {
+				currentImageScale = ImageDrawScales.LARGE;
+			}
+			else if (zoomer.getZoomScale() * (numHexCol / 2) > 22.4){
+				currentImageScale = ImageDrawScales.MEDIUM;
+			}
+			else {
+				currentImageScale = ImageDrawScales.SMALL;
+			}
+		}
 	}
 
 	//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)

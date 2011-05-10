@@ -1,6 +1,7 @@
 package gUI;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -118,8 +119,14 @@ public class WorldGenerateWindow {
 		worldParametersPanel.add(rocksSelectPanel);
 		worldParamsAndGeneratePanel.add(worldParametersPanel, BorderLayout.NORTH);
 		
-		JButton generateBtn = new JButton("Generate!");
-		worldParamsAndGeneratePanel.add(generateBtn, BorderLayout.CENTER);
+		JPanel generatePanel = new JPanel();
+		generatePanel.setLayout(new FlowLayout());
+		JButton generateBtn = new JButton("Generate");
+		JButton cancelBtn = new JButton("Cancel");
+		cancelBtn.addActionListener(new CloseListener());
+		generatePanel.add(generateBtn);
+		generatePanel.add(cancelBtn);
+		worldParamsAndGeneratePanel.add(generatePanel, BorderLayout.CENTER);
 		
 		pane.add(worldParamsAndGeneratePanel, BorderLayout.SOUTH);
 		

@@ -9,7 +9,7 @@ import javax.swing.*;
  * 
  * @author will
  */
-public class CloseListener implements ActionListener {
+class CloseListener implements ActionListener {
 
 	/**
 	 * Closes the window.

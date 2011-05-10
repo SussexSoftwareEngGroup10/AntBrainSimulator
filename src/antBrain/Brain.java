@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author pkew20 / 57116
@@ -232,10 +234,11 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	 * @throws IOException
 	 */
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeInt(size());
-		for(Integer key : keySet()){
-			out.writeInt(key);
-			out.writeObject(get(key));
+		Set<Map.Entry<Integer, State>> entrySet = entrySet();
+		out.writeInt(entrySet.size());
+		for(Map.Entry<Integer, State> entry : entrySet){
+			out.writeInt(entry.getKey());
+			out.writeObject(entry.getValue());
 		}
 		for(int i : this.fitnesses){
 			out.writeInt(i);

@@ -522,14 +522,18 @@ public class GeneticAlgorithm implements Serializable {
 		File subFolder = new File(subFolderPath); 
 		subFolder.mkdir();
 		
-		String filePath = subFolderPath + "\\epoch_" + this.epoch + ".ser";
+		String epochString = Integer.toString(this.epoch);
+		while(epochString.length() < 5){
+			epochString = "0" + epochString;
+		}
+		String filePath = subFolderPath + "\\epoch_" + epochString + ".ser";
 		
 		//Write this object to path
 		try{
 			writeObject(new ObjectOutputStream(new FileOutputStream(filePath)));
 		}catch(FileNotFoundException e){
 			Logger.log(new IOEvent("Save file: \""
-				+ filePath + " not found", e));
+				+ filePath + "\" not found", e));
 		}catch(IOException e){
 			Logger.log(new IOEvent(e.getMessage(), e));
 		}

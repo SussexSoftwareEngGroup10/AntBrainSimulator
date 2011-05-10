@@ -35,18 +35,6 @@ import antWorld.World;
  * @version 1.0
  */
 public class DummyEngine {
-	//World arguments
-	private int seed;
-	private int rows;
-	private int cols;
-	private int rocks;
-	private int anthills;
-	private int anthillSideLength;
-	private int foodBlobCount;
-	private int foodBlobSideLength;
-	private int foodBlobCellFoodCount;
-	private int antInitialDirection;
-	
 	//Simulation arguments
 	private int rounds;
 	
@@ -67,19 +55,7 @@ public class DummyEngine {
 	 * @param antInitialDirection
 	 * @param rounds
 	 */
-	public DummyEngine(int seed, int rows, int cols, int rocks, int anthills,
-		int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection, int rounds) {
-		this.seed = seed;
-		this.rows = rows;
-		this.cols = cols;
-		this.rocks = rocks;
-		this.anthills = anthills;
-		this.anthillSideLength = anthillSideLength;
-		this.foodBlobCount = foodBlobCount;
-		this.foodBlobSideLength = foodBlobSideLength;
-		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
-		this.antInitialDirection = antInitialDirection;
+	public DummyEngine(int rounds) {
 		this.rounds = rounds;
 		
 		Logger.log(new InformationLowEvent("New Engine object constructed"));
@@ -204,7 +180,7 @@ public class DummyEngine {
 		//Set fitness for every brain in population
 		for(Brain brain : population){
 			if(brain.getFitness() == 0){
-				//Not in elite
+				//Brain is not in elite
 				//Absolute fitness tests
 				threadPoolExecutor.execute(
 					new Simulation(this.absoluteTrainingBrain, brain, semaphore, 0));
@@ -219,62 +195,9 @@ public class DummyEngine {
 			threadPoolExecutor.execute(
 				new Simulation(brain, relativeTrainingBrain, semaphore, 3));
 		}
-		
-		//Await completion of all calls
+		//Await completion of all Simulations
 		semaphore.acquireUninterruptibly(population.length * 4);
 		semaphore.release(population.length * 4);
-		
-//		//Single-Threaded
-//		Brain brain;
-//		int i;
-//		for(i = 0; i < population.length; i++){
-//			brain = population[i];
-//			//Brains from previous contests may remain in the elite
-//			//their fitness does not need to be calculated again
-//			//Only if the fitness test is the same every time,
-//			//i.e. tested against the same brain
-//			if(brain.getFitness() == 0){
-//				brain.setFitness(evaluateFitnessContestSimulation(
-//					absoluteTrainingBrain, brain, rounds));
-//			}
-//		}
-	}
-	
-	/**
-	 * Single-threaded basic version of simulation in separate method
-	 * 
-	 * @param bestBrain
-	 * @param brain
-	 * @param rounds
-	 * @return
-	 */
-	@SuppressWarnings("unused")
-	private int evaluateFitnessContestSimulation(Brain bestBrain, Brain brain, int rounds) {
-		//Using a seed to construct a random means the worlds generated will be more
-		//uniform than using cloning, which seems to be slightly slower for some reason
-		World world = new World(this.seed, this.rows, this.cols, this.rocks, this.anthills,
-			this.anthillSideLength, this.foodBlobCount, this.foodBlobSideLength,
-			this.foodBlobCellFoodCount, this.antInitialDirection);
-		//World now has better brain at 0, GA brain at 1
-		world.setBrain(bestBrain, 0);
-		world.setBrain(brain, 1);
-		
-		Ant[] ants = world.getAnts();
-		
-		//Run the simulation
-		Logger.log(new InformationLowEvent("Begun simulation"));
-		
-		for(int r = 0; r < rounds ; r++){
-			for(Ant ant : ants){
-				//For efficiency, alive check is in step(),
-				//And surrounded checks and kill are called after move()
-				ant.step();
-			}
-		}
-		
-		//Fitness of the GA brain = its food - opponent's food
-		int[] anthillFood = world.getFoodInAnthills();
-		return anthillFood[1] - anthillFood[0];
 	}
 	
 	/**
@@ -292,17 +215,7 @@ public class DummyEngine {
 		//TODO multithread breed() and trim()
 		//TODO test kills and food fitness
 		//TODO use jar on linux server
-		//TODO fix writing so files aren't corrupted when prog terminates in write
-		//TODO fitness to include black <=> red, then can fix seed, but twice as slow
-		//TODO fix io
 		//TODO fix save clear order
-		
-//		Flipper flipper = new Flipper(12345);
-//		int n = Integer.MAX_VALUE;
-//		for(int i = 0; i < 46; i++){
-//			System.out.println(flipper.randomInt(n));
-//		}
-//		return;
 		
 		//Setup variables
 		//World arguments
@@ -351,9 +264,7 @@ public class DummyEngine {
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
 		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
-		DummyEngine dummyEngine = new DummyEngine(trainSeed, rows, cols, rocks, anthills,
-			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
-			antInitialDirection, rounds);
+		DummyEngine dummyEngine = new DummyEngine(rounds);
 		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain, epochs,
 			rounds, popLen, elite, mutationRate);
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result");

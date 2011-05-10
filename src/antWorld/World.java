@@ -7,31 +7,6 @@ import utilities.Logger;
 
 import antBrain.Brain;
 
-/*
-Terrain types:
-#        rocky cell
-.        clear cell (containing nothing interesting)
-+        red anthill cell
--        black anthill cell
-1 to 9   clear cell containing the given number of food particles
-*/
-
-/*
-Example World:
-	10
-	10
-	# # # # # # # # # #
-	 # 9 9 . . . . 3 3 #
-	# 9 # . - - - - - #
-	 # . # - - - - - - #
-	# . . 5 - - - - - #
-	 # + + + + + 5 . . #
-	# + + + + + + # . #
-	 # + + + + + . # 9 #
-	# 3 3 . . . . 9 9 #
-	 # # # # # # # # # #
-*/
-
 /**
  * @author pkew20 / 57116
  * @version 1.0
@@ -54,7 +29,7 @@ public class World {
 	
 	private final int antInitialDirection;
 	
-	private static final int gap = 1; //gap between objects in world
+	private final int gap; //gap between objects in world
 	
 	private Cell[][] cells; //indent every second line, starting at cells[1]
 	
@@ -92,7 +67,7 @@ public class World {
 	 * @return
 	 */
 	public static World getRegularWorld(int seed, int rows, int cols, int rocks) {
-		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0);
+		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0, 1);
 	}
 	
 	/**
@@ -114,7 +89,7 @@ public class World {
 	 */
 	public World(int seed, int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection) {
+		int foodBlobCellFoodCount, int antInitialDirection, int gap) {
 		//Can either use a random or predefined seed
 		if(seed == 0){
 			this.seed = (int) (Math.random() * Integer.MAX_VALUE + 1);
@@ -132,6 +107,7 @@ public class World {
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		this.antInitialDirection = antInitialDirection;
+		this.gap = gap;
 		
 		//Initialise every cell to be clear
 		int r = 0;
@@ -202,6 +178,7 @@ public class World {
 		//(however, there may be more than 1 anthill for each species)
 		//Food blobs are square, and all have the same side length
 		//All cells which contain food contain the same amount of food
+		//Gap == 1
 		
 		//Confirmed works for tournament worlds,
 		//getAttributes on generated world,
@@ -280,6 +257,7 @@ public class World {
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		this.antInitialDirection = 0;
+		this.gap = 1;
 		
 		//Setup markers in each cell
 		//Use this. for fields, local variables created above
@@ -500,7 +478,7 @@ public class World {
 		int c = 0;
 		
 		//First column + gap
-		for(c = 0; c < gap + 1; c++){
+		for(c = 0; c < this.gap + 1; c++){
 			for(r = 0; r < this.rows; r++){
 				if(this.cells[r][c].toChar() != '.'){
 					return false;
@@ -509,7 +487,7 @@ public class World {
 		}
 		
 		//Last column + gap
-		for(c = this.cols - 1 - gap; c < this.cols; c++){
+		for(c = this.cols - 1 - this.gap; c < this.cols; c++){
 			for(r = 0; r < this.rows; r++){
 				if(this.cells[r][c].toChar() != '.'){
 					return false;
@@ -518,7 +496,7 @@ public class World {
 		}
 		
 		//First row + gap
-		for(r = 0; r < gap + 1; r++){
+		for(r = 0; r < this.gap + 1; r++){
 			for(c = 0; c < this.rows; c++){
 				if(this.cells[r][c].toChar() != '.'){
 					return false;
@@ -527,7 +505,7 @@ public class World {
 		}
 		
 		//Last row + gap
-		for(r = this.rows - 1 - gap; r < this.rows; r++){
+		for(r = this.rows - 1 - this.gap; r < this.rows; r++){
 			for(c = 0; c < this.rows; c++){
 				if(this.cells[r][c].toChar() != '.'){
 					return false;
@@ -548,7 +526,7 @@ public class World {
 			Cell centre = this.cells[row][col];
 			
 			try{
-				return checkHexClearRecurse(centre, 0, sideLength + gap);
+				return checkHexClearRecurse(centre, 0, sideLength + this.gap);
 			}catch(ArrayIndexOutOfBoundsException e){
 				return false;
 			}
@@ -596,8 +574,8 @@ public class World {
 		int c = 0;
 		
 		try{
-			for(r = row - gap; r < row + height + gap; r++){
-				for(c = col - gap; c < col + width + gap; c++){
+			for(r = row - this.gap; r < row + height + this.gap; r++){
+				for(c = col - this.gap; c < col + width + this.gap; c++){
 					if(this.cells[r][c].toChar() != '.'){
 						return false;
 					}
@@ -619,8 +597,8 @@ public class World {
 		int r = 0;
 		int c = 0;
 		
-		for(r = row - gap; r <= row + gap; r++){
-			for(c = col - gap; c <= col + gap; c++){
+		for(r = row - this.gap; r <= row + this.gap; r++){
+			for(c = col - this.gap; c <= col + this.gap; c++){
 				if(this.cells[r][c].toChar() != '.'){
 					return false;
 				}
@@ -879,6 +857,22 @@ public class World {
 		return survivors;
 	}
 	
+	public boolean isContest() {
+		if(this.rows == 140
+		&& this.cols == 140
+		&& this.rocks == 13
+		&& this.anthills == 2
+		&& this.anthillSideLength == 7
+		&& this.foodBlobCount == 10
+		&& this.foodBlobSideLength == 5
+		&& this.foodBlobCellFoodCount == 5
+		&& this.antInitialDirection == 0
+		&& this.gap == 1){
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * @return
 	 */
@@ -896,7 +890,7 @@ public class World {
 		s += "\nfood blob side length: " + this.foodBlobSideLength;
 		s += "\nfood blob cell food count: " + this.foodBlobCellFoodCount;
 		s += "\nant initial direction: " + this.antInitialDirection;
-		s += "\ngap: " + gap;
+		s += "\ngap: " + this.gap;
 		s += "\nants: ";
 		for(i = 0; i < this.antsBySpecies.length; i++){
 			s += this.antsBySpecies[i].length;

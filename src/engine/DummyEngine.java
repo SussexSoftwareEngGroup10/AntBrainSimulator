@@ -35,15 +35,31 @@ import antWorld.World;
  * @version 1.0
  */
 public class DummyEngine {
-	//Simulation arguments
+	private int trainSeed;
+	private int testSeed;
+	private int rows;
+	private int cols;
+	private int rocks;
+	private int anthills;
+	private int anthillSideLength;
+	private int foodBlobCount;
+	private int foodBlobSideLength;
+	private int foodBlobCellFoodCount;
+	private int antInitialDirection;
+	private int epochs;
 	private int rounds;
+	private int popLen;
+	private int elite;
+	private int mutationRate;
+	private int gap;
 	
 	//GA variables
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
 	private Brain absoluteTrainingBrain;
 	
 	/**
-	 * @param seed
+	 * @param trainSeed
+	 * @param testSeed
 	 * @param rows
 	 * @param cols
 	 * @param rocks
@@ -53,10 +69,21 @@ public class DummyEngine {
 	 * @param foodBlobSideLength
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
+	 * @param epochs
 	 * @param rounds
+	 * @param popLen
+	 * @param elite
+	 * @param mutationRate
 	 */
-	public DummyEngine(int rounds) {
-		this.rounds = rounds;
+	public DummyEngine(int trainSeed, int testSeed, int rows, int cols, int rocks,
+		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
+		int foodBlobCellFoodCount, int antInitialDirection, int epochs, int rounds,
+		int popLen, int elite, int mutationRate) {
+		
+		setVariables(trainSeed, testSeed, rows, cols, rocks,
+		anthills, anthillSideLength, foodBlobCount, foodBlobSideLength,
+		foodBlobCellFoodCount, antInitialDirection, epochs, rounds,
+		popLen, elite, mutationRate);
 		
 		Logger.log(new InformationLowEvent("New Engine object constructed"));
 	}
@@ -110,24 +137,18 @@ public class DummyEngine {
 	/**
 	 * @param startBrain
 	 * @param trainingBrain
-	 * @param epochs
-	 * @param rounds
-	 * @param popLen
-	 * @param elite
-	 * @param mutationRate
 	 * @return
 	 */
-	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int epochs,
-		int rounds, int popLen, int elite, int mutationRate) {
+	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain) {
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(popLen * 4));
-		Semaphore semaphore = new Semaphore(popLen * 4, true);
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(this.popLen * 4));
+		Semaphore semaphore = new Semaphore(this.popLen * 4, true);
 		
 		this.absoluteTrainingBrain = trainingBrain;
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-		geneticAlgorithm.createPopulation(startBrain, popLen);
+		geneticAlgorithm.createPopulation(startBrain, this.popLen);
 		geneticAlgorithm.evolve(this, threadPoolExecutor, semaphore,
-			epochs, rounds, elite, mutationRate);
+			this.epochs, this.rounds, this.elite, this.mutationRate);
 		return geneticAlgorithm.getBestBrain();
 	}
 	
@@ -183,21 +204,87 @@ public class DummyEngine {
 				//Brain is not in elite
 				//Absolute fitness tests
 				threadPoolExecutor.execute(
-					new Simulation(this.absoluteTrainingBrain, brain, semaphore, 0));
+					new Simulation(this.absoluteTrainingBrain, brain, semaphore, 0,
+							this.trainSeed, this.rows, this.cols, this.rocks, this.anthills,
+							this.anthillSideLength, this.foodBlobCount,
+							this.foodBlobSideLength, this.foodBlobCellFoodCount,
+							this.antInitialDirection, this.gap, this.rounds));
 				threadPoolExecutor.execute(
-					new Simulation(brain, this.absoluteTrainingBrain, semaphore, 1));
+					new Simulation(brain, this.absoluteTrainingBrain, semaphore, 1,
+						this.trainSeed, this.rows, this.cols, this.rocks, this.anthills,
+						this.anthillSideLength, this.foodBlobCount,
+						this.foodBlobSideLength, this.foodBlobCellFoodCount,
+						this.antInitialDirection, this.gap, this.rounds));
 			}else{
 				semaphore.release(2);
 			}
 			//Relative fitness tests
 			threadPoolExecutor.execute(
-				new Simulation(relativeTrainingBrain, brain, semaphore, 2));
+				new Simulation(relativeTrainingBrain, brain, semaphore, 2,
+					this.trainSeed, this.rows, this.cols, this.rocks, this.anthills,
+					this.anthillSideLength, this.foodBlobCount,
+					this.foodBlobSideLength, this.foodBlobCellFoodCount,
+					this.antInitialDirection, this.gap, this.rounds));
 			threadPoolExecutor.execute(
-				new Simulation(brain, relativeTrainingBrain, semaphore, 3));
+				new Simulation(brain, relativeTrainingBrain, semaphore, 3,
+					this.trainSeed, this.rows, this.cols, this.rocks, this.anthills,
+					this.anthillSideLength, this.foodBlobCount,
+					this.foodBlobSideLength, this.foodBlobCellFoodCount,
+					this.antInitialDirection, this.gap, this.rounds));
 		}
 		//Await completion of all Simulations
 		semaphore.acquireUninterruptibly(population.length * 4);
 		semaphore.release(population.length * 4);
+	}
+	
+	/**
+	 * @return
+	 */
+	public World getWorld() {
+		return new World(this.testSeed, this.rows, this.cols,
+			this.rocks, this.anthills, this.anthillSideLength, this.foodBlobCount,
+			this.foodBlobSideLength, this.foodBlobCellFoodCount,
+			this.antInitialDirection, this.gap);
+	}
+	
+	/**
+	 * @param trainSeed
+	 * @param testSeed
+	 * @param rows
+	 * @param cols
+	 * @param rocks
+	 * @param anthills
+	 * @param anthillSideLength
+	 * @param foodBlobCount
+	 * @param foodBlobSideLength
+	 * @param foodBlobCellFoodCount
+	 * @param antInitialDirection
+	 * @param epochs
+	 * @param rounds
+	 * @param popLen
+	 * @param elite
+	 * @param mutationRate
+	 */
+	public void setVariables(int trainSeed, int testSeed, int rows, int cols, int rocks,
+		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
+		int foodBlobCellFoodCount, int antInitialDirection, int epochs, int rounds,
+		int popLen, int elite, int mutationRate) {
+		this.trainSeed = trainSeed;
+		this.testSeed = testSeed;
+		this.rows = rows;
+		this.cols = cols;
+		this.rocks = rocks;
+		this.anthills = anthills;
+		this.anthillSideLength = anthillSideLength;
+		this.foodBlobCount = foodBlobCount;
+		this.foodBlobSideLength = foodBlobSideLength;
+		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		this.antInitialDirection = antInitialDirection;
+		this.epochs = epochs;
+		this.rounds = rounds;
+		this.popLen = popLen;
+		this.elite = elite;
+		this.mutationRate = mutationRate;
 	}
 	
 	/**
@@ -217,42 +304,9 @@ public class DummyEngine {
 		//TODO use jar on linux server
 		//TODO fix save clear order
 		
-		//Setup variables
-		//World arguments
-		//Used by the GA to train Brains
-		int trainSeed = 1;
-		//Used here to test resulting Brain
-		int testSeed = 0;
-		int rows = 140;
-		int cols = 140;
-		int rocks = 13;
-		int anthills = 2;
-		//More means more ants, which is slower
-		int anthillSideLength = 7;
-		int foodBlobCount = 10;
-		int foodBlobSideLength = 5;
-		int foodBlobCellFoodCount = 5;
-		int antInitialDirection = 0;
-		
-		//GA arguments
-		//More is slower, and more likely to generate an improved brain
-		int epochs = Integer.MAX_VALUE;
-		//More is slower, and increases the accuracy of the GA
-		int rounds = 300000;
-		//More is slower, and searches more of the search space for brains
-		int popLen = 50;
-		//More is faster, but increases the likelihood of getting stuck
-		//with lucky starting brain
-		int elite = popLen / 10;
-		//More is less change per epoch
-		int mutationRate = 10;
-		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
-		Simulation.setValues(trainSeed, rows, cols, rocks, anthills,
-			anthillSideLength, foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
-			antInitialDirection, rounds);
 		
 		//Black is the default brain, read in from file
 		//Red is the best one found by the GeneticAlgorithm with parameters specified
@@ -264,16 +318,39 @@ public class DummyEngine {
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
 		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
-		DummyEngine dummyEngine = new DummyEngine(rounds);
-		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain, epochs,
-			rounds, popLen, elite, mutationRate);
+		DummyEngine dummyEngine = new DummyEngine(1, 0, 140, 140, 13, 2, 7, 10, 5, 5, 0,
+			Integer.MAX_VALUE, 300000, 50, 50 / 10, 10);
+		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain);
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result");
 		
 		//Compact and remove null and unreachable states
 		trainingBrain.trim();
 		gaBrain.trim();
 		
+		dummyEngine.simulate(trainingBrain, gaBrain, dummyEngine.getWorld());
 		
+		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
+	}
+	
+	/**
+	 * Phil: I have implemented the below methods, I hope that's what you meant me to do
+	 * 
+	 * @return
+	 */
+	public World generateWorld() {
+		return World.getContestWorld(0);	//random seeded contest world
+	}
+	
+	/**
+	 * Phil: the way I've coded the colours, black comes first, but I can change this if needed
+	 * Also, what do you want to happen if there's a draw? At the moment, null is returned
+	 * 
+	 * @param blackBrain
+	 * @param redBrain
+	 * @param world
+	 * @return
+	 */
+	public Brain simulate(Brain blackBrain, Brain redBrain, World world) {
 		//Setup world
 		//Seed is also used to determine ant moves,
 		//so exactly the same simulation can be replayed
@@ -281,25 +358,15 @@ public class DummyEngine {
 		//(possibly) fairer and quicker, but less random, evolution
 		//more efficient to test all GA population brains against
 		//the absoluteTrainingBrain with seed == 1
-		World world = new World(testSeed, rows, cols, rocks, anthills,
-			anthillSideLength, foodBlobCount, foodBlobSideLength,
-			foodBlobCellFoodCount, antInitialDirection);
 		
 		//Setup brains
-		world.setBrain(trainingBrain, 0);	//black
-		world.setBrain(gaBrain, 1);		//red
-		
-		Ant[] ants = world.getAnts();
+		world.setBrain(blackBrain, 0);
+		world.setBrain(redBrain, 1);
 		
 		//Run the simulation, test the Brain result from the GA against bestBrain
-		int r = 0;
 		Logger.log(new InformationLowEvent("Begun simulation"));
 		
-		for(r = 0; r < rounds; r++){
-			for(Ant ant : ants){
-				ant.step();
-			}
-		}
+		new Simulation(blackBrain, redBrain, null, 0, world, this.rounds).run();
 		
 		//Ant results
 		Ant[][] antPlayers = world.getAntsBySpecies();
@@ -326,53 +393,8 @@ public class DummyEngine {
 				+ anthillFood[1]));
 		}
 		
-		System.out.println(world);
-		System.out.println("---better_example.brain---\n" + trainingBrain);
-		System.out.println("---ga_result.brain---\n" + gaBrain);
-		
-		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
-	}
-	
-	/**
-	 * Phil: I have implemented the below methods, I hope that's what you meant me to do
-	 * 
-	 * @return
-	 */
-	public World generateWorld() {
-		return World.getContestWorld(0);	//random seeded contest world
-	}
-	
-	/**
-	 * Phil: the way I've coded the colours, black comes first, but I can change this if needed
-	 * Also, what do you want to happen if there's a draw? At the moment, null is returned
-	 * 
-	 * @param blackBrain
-	 * @param redBrain
-	 * @param world
-	 * @return
-	 */
-	public Brain run(Brain blackBrain, Brain redBrain, World world) {
-		//World now has better brain at 0, GA brain at 1
-		world.setBrain(blackBrain, 0);
-		world.setBrain(redBrain, 1);
-		
-		Ant[] ants = world.getAnts();
-		
-		for(int r = 0; r < this.rounds ; r++){
-			for(Ant ant : ants){
-				ant.step();
-			}
-		}
-		
-		int[] anthillFood = world.getFoodInAnthills();
-		//Black wins
-		if(anthillFood[0] > anthillFood[1]){
-			return blackBrain;
-		}
-		//Red wins
-		if(anthillFood[1] > anthillFood[0]){
-			return redBrain;
-		}
+		if(blackBrain.getFitness() > redBrain.getFitness()) return blackBrain;
+		if(redBrain.getFitness() > blackBrain.getFitness()) return redBrain;
 		return null;
 	}
 }

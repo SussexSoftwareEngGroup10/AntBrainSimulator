@@ -34,10 +34,10 @@ public final class WorldParser {
 		World world = null;
 		String[] rowCellStrings;
 		char[][] cellChars;
-		int rows = 0;
-		int cols = 0;
-		int r = 0;
-		int c = 0;
+		int rows;
+		int cols;
+		int r;
+		int c;
 		
 		try{
 			br = new BufferedReader(new FileReader(f));

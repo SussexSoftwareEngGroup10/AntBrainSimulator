@@ -534,6 +534,8 @@ public class GeneticAlgorithm implements Serializable {
 		//Write this object to path
 		try{
 			writeObject(new ObjectOutputStream(new FileOutputStream(filePath)));
+			Logger.log(new InformationNormEvent("Completed serializing GeneticAlgorithm " +
+				"object to " + filePath));
 		}catch(FileNotFoundException e){
 			Logger.log(new IOEvent("Save file: \""
 				+ filePath + "\" not found", e));
@@ -597,18 +599,21 @@ public class GeneticAlgorithm implements Serializable {
 		String fileName = filePathPrefix + maxFilePath + filePathSuffix;
 		File loadFile = new File(fileName);
 		load(loadFile);
+		
 		return true;
 	}
 	
 	/**
 	 * @param loadFile read the file specified and alter object variables accordingly
 	 */
-	private void load(File loadFile) {
+	private void load(File filePath) {
 		try{
-			readObject(new ObjectInputStream(new FileInputStream(loadFile)));
+			readObject(new ObjectInputStream(new FileInputStream(filePath)));
+			Logger.log(new InformationNormEvent("Completed deserializing GeneticAlgorithm " +
+				"object from " + filePath.getPath()));
 		}catch(FileNotFoundException e){
 			Logger.log(new IOEvent("Save file: \""
-				+ loadFile.getPath() + " not found", e));
+				+ filePath.getPath() + " not found", e));
 		}catch(ClassNotFoundException e){
 			Logger.log(new IOEvent(e.getMessage(), e));
 		}catch(IOException e){

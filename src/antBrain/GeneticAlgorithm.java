@@ -39,7 +39,7 @@ public class GeneticAlgorithm implements Serializable {
 		superFolderPath + "\\" + "genetic_algorithm_";
 	private static final Random ran = new Random();
 	
-	private transient int instance;
+	private final transient int instance;
 	private transient int popLen;
 	//Persistent object variables which are read and written when the object is serialised
 	private int epoch;
@@ -652,8 +652,6 @@ public class GeneticAlgorithm implements Serializable {
 		}
 		
 		//Transient variables
-		this.instance = instances;
-		instances++;
 		this.popLen = this.population.length;
 	}
 	

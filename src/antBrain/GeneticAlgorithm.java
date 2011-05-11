@@ -146,27 +146,6 @@ public class GeneticAlgorithm implements Serializable {
 		//After constructor, epoch == 1,
 		//after deserialisation, epoch == epoch to be run next
 		for(; this.epoch <= epochs; this.epoch++){
-			//Timing
-			Logger.log(new TimeEvent("for epoch " + (this.epoch - 1)));
-			//Does not clear garbage, doing so would increase accuracy of timing,
-			//but reduce efficiency of execution
-			Logger.restartTimer();
-			
-			//Logging
-			Logger.log(new InformationHighEvent("Completed "
-				+ (this.epoch) / (double) epochs * 100
-				+ "% of GeneticAlgorithm evolution epochs"));
-			
-			//Save every epoch,
-			//so JVM can be terminated and resumed
-			save();
-			//Write best brain so far to file
-			Brain b = this.population[this.popLen - 1].clone();
-			BrainParser.writeBrainTo(b, "ga_result_full");
-			b.trim();
-			BrainParser.writeBrainTo(b, "ga_result_trimmed");
-			
-			//Start next epoch
 			Logger.log(new InformationLowEvent("Beginning epoch " + this.epoch));
 			
 			newPop = new Brain[this.popLen];
@@ -203,6 +182,24 @@ public class GeneticAlgorithm implements Serializable {
 			this.population = newPop;
 			//Order, ready for next epoch
 			sortByFitness(seed, threadPoolExecutor, semaphore, dummyEngine);
+			
+			//Timing
+			Logger.log(new TimeEvent("for epoch " + (this.epoch - 1)));
+			Logger.restartTimer();
+			
+			//Logging
+			Logger.log(new InformationHighEvent("Completed "
+				+ (this.epoch) / (double) epochs * 100
+				+ "% of GeneticAlgorithm evolution epochs"));
+			
+			//Save every epoch,
+			//so evolve() can be terminated and resumed
+			save();
+			//Write best brain so far to file
+			Brain b = this.population[this.popLen - 1].clone();
+			BrainParser.writeBrainTo(b, "ga_result_full");
+			b.trim();
+			BrainParser.writeBrainTo(b, "ga_result_trimmed");
 		}
 		//Write best brain so far to file
 		Brain b = this.population[this.popLen - 1].clone();

@@ -18,7 +18,7 @@ public final class Logger {
 	public enum LogLevel { NO_LOGGING, ERROR_LOGGING, WARNING_LOGGING, TIME_LOGGING,
 	HIGH_LOGGING, NORM_LOGGING, LOW_LOGGING, ALL_LOGGING}
 	
-	private LogLevel logLevel = LogLevel.NO_LOGGING;
+	private LogLevel logLevel = LogLevel.ALL_LOGGING;
 	private final long startTime = System.nanoTime();
 	private long restartTime = this.startTime;
 	private final long sizeLimit = 10000000; //10MB

@@ -47,7 +47,7 @@ public final class Ant implements Comparable<Ant> {
 		this.uid = uid;
 		
 		if(ran == null){
-			this.ran = new Flipper((int) (Math.random() * Integer.MAX_VALUE + 1));
+			this.ran = new Flipper(0);
 		}else{
 			this.ran = ran;
 		}

@@ -21,6 +21,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	private static final long serialVersionUID = 1L;
 	private static final int minNumOfStates = 1;
 	private static final int maxNumOfStates = 10000;
+	private static final int fitnessLength = 4;
 	private int[] fitnesses;
 	
 	/**
@@ -28,7 +29,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	 */
 	public Brain(int initialCapacity) {
 		super(initialCapacity);
-		this.fitnesses = new int[4];
+		this.fitnesses = new int[fitnessLength];
 	}
 	
 	/**
@@ -38,7 +39,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	 */
 	protected Brain(HashMap<Integer, State> states) {
 		super(states);
-		this.fitnesses = new int[4];
+		this.fitnesses = new int[fitnessLength];
 	}
 	
 	/**
@@ -257,7 +258,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 			out.writeObject(entry.getValue());
 		}
 		
-		for(int i = 0; i < this.fitnesses.length; i++){
+		for(int i = 0; i < fitnessLength; i++){
 			out.writeInt(this.fitnesses[i]);
 		}
 	}
@@ -274,8 +275,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 			put(in.readInt(), (State) in.readObject());
 		}
 		
-		this.fitnesses = new int[4];
-		for(int i = 0; i < this.fitnesses.length; i++){
+		this.fitnesses = new int[fitnessLength];
+		for(int i = 0; i < fitnessLength; i++){
 			this.fitnesses[i] = in.readInt();
 		}
 	}

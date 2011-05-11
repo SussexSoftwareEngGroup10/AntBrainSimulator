@@ -35,8 +35,6 @@ import antWorld.World;
  * @version 1.0
  */
 public class DummyEngine {
-	private int trainSeed;
-	private int testSeed;
 	private int rows;
 	private int cols;
 	private int rocks;
@@ -75,12 +73,12 @@ public class DummyEngine {
 	 * @param elite
 	 * @param mutationRate
 	 */
-	public DummyEngine(int trainSeed, int testSeed, int rows, int cols, int rocks,
+	public DummyEngine(int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int epochs, int rounds,
 		int popLen, int elite, int mutationRate) {
 		
-		setVariables(trainSeed, testSeed, rows, cols, rocks,
+		setVariables(rows, cols, rocks,
 		anthills, anthillSideLength, foodBlobCount, foodBlobSideLength,
 		foodBlobCellFoodCount, antInitialDirection, epochs, rounds,
 		popLen, elite, mutationRate);
@@ -119,17 +117,17 @@ public class DummyEngine {
 //GeneticAlgorithm.breed()			  == epochs									== 1,000					   ==             1,000 == 1,500	  ==              1,500,000 == 0
 //population.sort()					  == epochs									== 1,000					   ==             1,000 == 1,700	  ==              1,700,000 == 0
 //BrainParser.writeBrainTo()		  == epochs									== 1,000					   ==             1,000 == 6,000	  ==              6,000,000 == 0
-//Ant.isKill()						  == epochs * ants     * popLen				== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
-//Ant()								  == epochs * ants     * popLen				== 1,000 * 250 * 100		   ==        25,000,000 == 1		  ==             25,000,000 == 0
-//World.setBrain()					  == epochs * popLen  * 2					== 1,000 * 100 * 2			   ==           200,000 == 250		  ==             50,000,000 == 0
-//Brain.setState()					  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 25		  ==            125,000,000 == 0
-//World()							  == epochs * popLen						== 1,000 * 100				   ==           100,000 == 1,750	  ==            175,000,000 == 0
-//GeneticAlgorithm.ranGenes()		  == epochs * stateNum * k					== 1,000 * 100 * 10			   ==         1,000,000 == 400		  ==            400,000,000 == 0
-//State.getValues()					  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 80		  ==            400,000,000 == 0
-//World.getFoodInAnthills()			  == epochs * popLen						== 1,000 * 100				   ==           100,000 == 6,800	  ==            680,000,000 == 0
-//GeneticAlgorithm.combineStates()	  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 700		  ==          3,500,000,000 == 0
-//GeneticAlgorithm.mutateGenes()	  == epochs * popLen  * stateNum / 2		== 1,000 * 100 * 100 / 2	   ==         5,000,000 == 300		  ==          1,500,000,000 == 0
-//Ant.setBrain()					  == epochs * ants     * popLen  * 2		== 1,000 * 250 * 100 * 2	   ==        50,000,000 == 200		  ==         10,000,000,000 == 0
+//Ant.isKill()						  == epochs * ants     * popLen				== 1,000   * 250   * 100	   ==        25,000,000 == 1		  ==             25,000,000 == 0
+//Ant()								  == epochs * ants     * popLen				== 1,000   * 250   * 100	   ==        25,000,000 == 1		  ==             25,000,000 == 0
+//World.setBrain()					  == epochs * popLen   * 2					== 1,000   * 100   * 2		   ==           200,000 == 250		  ==             50,000,000 == 0
+//Brain.setState()					  == epochs * popLen   * stateNum / 2		== 1,000   * 100   * 100 / 2   ==         5,000,000 == 25		  ==            125,000,000 == 0
+//World()							  == epochs * popLen						== 1,000   * 100			   ==           100,000 == 1,750	  ==            175,000,000 == 0
+//GeneticAlgorithm.ranGenes()		  == epochs * stateNum * k					== 1,000   * 100   * 10		   ==         1,000,000 == 400		  ==            400,000,000 == 0
+//State.getValues()					  == epochs * popLen   * stateNum / 2		== 1,000   * 100   * 100 / 2   ==         5,000,000 == 80		  ==            400,000,000 == 0
+//World.getFoodInAnthills()			  == epochs * popLen						== 1,000   * 100			   ==           100,000 == 6,800	  ==            680,000,000 == 0
+//GeneticAlgorithm.combineStates()	  == epochs * popLen   * stateNum / 2		== 1,000   * 100   * 100 / 2   ==         5,000,000 == 700		  ==          3,500,000,000 == 0
+//GeneticAlgorithm.mutateGenes()	  == epochs * popLen   * stateNum / 2		== 1,000   * 100   * 100 / 2   ==         5,000,000 == 300		  ==          1,500,000,000 == 0
+//Ant.setBrain()					  == epochs * ants     * popLen   * 2		== 1,000   * 250   * 100 * 2   ==        50,000,000 == 200		  ==         10,000,000,000 == 0
 //Ant.isAlive()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15		== N/A		
 //Ant.step()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
@@ -139,7 +137,7 @@ public class DummyEngine {
 	 * @param trainingBrain
 	 * @return
 	 */
-	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain) {
+	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int seed) {
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
 			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(this.popLen * 4));
 		Semaphore semaphore = new Semaphore(this.popLen * 4, true);
@@ -147,7 +145,7 @@ public class DummyEngine {
 		this.absoluteTrainingBrain = trainingBrain;
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		geneticAlgorithm.createPopulation(startBrain, this.popLen);
-		geneticAlgorithm.evolve(this, threadPoolExecutor, semaphore,
+		geneticAlgorithm.evolve(this, seed, threadPoolExecutor, semaphore,
 			this.epochs, this.rounds, this.elite, this.mutationRate);
 		return geneticAlgorithm.getBestBrain();
 	}
@@ -157,10 +155,10 @@ public class DummyEngine {
 	 * @param semaphore
 	 * @param population
 	 */
-	public void sortByFitness(ThreadPoolExecutor threadPoolExecutor,
+	public void sortByFitness(int seed, ThreadPoolExecutor threadPoolExecutor,
 		Semaphore semaphore, Brain[] population) {
 		//Ensure all Brains have a fitness
-		evaluateFitnessContest(threadPoolExecutor, semaphore, population);
+		evaluateFitnessContest(seed, threadPoolExecutor, semaphore, population);
 		
 		//Sort by fitnesses calculated
 		Arrays.sort(population);
@@ -171,7 +169,7 @@ public class DummyEngine {
 	 * @param semaphore
 	 * @param population
 	 */
-	private void evaluateFitnessContest(ThreadPoolExecutor threadPoolExecutor,
+	private void evaluateFitnessContest(int seed, ThreadPoolExecutor threadPoolExecutor,
 		Semaphore semaphore, Brain[] population) {
 		//Ants let each other know they've finished a step with the stepBarrier
 		//Ants let their sim know they've finished all steps with the endBarrier
@@ -204,47 +202,25 @@ public class DummyEngine {
 				//Brain is not in elite
 				//Absolute fitness tests
 				threadPoolExecutor.execute(
-					new Simulation(this.absoluteTrainingBrain, brain, semaphore, 0,
-							this.trainSeed, this.rows, this.cols, this.rocks, this.anthills,
-							this.anthillSideLength, this.foodBlobCount,
-							this.foodBlobSideLength, this.foodBlobCellFoodCount,
-							this.antInitialDirection, this.gap, this.rounds));
+					new Simulation(this, this.absoluteTrainingBrain, brain,
+						semaphore, 0, this.rounds, seed));
 				threadPoolExecutor.execute(
-					new Simulation(brain, this.absoluteTrainingBrain, semaphore, 1,
-						this.trainSeed, this.rows, this.cols, this.rocks, this.anthills,
-						this.anthillSideLength, this.foodBlobCount,
-						this.foodBlobSideLength, this.foodBlobCellFoodCount,
-						this.antInitialDirection, this.gap, this.rounds));
+					new Simulation(this, brain, this.absoluteTrainingBrain,
+						semaphore, 1, this.rounds, seed));
 			}else{
 				semaphore.release(2);
 			}
 			//Relative fitness tests
 			threadPoolExecutor.execute(
-				new Simulation(relativeTrainingBrain, brain, semaphore, 2,
-					this.trainSeed, this.rows, this.cols, this.rocks, this.anthills,
-					this.anthillSideLength, this.foodBlobCount,
-					this.foodBlobSideLength, this.foodBlobCellFoodCount,
-					this.antInitialDirection, this.gap, this.rounds));
+				new Simulation(this, relativeTrainingBrain, brain,
+					semaphore, 2, this.rounds, seed));
 			threadPoolExecutor.execute(
-				new Simulation(brain, relativeTrainingBrain, semaphore, 3,
-					this.trainSeed, this.rows, this.cols, this.rocks, this.anthills,
-					this.anthillSideLength, this.foodBlobCount,
-					this.foodBlobSideLength, this.foodBlobCellFoodCount,
-					this.antInitialDirection, this.gap, this.rounds));
+				new Simulation(this, brain, relativeTrainingBrain,
+					semaphore, 3, this.rounds, seed));
 		}
 		//Await completion of all Simulations
 		semaphore.acquireUninterruptibly(population.length * 4);
 		semaphore.release(population.length * 4);
-	}
-	
-	/**
-	 * @return
-	 */
-	public World getWorld() {
-		return new World(this.testSeed, this.rows, this.cols,
-			this.rocks, this.anthills, this.anthillSideLength, this.foodBlobCount,
-			this.foodBlobSideLength, this.foodBlobCellFoodCount,
-			this.antInitialDirection, this.gap);
 	}
 	
 	/**
@@ -265,12 +241,10 @@ public class DummyEngine {
 	 * @param elite
 	 * @param mutationRate
 	 */
-	public void setVariables(int trainSeed, int testSeed, int rows, int cols, int rocks,
+	public void setVariables(int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int epochs, int rounds,
 		int popLen, int elite, int mutationRate) {
-		this.trainSeed = trainSeed;
-		this.testSeed = testSeed;
 		this.rows = rows;
 		this.cols = cols;
 		this.rocks = rocks;
@@ -288,55 +262,17 @@ public class DummyEngine {
 	}
 	
 	/**
-	 * @param args
-	 */
-	public static void main(String args[]) {
-		//TODO combine GA and regular sim methods, bit of a pain
-		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
-		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
-			//or at least allow a numOfStates parameter
-		//TODO remove polling in Ant.step()
-		//TODO add more information logging
-		//TODO test effects of changing targetStates in GeneticAlgorithm.breed()
-		//TODO reusing Worlds and bits of sims would increase efficiency
-		//TODO multithread breed() and trim()
-		//TODO test kills and food fitness
-		//TODO use jar on linux server
-		//TODO fix save clear order
-		
-		Logger.clearLogs();
-//		GeneticAlgorithm.clearSaves();
-		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
-		
-		//Black is the default brain, read in from file
-		//Red is the best one found by the GeneticAlgorithm with parameters specified
-		//The better red does relative to black, the better the GA is
-		
-		//Evolve and get the best brain from the GeneticAlgorithm
-		//absoluteTrainingBrain is a decent place to start from
-		//but more likely to get stuck there in the optima,
-		//blankBrain is a worse starting point, it would take longer to get to a good brain,
-		//but it encourages the brains generated to be more random
-		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
-		DummyEngine dummyEngine = new DummyEngine(1, 0, 140, 140, 13, 2, 7, 10, 5, 5, 0,
-			Integer.MAX_VALUE, 300000, 50, 50 / 10, 10);
-		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain);
-//		Brain gaBrain = BrainParser.readBrainFrom("ga_result");
-		
-		//Compact and remove null and unreachable states
-		trainingBrain.trim();
-		gaBrain.trim();
-		
-		dummyEngine.simulate(trainingBrain, gaBrain, dummyEngine.getWorld());
-		
-		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
-	}
-	
-	/**
 	 * @return
 	 */
-	public World generateWorld() {
-		return World.getContestWorld(0);	//random seeded contest world
+	public World generateWorld(int seed) {
+		return new World(seed, this.rows, this.cols,
+			this.rocks, this.anthills, this.anthillSideLength, this.foodBlobCount,
+			this.foodBlobSideLength, this.foodBlobCellFoodCount,
+			this.antInitialDirection, this.gap);
+	}
+	
+	public World getCurrentWorld(int seed) {
+		return generateWorld(seed);
 	}
 	
 	/**
@@ -353,7 +289,7 @@ public class DummyEngine {
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		Logger.log(new InformationLowEvent("Begun simulation"));
 		
-		new Simulation(blackBrain, redBrain, null, 0, world, this.rounds).run();
+		new Simulation(this, blackBrain, redBrain, null, 0, this.rounds, world).run();
 		
 		//Ant results
 		Ant[][] antsBySpecies = world.getAntsBySpecies();
@@ -383,5 +319,43 @@ public class DummyEngine {
 		if(blackBrain.getFitness() > redBrain.getFitness()) return blackBrain;
 		if(redBrain.getFitness() > blackBrain.getFitness()) return redBrain;
 		return null;
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String args[]) {
+		//TODO combine GA and regular sim methods
+		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
+		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
+			//or at least allow a numOfStates parameter
+		//TODO remove polling in Ant.step()
+		//TODO add more information logging
+		//TODO reusing Worlds and bits of sims would increase efficiency
+		//TODO multithread breed() and trim()
+		//TODO use jar on linux server
+		
+		Logger.clearLogs();
+//		GeneticAlgorithm.clearSaves();
+		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
+		
+		//Evolve and get the best brain from the GeneticAlgorithm
+		//trainingBrain is a decent place to start from
+		//but more likely to get stuck there in the optima,
+		//blankBrain is a worse starting point, it would take longer to get to a good brain,
+		//but it encourages the brains generated to be more random
+		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
+		DummyEngine dummyEngine = new DummyEngine(140, 140, 13, 2, 7, 10, 5, 5, 0,
+			Integer.MAX_VALUE, 300000, 50, 50 / 10, 10);
+		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain, 1);
+//		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
+		
+		//Compact and remove null and unreachable states
+		trainingBrain.trim();
+		gaBrain.trim();
+		
+		dummyEngine.simulate(trainingBrain, gaBrain, dummyEngine.generateWorld(0));
+		
+		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 }

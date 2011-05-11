@@ -2,6 +2,8 @@ package antBrain;
 
 import java.util.concurrent.Semaphore;
 
+import engine.DummyEngine;
+
 import antWorld.Ant;
 import antWorld.World;
 
@@ -10,42 +12,31 @@ import antWorld.World;
  * @version 1.0
  */
 public final class Simulation implements Runnable {
+	private final DummyEngine dummyEngine;
 	private final Brain blackBrain;
 	private final Brain redBrain;
 	private final Semaphore semaphore;
 	private final int fitness;
-	private final World world;
 	private final int rounds;
+	private int seed;
+	private World world;
 	
 	/**
 	 * @param blackBrain
 	 * @param redBrain
 	 * @param semaphore
 	 * @param fitness
-	 * @param seed
-	 * @param rows
-	 * @param cols
-	 * @param rocks
-	 * @param anthills
-	 * @param anthillSideLength
-	 * @param foodBlobCount
-	 * @param foodBlobSideLength
-	 * @param foodBlobCellFoodCount
-	 * @param antInitialDirection
-	 * @param gap
 	 * @param rounds
+	 * @param seed
 	 */
-	public Simulation(Brain blackBrain, Brain redBrain, Semaphore semaphore, int fitness,
-		int seed, int rows, int cols, int rocks, int anthills, int anthillSideLength,
-		int foodBlobCount, int foodBlobSideLength, int foodBlobCellFoodCount,
-		int antInitialDirection, int gap, int rounds) {
+	public Simulation(DummyEngine dummyEngine, Brain blackBrain, Brain redBrain,
+		Semaphore semaphore, int fitness, int rounds, int seed) {
+		this.dummyEngine = dummyEngine;
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
 		this.semaphore = semaphore;
 		this.fitness = fitness;
-		this.world = new World(seed, rows, cols, rocks, anthills, anthillSideLength,
-			foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount,
-			antInitialDirection, gap);
+		this.seed = seed;
 		this.rounds = rounds;
 	}
 	
@@ -54,11 +45,12 @@ public final class Simulation implements Runnable {
 	 * @param redBrain
 	 * @param semaphore
 	 * @param fitness
-	 * @param world
 	 * @param rounds
+	 * @param world
 	 */
-	public Simulation(Brain blackBrain, Brain redBrain, Semaphore semaphore,
-		int fitness, World world, int rounds) {
+	public Simulation(DummyEngine dummyEngine, Brain blackBrain, Brain redBrain,
+		Semaphore semaphore, int fitness, int rounds, World world) {
+		this.dummyEngine = dummyEngine;
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
 		this.semaphore = semaphore;
@@ -75,10 +67,17 @@ public final class Simulation implements Runnable {
 		//Using a seed to construct a random means the worlds generated will be more
 		//uniform than using cloning, which seems to be slightly slower for some reason
 		//World now has better brain at 0, GA brain at 1
-		this.world.setBrain(this.blackBrain, 0);
-		this.world.setBrain(this.redBrain, 1);
+		World world;
+		if(this.world == null){
+			world = this.dummyEngine.generateWorld(this.seed);
+		}else{
+			world = this.world;
+		}
 		
-		Ant[] ants = this.world.getAnts();
+		world.setBrain(this.blackBrain, 0);
+		world.setBrain(this.redBrain, 1);
+		
+		Ant[] ants = world.getAnts();
 		
 		//Run ants for all steps, serial / in this thread
 		for(int i = 0; i < this.rounds; i++){
@@ -88,7 +87,7 @@ public final class Simulation implements Runnable {
 		}
 		
 		//Store the result as the fitness of the red (GA) brain
-		int[] anthillFood = this.world.getFoodInAnthills();
+		int[] anthillFood = world.getFoodInAnthills();
 		
 		//Increment fitness by score
 		this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);

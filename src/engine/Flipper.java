@@ -13,7 +13,12 @@ public class Flipper {
 	 * @param seed
 	 */
 	public Flipper(int seed) {
-		this.s = seed;
+		if(seed == 0){
+			this.s = (int) (Math.random() * Integer.MAX_VALUE + 1);
+		}else{
+			this.s = seed;
+		}
+		
 		for(int i = 0; i < 3; i++){
 			nextS();
 		}

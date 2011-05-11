@@ -99,8 +99,9 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param elite number of brains from the old population to retain in the new population
 	 * @param mutationRate the chance of altering any part of any command in any brain
 	 */
-	public void evolve(DummyEngine dummyEngine, ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore, int epochs, int rounds, int elite, int mutationRate) {
+	public void evolve(DummyEngine dummyEngine, int seed,
+		ThreadPoolExecutor threadPoolExecutor, Semaphore semaphore,
+		int epochs, int rounds, int elite, int mutationRate) {
 		//Log information on epoch and evolution
 		if(this.epoch == 1){
 			//Starting evolution from a newly created population
@@ -140,7 +141,7 @@ public class GeneticAlgorithm implements Serializable {
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
-		sortByFitness(threadPoolExecutor, semaphore, dummyEngine);
+		sortByFitness(seed, threadPoolExecutor, semaphore, dummyEngine);
 		
 		//After constructor, epoch == 1,
 		//after deserialisation, epoch == epoch to be run next
@@ -201,7 +202,7 @@ public class GeneticAlgorithm implements Serializable {
 			}
 			this.population = newPop;
 			//Order, ready for next epoch
-			sortByFitness(threadPoolExecutor, semaphore, dummyEngine);
+			sortByFitness(seed, threadPoolExecutor, semaphore, dummyEngine);
 		}
 		//Write best brain so far to file
 		Brain b = this.population[this.popLen - 1].clone();
@@ -216,11 +217,11 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param semaphore
 	 * @param dummyEngine
 	 */
-	private void sortByFitness(ThreadPoolExecutor threadPoolExecutor,
+	private void sortByFitness(int seed, ThreadPoolExecutor threadPoolExecutor,
 		Semaphore semaphore, DummyEngine dummyEngine) {
 		//Calculates the fitness of all Brains with no fitness,
 		//then orders by fitness in ascending order
-		dummyEngine.sortByFitness(threadPoolExecutor, semaphore, this.population);
+		dummyEngine.sortByFitness(seed, threadPoolExecutor, semaphore, this.population);
 		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness()
 			+ ";  avg: " + avgFitness() + ";  min: " + minFitness()));
 	}
@@ -548,7 +549,7 @@ public class GeneticAlgorithm implements Serializable {
 		//Get superFolder ending in highest number
 		File[] files = superFolder.listFiles();
 		if(files == null) return false;	//No superfolder
-		int max = -1;
+		int max = Integer.MIN_VALUE;
 		int num;
 		String filePath;
 		for(File f1 : files){
@@ -573,7 +574,8 @@ public class GeneticAlgorithm implements Serializable {
 		String filePathPrefix = subFolderPath + "\\epoch_";
 		String filePathSuffix = ".ser";
 		files = folder.listFiles();
-		max = -1;
+		String maxFilePath = null;
+		max = Integer.MIN_VALUE;
 		for(File f2 : files){
 			filePath = f2.getPath();
 			if(filePath.startsWith(filePathPrefix)
@@ -583,6 +585,7 @@ public class GeneticAlgorithm implements Serializable {
 				num = Integer.parseInt(filePath);
 				if(num > max){
 					max = num;
+					maxFilePath = filePath;
 				}
 			}
 		}
@@ -591,7 +594,7 @@ public class GeneticAlgorithm implements Serializable {
 			//could try next best subfolder
 			return false;
 		}
-		String fileName = filePathPrefix + max + filePathSuffix;
+		String fileName = filePathPrefix + maxFilePath + filePathSuffix;
 		File loadFile = new File(fileName);
 		load(loadFile);
 		return true;

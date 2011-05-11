@@ -91,11 +91,7 @@ public class World {
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int gap) {
 		//Can either use a random or predefined seed
-		if(seed == 0){
-			this.seed = (int) (Math.random() * Integer.MAX_VALUE + 1);
-		}else{
-			this.seed = seed;
-		}
+		this.seed = seed;
 		this.ran = new Flipper(this.seed);
 		
 		this.rows = rows;

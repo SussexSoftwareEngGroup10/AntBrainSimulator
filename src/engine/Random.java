@@ -4,7 +4,7 @@ package engine;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Flipper {
+public class Random {
 	private static final long serialVersionUID = 1L;
 	private int s;
 	private int i = -1;
@@ -12,7 +12,7 @@ public class Flipper {
 	/**
 	 * @param seed
 	 */
-	public Flipper(int seed) {
+	public Random(int seed) {
 		if(seed == 0){
 			this.s = (int) (Math.random() * Integer.MAX_VALUE + 1);
 		}else{

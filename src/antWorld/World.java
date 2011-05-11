@@ -1,7 +1,7 @@
 package antWorld;
 
 
-import engine.Flipper;
+import engine.Random;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
@@ -15,7 +15,7 @@ public class World {
 	//Using a seed means that the same world can be reproduced
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
 	private final int seed;
-	private final Flipper ran;
+	private final Random ran;
 	
 	private final int rows;
 	private final int cols;
@@ -92,7 +92,7 @@ public class World {
 		int foodBlobCellFoodCount, int antInitialDirection, int gap) {
 		//Can either use a random or predefined seed
 		this.seed = seed;
-		this.ran = new Flipper(this.seed);
+		this.ran = new Random(this.seed);
 		
 		this.rows = rows;
 		this.cols = cols;

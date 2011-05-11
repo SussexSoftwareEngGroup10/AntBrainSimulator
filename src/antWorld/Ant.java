@@ -1,6 +1,6 @@
 package antWorld;
 
-import engine.Flipper;
+import engine.Random;
 import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
@@ -18,7 +18,7 @@ public final class Ant implements Comparable<Ant> {
 	//Random is passed from world, all ants in world, and world itself use the same Random,
 	//with the same seed, so exactly the same game can be replicated
 	//If no Random is passed, generate a new Random with random seed
-	private final Flipper ran;
+	private final Random ran;
 	private final int uid;
 	private final Colour colour;
 	private Brain brain;
@@ -43,11 +43,11 @@ public final class Ant implements Comparable<Ant> {
 	 * @param colour
 	 * @param cell
 	 */
-	public Ant(int uid, Flipper ran, int direction, int colour, Cell cell) {
+	public Ant(int uid, Random ran, int direction, int colour, Cell cell) {
 		this.uid = uid;
 		
 		if(ran == null){
-			this.ran = new Flipper(0);
+			this.ran = new Random(0);
 		}else{
 			this.ran = ran;
 		}

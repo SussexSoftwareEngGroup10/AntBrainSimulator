@@ -190,6 +190,7 @@ public class World {
 		int foodBlobSideLength = 0;
 		int foodBlobCellFoodCount = 0;
 		
+		//TODO rewrite all of this so it's unbreakable
 		//Calculate field values from cell information
 		for(r = 0; r < this.rows; r++){
 			for(c = 0; c < this.cols; c++){

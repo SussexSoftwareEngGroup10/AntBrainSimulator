@@ -174,7 +174,6 @@ public class World {
 		//(however, there may be more than 1 anthill for each species)
 		//Food blobs are square, and all have the same side length
 		//All cells which contain food contain the same amount of food
-		//Gap == 1
 		
 		//Confirmed works for tournament worlds,
 		//getAttributes on generated world,
@@ -253,6 +252,7 @@ public class World {
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		this.antInitialDirection = 0;
+		//TODO gap
 		this.gap = 1;
 		
 		//Setup markers in each cell
@@ -342,7 +342,7 @@ public class World {
 	 * @return set the first and last rows and columns as rocks
 	 */
 	private boolean setBorderRocks() {
-		if(!checkBorderClear()){
+		if(!checkBorder('.')){
 			return false;
 		}
 		
@@ -469,14 +469,14 @@ public class World {
 	/**
 	 * @return
 	 */
-	private boolean checkBorderClear() {
+	private boolean checkBorder(char ch) {
 		int r = 0;
 		int c = 0;
 		
 		//First column + gap
 		for(c = 0; c < this.gap + 1; c++){
 			for(r = 0; r < this.rows; r++){
-				if(this.cells[r][c].toChar() != '.'){
+				if(this.cells[r][c].toChar() != ch){
 					return false;
 				}
 			}
@@ -485,7 +485,7 @@ public class World {
 		//Last column + gap
 		for(c = this.cols - 1 - this.gap; c < this.cols; c++){
 			for(r = 0; r < this.rows; r++){
-				if(this.cells[r][c].toChar() != '.'){
+				if(this.cells[r][c].toChar() != ch){
 					return false;
 				}
 			}
@@ -494,7 +494,7 @@ public class World {
 		//First row + gap
 		for(r = 0; r < this.gap + 1; r++){
 			for(c = 0; c < this.rows; c++){
-				if(this.cells[r][c].toChar() != '.'){
+				if(this.cells[r][c].toChar() != ch){
 					return false;
 				}
 			}
@@ -503,7 +503,7 @@ public class World {
 		//Last row + gap
 		for(r = this.rows - 1 - this.gap; r < this.rows; r++){
 			for(c = 0; c < this.rows; c++){
-				if(this.cells[r][c].toChar() != '.'){
+				if(this.cells[r][c].toChar() != ch){
 					return false;
 				}
 			}
@@ -863,7 +863,8 @@ public class World {
 		&& this.foodBlobSideLength == 5
 		&& this.foodBlobCellFoodCount == 5
 		&& this.antInitialDirection == 0
-		&& this.gap == 1){
+		&& this.gap == 1
+		&& checkBorder('#')){
 			return true;
 		}
 		return false;

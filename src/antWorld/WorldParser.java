@@ -11,6 +11,7 @@ import utilities.IOEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.Logger;
+import utilities.WarningEvent;
 
 /**
  * @author pkew20 / 57116
@@ -83,6 +84,11 @@ public final class WorldParser {
 			Logger.log(new IOEvent(e.getMessage(), e));
 		}
 		Logger.log(new InformationHighEvent("Completed reading World object from \"" + path + "\""));
+		if(world == null){
+			Logger.log(new WarningEvent("World read from \"" + path + "\" is null"));
+		}else if(world.isContest()){
+			Logger.log(new WarningEvent("World read from \"" + path + "\" is not suitable for contests"));
+		}
 		return world;
 	}
 	

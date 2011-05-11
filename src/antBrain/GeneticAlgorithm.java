@@ -156,6 +156,10 @@ public class GeneticAlgorithm implements Serializable {
 		//the population is the same size as when it began the iteration
 		sortByFitness(seed, threadPoolExecutor, semaphore, dummyEngine);
 		Logger.log(new InformationLowEvent("Initial sort completed"));
+
+		//Timing
+		Logger.log(new TimeEvent("until start of first epoch"));
+		Logger.restartTimer();
 		
 		//After constructor, epoch == 1,
 		//after deserialisation, epoch == epoch to be run next

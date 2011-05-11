@@ -142,6 +142,7 @@ public class GeneticAlgorithm implements Serializable {
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
 		sortByFitness(seed, threadPoolExecutor, semaphore, dummyEngine);
+		Logger.log(new InformationLowEvent("Initial sort completed"));
 		
 		//After constructor, epoch == 1,
 		//after deserialisation, epoch == epoch to be run next
@@ -673,7 +674,8 @@ public class GeneticAlgorithm implements Serializable {
 		 */
 		@Override
 		public boolean accept(File pathname) {
-			return pathname.getPath().startsWith(subFolderPathPrefix) && pathname.getPath().endsWith(".ser");
+			return pathname.getPath().startsWith(subFolderPathPrefix)
+			&& pathname.getPath().endsWith(".ser");
 		}
 	}
 }

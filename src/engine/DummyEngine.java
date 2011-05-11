@@ -328,7 +328,7 @@ public class DummyEngine {
 	/**
 	 * @param args
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		//TODO combine GA and regular sim methods
 		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
 		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states

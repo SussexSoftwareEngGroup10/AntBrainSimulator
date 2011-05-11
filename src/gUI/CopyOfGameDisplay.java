@@ -27,6 +27,25 @@ public class CopyOfGameDisplay extends PApplet {
 	
 	public enum ImageDrawScales { SMALL, MEDIUM, LARGE }
 	private ImageDrawScales currentImageScale = ImageDrawScales.MEDIUM;
+	
+	public enum AntDirection {
+		EAST(0), 
+		SOUTH_EAST(5 * PI / 3), 
+		SOUTH_WEST(4 * PI / 3), 
+		WEST(PI), 
+		NORTH_WEST(2 * PI / 3), 
+		NORTH_EAST(PI / 3);
+
+		private final float direction;
+		
+		AntDirection(float direction) {
+			this.direction = direction;
+		}
+		
+		public float direction()  {
+			return direction;
+		}
+	}
 		
 	private ZoomPan zoomer; //Class for zooming and panning
 	
@@ -72,8 +91,8 @@ public class CopyOfGameDisplay extends PApplet {
 		pixelHeight = 700;
 		
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 104;
-		numHexRow = 140;
+		numHexCol = 30;
+		numHexRow = 30;
 
 		hexWidth = 35;
 		hexHeight = 40;
@@ -89,7 +108,6 @@ public class CopyOfGameDisplay extends PApplet {
 		
 		size(pixelWidth, pixelHeight);
 		
-		background(0); //Set background to black
 		smooth(); //Turn on anti aliasing
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
@@ -99,6 +117,7 @@ public class CopyOfGameDisplay extends PApplet {
 		grassTileLarge = loadImage("resources/images/tiles/grass_tile_large.png");
 		grassTileMedium = loadImage("resources/images/tiles/grass_tile_medium.png");
 		grassTileSmall = loadImage("resources/images/tiles/grass_tile_small.png");
+		blackAnt = loadImage("resources/images/ants/black_ant_large.png");
 	}
 	
 	/*
@@ -188,11 +207,11 @@ public class CopyOfGameDisplay extends PApplet {
 			tile = grassTileSmall;
 		}
 		
+		background(255, 204, 0);
 		//Draw hexagons
-		background(0);
 		for (int row = 0; row < numHexRow; row++) {
 			for (int col = 0; col < numHexCol; col++) {
-			    if (row % 2 != 0) { //On even numbered rows the row needs to be shifted to the right
+			    if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
 			    	image(tile, col * hexWidth, row * (hexVertHeight + hexAngleHeight), hexWidth, hexHeight);
 			    }
 			    else {
@@ -200,16 +219,14 @@ public class CopyOfGameDisplay extends PApplet {
 			    }
 			}
 		}
-		//Test code
-		/*
-		imageMode(CENTER);
-		createAnt(1, 1, 0);
-		for (int row = 1; row <= numHexRow; row++) {
-			for (int col = 1; col <= numHexCol; col++) {
-				createAnt(row, col, 0);
-			}
-		}
-		*/
+		
+		createAnt(1, 10, 0);
+
+		//for (int row = 1; row <= numHexRow; row++) {
+		//	for (int col = 1; col <= numHexCol; col++) {
+		//		createAnt(row, col, 0);
+		//	}
+		//}
 	}
 	
 	/*
@@ -264,19 +281,18 @@ public class CopyOfGameDisplay extends PApplet {
 
 	//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)
 	private int getRowPixelCoords(int row) {
-		//Work out the values, need to do divide by two at the end to give the centre of the hexagon
-		return row * (hexHeight - hexAngleHeight) - hexVertHeight / 2;
+		return row * (hexHeight - hexAngleHeight);
 	}
-	
+
 	//Equivalent method for finding the column in pixels
 	private int getColPixelCoords(int col, int row) {
 		int pixelCol;
-		//If it's an even numbered row it needs to be shifted along
+		//If it's an odd numbered row it needs to be shifted along
 		if (row % 2 == 0) {
-			pixelCol = ((col * hexWidth) - hexWidth / 2) + (hexWidth / 2);
+			pixelCol = (col * hexWidth);// - hexWidth / 2;
 		}
 		else {
-			pixelCol = (col * hexWidth) - hexWidth / 2;
+			pixelCol = ((col * hexWidth) - hexWidth / 2) + hexWidth;
 		}
 		return pixelCol;
 	}
@@ -284,7 +300,17 @@ public class CopyOfGameDisplay extends PApplet {
 	//Test method
 	public void createAnt(int row, int col, int colour) {
 		if (colour == 0) {
-			image(blackAnt, getColPixelCoords(col, row), getRowPixelCoords(row), hexWidth, hexWidth);
+			//TODO: THIS!
+			pushMatrix();
+			translate(-getColPixelCoords(col, row), -getRowPixelCoords(row));
+			
+			rotate(AntDirection.NORTH_EAST.direction());
+			image(blackAnt, getColPixelCoords(col, row), getRowPixelCoords(row), hexWidth, hexHeight);
+			//translate(getColPixelCoords(col, row), getRowPixelCoords(row));
+			
+			//draw image
+			
+			popMatrix();
 		}
 	}
 	

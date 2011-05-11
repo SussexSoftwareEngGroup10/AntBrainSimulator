@@ -22,9 +22,9 @@ public class MainWindow {
 	StatisticsWindow statisticsWindow;
 	
 	//The paths to the ant and world files
-	String blackBrainPath;
-	String redBrainPath;
-	String worldPath;
+	String blackBrainPath = "";
+	String redBrainPath = "";
+	String worldPath = "";
 	
 	//The control buttons to be display at the bottom of the window
 	JButton startGameBtn;
@@ -213,6 +213,10 @@ public class MainWindow {
 			catch (SecurityException sE) {
 				Logger.log(new IOEvent(
 						"Security violation with file!", sE));
+			}
+			//If all files have been selected, allow game to be played.
+			if (!blackBrainPath.equals("") && !redBrainPath.equals("") && !worldPath.equals("")) {
+				startGameBtn.setEnabled(true);
 			}
 		}
 	}

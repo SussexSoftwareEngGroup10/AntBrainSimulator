@@ -96,10 +96,9 @@ public class CopyOfGameDisplay extends PApplet {
 		
 		setInitialPanAndZoom();
 		
-		grassTileLarge = loadImage("resources/grass_tile_large.png");
-		grassTileMedium = loadImage("resources/grass_tile_medium.png");
-		grassTileSmall = loadImage("resources/grass_tile_small.png");
-		blackAnt = loadImage("resources/ant.png");
+		grassTileLarge = loadImage("resources/images/tiles/grass_tile_large.png");
+		grassTileMedium = loadImage("resources/images/tiles/grass_tile_medium.png");
+		grassTileSmall = loadImage("resources/images/tiles/grass_tile_small.png");
 	}
 	
 	/*
@@ -172,7 +171,7 @@ public class CopyOfGameDisplay extends PApplet {
 		//TODO: this formula doesn't always apply when there are larger numbers of hex
 		//TODO: add upper and lower bounds to if statement where camera won't soom
 		
-		System.out.println(zoomer.getZoomScale() * (numHexCol / 2));
+		//System.out.println(zoomer.getZoomScale() * (numHexCol / 2));
 		//System.out.println(zoomer.getZoomScale());
 		//System.out.println(zoomer.getPanOffset());
 		

@@ -44,20 +44,19 @@ public class DummyEngine {
 	private int foodBlobSideLength;
 	private int foodBlobCellFoodCount;
 	private int antInitialDirection;
-	private int epochs;
-	private int rounds;
-	private int popLen;
-	private int elite;
-	private int mutationRate;
 	private int gap;
 	
 	//GA variables
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
 	private Brain absoluteTrainingBrain;
 	
+	private int epochs;
+	private int rounds;
+	private int popLen;
+	private int elite;
+	private int mutationRate;
+	
 	/**
-	 * @param trainSeed
-	 * @param testSeed
 	 * @param rows
 	 * @param cols
 	 * @param rocks
@@ -67,6 +66,7 @@ public class DummyEngine {
 	 * @param foodBlobSideLength
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
+	 * @param gap
 	 * @param epochs
 	 * @param rounds
 	 * @param popLen
@@ -75,12 +75,12 @@ public class DummyEngine {
 	 */
 	public DummyEngine(int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection, int epochs, int rounds,
+		int foodBlobCellFoodCount, int antInitialDirection, int gap, int epochs, int rounds,
 		int popLen, int elite, int mutationRate) {
 		
 		setVariables(rows, cols, rocks,
 		anthills, anthillSideLength, foodBlobCount, foodBlobSideLength,
-		foodBlobCellFoodCount, antInitialDirection, epochs, rounds,
+		foodBlobCellFoodCount, antInitialDirection, gap, epochs, rounds,
 		popLen, elite, mutationRate);
 		
 		Logger.log(new InformationLowEvent("New Engine object constructed"));
@@ -135,6 +135,7 @@ public class DummyEngine {
 	/**
 	 * @param startBrain
 	 * @param trainingBrain
+	 * @param seed
 	 * @return
 	 */
 	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int seed) {
@@ -151,6 +152,7 @@ public class DummyEngine {
 	}
 	
 	/**
+	 * @param seed
 	 * @param threadPoolExecutor
 	 * @param semaphore
 	 * @param population
@@ -165,6 +167,7 @@ public class DummyEngine {
 	}
 	
 	/**
+	 * @param seed
 	 * @param threadPoolExecutor
 	 * @param semaphore
 	 * @param population
@@ -224,8 +227,6 @@ public class DummyEngine {
 	}
 	
 	/**
-	 * @param trainSeed
-	 * @param testSeed
 	 * @param rows
 	 * @param cols
 	 * @param rocks
@@ -235,6 +236,7 @@ public class DummyEngine {
 	 * @param foodBlobSideLength
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
+	 * @param gap
 	 * @param epochs
 	 * @param rounds
 	 * @param popLen
@@ -243,7 +245,7 @@ public class DummyEngine {
 	 */
 	public void setVariables(int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection, int epochs, int rounds,
+		int foodBlobCellFoodCount, int antInitialDirection, int gap, int epochs, int rounds,
 		int popLen, int elite, int mutationRate) {
 		this.rows = rows;
 		this.cols = cols;
@@ -254,6 +256,7 @@ public class DummyEngine {
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		this.antInitialDirection = antInitialDirection;
+		this.gap = gap;
 		this.epochs = epochs;
 		this.rounds = rounds;
 		this.popLen = popLen;
@@ -262,6 +265,7 @@ public class DummyEngine {
 	}
 	
 	/**
+	 * @param seed
 	 * @return
 	 */
 	public World generateWorld(int seed) {
@@ -345,7 +349,7 @@ public class DummyEngine {
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
 		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
-		DummyEngine dummyEngine = new DummyEngine(140, 140, 13, 2, 7, 10, 5, 5, 0,
+		DummyEngine dummyEngine = new DummyEngine(140, 140, 13, 2, 7, 10, 5, 5, 0, 1,
 			Integer.MAX_VALUE, 300000, 50, 50 / 10, 10);
 		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain, 1);
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");

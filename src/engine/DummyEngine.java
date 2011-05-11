@@ -338,6 +338,7 @@ public class DummyEngine {
 		//TODO reusing Worlds and bits of sims would increase efficiency
 		//TODO multithread breed() and trim()
 		//TODO use jar on linux server
+		//TODO pass time logging a unit to convert to from ns
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

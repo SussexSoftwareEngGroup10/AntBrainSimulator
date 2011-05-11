@@ -65,16 +65,29 @@ public class GeneticAlgorithm implements Serializable {
 		if(loadLast()){
 			this.popLen = popLen;
 			Brain[] newPopulation = new Brain[popLen];
-			//Reverses order of population
-			for(int i = 0; i < popLen; i++){
-				if(i < this.population.length){
-					newPopulation[i] = this.population[this.population.length - 1 - i];
+			
+			//Copy serialised population to new population so that the Brain at 0 is
+			//lowest fitness, and the Brain at length - 1 is highest fitness,
+			//Any new Brains needing addition or removal as the population length is altered
+			//are added or removed from 0, maintaining the natural ordering of the population
+			for(int i = popLen - 1; i >= 0; i--){
+				if(popLen - 1 - i >= popLen - 1 - this.population.length){
+					newPopulation[popLen - 1 - i] = this.population[this.population.length - 1 - i];
 				}else{
 					//If there are more brains required than there are in the
 					//population read in from loadLast(), create new brains
 					newPopulation[i] = startBrain.clone();
 				}
 			}
+//			for(int i = 0; i < popLen; i++){
+//				if(i < this.population.length){
+//					newPopulation[i] = this.population[this.population.length - 1 - i];
+//				}else{
+//					//If there are more brains required than there are in the
+//					//population read in from loadLast(), create new brains
+//					newPopulation[i] = startBrain.clone();
+//				}
+//			}
 			this.population = newPopulation;
 		}else{
 			//Otherwise create an entirely new population

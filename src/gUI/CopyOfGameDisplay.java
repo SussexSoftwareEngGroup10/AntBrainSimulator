@@ -30,11 +30,11 @@ public class CopyOfGameDisplay extends PApplet {
 	
 	public enum AntDirection {
 		EAST(0), 
-		SOUTH_EAST(5 * PI / 3), 
-		SOUTH_WEST(4 * PI / 3), 
+		SOUTH_EAST(PI / 3), 
+		SOUTH_WEST(2 * PI / 3), 
 		WEST(PI), 
-		NORTH_WEST(2 * PI / 3), 
-		NORTH_EAST(PI / 3);
+		NORTH_WEST(4 * PI / 3), 
+		NORTH_EAST(5 * PI / 3);
 
 		private final float direction;
 		
@@ -207,7 +207,9 @@ public class CopyOfGameDisplay extends PApplet {
 			tile = grassTileSmall;
 		}
 		
+		
 		background(255, 204, 0);
+		
 		//Draw hexagons
 		for (int row = 0; row < numHexRow; row++) {
 			for (int col = 0; col < numHexCol; col++) {
@@ -219,9 +221,9 @@ public class CopyOfGameDisplay extends PApplet {
 			    }
 			}
 		}
-		
-		createAnt(1, 10, 0);
 
+		drawAnt(25, 15, 0);
+		
 		//for (int row = 1; row <= numHexRow; row++) {
 		//	for (int col = 1; col <= numHexCol; col++) {
 		//		createAnt(row, col, 0);
@@ -297,19 +299,16 @@ public class CopyOfGameDisplay extends PApplet {
 		return pixelCol;
 	}
 	
-	//Test method
-	public void createAnt(int row, int col, int colour) {
+	public void drawAnt(int row, int col, int colour) {
 		if (colour == 0) {
-			//TODO: THIS!
+			//push and pop matrices so no further draws are affected by transforms below
 			pushMatrix();
-			translate(-getColPixelCoords(col, row), -getRowPixelCoords(row));
-			
-			rotate(AntDirection.NORTH_EAST.direction());
-			image(blackAnt, getColPixelCoords(col, row), getRowPixelCoords(row), hexWidth, hexHeight);
-			//translate(getColPixelCoords(col, row), getRowPixelCoords(row));
-			
-			//draw image
-			
+			//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
+			translate((getColPixelCoords(col, row) + hexWidth / 2), (getRowPixelCoords(row) + hexVertHeight));
+			//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
+			rotate(AntDirection.SOUTH_EAST.direction());
+			//Draw the image at an offset so that the origin is back to the top left of the tile.
+			image(blackAnt, -(hexWidth / 2), -hexVertHeight, hexWidth, hexHeight);
 			popMatrix();
 		}
 	}

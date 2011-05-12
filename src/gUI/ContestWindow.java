@@ -50,7 +50,7 @@ public class ContestWindow {
 		//upload a brain, and show the wins and losses for that brain
 		JPanel brainUploadPanel = new JPanel();
 		brainUploadPanel.setLayout(new GridLayout(numOfPlayers + 1, 5, 10, 10));
-		
+
 		//Labels that are the column headings
 		JLabel blankLbl1 = new JLabel("");
 		JLabel blankLbl2 = new JLabel("");
@@ -87,7 +87,19 @@ public class ContestWindow {
 			brainUploadPanel.add(lossesLbls[i]);
 		}
 		
-		pane.add(brainUploadPanel, BorderLayout.NORTH);
+		JScrollPane scrollPanel = new JScrollPane(brainUploadPanel);
+		//Only add scroll bars by limiting the preferred size of the scroll panel if the number 
+		//of players is above 7 (the amount that fits into 300 pixels).
+		if (numOfPlayers > 7) {
+			scrollPanel.setPreferredSize(new Dimension(500, 300));
+		}
+		else {
+			//If there won't be scrolling, remove the border of the scroll panel
+			scrollPanel.setBorder(null);
+		}
+		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		pane.add(scrollPanel, BorderLayout.NORTH);
 		
 		//Panel to add button to display statistics and cancel at the bottom
 		JPanel showStatsPanel = new JPanel();

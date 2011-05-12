@@ -1,6 +1,7 @@
 package gUI;
 
 import processing.core.*;
+
 import org.gicentre.utils.move.*; 
 
 import antWorld.World;
@@ -23,8 +24,30 @@ public class GameDisplay extends PApplet {
 	private PImage grassTileMedium;
 	private PImage grassTileSmall;
 	private PImage blackAnt;
+	
+	public enum ImageDrawScales { SMALL, MEDIUM, LARGE }
+	private ImageDrawScales currentImageScale = ImageDrawScales.MEDIUM;
+	
+	public enum AntDirection {
+		EAST(0), 
+		SOUTH_EAST(PI / 3), 
+		SOUTH_WEST(2 * PI / 3), 
+		WEST(PI), 
+		NORTH_WEST(4 * PI / 3), 
+		NORTH_EAST(5 * PI / 3);
+
+		private final float direction;
 		
-	ZoomPan zoomer; //Class for zooming and panning
+		AntDirection(float direction) {
+			this.direction = direction;
+		}
+		
+		public float direction()  {
+			return direction;
+		}
+	}
+		
+	private ZoomPan zoomer; //Class for zooming and panning
 	
 	/*
 	 * Image below shows the variable which denote hexagon dimensions.
@@ -49,137 +72,244 @@ public class GameDisplay extends PApplet {
 	 * C = D / sqrt(3)
 	 * 
 	 */
+	
 	private int hexWidth; //Corresponds to C
 	private int hexHeight; //Corresponds to D
 	private int hexAngleHeight; //Corresponds to A
 	private int hexVertHeight; //Corresponds to B
+
 		
 	private int numHexCol; //Number of columns (in hexagons) wide
 	private int numHexRow; //Number of rows (in hexagons) high
+	private String largestDimension;
 	private int pixelWidth; //Used to store size of display in pixels
 	private int pixelHeight;
-		
-	public static void main(String args[]) {
-		PApplet.main(new String[] { "--present", "gUI.GameDisplay" });
-	}
 
 	public void setup() {
 		//Dimensions of display in pixels - change to modify size
-		pixelWidth = 750;
-		pixelHeight = 600;
+		pixelWidth = 700;
+		pixelHeight = 700;
+		
+		//Number of hexagons in columns and rows - change to modify quantity of hexagons
+		numHexCol = 30;
+		numHexRow = 30;
+
+		hexWidth = 35;
+		hexHeight = 40;
+		hexAngleHeight = 10;
+		hexVertHeight = 20;
+		
+		if ((numHexCol * hexWidth) + (hexWidth / 2)> (numHexRow * hexHeight) + hexAngleHeight) {
+			largestDimension = "width";
+		}
+		else {
+			largestDimension = "height";
+		}
+		
 		size(pixelWidth, pixelHeight);
 		
-		background(0); //Set background to black
 		smooth(); //Turn on anti aliasing
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
-			
-		grassTileLarge = loadImage("resources/grass_tile_large.png");
-		grassTileMedium = loadImage("resources/grass_tile_medium.png");
-		grassTileSmall = loadImage("resources/grass_tile_small.png");
-		blackAnt = loadImage("resources/ant.png");
 		
-		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 10;
-		numHexRow = 10;
+		setInitialPanAndZoom();
 		
-		//Calculates what the size of the hexagons will be using both the height and the width, it then uses the one
-		//whicth doesn't force the hexaons off the edge of the game display.
-		if (calculateHexDimensionsUsingHeight() * (float) (numHexCol + 0.5) > pixelWidth) { 
-			calculateHexDimensionsUsingWidth(); //If using the height made the width of the grid go over the right hand side of the display, use the width
+		grassTileLarge = loadImage("resources/images/tiles/grass_tile_large.png");
+		grassTileMedium = loadImage("resources/images/tiles/grass_tile_medium.png");
+		grassTileSmall = loadImage("resources/images/tiles/grass_tile_small.png");
+		blackAnt = loadImage("resources/images/ants/black_ant_large.png");
+	}
+	
+	/*
+	 * Method with hard coded values for the initial zoom and pan
+	 * of the zoomer based on number of hexagons.
+	 */
+	private void setInitialPanAndZoom() {
+		if (largestDimension.equals("width")) {
+			if (numHexCol <= 20) {
+				zoomer.setZoomScale(0.94);
+			}
+			else if (numHexCol <= 40) {
+				zoomer.setZoomScale(0.48);
+				zoomer.setPanOffset(-160, -160);
+			}
+			else if (numHexCol <= 60) {
+				zoomer.setZoomScale(0.32);
+				zoomer.setPanOffset(-220, -220);
+			}
+			else if (numHexCol <= 80) {
+				zoomer.setZoomScale(0.24);
+				zoomer.setPanOffset(-250, -250);
+			}
+			else if (numHexCol <= 100) {
+				zoomer.setZoomScale(0.19);
+				zoomer.setPanOffset(-270, -270);
+			}
+			else if (numHexCol <= 120) {
+				zoomer.setZoomScale(0.16);
+				zoomer.setPanOffset(-280, -280);
+			}
+			else if (numHexCol <= 140) {
+				zoomer.setZoomScale(0.14);
+				zoomer.setPanOffset(-290, -290);
+			}
+		}
+		else {
+			if (numHexRow <= 20) {
+				zoomer.setZoomScale(0.94);
+			}
+			else if (numHexRow <= 40) {
+				zoomer.setZoomScale(0.48);
+				zoomer.setPanOffset(-160, -160);
+			}
+			else if (numHexRow <= 60) {
+				zoomer.setZoomScale(0.32);
+				zoomer.setPanOffset(-220, -220);
+			}
+			else if (numHexRow <= 80) {
+				zoomer.setZoomScale(0.24);
+				zoomer.setPanOffset(-250, -250);
+			}
+			else if (numHexRow <= 100) {
+				zoomer.setZoomScale(0.19);
+				zoomer.setPanOffset(-270, -270);
+			}
+			else if (numHexRow <= 120) {
+				zoomer.setZoomScale(0.16);
+				zoomer.setPanOffset(-280, -280);
+			}
+			else if (numHexRow <= 140) {
+				zoomer.setZoomScale(0.14);
+				zoomer.setPanOffset(-290, -290);
+			}
 		}
 	}
 	
 	public void draw() {
-		//Sets an upper and lower bound on the zoom scale - it would be nicer if this was done more smoothly
-		if (zoomer.getZoomScale() >= 22.7) {
-			zoomer.setZoomScale(22.71);
-		}
-		else if (zoomer.getZoomScale() <= 0.9) {
-			zoomer.setZoomScale(1);
-		}
 		zoomer.transform();
-		//TODO - work out how to set limits to the pan offset (will probably need to know size of grid for the right hand side)
+		//TODO: this formula doesn't always apply when there are larger numbers of hex
+		//TODO: add upper and lower bounds to if statement where camera won't soom
 		
-		PImage tile;
-		if (zoomer.getZoomScale() > 15) {
+		//System.out.println(zoomer.getZoomScale() * (numHexCol / 2));
+		//System.out.println(zoomer.getZoomScale());
+		//System.out.println(zoomer.getPanOffset());
+		
+		//Work out which size images to use.
+		updateImageScale();
+		PImage tile; //TODO: refactor into helper method
+		if (currentImageScale == ImageDrawScales.LARGE) {
 			tile = grassTileLarge;
 		}
-		else if (zoomer.getZoomScale() > 5) {
+		else if (currentImageScale == ImageDrawScales.MEDIUM) {
 			tile = grassTileMedium;
 		}
 		else {
 			tile = grassTileSmall;
 		}
+		
+		
+		background(255, 204, 0);
+		
 		//Draw hexagons
-		background(0);
 		for (int row = 0; row < numHexRow; row++) {
 			for (int col = 0; col < numHexCol; col++) {
-			    if (row % 2 != 0) { //On even numbered rows the row needs to be shifted to the right
+			    if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
 			    	image(tile, col * hexWidth, row * (hexVertHeight + hexAngleHeight), hexWidth, hexHeight);
 			    }
 			    else {
-			    	image(tile, col * hexWidth + (hexWidth / 2), row  * (hexVertHeight + hexAngleHeight), hexWidth, hexHeight);
+			    	image(tile, col * hexWidth + ((hexWidth / 2) + 0), row  * (hexVertHeight + hexAngleHeight), hexWidth, hexHeight);
 			    }
 			}
 		}
-		//Test code
-		/*
-		imageMode(CENTER);
-		createAnt(1, 1, 0);
-		for (int row = 1; row <= numHexRow; row++) {
-			for (int col = 1; col <= numHexCol; col++) {
-				createAnt(row, col, 0);
+
+		drawAnt(25, 15, 0);
+		
+		//for (int row = 1; row <= numHexRow; row++) {
+		//	for (int col = 1; col <= numHexCol; col++) {
+		//		createAnt(row, col, 0);
+		//	}
+		//}
+	}
+	
+	/*
+	 * Updates the scale at which images should be drawn for.
+	 */
+	private void updateImageScale() {
+		if (numHexCol < 35) {
+			if (zoomer.getZoomScale() * (numHexCol / 2) > 16.5) {
+				currentImageScale = ImageDrawScales.LARGE;
+			}
+			else if (zoomer.getZoomScale() * (numHexCol / 2) > 4.3){
+				currentImageScale = ImageDrawScales.MEDIUM;
+			}
+			else {
+				currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
-		*/
-	}
-	
-	//Methods for finding out the dimensions of the hexagons; one uses the height, the other uses the width
-	private int calculateHexDimensionsUsingHeight() {
-		float third = (float) (1) / (float) (3);
-		hexAngleHeight = (int) ((pixelHeight / (float) (numHexRow + third)) * third);
-		hexVertHeight = hexAngleHeight * 2;
-		hexHeight = hexAngleHeight * 4;
-		//Trigonometry to work out the width
-		hexWidth = (int) ((hexAngleHeight * tan(radians(60))) * 2);
-		
-		return hexWidth; //Returned for use in the if statement when this is called
-	}
-	
-	//Inverse of the above method
-	private int calculateHexDimensionsUsingWidth() {
-		hexWidth = (int) (pixelWidth / (float) (numHexCol + 0.5));
-		hexAngleHeight = (int) (hexWidth / 2 * tan(radians(30)));
-		hexVertHeight = hexAngleHeight * 2;
-		hexHeight = (hexAngleHeight * 4);
-		
-		return hexHeight;
+		else if (numHexCol < 70) {
+			if (zoomer.getZoomScale() * (numHexCol / 2) > 22.2) {
+				currentImageScale = ImageDrawScales.LARGE;
+			}
+			else if (zoomer.getZoomScale() * (numHexCol / 2) > 7.6){
+				currentImageScale = ImageDrawScales.MEDIUM;
+			}
+			else {
+				currentImageScale = ImageDrawScales.SMALL;
+			}
+		}
+		else if (numHexCol < 105) {
+			if (zoomer.getZoomScale() * (numHexCol / 2) > 32.6) {
+				currentImageScale = ImageDrawScales.LARGE;
+			}
+			else if (zoomer.getZoomScale() * (numHexCol / 2) > 13){
+				currentImageScale = ImageDrawScales.MEDIUM;
+			}
+			else {
+				currentImageScale = ImageDrawScales.SMALL;
+			}
+		}
+		else {
+			if (zoomer.getZoomScale() * (numHexCol / 2) > 44.4) {
+				currentImageScale = ImageDrawScales.LARGE;
+			}
+			else if (zoomer.getZoomScale() * (numHexCol / 2) > 22.4){
+				currentImageScale = ImageDrawScales.MEDIUM;
+			}
+			else {
+				currentImageScale = ImageDrawScales.SMALL;
+			}
+		}
 	}
 
 	//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)
 	private int getRowPixelCoords(int row) {
-		//Work out the values, need to do divide by two at the end to give the centre of the hexagon
-		return row * (hexHeight - hexAngleHeight) - hexVertHeight / 2;
+		return row * (hexHeight - hexAngleHeight);
 	}
-	
+
 	//Equivalent method for finding the column in pixels
 	private int getColPixelCoords(int col, int row) {
 		int pixelCol;
-		//If it's an even numbered row it needs to be shifted along
+		//If it's an odd numbered row it needs to be shifted along
 		if (row % 2 == 0) {
-			pixelCol = ((col * hexWidth) - hexWidth / 2) + (hexWidth / 2);
+			pixelCol = (col * hexWidth);// - hexWidth / 2;
 		}
 		else {
-			pixelCol = (col * hexWidth) - hexWidth / 2;
+			pixelCol = ((col * hexWidth) - hexWidth / 2) + hexWidth;
 		}
 		return pixelCol;
 	}
 	
-	//Test method
-	public void createAnt(int row, int col, int colour) {
+	public void drawAnt(int row, int col, int colour) {
 		if (colour == 0) {
-			image(blackAnt, getColPixelCoords(col, row), getRowPixelCoords(row), hexWidth, hexWidth);
+			//push and pop matrices so no further draws are affected by transforms below
+			pushMatrix();
+			//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
+			translate((getColPixelCoords(col, row) + hexWidth / 2), (getRowPixelCoords(row) + hexVertHeight));
+			//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
+			rotate(AntDirection.SOUTH_EAST.direction());
+			//Draw the image at an offset so that the origin is back to the top left of the tile.
+			image(blackAnt, -(hexWidth / 2), -hexVertHeight, hexWidth, hexHeight);
+			popMatrix();
 		}
 	}
 	

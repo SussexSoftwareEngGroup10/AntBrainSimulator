@@ -14,6 +14,9 @@ import engine.DummyEngine;
  * @author will
  */
 public class MainWindow {
+	private static final int WINDOW_WIDTH = 750;
+	private static final int WINDOW_HEIGHT = 850;
+	
 	DummyEngine gameEngine;
 	
 	//The other GUI components used
@@ -59,7 +62,7 @@ public class MainWindow {
 		//Set up the main frame with a border layout
 		JFrame window = new JFrame("Ant Brain Simulator");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setSize(800,850);
+		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		Container pane = window.getContentPane();
 		pane.setLayout(new BorderLayout());
 		
@@ -71,6 +74,16 @@ public class MainWindow {
 		gridDisplayPanel.add(gameDisplay);
 		gameDisplay.init();
 		pane.add(gridDisplayPanel, BorderLayout.NORTH);
+		
+		//Set up JPanel to display the speed adjustment slider
+		JPanel speedAdjustmentPanel = new JPanel();
+		JSlider speedAdjustmentSlider = new JSlider();
+		//Add a border, and tick marks to slider
+		speedAdjustmentSlider.setBorder(BorderFactory.createTitledBorder("Speed Adjustment Slider"));
+		speedAdjustmentSlider.setMajorTickSpacing(20);
+		speedAdjustmentSlider.setEnabled(false);
+		speedAdjustmentPanel.add(speedAdjustmentSlider);
+		pane.add(speedAdjustmentPanel);
 		
 		//Set up JPanel at the bottom to display the control buttons
 		JPanel controlPanel = new JPanel();
@@ -96,7 +109,7 @@ public class MainWindow {
 		controlPanel.add(uploadBlackBtn);
 		controlPanel.add(genWorldBtn);
 		
-		pane.add(controlPanel, BorderLayout.CENTER);
+		pane.add(controlPanel, BorderLayout.SOUTH);
 		
 		//Centre frame on screen and set visable
 		window.setLocationRelativeTo(null);

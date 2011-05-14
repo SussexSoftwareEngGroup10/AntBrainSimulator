@@ -42,7 +42,9 @@ public class GameEngine
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
 	private Brain absoluteTrainingBrain;
 	
-    
+    /**
+     * general constructor
+     */
     public GameEngine(String blackBrainLocation, String redBrainLocation)
     {
         seed = 5;
@@ -62,6 +64,11 @@ public class GameEngine
         run(300000);
     }
     
+    /**
+     * 
+     * Constructor for contests
+     * 
+     */
     public GameEngine(Brain blackBrain, Brain redBrain, World world)
     {
         this.world = world;
@@ -93,6 +100,9 @@ public class GameEngine
         calculateWinner();
     }
 
+    /**  
+     * set max and min as 100 and 0 but have no idea what a good speed would be until the GUI is set up
+     */
     public void slowDown()
     {
         if(waitTime != 100) { waitTime = waitTime + 10; }
@@ -103,6 +113,13 @@ public class GameEngine
         if(waitTime != 0) { waitTime = waitTime - 10; }
     }
     
+    /**
+     * In the dummy engine already on here this method returned a brain - not sure if the Genetic Alg
+     * still works but not sure how easy it is to determine from a brain which team has won?
+     * 
+     * At present it returns 0 for black, 1 for red, and 2 for the draw
+     * 
+     */
     public int calculateWinner()
     {
         int[] anthillFood = world.getFoodInAntHills();
@@ -119,6 +136,10 @@ public class GameEngine
         //play sound effect
     }
     
+   /**
+    * just a simple string array... what other stats can we add?
+    */
+    
     public String[] showStatistics()
     {
         int[] survivors = (world).survivingAntsBySpecies();
@@ -133,6 +154,16 @@ public class GameEngine
         
     }
     
+    
+    /**
+     * 
+     * At present just have this method so it returns a 2d array of ints. I think I have the logic right
+     * but correct me if I am wrong - each time plays it other team - once on each world?
+     * 
+     * At present, it stores in the cellreference [black][red] the index of the winning team or "-1"
+     * for a draw.
+     * 
+     */
     public int[][] runContest(Brain[] teams)
     {
         int[][] results = new int[teams.length][teams.length];

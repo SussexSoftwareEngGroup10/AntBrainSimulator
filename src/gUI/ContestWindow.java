@@ -101,14 +101,6 @@ public class ContestWindow {
 		scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		pane.add(scrollPanel, BorderLayout.NORTH);
 		
-		//Panel to add button to display statistics and cancel at the bottom
-		JPanel showStatsPanel = new JPanel();
-		showStatsPanel.setLayout(new FlowLayout());
-		JButton showStats = new JButton("Display Statistics");
-		showStats.setEnabled(false);
-		showStatsPanel.add(showStats);
-		pane.add(showStatsPanel, BorderLayout.CENTER);
-		
 		JPanel goPanel = new JPanel();
 		goPanel.setLayout(new FlowLayout());
 		JButton goBtn = new JButton("Go");

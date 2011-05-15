@@ -16,7 +16,6 @@ import antBrain.GeneticAlgorithm;
 import antBrain.Simulation;
 import antWorld.Ant;
 import antWorld.World;
-import antWorld.WorldParser;
 
 /**
  * Dummy DummyEngine class
@@ -350,24 +349,25 @@ public class DummyEngine {
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
-//		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
-//		DummyEngine dummyEngine = new DummyEngine(140, 140, 13, 2, 7, 10, 5, 5, 0, 1,
-//			Integer.MAX_VALUE, 300000, 50, 50 / 10, 100);
+		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
+		DummyEngine dummyEngine = new DummyEngine(140, 140, 13, 2, 7, 10, 5, 5, 0, 1,
+			Integer.MAX_VALUE, 300000, 50, 50 / 10, 100);
 		
-		World world = World.getContestWorld(0);
-		WorldParser.writeWorldTo(world, "test");
-		world = WorldParser.readWorldFrom("test");
-		System.out.println(world);
-		System.out.println(world.getAttributes());
+//		//World(char[][]) test:
+//		World world = World.getContestWorld(0);
+//		WorldParser.writeWorldTo(world, "test");
+//		world = WorldParser.readWorldFrom("test");
+//		System.out.println(world);
+//		System.out.println(world.getAttributes());
 		
-//		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain, 1);
-////		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
-//		
-//		//Compact and remove null and unreachable states
-//		trainingBrain.trim();
-//		gaBrain.trim();
-//		
-//		dummyEngine.simulate(trainingBrain, gaBrain, dummyEngine.generateWorld(0));
+		Brain gaBrain = dummyEngine.getBestGABrain(trainingBrain, trainingBrain, 1);
+//		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
+		
+		//Compact and remove null and unreachable states
+		trainingBrain.trim();
+		gaBrain.trim();
+		
+		dummyEngine.simulate(trainingBrain, gaBrain, dummyEngine.generateWorld(0));
 		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}

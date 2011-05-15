@@ -241,15 +241,15 @@ public class Cell {
 	 * @return
 	 */
 	public char toChar() {
-		//Ant
-		if(hasAnt()){
-			if(this.ant.getColour() == 0){
-				return '=';
-			}
-			if(this.ant.getColour() == 1){
-				return '|';
-			}
-		}
+//		//Ant
+//		if(hasAnt()){
+//			if(this.ant.getColour() == 0){
+//				return '=';
+//			}
+//			if(this.ant.getColour() == 1){
+//				return '|';
+//			}
+//		}
 		
 		//Rock
 		if(this.rocky){
@@ -299,17 +299,20 @@ public class Cell {
 			}
 		}
 		
-		//Markers
-		for(boolean marker : this.markers[0]){
-			if(marker){
-				return '[';
-			}
-		}
-		for(boolean marker : this.markers[1]){
-			if(marker){
-				return ']';
-			}
-		}
+//		//Markers
+//		for(int i = 0; i < this.markers.length; i++){
+//			for(boolean marker : this.markers[i]){
+//				if(marker){
+//					if(i == 0){
+//						return '[';
+//					}else if(i == 1){
+//						return ']';
+//					}else{
+//						return '?';
+//					}
+//				}
+//			}		
+//		}
 		
 		return '.';
 	}

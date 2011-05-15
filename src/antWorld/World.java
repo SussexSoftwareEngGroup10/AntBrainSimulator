@@ -21,11 +21,15 @@ public class World {
 	private final int cols;
 	
 	private final int rocks;
+	private final boolean rockAreaConsistency;
+	private final boolean borderRocks;
 	private final int anthills;
 	private final int anthillSideLength;
+	private final boolean anthillAreaConsistency;
 	private final int foodBlobCount;
 	private final int foodBlobSideLength;
 	private final int foodBlobCellFoodCount;
+	private final boolean foodBlobAreaConsistency;
 	
 	private final int antInitialDirection;
 	
@@ -97,11 +101,15 @@ public class World {
 		this.rows = rows;
 		this.cols = cols;
 		this.rocks = rocks;
+		this.rockAreaConsistency = true;
+		this.borderRocks = true;
 		this.anthills = anthills;
 		this.anthillSideLength = anthillSideLength;
+		this.anthillAreaConsistency = true;
 		this.foodBlobCount = foodBlobCount;
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		this.foodBlobAreaConsistency = true;
 		this.antInitialDirection = antInitialDirection;
 		this.gap = gap;
 		
@@ -137,9 +145,9 @@ public class World {
 	 * @param cellChars
 	 */
 	public World(char[][] cellChars) {
-		//Random is not needed as world will not be generated
-		this.seed = -1;
-		this.ran = null;
+		//Random is not needed for world generation, but is for Ant.step()
+		this.seed = 0;
+		this.ran = new Random(this.seed);
 		
 		this.rows = cellChars.length;
 		this.cols = cellChars[0].length;
@@ -162,16 +170,12 @@ public class World {
 			for(c = 0; c < this.cols; c++){
 				current = this.cells[r][c];
 				current.setNeighbours(getNeighbours(current));
+				current.setupMarkers(this.anthills);
 			}
 		}
 		
 		//Assumptions:
-		//There is a rocky border around the world which should not 
-		//count towards the total number of rocks in the world
-		//There is a gap of at least 1 hex between each object
-		//All anthills are hexagonal and have the same side length
 		//There are no more than 2 types of anthill in the world ('+' and '-')
-		//(however, there may be more than 1 anthill for each species)
 		//Food blobs are square, and all have the same side length
 		//All cells which contain food contain the same amount of food
 		
@@ -179,92 +183,273 @@ public class World {
 		//getAttributes on generated world,
 		//then compared results with those given after writing
 		//and reading world in through a WorldParser
-		int rocks = 0;
-		boolean plusAnthill = false;
-		boolean minusAnthill = false;
-		Cell current2;
-		boolean firstAnthillFound = false;
-		int anthillSideLength = 0;
-		int foodBlobCellCount = 0;
-		boolean firstFoodFound = false;
-		int foodBlobSideLength = 0;
-		int foodBlobCellFoodCount = 0;
+		
+//		int rocks;
+//		boolean borderRocks;
+//		int anthills;
+//		int anthillSideLength;
+//		boolean anthillAreaConsistency;
+//		int foodBlobCount;
+//		int foodBlobSideLength;
+//		int foodBlobCellFoodCount;
+//		int antInitialDirection;
+//		int gap;
 		
 		//TODO rewrite all of this so it's unbreakable
 		//Calculate field values from cell information
-		for(r = 0; r < this.rows; r++){
-			for(c = 0; c < this.cols; c++){
-				current = this.cells[r][c];
-				
-				//Calculate number of rocks
-				if(current.isRocky()){
-					rocks++;
-				
-				//Calculate number of anthills
-				}else if(current.getAnthill() == 1){
-					plusAnthill = true;
-				}else if(current.getAnthill() == 2){
-					minusAnthill = true;
-				}
-				
-				//Calculate anthill side length
-				if(current.getAnthill() != 0){
-					if(!firstAnthillFound){
-						current2 = current;
-						do{
-							anthillSideLength++;
-							current2 = current2.getNeighbour(0);
-						}while(current2.getAnthill() != 0);
-						firstAnthillFound = true;
-					}
-				}
-				
-				if(current.hasFood()){
-					//Calculate number of cells containing food
-					foodBlobCellCount++;
-					
-					//Calculate food blob side length
-					if(!firstFoodFound){
-						foodBlobCellFoodCount = current.foodCount();
-						current2 = current;
-						do{
-							foodBlobSideLength++;
-							current2 = current2.getNeighbour(0);
-						}while(current2.hasFood());
-						firstFoodFound = true;
-					}
-				}
+		
+		//rocks (not including border, if any)
+		int rocks = 0;
+		for(r = 1; r < this.rows - 1; r++){
+			for(c = 1; c < this.cols - 1; c++){
+				if(this.cells[r][c].isRocky()) rocks++;
 			}
 		}
-		
-		rocks -= (this.rows - 1) * 2 + (this.cols - 1) * 2; //subtract border rocks
 		this.rocks = rocks;
 		
-		int anthills = 0;
-		if(plusAnthill){
-			anthills++;
-		}
-		if(minusAnthill){
-			anthills++;
-		}
-		this.anthills = anthills;
-		this.anthillSideLength = anthillSideLength;
-		this.foodBlobCount = foodBlobCellCount / (foodBlobSideLength * foodBlobSideLength);
-		this.foodBlobSideLength = foodBlobSideLength;
-		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
-		this.antInitialDirection = 0;
-		//TODO gap
-		this.gap = 1;
+		//rockAreaConsistency
+		boolean rockAreaConsistency = true;
+		rockAreaLoop:
+			for(r = 1; r < this.rows - 1; r++){
+				for(c = 1; c < this.cols - 1; c++){
+					current = this.cells[r][c];
+					if(current.isRocky()){
+						//Cells must be surrounded by clear cells
+						for(Cell neighbour : current.getNeighbours()){
+							if(neighbour.toChar() != '.'){
+								rockAreaConsistency = false;
+								break rockAreaLoop;
+							}
+						}
+					}
+				}
+			}
+		this.rockAreaConsistency = rockAreaConsistency;
 		
-		//Setup markers in each cell
-		//Use this. for fields, local variables created above
-		for(r = 0; r < this.rows; r++){
-			for(c = 0; c < this.cols; c++){
+		//borderRocks
+		this.borderRocks = checkBorder(0, '#');
+		
+		//anthills
+		boolean[] existingAnthills = {false, false};
+		int[][] anthillLocs = new int[2][2];
+		for(r = 0; r < this.rows && (!existingAnthills[0] || !existingAnthills[1]); r++){
+			for(c = 0; c < this.cols && (!existingAnthills[0] || !existingAnthills[1]); c++){
 				current = this.cells[r][c];
-				current.setNeighbours(getNeighbours(current));
-				current.setupMarkers(this.anthills);
+				if(!existingAnthills[0]){
+					if(current.getAnthill() == 1){
+						existingAnthills[0] = true;
+						anthillLocs[0][0] = r;
+						anthillLocs[0][1] = c;
+					}
+				}
+				if(!existingAnthills[1]){
+					if(current.getAnthill() == 2){
+						existingAnthills[1] = true;
+						anthillLocs[1][0] = r;
+						anthillLocs[1][1] = c;
+					}
+				}
 			}
 		}
+		int anthills = 0;
+		if(existingAnthills[0]) anthills++;
+		if(existingAnthills[1]) anthills++;
+		this.anthills = anthills;
+		
+		//anthillSideLength
+		int anthillType;
+		int lenC = 0;
+		anthillSideLengthLoop:
+			for(r = 0; r < this.rows; r++){
+				for(c = 0; c < this.cols; c++){
+					current = this.cells[r][c];
+					
+					if(current.getAnthill() != 0){
+						anthillType = current.getAnthill();
+						for(lenC = c + 1; lenC < this.cols; lenC++){
+							if(this.cells[r][lenC].getAnthill() != anthillType){
+								break anthillSideLengthLoop;
+							}
+						}
+						break anthillSideLengthLoop;
+					}
+				}
+			}
+		this.anthillSideLength = lenC - c;
+		
+		//find anthill centres
+		//[0][0] 1 [0][ 0 ]	[EO/OE]
+		//[0][0] 2 [1][0/1]
+		//[0][0] 3 [2][ 1 ]
+		//[0][0] 4 [3][1/2]
+		//[0][0] 5 [4][ 2 ]
+		//[0][0] 6 [5][2/3]
+		//[0][0] 7 [6][ 3 ]
+		//[0][0] 8 [7][3/4]
+		//[0][0] 9 [8][ 4 ]
+		for(int anthill = 0; anthill < this.anthills; anthill++){
+			if(anthillLocs[anthill][0] % 2 == 0
+				&& (anthillLocs[anthill][0] % 2) + this.anthillSideLength - 1 == 1){
+				//EO
+				anthillLocs[anthill][1] += (this.anthillSideLength / 2) - 1;
+			}else{
+				//OO, OE, OO
+				anthillLocs[anthill][1] += this.anthillSideLength / 2;
+			}
+			anthillLocs[anthill][0] += this.anthillSideLength - 1;
+		}
+		
+		//anthillAreaConsistency
+		char ch = 0;
+		boolean[][] anthillAreas = new boolean[this.rows][this.cols];
+		for(int anthill = 0; anthill < this.anthills; anthill++){
+			if(anthill == 0){
+				ch = '+';
+			}else if(anthill == 1){
+				ch = '-';
+			}
+			
+			if(existingAnthills[anthill]){
+				//markHex, boolean[][], check all false cells
+				setHexBool(anthillLocs[anthill][0], anthillLocs[anthill][1], 
+					this.anthillSideLength, ch, anthillAreas, true);
+			}
+		}
+		
+		boolean anthillAreaConsistency = true;
+		anthillAreaLoop:
+			for(r = 0; r < this.rows; r++){
+				for(c = 0; c < this.cols; c++){
+					if(anthillAreas[r][c]){
+						if(this.cells[r][c].getAnthill() == 0){
+							anthillAreaConsistency = false;
+							break anthillAreaLoop;
+						}
+					}else if(this.cells[r][c].getAnthill() != 0){
+						anthillAreaConsistency = false;
+						break anthillAreaLoop;
+					}
+				}
+			}
+		this.anthillAreaConsistency = anthillAreaConsistency;
+		
+		//foodBlobCount, foodBlobSideLength, foodBlobCellFoodCount
+		int foodBlobCount = 0;
+		int foodBlobSideLength = -1;
+		int foodBlobCellFoodCount = -1;
+		boolean[][] foodBlobAreas = new boolean[this.rows][this.cols];
+		int currentFood;
+		r = 0;
+		c = 0;
+		while(r < this.rows - 1 && c < this.cols - 1){
+			foodBlobSideLengthLoop:
+				for(; r < this.rows; r++){
+					for(; c < this.cols; c++){
+						if(!foodBlobAreas[r][c]){
+							current = this.cells[r][c];
+							currentFood = current.foodCount();
+
+							if(currentFood > 0){
+								foodBlobCount++;
+								if(foodBlobCellFoodCount == -1){
+									foodBlobCellFoodCount = currentFood;
+								}
+								
+								for(lenC = c + 1; lenC < this.cols; lenC++){
+									if(!this.cells[r][lenC].hasFood()){
+										break foodBlobSideLengthLoop;
+									}
+								}
+								break foodBlobSideLengthLoop;
+							}
+						}
+					}
+				}
+			if(foodBlobSideLength == -1){
+				foodBlobSideLength = lenC - c;
+			}
+			
+			setRectBool(r, c, this.foodBlobSideLength, this.foodBlobSideLength,	foodBlobAreas, true);
+		}
+		this.foodBlobCount = foodBlobCount;
+		this.foodBlobSideLength = foodBlobSideLength;
+		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		
+		//foodBlobAreaConsistency
+		boolean foodBlobAreaConsistency = true;
+		foodBlobAreaConsistencyLoop:
+			for(r = 0; r < this.rows; r++){
+				for(c = 0; c < this.cols; c++){
+					if(foodBlobAreas[r][c]){
+						if(this.cells[r][c].foodCount() != this.foodBlobCellFoodCount){
+							foodBlobAreaConsistency = false;
+							break foodBlobAreaConsistencyLoop;
+						}
+					}else if(this.cells[r][c].hasFood()){
+						foodBlobAreaConsistency = false;
+						break foodBlobAreaConsistencyLoop;
+					}
+				}
+			}
+		this.foodBlobAreaConsistency = foodBlobAreaConsistency;
+		
+		//other
+		this.antInitialDirection = 0;
+		this.gap = 1;
+		
+//		for(r = 0; r < this.rows; r++){
+//			for(c = 0; c < this.cols; c++){
+//				current = this.cells[r][c];
+//				
+//				//Calculate number of rocks
+//				if(current.isRocky()){
+//					rocks++;
+//				
+//				//Calculate number of anthills
+//				}else if(current.getAnthill() == 1){
+//					plusAnthill = true;
+//				}else if(current.getAnthill() == 2){
+//					minusAnthill = true;
+//				}
+//				
+//				//Calculate anthill side length
+//				if(current.getAnthill() != 0){
+//					if(!firstAnthillFound){
+//						current2 = current;
+//						do{
+//							anthillSideLength++;
+//							current2 = current2.getNeighbour(0);
+//						}while(current2.getAnthill() != 0);
+//						firstAnthillFound = true;
+//					}
+//				}
+//				
+//				if(current.hasFood()){
+//					//Calculate number of cells containing food
+//					foodBlobCellCount++;
+//					
+//					//Calculate food blob side length
+//					if(!firstFoodFound){
+//						foodBlobCellFoodCount = current.foodCount();
+//						current2 = current;
+//						do{
+//							foodBlobSideLength++;
+//							current2 = current2.getNeighbour(0);
+//						}while(current2.hasFood());
+//						firstFoodFound = true;
+//					}
+//				}
+//			}
+//		}
+//		
+//		rocks -= (this.rows - 1) * 2 + (this.cols - 1) * 2; //subtract border rocks
+//		this.rocks = rocks;
+//		
+//		this.foodBlobCount = foodBlobCellCount / (foodBlobSideLength * foodBlobSideLength);
+//		this.foodBlobSideLength = foodBlobSideLength;
+//		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+//		this.antInitialDirection = 0;
+//		this.gap = 1;
 		
 		createAnts();
 	}
@@ -343,7 +528,7 @@ public class World {
 	 * @return set the first and last rows and columns as rocks
 	 */
 	private boolean setBorderRocks() {
-		if(!checkBorder('.')){
+		if(!checkBorder(this.gap, '.')){
 			return false;
 		}
 		
@@ -384,7 +569,7 @@ public class World {
 	 * @param c new value for every cell in the area
 	 */
 	private boolean setHex(int row, int col, int sideLength, char ch) {
-		if(!checkHexClear(row, col, sideLength)){
+		if(!checkHex(row, col, sideLength, this.gap, '.')){
 			return false;
 		}
 		
@@ -422,9 +607,8 @@ public class World {
 		
 		//Sets hexes multiple times, inefficient
 		Cell[] neighbours = getNeighbours(cell);
-		int i = 0;
-		for(i = 0; i < neighbours.length; i++){
-			setHexRecurse(neighbours[i], recurseNum + 1, recurseDepth, ch);
+		for(Cell neighbour : neighbours){
+			setHexRecurse(neighbour, recurseNum + 1, recurseDepth, ch);
 		}
 	}
 	
@@ -437,7 +621,7 @@ public class World {
 	 * @return
 	 */
 	private boolean setRect(int row, int col, int height, int width, char ch) {
-		if(!checkRectClear(row, col, height, width)){
+		if(!checkRect(row, col, height, width, '.')){
 			return false;
 		}
 		
@@ -470,12 +654,12 @@ public class World {
 	/**
 	 * @return
 	 */
-	private boolean checkBorder(char ch) {
+	private boolean checkBorder(int gap, char ch) {
 		int r = 0;
 		int c = 0;
 		
 		//First column + gap
-		for(c = 0; c < this.gap + 1; c++){
+		for(c = 0; c < gap + 1; c++){
 			for(r = 0; r < this.rows; r++){
 				if(this.cells[r][c].toChar() != ch){
 					return false;
@@ -484,17 +668,16 @@ public class World {
 		}
 		
 		//Last column + gap
-		for(c = this.cols - 1 - this.gap; c < this.cols; c++){
+		for(c = this.cols - 1 - gap; c < this.cols; c++){
 			for(r = 0; r < this.rows; r++){
 				if(this.cells[r][c].toChar() != ch){
 					return false;
 				}
 			}
 		}
-		
 		//First row + gap
-		for(r = 0; r < this.gap + 1; r++){
-			for(c = 0; c < this.rows; c++){
+		for(r = 0; r < gap + 1; r++){
+			for(c = 0; c < this.cols; c++){
 				if(this.cells[r][c].toChar() != ch){
 					return false;
 				}
@@ -502,8 +685,8 @@ public class World {
 		}
 		
 		//Last row + gap
-		for(r = this.rows - 1 - this.gap; r < this.rows; r++){
-			for(c = 0; c < this.rows; c++){
+		for(r = this.rows - 1 - gap; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
 				if(this.cells[r][c].toChar() != ch){
 					return false;
 				}
@@ -514,16 +697,108 @@ public class World {
 	}
 	
 	/**
+	 * @param row
+	 * @param col
+	 * @param anthillSideLength
+	 * @param ch
+	 * @param anthillAreas
+	 * @param set
+	 * @return
+	 */
+	private void setHexBool(int r, int c, int anthillSideLength, char ch,
+		boolean[][] anthillAreas, boolean set){
+		
+		setHexBoolRecurse(r, c, 0, anthillSideLength, ch, anthillAreas, set);
+	}
+	
+	/**
+	 * @param row
+	 * @param col
+	 * @param recurseNum
+	 * @param recurseDepth
+	 * @param ch
+	 * @param set
+	 */
+	private void setHexBoolRecurse(int r, int c, int recurseNum, int recurseDepth, char ch,
+		boolean[][] anthillAreas, boolean set) {
+		//Don't set if over required length
+		if(recurseNum > recurseDepth - 1){
+			return;
+		}
+		
+		//The check is probably slightly more efficient
+		//than overwriting identical values
+		if(anthillAreas[r][c] != set){
+			anthillAreas[r][c] = set;
+		}
+		
+		//Don't recurse if next recurse will take side length over required length
+		if(recurseNum > recurseDepth - 2){
+			return;
+		}
+		
+		//Set neighbours
+		int k = r % 2;
+		//Clockwise from east
+		try{
+			setHexBoolRecurse(r, c + 1, recurseNum + 1, recurseDepth,
+				ch, anthillAreas, set); //east
+		}catch(ArrayIndexOutOfBoundsException e){
+			//Neighbour[i] is off the edge of the world
+		}
+		try{
+			setHexBoolRecurse(r + 1, c + k, recurseNum + 1, recurseDepth,
+				ch, anthillAreas, set); //south-east
+		}catch(ArrayIndexOutOfBoundsException e){
+			//Neighbour[i] is off the edge of the world
+		}
+		try{
+			setHexBoolRecurse(r + 1, c - 1 + k, recurseNum + 1, recurseDepth,
+				ch, anthillAreas, set); //south-west
+		}catch(ArrayIndexOutOfBoundsException e){
+			//Neighbour[i] is off the edge of the world
+		}
+		try{
+			setHexBoolRecurse(r, c - 1, recurseNum + 1, recurseDepth,
+				ch, anthillAreas, set); //west
+		}catch(ArrayIndexOutOfBoundsException e){
+			//Neighbour[i] is off the edge of the world
+		}
+		try{
+			setHexBoolRecurse(r - 1, c - 1 + k, recurseNum + 1, recurseDepth,
+				ch, anthillAreas, set); //north-west
+		}catch(ArrayIndexOutOfBoundsException e){
+			//Neighbour[i] is off the edge of the world
+		}
+		try{
+			setHexBoolRecurse(r - 1, c + k, recurseNum + 1, recurseDepth,
+				ch, anthillAreas, set); //north-east
+		}catch(ArrayIndexOutOfBoundsException e){
+			//Neighbour[i] is off the edge of the world
+		}
+	}
+	
+	private void setRectBool(int row, int col, int height, int width,
+		boolean[][] foodBlobAreas, boolean set) {
+		
+		for(int r = row; r < row + height; r++){
+			for(int c = col; c < col + width; c++){
+				foodBlobAreas[r][c] = set;
+			}
+		}
+	}
+	
+	/**
 	 * @param row of centre hex
 	 * @param col of centre hex
 	 * @param sideLength
 	 * @return
 	 */
-	private boolean checkHexClear(int row, int col, int sideLength) {
+	private boolean checkHex(int row, int col, int sideLength, int gap, char ch) {
 			Cell centre = this.cells[row][col];
 			
 			try{
-				return checkHexClearRecurse(centre, 0, sideLength + this.gap);
+				return checkHexRecurse(centre, 0, sideLength + gap, ch);
 			}catch(ArrayIndexOutOfBoundsException e){
 				return false;
 			}
@@ -535,11 +810,8 @@ public class World {
 	 * @param recurseDepth
 	 * @return
 	 */
-	private boolean checkHexClearRecurse(Cell cell, int recurseNum, int recurseDepth) {
-		if(cell == null){
-			return false;
-		}
-		if(cell.toChar() != '.'){
+	private boolean checkHexRecurse(Cell cell, int recurseNum, int recurseDepth, char ch) {
+		if(cell == null || cell.toChar() != '.'){
 			return false;
 		}
 		
@@ -552,7 +824,7 @@ public class World {
 		Cell[] neighbours = getNeighbours(cell);
 		int i = 0;
 		for(i = 0; i < neighbours.length; i++){
-			if(!checkHexClearRecurse(neighbours[i], recurseNum + 1, recurseDepth)){
+			if(!checkHexRecurse(neighbours[i], recurseNum + 1, recurseDepth, ch)){
 				return false;
 			}
 		}
@@ -566,14 +838,14 @@ public class World {
 	 * @param width distance from top left to top right hex
 	 * @return
 	 */
-	private boolean checkRectClear(int row, int col, int height, int width) {
+	private boolean checkRect(int row, int col, int height, int width, char ch) {
 		int r = 0;
 		int c = 0;
 		
 		try{
 			for(r = row - this.gap; r < row + height + this.gap; r++){
 				for(c = col - this.gap; c < col + width + this.gap; c++){
-					if(this.cells[r][c].toChar() != '.'){
+					if(this.cells[r][c].toChar() != ch){
 						return false;
 					}
 				}
@@ -855,17 +1127,21 @@ public class World {
 	}
 	
 	public boolean isContest() {
+		//must be a gap of 1 between rocks TODO
 		if(this.rows == 140
 		&& this.cols == 140
 		&& this.rocks == 13
+		&& this.rockAreaConsistency
+		&& this.borderRocks
 		&& this.anthills == 2
 		&& this.anthillSideLength == 7
+		&& this.anthillAreaConsistency
 		&& this.foodBlobCount == 10
 		&& this.foodBlobSideLength == 5
 		&& this.foodBlobCellFoodCount == 5
+		&& this.foodBlobAreaConsistency
 		&& this.antInitialDirection == 0
-		&& this.gap == 1
-		&& checkBorder('#')){
+		&& this.gap == 1){
 			return true;
 		}
 		return false;
@@ -882,11 +1158,15 @@ public class World {
 		s += "\nrows: " + this.rows;
 		s += "\ncols: " + this.cols;
 		s += "\nrocks: " + this.rocks;
+		s += "\nrockAreaConsistency: " + this.rockAreaConsistency;
+		s += "\nborderRocks: " + this.borderRocks;
 		s += "\nanthills: " + this.anthills;
 		s += "\nanthill side length: " + this.anthillSideLength;
+		s += "\nanthillAreaConsistency: " + this.anthillAreaConsistency;
 		s += "\nfood blob count: " + this.foodBlobCount;
 		s += "\nfood blob side length: " + this.foodBlobSideLength;
 		s += "\nfood blob cell food count: " + this.foodBlobCellFoodCount;
+		s += "\nfoodBlobAreaConsistency: " + this.foodBlobAreaConsistency;
 		s += "\nant initial direction: " + this.antInitialDirection;
 		s += "\ngap: " + this.gap;
 		s += "\nants: ";
@@ -896,6 +1176,11 @@ public class World {
 				s += ", ";
 			}
 		}
+		s += "\n";
+		if(!isContest()){
+			s += "not ";
+		}
+		s += "suitable for contest";
 		
 		return s;
 	}

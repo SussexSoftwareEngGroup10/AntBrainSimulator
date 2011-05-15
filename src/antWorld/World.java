@@ -308,14 +308,12 @@ public class World {
 			}else if(anthill == 1){
 				ch = '-';
 			}
-			
 			if(existingAnthills[anthill]){
 				//markHex, boolean[][], check all false cells
 				setHexBool(anthillLocs[anthill][0], anthillLocs[anthill][1], 
 					this.anthillSideLength, ch, anthillAreas, true);
 			}
 		}
-		
 		boolean anthillAreaConsistency = true;
 		anthillAreaLoop:
 			for(r = 0; r < this.rows; r++){
@@ -341,35 +339,50 @@ public class World {
 		int currentFood;
 		r = 0;
 		c = 0;
-		while(r < this.rows && c < this.cols){
+		int lastR = 0;
+		int lastC = 0;
+		while(r < this.rows || c < this.cols){
 			foodBlobSideLengthLoop:
-				for(; r < this.rows; r++){
-					for(; c < this.cols; c++){
+				for(r = lastR; r < this.rows; r++){
+					for(c = lastC + 1; c < this.cols; c++){
 						if(!foodBlobAreas[r][c]){
 							current = this.cells[r][c];
 							currentFood = current.foodCount();
-
 							if(currentFood > 0){
 								foodBlobCount++;
 								if(foodBlobCellFoodCount == -1){
 									foodBlobCellFoodCount = currentFood;
 								}
-								
 								for(lenC = c + 1; lenC < this.cols; lenC++){
 									if(!this.cells[r][lenC].hasFood()){
-										break foodBlobSideLengthLoop;
+										break;
 									}
 								}
+								setRectBool(r, c, foodBlobSideLength, foodBlobSideLength,
+									foodBlobAreas, true);
+								if(foodBlobSideLength == -1){
+									foodBlobSideLength = lenC - c;
+								}
+								lastR = r;
+								lastC = c;
 								break foodBlobSideLengthLoop;
 							}
 						}
 					}
 				}
-			if(foodBlobSideLength == -1){
-				foodBlobSideLength = lenC - c;
+		}
+		for(r = 0; r < this.rows; r++){
+			if(r % 2 == 1){
+				System.out.print(" ");
 			}
-			
-			setRectBool(r, c, this.foodBlobSideLength, this.foodBlobSideLength,	foodBlobAreas, true);
+			for(c = 0; c < this.cols; c++){
+				if(foodBlobAreas[r][c]){
+					System.out.print("1 ");
+				}else{
+					System.out.print("0 ");
+				}
+			}
+			System.out.print("\n");
 		}
 		this.foodBlobCount = foodBlobCount;
 		this.foodBlobSideLength = foodBlobSideLength;

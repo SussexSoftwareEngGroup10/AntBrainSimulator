@@ -459,14 +459,14 @@ public final class Ant implements Comparable<Ant> {
 	/**
 	 * @return
 	 */
-	public final boolean isAlive() {
+	protected final boolean isAlive() {
 		return this.alive;
 	}
 	
 	/**
 	 * @return
 	 */
-	public final Cell getCell() {
+	protected final Cell getCell() {
 		return this.cell;
 	}
 	
@@ -503,7 +503,7 @@ public final class Ant implements Comparable<Ant> {
 	/**
 	 * @param cell
 	 */
-	public final void setCell(Cell cell) {
+	protected final void setCell(Cell cell) {
 		this.cell = cell;
 	}
 	

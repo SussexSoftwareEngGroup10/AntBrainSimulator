@@ -1,3 +1,5 @@
+package engine;
+
 import java.util.Arrays;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -13,6 +15,7 @@ import antBrain.BrainParser;
 import antBrain.GeneticAlgorithm;
 import antBrain.Simulation;
 import antWorld.Ant;
+import antWorld.Cell;
 import antWorld.World;
 
 public class GameEngine
@@ -122,7 +125,7 @@ public class GameEngine
      */
     public int calculateWinner()
     {
-        int[] anthillFood = world.getFoodInAntHills();
+        int[] anthillFood = world.getFoodInAnthills();
         
         if(anthillFood[0] > anthillFood[1])
         {
@@ -143,7 +146,7 @@ public class GameEngine
     public String[] showStatistics()
     {
         int[] survivors = (world).survivingAntsBySpecies();
-        int[] food = (world).getFoodInAntHills();
+        int[] food = (world).getFoodInAnthills();
         String[] stats = new String[4];
         stats[0] = "The black team finished with " + survivors[0] + " living ants";
         stats[1] = "The red team finished with " + survivors[1] + " living ants";
@@ -153,7 +156,6 @@ public class GameEngine
         return stats;
         
     }
-    
     
     /**
      * 
@@ -207,6 +209,15 @@ public class GameEngine
         }
         
         return results;
+    }
+    
+    /**
+     * Enables the GUI to retrieve a copy of the cells in the world.
+     * 
+     * @return The cells making up the world.
+     */
+    public Cell[][] getCells() {
+    	return world.getWorld();
     }
     
     

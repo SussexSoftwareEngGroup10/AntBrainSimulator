@@ -485,6 +485,15 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
+	 * Get the ant's direction.
+	 * 
+	 * @return The direction.
+	 */
+	public int getDirection() {
+		return direction;
+	}
+	
+	/**
 	 * @return
 	 */
 	public final boolean hasFood() {

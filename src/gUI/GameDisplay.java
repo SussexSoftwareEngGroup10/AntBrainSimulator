@@ -1,9 +1,15 @@
 package gUI;
 
+import java.util.Random;
+
 import processing.core.*;
 
 import org.gicentre.utils.move.*; 
 
+import engine.GameEngine;
+
+import antWorld.Ant;
+import antWorld.Cell;
 import antWorld.World;
 
 /* 
@@ -19,6 +25,11 @@ import antWorld.World;
  */
 public class GameDisplay extends PApplet {
 	private static final long serialVersionUID = 1L;
+	
+	private GameEngine gameEngine;
+	private Cell[][] gridCells;
+	
+	private Random random;
 	
 	private static final int PIXEL_WIDTH = 700; //Used to store size of display in pixels
 	private static final int PIXEL_HEIGHT = 700;
@@ -121,8 +132,15 @@ public class GameDisplay extends PApplet {
 	
 	private PImage blackMarker;
 	private PImage redMarker;
+	
+	public GameDisplay(GameEngine gameEngine) {
+		this.gameEngine = gameEngine;
+		gridCells = gameEngine.getCells();
+	}
 
 	public void setup() {
+		Random random = new Random();
+		
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
 		numHexCol = 140;
 		numHexRow = 140;
@@ -266,35 +284,154 @@ public class GameDisplay extends PApplet {
 	
 	public void draw() {
 		zoomer.transform();
-
+		gridCells = gameEngine.getCells();
 		//Work out which size images to use.
 		updateImageScale();
-		PImage tile; //TODO: refactor into helper method
 		if (currentImageScale == ImageDrawScales.LARGE) {
-			tile = grassTile[LARGE_IMAGE];
+			drawGird(LARGE_IMAGE);
+			drawMarkers();
+			drawFood(LARGE_IMAGE);
+			drawAnts(LARGE_IMAGE);
 		}
 		else if (currentImageScale == ImageDrawScales.MEDIUM) {
-			tile = grassTile[MEDIUM_IMAGE];
+			drawGird(MEDIUM_IMAGE);
+			drawMarkers();
+			drawFood(MEDIUM_IMAGE);
+			drawAnts(MEDIUM_IMAGE);
 		}
 		else {
-			tile = grassTile[SMALL_IMAGE];
+			drawGird(SMALL_IMAGE);
+			drawMarkers();
+			drawFood(MEDIUM_IMAGE);
+			drawAnts(MEDIUM_IMAGE);
 		}
 		
-		background(99, 99, 99);
-		
-		//Draw hexagons
+		background(99, 99, 99);	
+	}
+	
+	private void drawGird(int imageScale) {
 		for (int row = 0; row < numHexRow; row++) {
 			for (int col = 0; col < numHexCol; col++) {
-			    if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
-			    	image(tile, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			    }
-			    else {
-			    	image(tile, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+				if (gridCells[row][col].getAnthill() == 1) { //If the cell is a red anthill
+			    	drawImage(redAnthillTile[imageScale], row, col);
+			    } else if (gridCells[row][col].getAnthill() == 2) { //If it is black anthill
+			    	drawImage(redAnthillTile[imageScale], row, col);
+			    } else if (gridCells[row][col].isRocky()) { //If it's rocky
+			    	drawImage(rockTile[imageScale][random.nextInt(2)], row, col); //Randomly pick shade of grey
+			    } else {
+			    	drawImage(grassTile[imageScale], row, col); //Otherwise it is a grass tile
 			    }
 			}
 		}
+	}
+	
+	private void drawMarkers() {
+		for (int row = 0; row < numHexRow; row++) {
+			for (int col = 0; col < numHexCol; col++) {
+				for (int i = 0; i < 6; i++) { //Check in each type of the 6 markers
+					if (gridCells[row][col].getMarker(0, i)) {
+						drawImage(blackMarker, row, col); //COULD HAVE GOT THE SPECIES MIXED UP
+					}
+					if (gridCells[row][col].getMarker(1, i)) {
+						drawImage(redMarker, row, col);
+					}
+				}
+			}
+		}
+	}
+	
+	private void drawFood(int imageScale) {
+		for (int row = 0; row < numHexRow; row++) {
+			for (int col = 0; col < numHexCol; col++) {
+				if (imageScale == LARGE_IMAGE) { //If it's small, need to check quantity to show the correct image
+					switch (gridCells[row][col].foodCount()) {
+						case 1: drawImage(foodLarge[ONE_FOOD], row, col); 
+						break;
+						case 2: drawImage(foodLarge[TWO_FOOD], row, col); 
+						break;
+						case 3: drawImage(foodLarge[THREE_FOOD], row, col); 
+						break;
+						case 4: drawImage(foodLarge[FOUR_FOOD], row, col); 
+						break;
+						case 5: drawImage(foodLarge[FIVE_FOOD], row, col); 
+						break;
+						case 6: drawImage(foodLarge[SIX_FOOD], row, col); 
+						break;
+						case 7: drawImage(foodLarge[SEVEN_FOOD], row, col); 
+						break;
+						case 8: drawImage(foodLarge[EIGHT_FOOD], row, col); 
+						break;
+						case 9: drawImage(foodLarge[NINE_FOOD], row, col); 
+						break;
+					}
+				} else if (imageScale == MEDIUM_IMAGE) { //Otherwise, just check if any is there
+					if (gridCells[row][col].hasFood()) {
+						drawImage(foodMedium, row, col); 
+					}
+				} else {
+					if (gridCells[row][col].hasFood()) {
+						drawImage(foodSmall, row, col); 
+					}
+				}
+			}
+		}
+	}
+	
+	public void drawAnts(int imageScale) {
+		Ant currentAnt;
+		for (int row = 0; row < numHexRow; row++) {
+			for (int col = 0; col < numHexCol; col++) {
+				try {
+					currentAnt = gridCells[row][col].getAnt();
+					if (imageScale == LARGE_IMAGE) {
+						pushMatrix();
+						//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
+						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
+						//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
+						rotate(AntDirection.SOUTH_EAST.direction());
+						//Draw the image at an offset so that the origin is back to the top left of the tile.
+						if (currentAnt.getColour() == 0) { //If it's a black ant
+							if (currentAnt.hasFood()) {
+								image(blackAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT); //TODO: Decide on drawing method to use.
+							} else {
+								image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+							}
+						} else {
+							if (currentAnt.hasFood()) {
+								image(redAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+							} else {
+								image(redAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+							}
+						}
+						popMatrix();
+					} else {
+						image(redAnt[imageScale], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+					}
+				} catch (NullPointerException nPE) {
+				}
+			}
+		}
+			/*
+		if (species == 0) {
+			//push and pop matrices so no further draws are affected by transforms below
+			pushMatrix();
+			//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
+			translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
+			//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
+			rotate(AntDirection.SOUTH_EAST.direction());
+			//Draw the image at an offset so that the origin is back to the top left of the tile.
+			image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+			popMatrix();
+		}*/
+	}
 
-		drawAnt(25, 15, 0);
+	private void drawImage(PImage image, int row, int col) {
+		 if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
+		 	image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+		 }
+		 else {
+		    image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+		} 
 	}
 	
 	/*
@@ -347,6 +484,7 @@ public class GameDisplay extends PApplet {
 		}
 	}
 
+	//TODO: DIFFERENCE BETWEEN THESE AND NEWER DRAW IMAGE METHOD??? NEED TO TEST!
 	//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)
 	private int getRowPixelCoords(int row) {
 		return row * (HEX_HEIGHT - HEX_ANGLE_HEIGHT);
@@ -363,20 +501,6 @@ public class GameDisplay extends PApplet {
 			pixelCol = ((col * HEX_WIDTH) - HEX_WIDTH / 2) + HEX_WIDTH;
 		}
 		return pixelCol;
-	}
-	
-	public void drawAnt(int row, int col, int colour) {
-		if (colour == 0) {
-			//push and pop matrices so no further draws are affected by transforms below
-			pushMatrix();
-			//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
-			translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
-			//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
-			rotate(AntDirection.SOUTH_EAST.direction());
-			//Draw the image at an offset so that the origin is back to the top left of the tile.
-			image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-			popMatrix();
-		}
 	}
 	
 	public void displayNewWorld(World world) {

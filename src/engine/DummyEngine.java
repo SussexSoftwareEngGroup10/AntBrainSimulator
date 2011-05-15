@@ -354,7 +354,7 @@ public class DummyEngine {
 //		DummyEngine dummyEngine = new DummyEngine(140, 140, 13, 2, 7, 10, 5, 5, 0, 1,
 //			Integer.MAX_VALUE, 300000, 50, 50 / 10, 100);
 		
-		World world = new World(0, 30, 40, 13, 2, 7, 5, 5, 5, 0, 1);
+		World world = World.getContestWorld(0);
 		WorldParser.writeWorldTo(world, "test");
 		world = WorldParser.readWorldFrom("test");
 		System.out.println(world);

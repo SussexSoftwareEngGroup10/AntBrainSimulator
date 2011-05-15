@@ -1,6 +1,5 @@
 package antWorld;
 
-
 import engine.Random;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
@@ -184,20 +183,6 @@ public class World {
 		//then compared results with those given after writing
 		//and reading world in through a WorldParser
 		
-//		int rocks;
-//		boolean borderRocks;
-//		int anthills;
-//		int anthillSideLength;
-//		boolean anthillAreaConsistency;
-//		int foodBlobCount;
-//		int foodBlobSideLength;
-//		int foodBlobCellFoodCount;
-//		int antInitialDirection;
-//		int gap;
-		
-		//TODO rewrite all of this so it's unbreakable
-		//Calculate field values from cell information
-		
 		//rocks (not including border, if any)
 		int rocks = 0;
 		for(r = 1; r < this.rows - 1; r++){
@@ -339,12 +324,10 @@ public class World {
 		int currentFood;
 		r = 0;
 		c = 0;
-		int lastR = 0;
-		int lastC = 0;
 		while(r < this.rows || c < this.cols){
 			foodBlobSideLengthLoop:
-				for(r = lastR; r < this.rows; r++){
-					for(c = lastC + 1; c < this.cols; c++){
+				for(; r < this.rows; r++){
+					for(c = 0; c < this.cols; c++){
 						if(!foodBlobAreas[r][c]){
 							current = this.cells[r][c];
 							currentFood = current.foodCount();
@@ -358,31 +341,16 @@ public class World {
 										break;
 									}
 								}
-								setRectBool(r, c, foodBlobSideLength, foodBlobSideLength,
-									foodBlobAreas, true);
 								if(foodBlobSideLength == -1){
 									foodBlobSideLength = lenC - c;
 								}
-								lastR = r;
-								lastC = c;
+								setRectBool(r, c, foodBlobSideLength, foodBlobSideLength,
+									foodBlobAreas, true);
 								break foodBlobSideLengthLoop;
 							}
 						}
 					}
 				}
-		}
-		for(r = 0; r < this.rows; r++){
-			if(r % 2 == 1){
-				System.out.print(" ");
-			}
-			for(c = 0; c < this.cols; c++){
-				if(foodBlobAreas[r][c]){
-					System.out.print("1 ");
-				}else{
-					System.out.print("0 ");
-				}
-			}
-			System.out.print("\n");
 		}
 		this.foodBlobCount = foodBlobCount;
 		this.foodBlobSideLength = foodBlobSideLength;
@@ -408,61 +376,9 @@ public class World {
 		
 		//other
 		this.antInitialDirection = 0;
+		//I can't think of an efficient way of checking for the minimum gap between
+		//objects in the World
 		this.gap = 1;
-		
-//		for(r = 0; r < this.rows; r++){
-//			for(c = 0; c < this.cols; c++){
-//				current = this.cells[r][c];
-//				
-//				//Calculate number of rocks
-//				if(current.isRocky()){
-//					rocks++;
-//				
-//				//Calculate number of anthills
-//				}else if(current.getAnthill() == 1){
-//					plusAnthill = true;
-//				}else if(current.getAnthill() == 2){
-//					minusAnthill = true;
-//				}
-//				
-//				//Calculate anthill side length
-//				if(current.getAnthill() != 0){
-//					if(!firstAnthillFound){
-//						current2 = current;
-//						do{
-//							anthillSideLength++;
-//							current2 = current2.getNeighbour(0);
-//						}while(current2.getAnthill() != 0);
-//						firstAnthillFound = true;
-//					}
-//				}
-//				
-//				if(current.hasFood()){
-//					//Calculate number of cells containing food
-//					foodBlobCellCount++;
-//					
-//					//Calculate food blob side length
-//					if(!firstFoodFound){
-//						foodBlobCellFoodCount = current.foodCount();
-//						current2 = current;
-//						do{
-//							foodBlobSideLength++;
-//							current2 = current2.getNeighbour(0);
-//						}while(current2.hasFood());
-//						firstFoodFound = true;
-//					}
-//				}
-//			}
-//		}
-//		
-//		rocks -= (this.rows - 1) * 2 + (this.cols - 1) * 2; //subtract border rocks
-//		this.rocks = rocks;
-//		
-//		this.foodBlobCount = foodBlobCellCount / (foodBlobSideLength * foodBlobSideLength);
-//		this.foodBlobSideLength = foodBlobSideLength;
-//		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
-//		this.antInitialDirection = 0;
-//		this.gap = 1;
 		
 		createAnts();
 	}
@@ -1140,7 +1056,6 @@ public class World {
 	}
 	
 	public boolean isContest() {
-		//must be a gap of 1 between rocks TODO
 		if(this.rows == 140
 		&& this.cols == 140
 		&& this.rocks == 13

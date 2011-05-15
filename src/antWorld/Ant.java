@@ -408,14 +408,6 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @param brain
-	 */
-	public final void setBrain(Brain brain) {
-		this.brain = brain;
-		this.state = brain.get(0);
-	}
-	
-	/**
 	 * @return
 	 */
 	private final int neighbourFoes() {
@@ -437,6 +429,14 @@ public final class Ant implements Comparable<Ant> {
 		}
 		//All cells must have contained foes
 		return foes;
+	}
+	
+	/**
+	 * @param brain
+	 */
+	public final void setBrain(Brain brain) {
+		this.brain = brain;
+		this.state = brain.get(0);
 	}
 	
 	/**

@@ -341,7 +341,7 @@ public class World {
 		int currentFood;
 		r = 0;
 		c = 0;
-		while(r < this.rows - 1 && c < this.cols - 1){
+		while(r < this.rows && c < this.cols){
 			foodBlobSideLengthLoop:
 				for(; r < this.rows; r++){
 					for(; c < this.cols; c++){

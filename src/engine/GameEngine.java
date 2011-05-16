@@ -23,7 +23,7 @@ public class GameEngine
     private World world;
     private Brain redBrain;
     private Brain blackBrain;
-    private SoundEffect winningSoundEffect;
+//    private SoundEffect winningSoundEffect;
     private int waitTime;
     
     //World arguments

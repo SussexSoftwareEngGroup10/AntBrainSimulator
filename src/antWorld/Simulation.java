@@ -1,4 +1,4 @@
-package antBrain;
+package antWorld;
 
 import java.util.concurrent.Semaphore;
 
@@ -7,8 +7,7 @@ import utilities.WarningEvent;
 
 import engine.DummyEngine;
 
-import antWorld.Ant;
-import antWorld.World;
+import antBrain.Brain;
 
 /**
  * @author pkew20 / 57116

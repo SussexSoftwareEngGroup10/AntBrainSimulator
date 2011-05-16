@@ -178,8 +178,11 @@ public class GameEngine
 
     	for(int i=0; i<teams.length; i++)
     	{
-    		for(int j=i+1; j<teams.length; j++)
+    		for(int j=0; j<teams.length; j++)
     		{
+    			if(j == i) j++;
+    			if(j >= teams.length) break;
+    			
     			World newWorld = World.getContestWorld(1);
     			GameEngine ge = new GameEngine(teams[i], teams[j], newWorld);
     			if(ge.calculateWinner(newWorld) == 0)
@@ -198,24 +201,24 @@ public class GameEngine
     		}
     	}
 
-    	for(int i=teams.length; i>=0; i--)
-    	{
-    		for(int j=i - 1; j>=0; j--)
-    		{
-    			World newWorld = World.getContestWorld(0);
-    			GameEngine ge = new GameEngine(teams[i], teams[j], newWorld);
-    			if(ge.calculateWinner(newWorld) == 0)
-    			{
-    				//black wins
-    				results[i][j] = i;
-    			} else if(ge.calculateWinner(newWorld) == 1 ) {
-    				//red wins
-    				results[i][j] = j;
-    			} else {
-    				results[i][j] = -1;
-    			}
-    		}
-    	}
+//    	for(int i=teams.length; i>=0; i--)
+//    	{
+//    		for(int j=i - 1; j>=0; j--)
+//    		{
+//    			World newWorld = World.getContestWorld(0);
+//    			GameEngine ge = new GameEngine(teams[i], teams[j], newWorld);
+//    			if(ge.calculateWinner(newWorld) == 0)
+//    			{
+//    				//black wins
+//    				results[i][j] = i;
+//    			} else if(ge.calculateWinner(newWorld) == 1 ) {
+//    				//red wins
+//    				results[i][j] = j;
+//    			} else {
+//    				results[i][j] = -1;
+//    			}
+//    		}
+//    	}
 
         return results;
     }

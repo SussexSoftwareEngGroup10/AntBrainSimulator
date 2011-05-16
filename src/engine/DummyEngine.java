@@ -45,6 +45,7 @@ public class DummyEngine {
 	private int foodBlobCellFoodCount;
 	private int antInitialDirection;
 	private int gap;
+	private int sleepDur;
 	
 	//GA variables
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
@@ -76,16 +77,17 @@ public class DummyEngine {
 	public DummyEngine(int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int gap, int epochs, int rounds,
-		int popLen, int elite, int mutationRate) {
+		int popLen, int elite, int mutationRate, int sleepDur) {
 		
 		setVariables(rows, cols, rocks,
 		anthills, anthillSideLength, foodBlobCount, foodBlobSideLength,
 		foodBlobCellFoodCount, antInitialDirection, gap, epochs, rounds,
-		popLen, elite, mutationRate);
+		popLen, elite, mutationRate, sleepDur);
 		
 		Logger.log(new InformationLowEvent("New Engine object constructed"));
 	}
 	
+	/*
 	//How many times GA-related methods are called in each run,
 	//ignoring elite (popLen -= elite)
 	//Variables in descending order and approximate values
@@ -131,6 +133,7 @@ public class DummyEngine {
 //Ant.isAlive()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15		== N/A		
 //Ant.step()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
+	*/
 	
 	/**
 	 * @param startBrain
@@ -206,20 +209,20 @@ public class DummyEngine {
 				//Absolute fitness tests
 				threadPoolExecutor.execute(
 					new Simulation(this, this.absoluteTrainingBrain, brain,
-						semaphore, 0, this.rounds, seed));
+						semaphore, 0, 0, this.rounds, seed));
 				threadPoolExecutor.execute(
 					new Simulation(this, brain, this.absoluteTrainingBrain,
-						semaphore, 1, this.rounds, seed));
+						semaphore, 0, 1, this.rounds, seed));
 			}else{
 				semaphore.release(2);
 			}
 			//Relative fitness tests
 			threadPoolExecutor.execute(
 				new Simulation(this, relativeTrainingBrain, brain,
-					semaphore, 2, this.rounds, seed));
+					semaphore, 0, 2, this.rounds, seed));
 			threadPoolExecutor.execute(
 				new Simulation(this, brain, relativeTrainingBrain,
-					semaphore, 3, this.rounds, seed));
+					semaphore, 0, 3, this.rounds, seed));
 		}
 		//Await completion of all Simulations
 		semaphore.acquireUninterruptibly(population.length * 4);
@@ -246,7 +249,7 @@ public class DummyEngine {
 	public void setVariables(int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int gap, int epochs, int rounds,
-		int popLen, int elite, int mutationRate) {
+		int popLen, int elite, int mutationRate, int sleepDur) {
 		this.rows = rows;
 		this.cols = cols;
 		this.rocks = rocks;
@@ -262,6 +265,7 @@ public class DummyEngine {
 		this.popLen = popLen;
 		this.elite = elite;
 		this.mutationRate = mutationRate;
+		this.sleepDur = sleepDur;
 	}
 	
 	/**
@@ -293,7 +297,7 @@ public class DummyEngine {
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		Logger.log(new InformationLowEvent("Begun simulation"));
 		
-		new Simulation(this, blackBrain, redBrain, null, 0, this.rounds, world).run();
+		new Simulation(this, blackBrain, redBrain, null, this.sleepDur, 0, this.rounds, world).run();
 		
 		//Ant results
 		Ant[][] antsBySpecies = world.getAntsBySpecies();
@@ -352,7 +356,7 @@ public class DummyEngine {
 		//but it encourages the brains generated to be more random
 		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
 		DummyEngine dummyEngine = new DummyEngine(140, 140, 13, 2, 7, 10, 5, 5, 0, 1,
-			Integer.MAX_VALUE, 300000, 50, 50 / 10, 100);
+			Integer.MAX_VALUE, 300000, 50, 50 / 10, 100, 50);
 		
 //		//World(char[][]) test:
 //		World world = World.getContestWorld(0);

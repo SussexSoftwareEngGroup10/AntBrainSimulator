@@ -70,7 +70,7 @@ public class MainWindow {
 		JPanel gridDisplayPanel = new JPanel();
 		gridDisplayPanel.setLayout(new FlowLayout());
 		
-		gameDisplay = new GameDisplay();
+		gameDisplay = new GameDisplay(gameEngine);
 		gridDisplayPanel.add(gameDisplay);
 		gameDisplay.init();
 		pane.add(gridDisplayPanel, BorderLayout.NORTH);

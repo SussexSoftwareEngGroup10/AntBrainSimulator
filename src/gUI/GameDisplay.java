@@ -6,6 +6,7 @@ import processing.core.*;
 
 import org.gicentre.utils.move.*; 
 
+import engine.DummyEngine;
 import engine.GameEngine;
 
 import antWorld.Ant;
@@ -26,7 +27,7 @@ import antWorld.World;
 public class GameDisplay extends PApplet {
 	private static final long serialVersionUID = 1L;
 	
-	private GameEngine gameEngine;
+	private DummyEngine gameEngine;
 	private Cell[][] gridCells;
 	
 	private Random random;
@@ -133,9 +134,9 @@ public class GameDisplay extends PApplet {
 	private PImage blackMarker;
 	private PImage redMarker;
 	
-	public GameDisplay(GameEngine gameEngine) {
+	public GameDisplay(DummyEngine gameEngine) {
 		this.gameEngine = gameEngine;
-		gridCells = gameEngine.getCells();
+		gridCells = gameEngine.generateWorld(100).getWorld();
 	}
 
 	public void setup() {

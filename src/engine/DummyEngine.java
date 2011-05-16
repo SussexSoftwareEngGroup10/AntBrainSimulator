@@ -15,6 +15,7 @@ import antBrain.BrainParser;
 import antBrain.GeneticAlgorithm;
 import antBrain.Simulation;
 import antWorld.Ant;
+import antWorld.Cell;
 import antWorld.World;
 
 /**

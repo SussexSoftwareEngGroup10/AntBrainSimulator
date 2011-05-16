@@ -59,7 +59,8 @@ public class GameEngine
         BrainParser brainParser = new BrainParser();
         Brain blackBrain = brainParser.readBrainFrom(blackBrainLocation);
         Brain redBrain = brainParser.readBrainFrom(redBrainLocation);
-        world = new World(seed,rows,cols,rocks);
+//        world = new World(seed,rows,cols,rocks);
+        world = World.getContestWorld(0);
         
         world.setBrain(blackBrain,0);
         world.setBrain(redBrain,1);

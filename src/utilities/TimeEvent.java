@@ -3,7 +3,7 @@ package utilities;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Logs the current time since the start of the program, and a message,
+ * Logs the current time since the start of timing, and a message,
  * e.g. a marker for the start or end of a method call
  * 
  * @author pkew20 / 57116

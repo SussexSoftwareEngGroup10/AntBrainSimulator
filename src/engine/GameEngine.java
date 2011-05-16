@@ -95,13 +95,12 @@ public class GameEngine
         {
             for(int ant = 0; ant < ants.length; ant++)
             {
-            	//Phil: isSurrounded and kill are built in to the step method in Ant
-//                if(ants[ant].isSurrounded())
-//                {
-//                    ants[ant].kill();
-//                }else{
+                if(ants[ant].isSurrounded())
+                {
+                    ants[ant].kill();
+                }else{
                     ants[ant].step();
-//                }
+                }
             }
             try {
 				Thread.sleep(waitTime);

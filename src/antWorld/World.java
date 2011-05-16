@@ -143,7 +143,7 @@ public class World {
 	 * 
 	 * @param cellChars
 	 */
-	public World(char[][] cellChars) {
+	protected World(char[][] cellChars) {
 		//Random is not needed for world generation, but is for Ant.step()
 		this.seed = 0;
 		this.ran = new Random(this.seed);

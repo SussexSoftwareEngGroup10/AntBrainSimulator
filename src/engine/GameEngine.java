@@ -229,7 +229,6 @@ public class GameEngine
     	return world.getWorld();
     }
     
-    /*
     //How many times GA-related methods are called in each run,
 	//ignoring elite (popLen -= elite)
 	//Variables in descending order and approximate values
@@ -275,99 +274,98 @@ public class GameEngine
 //Ant.isAlive()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 30		  ==    225,000,000,000,000 == 15		== N/A		
 //Ant.step()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
-	*/
 	
-    /**
-	 * @param startBrain
-	 * @param trainingBrain
-	 * @param seed
-	 * @return
-	 */
-	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int seed) {
-		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(this.popLen * 4));
-		Semaphore semaphore = new Semaphore(this.popLen * 4, true);
-		
-		this.absoluteTrainingBrain = trainingBrain;
-		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-		geneticAlgorithm.createPopulation(startBrain, this.popLen);
-		geneticAlgorithm.evolve(this, seed, threadPoolExecutor, semaphore,
-			this.epochs, this.rounds, this.elite, this.mutationRate);
-		return geneticAlgorithm.getBestBrain();
-	}
-	
-	/**
-	 * @param seed
-	 * @param threadPoolExecutor
-	 * @param semaphore
-	 * @param population
-	 */
-	public void sortByFitness(int seed, ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore, Brain[] population) {
-		//Ensure all Brains have a fitness
-		evaluateFitnessContest(seed, threadPoolExecutor, semaphore, population);
-		
-		//Sort by fitnesses calculated
-		Arrays.sort(population);
-	}
-	
-	/**
-	 * @param seed
-	 * @param threadPoolExecutor
-	 * @param semaphore
-	 * @param population
-	 */
-	private void evaluateFitnessContest(int seed, ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore, Brain[] population) {
-		//Ants let each other know they've finished a step with the stepBarrier
-		//Ants let their sim know they've finished all steps with the endBarrier
-		//Sims let the engine know they've finished their sim with the contestEndBarrier
-		
-		//Set fitness for each brain against the best brain in the population
-		//Assumes population has been sorted
-		//Get the brain in the population with the highest fitness, if any have one
-		int i = population.length;
-		Brain relativeTrainingBrain;
-		do{
-			if(i <= 0){
-				//If there is no elite, or this is the first epoch,
-				//no brains will have a fitness,
-				//In these cases, the static Brain test must be used instead
-				relativeTrainingBrain = this.absoluteTrainingBrain;
-				break;
-			}
-			i--;
-			relativeTrainingBrain = population[i];
-		}while(relativeTrainingBrain.getFitness() == 0);
-		
-		//Multi-Threaded
-		//Get popLen permits, restore as runs complete
-		semaphore.acquireUninterruptibly(population.length * 4);
-		
-		//Set fitness for every brain in population
-		for(Brain brain : population){
-			if(brain.getFitness() == 0){
-				//Brain is not in elite
-				//Absolute fitness tests
-				threadPoolExecutor.execute(
-					new Simulation(this, this.absoluteTrainingBrain, brain,
-						semaphore, 0, 0, this.rounds, seed));
-				threadPoolExecutor.execute(
-					new Simulation(this, brain, this.absoluteTrainingBrain,
-						semaphore, 0, 1, this.rounds, seed));
-			}else{
-				semaphore.release(2);
-			}
-			//Relative fitness tests
-			threadPoolExecutor.execute(
-				new Simulation(this, relativeTrainingBrain, brain,
-					semaphore, 0, 2, this.rounds, seed));
-			threadPoolExecutor.execute(
-				new Simulation(this, brain, relativeTrainingBrain,
-					semaphore, 0, 3, this.rounds, seed));
-		}
-		//Await completion of all Simulations
-		semaphore.acquireUninterruptibly(population.length * 4);
-		semaphore.release(population.length * 4);
-	}
+//    /**
+//	 * @param startBrain
+//	 * @param trainingBrain
+//	 * @param seed
+//	 * @return
+//	 */
+//	public Brain getBestGABrain(Brain startBrain, Brain trainingBrain, int seed) {
+//		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
+//			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(this.popLen * 4));
+//		Semaphore semaphore = new Semaphore(this.popLen * 4, true);
+//		
+//		this.absoluteTrainingBrain = trainingBrain;
+//		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+//		geneticAlgorithm.createPopulation(startBrain, this.popLen);
+//		geneticAlgorithm.evolve(this, seed, threadPoolExecutor, semaphore,
+//			this.epochs, this.rounds, this.elite, this.mutationRate);
+//		return geneticAlgorithm.getBestBrain();
+//	}
+//	
+//	/**
+//	 * @param seed
+//	 * @param threadPoolExecutor
+//	 * @param semaphore
+//	 * @param population
+//	 */
+//	public void sortByFitness(int seed, ThreadPoolExecutor threadPoolExecutor,
+//		Semaphore semaphore, Brain[] population) {
+//		//Ensure all Brains have a fitness
+//		evaluateFitnessContest(seed, threadPoolExecutor, semaphore, population);
+//		
+//		//Sort by fitnesses calculated
+//		Arrays.sort(population);
+//	}
+//	
+//	/**
+//	 * @param seed
+//	 * @param threadPoolExecutor
+//	 * @param semaphore
+//	 * @param population
+//	 */
+//	private void evaluateFitnessContest(int seed, ThreadPoolExecutor threadPoolExecutor,
+//		Semaphore semaphore, Brain[] population) {
+//		//Ants let each other know they've finished a step with the stepBarrier
+//		//Ants let their sim know they've finished all steps with the endBarrier
+//		//Sims let the engine know they've finished their sim with the contestEndBarrier
+//		
+//		//Set fitness for each brain against the best brain in the population
+//		//Assumes population has been sorted
+//		//Get the brain in the population with the highest fitness, if any have one
+//		int i = population.length;
+//		Brain relativeTrainingBrain;
+//		do{
+//			if(i <= 0){
+//				//If there is no elite, or this is the first epoch,
+//				//no brains will have a fitness,
+//				//In these cases, the static Brain test must be used instead
+//				relativeTrainingBrain = this.absoluteTrainingBrain;
+//				break;
+//			}
+//			i--;
+//			relativeTrainingBrain = population[i];
+//		}while(relativeTrainingBrain.getFitness() == 0);
+//		
+//		//Multi-Threaded
+//		//Get popLen permits, restore as runs complete
+//		semaphore.acquireUninterruptibly(population.length * 4);
+//		
+//		//Set fitness for every brain in population
+//		for(Brain brain : population){
+//			if(brain.getFitness() == 0){
+//				//Brain is not in elite
+//				//Absolute fitness tests
+//				threadPoolExecutor.execute(
+//					new Simulation(this, this.absoluteTrainingBrain, brain,
+//						semaphore, 0, 0, this.rounds, seed));
+//				threadPoolExecutor.execute(
+//					new Simulation(this, brain, this.absoluteTrainingBrain,
+//						semaphore, 0, 1, this.rounds, seed));
+//			}else{
+//				semaphore.release(2);
+//			}
+//			//Relative fitness tests
+//			threadPoolExecutor.execute(
+//				new Simulation(this, relativeTrainingBrain, brain,
+//					semaphore, 0, 2, this.rounds, seed));
+//			threadPoolExecutor.execute(
+//				new Simulation(this, brain, relativeTrainingBrain,
+//					semaphore, 0, 3, this.rounds, seed));
+//		}
+//		//Await completion of all Simulations
+//		semaphore.acquireUninterruptibly(population.length * 4);
+//		semaphore.release(population.length * 4);
+//	}
 }

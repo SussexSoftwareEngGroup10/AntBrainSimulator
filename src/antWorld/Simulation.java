@@ -13,7 +13,7 @@ import antBrain.Brain;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public final class Simulation implements Runnable {
+public final class Simulation extends Thread {
 	private final DummyEngine dummyEngine;
 	private final Brain blackBrain;
 	private final Brain redBrain;
@@ -108,5 +108,26 @@ public final class Simulation implements Runnable {
 		if(this.semaphore != null){
 			this.semaphore.release();
 		}
+	}
+	
+	/**
+	 * @return
+	 */
+	public Brain getBlackBrain() {
+		return this.blackBrain;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Brain getRedBrain() {
+		return this.redBrain;
+	}
+	
+	/**
+	 * @return
+	 */
+	public World getWorld() {
+		return this.world;
 	}
 }

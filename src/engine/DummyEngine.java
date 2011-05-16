@@ -14,7 +14,6 @@ import antBrain.Brain;
 import antBrain.BrainParser;
 import antBrain.GeneticAlgorithm;
 import antWorld.Ant;
-import antWorld.Cell;
 import antWorld.Simulation;
 import antWorld.World;
 
@@ -310,7 +309,8 @@ public class DummyEngine {
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		Logger.log(new InformationLowEvent("Begun simulation"));
 		
-		new Simulation(this, blackBrain, redBrain, null, this.sleepDur, 0, this.rounds, world).run();
+		new Simulation(this, blackBrain, redBrain, null,
+			this.sleepDur, 0, this.rounds, world).run();
 		
 		//Ant results
 		Ant[][] antsBySpecies = world.getAntsBySpecies();

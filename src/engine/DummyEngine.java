@@ -295,10 +295,6 @@ public class DummyEngine {
 			this.antInitialDirection, this.gap);
 	}
 	
-	public World getCurrentWorld(int seed) {
-		return generateWorld(seed);
-	}
-	
 	/**
 	 * @param blackBrain
 	 * @param redBrain

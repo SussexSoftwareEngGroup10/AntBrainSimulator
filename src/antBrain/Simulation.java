@@ -2,6 +2,9 @@ package antBrain;
 
 import java.util.concurrent.Semaphore;
 
+import utilities.Logger;
+import utilities.WarningEvent;
+
 import engine.DummyEngine;
 
 import antWorld.Ant;
@@ -18,6 +21,7 @@ public final class Simulation implements Runnable {
 	private final Semaphore semaphore;
 	private final int fitness;
 	private final int rounds;
+	private final int sleepDur;
 	private int seed;
 	private World world;
 	
@@ -30,7 +34,7 @@ public final class Simulation implements Runnable {
 	 * @param seed
 	 */
 	public Simulation(DummyEngine dummyEngine, Brain blackBrain, Brain redBrain,
-		Semaphore semaphore, int fitness, int rounds, int seed) {
+		Semaphore semaphore, int sleepDur, int fitness, int rounds, int seed) {
 		this.dummyEngine = dummyEngine;
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
@@ -38,6 +42,7 @@ public final class Simulation implements Runnable {
 		this.fitness = fitness;
 		this.seed = seed;
 		this.rounds = rounds;
+		this.sleepDur = sleepDur;
 	}
 	
 	/**
@@ -49,7 +54,7 @@ public final class Simulation implements Runnable {
 	 * @param world
 	 */
 	public Simulation(DummyEngine dummyEngine, Brain blackBrain, Brain redBrain,
-		Semaphore semaphore, int fitness, int rounds, World world) {
+		Semaphore semaphore, int sleepDur, int fitness, int rounds, World world) {
 		this.dummyEngine = dummyEngine;
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
@@ -57,6 +62,7 @@ public final class Simulation implements Runnable {
 		this.fitness = fitness;
 		this.world = world;
 		this.rounds = rounds;
+		this.sleepDur = sleepDur;
 	}
 	
 	/* (non-Javadoc)
@@ -83,6 +89,13 @@ public final class Simulation implements Runnable {
 		for(int i = 0; i < this.rounds; i++){
 			for(Ant ant : ants){
 				ant.step();
+			}
+			if(this.sleepDur > 0){
+				try{
+					Thread.sleep(this.sleepDur);
+				}catch(InterruptedException e){
+					Logger.log(new WarningEvent(e.getMessage(), e));
+				}
 			}
 		}
 		

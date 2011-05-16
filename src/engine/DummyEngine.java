@@ -87,6 +87,22 @@ public class DummyEngine {
 		Logger.log(new InformationLowEvent("New Engine object constructed"));
 	}
 	
+	/**
+	 * 
+	 */
+	public void slowDown() {
+		this.sleepDur += 10;
+		if(this.sleepDur > 100) this.sleepDur = 100;
+	}
+
+	/**
+	 * 
+	 */
+	public void speedUp() {
+		this.sleepDur -= 10;
+		if(this.sleepDur < 0) this.sleepDur = 0;
+	}
+	
 	/*
 	//How many times GA-related methods are called in each run,
 	//ignoring elite (popLen -= elite)

@@ -339,6 +339,7 @@ public class DummyEngine {
 		//TODO multithread breed() and trim()
 		//TODO use jar on linux server
 		//TODO pass time logging a unit to convert to from ns
+		//TODO fix GA (de)serialize epoch
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

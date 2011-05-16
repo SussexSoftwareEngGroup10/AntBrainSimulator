@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import utilities.IOEvent;
 import utilities.InformationHighEvent;
@@ -158,7 +159,7 @@ public class GeneticAlgorithm implements Serializable {
 		Logger.log(new InformationLowEvent("Initial sort completed"));
 
 		//Timing
-		Logger.log(new TimeEvent("until start of first epoch"));
+		Logger.log(new TimeEvent("from start to beginning of first epoch", TimeUnit.SECONDS));
 		Logger.restartTimer();
 		
 		//After constructor, epoch == 1,
@@ -202,7 +203,7 @@ public class GeneticAlgorithm implements Serializable {
 			sortByFitness(seed, threadPoolExecutor, semaphore, dummyEngine);
 			
 			//Timing
-			Logger.log(new TimeEvent("for epoch " + (this.epoch - 1)));
+			Logger.log(new TimeEvent("for epoch " + (this.epoch - 1), TimeUnit.SECONDS));
 			Logger.restartTimer();
 			
 			//Logging
@@ -219,11 +220,6 @@ public class GeneticAlgorithm implements Serializable {
 			b.trim();
 			BrainParser.writeBrainTo(b, "ga_result_trimmed");
 		}
-		//Write best brain so far to file
-		Brain b = this.population[this.popLen - 1].clone();
-		BrainParser.writeBrainTo(b, "ga_result_full");
-		b.trim();
-		BrainParser.writeBrainTo(b, "ga_result_trimmed");
 		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
 	}
 	

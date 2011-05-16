@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.Logger;
+import utilities.WarningEvent;
 
 import antBrain.Brain;
 import antBrain.BrainParser;
@@ -56,9 +57,9 @@ public class GameEngine
         rocks = 5;
         waitTime = 50;
         
-        BrainParser brainParser = new BrainParser();
-        Brain blackBrain = brainParser.readBrainFrom(blackBrainLocation);
-        Brain redBrain = brainParser.readBrainFrom(redBrainLocation);
+//        BrainParser brainParser = new BrainParser();
+        Brain blackBrain = BrainParser.readBrainFrom(blackBrainLocation);
+        Brain redBrain = BrainParser.readBrainFrom(redBrainLocation);
 //        world = new World(seed,rows,cols,rocks);
         world = World.getContestWorld(0);
         
@@ -93,7 +94,7 @@ public class GameEngine
         {
             for(int ant = 0; ant < ants.length; ant++)
             {
-            	//isSurrounded and kill are built in to the step method in Ant - Phil
+            	//Phil: isSurrounded and kill are built in to the step method in Ant
 //                if(ants[ant].isSurrounded())
 //                {
 //                    ants[ant].kill();
@@ -101,6 +102,11 @@ public class GameEngine
                     ants[ant].step();
 //                }
             }
+            try {
+				Thread.sleep(waitTime);
+			} catch (InterruptedException e) {
+				Logger.log(new WarningEvent(e.getMessage(), e));
+			}
         }
         calculateWinner(this.world);
     }
@@ -125,9 +131,8 @@ public class GameEngine
      * At present it returns 0 for black, 1 for red, and 2 for the draw
      * 
      */
-    public int calculateWinner(World world)
+    public int calculateWinner()
     {
-    	//Phil: You were using the field world here, and using a local variable in runContest, so that would have failed
         int[] anthillFood = world.getFoodInAnthills();
         
         if(anthillFood[0] > anthillFood[1])
@@ -169,11 +174,12 @@ public class GameEngine
      * for a draw.
      * 
      */
-    public int[][] runContest(Brain[] teams)
+    public synchronized int[][] runContest(Brain[] teams)
     {
     	//Phil: okay, so you want to play every brain against every other brain and store all the winning indexes.
     	//You can't reuse Worlds, need a new one for every simulation
     	//Why do you need 2 loops?
+    	//You were using the field world in calculateWinner, and using a local variable here, so that would have failed
     	
     	int[][] results = new int[teams.length][teams.length];
 
@@ -184,14 +190,14 @@ public class GameEngine
     			if(j == i) j++;
     			if(j >= teams.length) break;
     			
-    			World newWorld = World.getContestWorld(1);
-    			GameEngine ge = new GameEngine(teams[i], teams[j], newWorld);
-    			if(ge.calculateWinner(newWorld) == 0)
+    			world = World.getContestWorld(1);
+    			GameEngine ge = new GameEngine(teams[i], teams[j], world);
+    			if(ge.calculateWinner() == 0)
     			{
     				//black wins
     				results[i][j] = i;
     				results[j][i] = i;
-    			} else if(ge.calculateWinner(newWorld) == 1 ) {
+    			} else if(ge.calculateWinner() == 1 ) {
     				//red wins
     				results[i][j] = j;
     				results[j][i] = j;

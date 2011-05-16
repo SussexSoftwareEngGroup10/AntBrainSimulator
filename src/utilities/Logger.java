@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author pkew20 / 57116
@@ -169,7 +170,7 @@ public final class Logger {
 	 */
 	public static void logCurrentTime(String message) {
 		//Logs time since custom point, rather than the default time since a point
-		Logger.log(new TimeEvent(getCurrentTime(), message));
+		Logger.log(new TimeEvent(getCurrentTime(), TimeUnit.NANOSECONDS, message));
 	}
 	
 	/**

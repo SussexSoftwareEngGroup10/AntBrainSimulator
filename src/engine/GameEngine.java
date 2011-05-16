@@ -76,12 +76,13 @@ public class GameEngine
      */
     public GameEngine(Brain blackBrain, Brain redBrain, World world)
     {
+    	//Phil: if this is the contest constructor, why are you only passing it 2 brains?
         this.world = world;
         this.redBrain = redBrain;
         this.blackBrain = blackBrain;
         
-        world.setBrain(blackBrain,0);
-        world.setBrain(redBrain,1);
+        this.world.setBrain(blackBrain,0);
+        this.world.setBrain(redBrain,1);
 
         run(300000);
     }
@@ -108,7 +109,7 @@ public class GameEngine
 				Logger.log(new WarningEvent(e.getMessage(), e));
 			}
         }
-        calculateWinner(this.world);
+        calculateWinner();
     }
 
     /**  

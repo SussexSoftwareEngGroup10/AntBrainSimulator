@@ -101,7 +101,7 @@ public class GameEngine
 //                }
             }
         }
-        calculateWinner();
+        calculateWinner(this.world);
     }
 
     /**  
@@ -124,8 +124,9 @@ public class GameEngine
      * At present it returns 0 for black, 1 for red, and 2 for the draw
      * 
      */
-    public int calculateWinner()
+    public int calculateWinner(World world)
     {
+    	//Phil: You were using the field world here, and using a local variable in runContest, so that would have failed
         int[] anthillFood = world.getFoodInAnthills();
         
         if(anthillFood[0] > anthillFood[1])
@@ -181,12 +182,12 @@ public class GameEngine
     		{
     			World newWorld = World.getContestWorld(1);
     			GameEngine ge = new GameEngine(teams[i], teams[j], newWorld);
-    			if(ge.calculateWinner() == 0)
+    			if(ge.calculateWinner(newWorld) == 0)
     			{
     				//black wins
     				results[i][j] = i;
     				results[j][i] = i;
-    			} else if(ge.calculateWinner() == 1 ) {
+    			} else if(ge.calculateWinner(newWorld) == 1 ) {
     				//red wins
     				results[i][j] = j;
     				results[j][i] = j;
@@ -203,11 +204,11 @@ public class GameEngine
     		{
     			World newWorld = World.getContestWorld(0);
     			GameEngine ge = new GameEngine(teams[i], teams[j], newWorld);
-    			if(ge.calculateWinner() == 0)
+    			if(ge.calculateWinner(newWorld) == 0)
     			{
     				//black wins
     				results[i][j] = i;
-    			} else if(ge.calculateWinner() == 1 ) {
+    			} else if(ge.calculateWinner(newWorld) == 1 ) {
     				//red wins
     				results[i][j] = j;
     			} else {

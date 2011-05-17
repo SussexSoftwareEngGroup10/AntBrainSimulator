@@ -294,7 +294,7 @@ public class World implements Cloneable {
 				ch = '-';
 			}
 			if(existingAnthills[anthill]){
-				//markHex, boolean[][], check all false cells
+				//TODO allow gap, can only border clear
 				setHexBool(anthillLocs[anthill][0], anthillLocs[anthill][1], 
 					this.anthillSideLength, ch, anthillAreas, true);
 			}
@@ -344,6 +344,7 @@ public class World implements Cloneable {
 								if(foodBlobSideLength == -1){
 									foodBlobSideLength = lenC - c;
 								}
+								//TODO allow gap, can only border food or clear
 								setRectBool(r, c, foodBlobSideLength, foodBlobSideLength,
 									foodBlobAreas, true);
 								break foodBlobSideLengthLoop;

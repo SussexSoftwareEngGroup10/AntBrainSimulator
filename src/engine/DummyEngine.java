@@ -353,7 +353,6 @@ public class DummyEngine {
 		//TODO remove polling in Ant.step()
 		//TODO add more information logging
 		//TODO reusing Worlds and bits of sims would increase efficiency
-		//TODO multithread breed() and trim()
 		//TODO use jar on linux server
 		
 		Logger.clearLogs();

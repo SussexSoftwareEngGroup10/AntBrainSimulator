@@ -10,7 +10,7 @@ import antBrain.Brain;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class World {
+public class World implements Cloneable {
 	//Using a seed means that the same world can be reproduced
 	//Seed is generated randomly, but is recorded, so the same seed can be used again
 	private final int seed;
@@ -909,8 +909,21 @@ public class World {
 	/**
 	 * @return
 	 */
-	public Cell[][] getWorld() {
+	public Cell[][] getCells() {
 		return this.cells;
+	}
+	
+	/**
+	 * @return
+	 */
+	public char[][] getChars() {
+		char[][] chars = new char[this.rows][this.cols];
+		for(int r = 0; r < this.rows; r++){
+			for(int c = 0; c < this.cols; c++){
+				chars[r][c] = this.cells[r][c].toChar();
+			}
+		}
+		return chars;
 	}
 	
 	/**
@@ -1111,6 +1124,17 @@ public class World {
 		s += "suitable for contest";
 		
 		return s;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 * 
+	 * Returns a World with the same Cell[][], does not copy Ants, generates new ones on anthills,
+	 * same as if passed a char[][] parsed from a file
+	 */
+	@Override
+	public Object clone() {
+		return new World(getChars());
 	}
 	
 	/* (non-Javadoc)

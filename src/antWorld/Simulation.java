@@ -85,7 +85,7 @@ public final class Simulation extends Thread {
 		Ant[] ants = world.getAnts();
 		
 		//Run ants for all steps, serial / in this thread
-		for(int i = 0; i < this.rounds; i++){
+		for(int i = this.rounds; i > 0; i--){
 			for(Ant ant : ants){
 				ant.step();
 			}

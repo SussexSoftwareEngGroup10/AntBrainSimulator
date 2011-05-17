@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 import utilities.Logger;
 import utilities.WarningEvent;
 
-import engine.DummyEngine;
+import engine.GameEngine;
 
 import antBrain.Brain;
 
@@ -14,7 +14,7 @@ import antBrain.Brain;
  * @version 1.0
  */
 public final class Simulation extends Thread {
-	private final DummyEngine dummyEngine;
+	private final GameEngine dummyEngine;
 	private final Brain blackBrain;
 	private final Brain redBrain;
 	private final Semaphore semaphore;
@@ -33,7 +33,7 @@ public final class Simulation extends Thread {
 	 * @param rounds
 	 * @param seed
 	 */
-	public Simulation(DummyEngine dummyEngine, Brain blackBrain, Brain redBrain,
+	public Simulation(GameEngine dummyEngine, Brain blackBrain, Brain redBrain,
 		Semaphore semaphore, int sleepDur, int fitness, boolean useFitness, int rounds, int seed) {
 		this.dummyEngine = dummyEngine;
 		this.blackBrain = blackBrain;
@@ -54,7 +54,7 @@ public final class Simulation extends Thread {
 	 * @param rounds
 	 * @param world
 	 */
-	public Simulation(DummyEngine dummyEngine, Brain blackBrain, Brain redBrain, Semaphore semaphore,
+	public Simulation(GameEngine dummyEngine, Brain blackBrain, Brain redBrain, Semaphore semaphore,
 		int sleepDur, int fitness, boolean useFitness, int rounds, World world) {
 		this.dummyEngine = dummyEngine;
 		this.blackBrain = blackBrain;

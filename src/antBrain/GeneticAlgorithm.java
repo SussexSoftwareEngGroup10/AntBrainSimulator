@@ -25,7 +25,7 @@ import utilities.Logger;
 import utilities.TimeEvent;
 import utilities.WarningEvent;
 
-import engine.GameEngine;
+import engine.DummyEngine;
 
 /**
  * @author pkew20 / 57116
@@ -113,7 +113,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param elite number of brains from the old population to retain in the new population
 	 * @param mutationRate the chance of altering any part of any command in any brain
 	 */
-	public void evolve(GameEngine dummyEngine, int seed,
+	public void evolve(DummyEngine dummyEngine, int seed,
 		ThreadPoolExecutor threadPoolExecutor, Semaphore semaphore,
 		int epochs, int rounds, int elite, int mutationRate) {
 		//Log information on epoch and evolution
@@ -224,7 +224,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param dummyEngine
 	 */
 	private void sortByFitness(int seed, ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore, GameEngine dummyEngine) {
+		Semaphore semaphore, DummyEngine dummyEngine) {
 		//Calculates the fitness of all Brains with no fitness,
 		//then orders by fitness in ascending order
 		dummyEngine.sortByFitness(seed, threadPoolExecutor, semaphore, true, this.population);

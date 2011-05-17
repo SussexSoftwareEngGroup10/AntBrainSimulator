@@ -44,21 +44,21 @@ public final class Simulation extends Thread {
 	/**
 	 * @return
 	 */
-	public Brain getBlackBrain() {
+	public final Brain getBlackBrain() {
 		return this.blackBrain;
 	}
 	
 	/**
 	 * @return
 	 */
-	public Brain getRedBrain() {
+	public final Brain getRedBrain() {
 		return this.redBrain;
 	}
 	
 	/**
 	 * @return
 	 */
-	public World getWorld() {
+	public final World getWorld() {
 		return this.world;
 	}
 	

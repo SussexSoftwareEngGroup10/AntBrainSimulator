@@ -37,18 +37,16 @@ import antWorld.World;
  */
 public class GameEngine {
 	private static final int rounds = 300000;
-	private static final int cpus = Runtime.getRuntime().availableProcessors();
+	private static final int processors = Runtime.getRuntime().availableProcessors();
 	private World world;
 	private int sleepDur;
 	
 	/**
 	 * @param world
-	 * @param rounds
-	 * @param sleepDur
 	 */
 	public GameEngine(World world) {
 		setWorld(world);
-		setSleepDur(50);
+		this.sleepDur = 500;
 		Logger.log(new InformationLowEvent("New Engine object constructed"));
 	}
 	
@@ -60,26 +58,17 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @param sleepDur
-	 */
-	private void setSleepDur(int sleepDur) {
-		this.sleepDur = sleepDur;
-	}
-	
-	/**
 	 * 
 	 */
 	public void slowDown() {
-		this.sleepDur += 10;
-		if(this.sleepDur > 100) this.sleepDur = 100;
+		this.sleepDur = Math.min(this.sleepDur + 50, 1000);
 	}
 
 	/**
 	 * 
 	 */
 	public void speedUp() {
-		this.sleepDur -= 10;
-		if(this.sleepDur < 0) this.sleepDur = 0;
+		this.sleepDur = Math.max(this.sleepDur - 50, 0);
 	}
 	
 	/*
@@ -155,7 +144,7 @@ public class GameEngine {
 			sims = population.length * population.length * 2;
 		}
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-			GameEngine.cpus, GameEngine.cpus, 1, TimeUnit.NANOSECONDS,
+			GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
 			new ArrayBlockingQueue<Runnable>(sims));
 		Semaphore semaphore = new Semaphore(sims, true);
 		

@@ -8,7 +8,7 @@ import utilities.WarningEvent;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class Cell {
+public class Cell implements Cloneable {
 	private final int row;
 	private final int col;
 	
@@ -32,6 +32,14 @@ public class Cell {
 		this.col = col;
 		
 		setCell(c);
+	}
+	
+	private Cell(int row, int col, boolean rocky, int food, int anthill){
+		this.row = row;
+		this.col = col;
+		this.rocky = rocky;
+		this.food = food;
+		this.anthill = anthill;
 	}
 	
 	/**
@@ -235,6 +243,14 @@ public class Cell {
 	 */
 	public boolean hasAnt() {
 		return this.ant != null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public Object clone() {
+		return new Cell(this.row, this.col, this.rocky, this.food, this.anthill);
 	}
 	
 	/**

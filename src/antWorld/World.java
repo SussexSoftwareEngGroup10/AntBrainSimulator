@@ -40,9 +40,8 @@ public class World implements Cloneable {
 	//These should be kept in sync as they only use pointers,
 	//ants are added to both, and never removed
 	//Ants are added in UID order,
-	//Collections.sort() will restore the list to UID order, as it was created
+	//Arrays.sort() will restore the list to UID order, as it was created
 	private Ant[] ants;
-	//I would use a ArrayList<Ant>[], but you can't do that in Java
 	private Ant[][] antsBySpecies;
 	
 	//Ant colours:
@@ -847,8 +846,8 @@ public class World implements Cloneable {
 		int[] nextAntIndex = {0, 0};
 		
 		//Put new ants onto each anthill cell, and into the right arrays
-		for(r = 0; r < this.rows; r++){
-			for(c = 0; c < this.cols; c++){
+		for(r = this.rows - 1; r >= 0; r--){
+			for(c = this.cols - 1; c >= 0; c--){
 				colour = -1;
 				cell = this.cells[r][c];
 				
@@ -1155,16 +1154,33 @@ public class World implements Cloneable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 * 
-	 * Returns a World with the same Cell[][], does not copy Ants, generates new ones on anthills,
-	 * same as if passed a char[][] parsed from a file, but without the slow checks
+	 * Returns a World with a cloned Cell[][], does not copy Ants, generates new ones on anthills,
+	 * equivilent to calling World(char[][]) with one parsed from a file, but without the slow checks
 	 */
 	@Override
 	public Object clone() {
-		return new World(this.seed, this.rows, this.cols, this.rocks,
+		Cell[][] newCells = new Cell[this.rows][this.cols];
+		int r;
+		int c;
+		Cell current;
+		for(r = this.rows - 1; r >= 0; r--){
+			for(c = this.cols - 1; c >= 0; c--){
+				newCells[r][c] = (Cell) this.cells[r][c].clone();
+			}
+		}
+		for(r = this.rows - 1; r >= 0; r--){
+			for(c = this.cols - 1; c >= 0; c--){
+				current = newCells[r][c];
+				current.setNeighbours(getNeighbours(current));
+				current.setupMarkers(this.anthills);
+			}
+		}
+		World world = new World(this.seed, this.rows, this.cols, this.rocks,
 			this.rockAreaConsistency, this.borderRocks, this.anthills, this.anthillSideLength,
 			this.anthillAreaConsistency, this.foodBlobCount, this.foodBlobSideLength,
 			this.foodBlobCellFoodCount,	this.foodBlobAreaConsistency, this.antInitialDirection,
-			this.gap, this.cells);
+			this.gap, newCells);
+		return world;
 	}
 	
 	/* (non-Javadoc)

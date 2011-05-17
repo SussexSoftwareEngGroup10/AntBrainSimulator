@@ -143,7 +143,7 @@ public class GeneticAlgorithm implements Serializable {
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
-		gameEngine.sortByFitness(true, this.population, absoluteTrainingBrain);
+		gameEngine.evaluateFitnessContest(true, this.population, absoluteTrainingBrain);
 		Logger.log(new InformationLowEvent("Initial sort completed"));
 		
 		//Timing
@@ -192,7 +192,7 @@ public class GeneticAlgorithm implements Serializable {
 			}
 			this.population = newPop;
 			//Order, ready for next epoch
-			gameEngine.sortByFitness(true, this.population, absoluteTrainingBrain);
+			gameEngine.evaluateFitnessContest(true, this.population, absoluteTrainingBrain);
 			
 			//Timing
 			Logger.log(new TimeEvent("for epoch " + (this.epoch - 1), TimeUnit.SECONDS));

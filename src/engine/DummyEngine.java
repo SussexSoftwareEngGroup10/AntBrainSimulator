@@ -352,7 +352,8 @@ public class DummyEngine {
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step()
 		//TODO use jar on linux server
-		//TODO use world.clone() in ga
+		//TODO use world.clone() in ga, make another constructor
+		//TODO javac -O, JIT, java -prof
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

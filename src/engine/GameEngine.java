@@ -159,22 +159,21 @@ public class GameEngine {
 			new ArrayBlockingQueue<Runnable>(sims));
 		Semaphore semaphore = new Semaphore(sims, true);
 		
-		//Set fitness for each brain against the best brain in the population
-		//Assumes population has been sorted
-		//Get the brain in the population with the highest fitness, if any have one
-		int i = population.length;
-		Brain relativeTrainingBrain;
-		do{
-			i--;
-			if(i < 0){
-				//If there is no elite, or this is the first epoch,
-				//no brains will have a fitness,
-				//In these cases, the static Brain test must be used instead
-				relativeTrainingBrain = absoluteTrainingBrain;
-				break;
+		//Find Brain in elite with highest fitness
+		int index = population.length - 1;
+		int i;
+		for(i = population.length - 2; i >= 0; i--){
+			if(population[i].getFitness() > population[index].getFitness()){
+				index = i;
 			}
-			relativeTrainingBrain = population[i];
-		}while(relativeTrainingBrain.getFitness() == 0);
+		}
+		Brain relativeTrainingBrain;
+		if(population[index].getFitness() == 0){
+			//Either no elite or first epoch, so use absoluteTrainingBrain
+			relativeTrainingBrain = absoluteTrainingBrain;
+		}else{
+			relativeTrainingBrain = population[index];
+		}
 		
 		//Give priority to the Simulation threads, so, in theory, 2 exist at any one time,
 		//when one finished, another one is started by the main thread,
@@ -212,17 +211,17 @@ public class GameEngine {
 			semaphore.release(population.length * 4);
 		}else{
 			semaphore.acquireUninterruptibly(population.length * population.length * 2);
-			for(int j = population.length; j > 0; j--){
-				for(int k = population.length; k > 0; k--){
+			for(int j = population.length - 1; j >= 0; j--){
+				for(int k = population.length - 1; k >= 0; k--){
 					if(j == k){
 						semaphore.release(2);
 						continue;
 					}
 					threadPoolExecutor.execute(
-						new Simulation(population[j - 1], population[k - 1],
+						new Simulation(population[j], population[k],
 							semaphore, 0, 0, false, GameEngine.rounds, (World) this.world.clone()));
 					threadPoolExecutor.execute(
-						new Simulation(population[k - 1], population[j - 1],
+						new Simulation(population[k], population[j],
 							semaphore, 0, 0, false, GameEngine.rounds, (World) this.world.clone()));
 				}
 			}
@@ -236,27 +235,27 @@ public class GameEngine {
 		Arrays.sort(population);
 		
 		//Log fitness stats
-		int maxIndex = 0;
-		for(i = 1; i < population.length; i++){
-			if(population[i].getFitness() > population[maxIndex].getFitness()){
-				maxIndex = i;
+		index = population.length - 1;
+		for(i = population.length - 2; i >= 0; i--){
+			if(population[i].getFitness() > population[index].getFitness()){
+				index = i;
 			}
 		}
-		int maxFitness = population[maxIndex].getFitness();
+		int maxFitness = population[index].getFitness();
 		
 		int total = 0;
-		for(i = 1; i < population.length; i++){
+		for(i = population.length - 1; i >= 0; i--){
 			total += population[i].getFitness();
 		}
 		int avgFitness =  total / population.length;
-		
-		int minIndex = 0;
-		for(i = 1; i < population.length; i++){
-			if(population[i].getFitness() < population[minIndex].getFitness()){
-				minIndex = i;
+
+		index = population.length - 1;
+		for(i = population.length - 2; i >= 0; i--){
+			if(population[i].getFitness() < population[index].getFitness()){
+				index = i;
 			}
 		}
-		int minFitness = population[minIndex].getFitness();
+		int minFitness = population[index].getFitness();
 		
 		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness
 			+ ";  avg: " + avgFitness + ";  min: " + minFitness));

@@ -165,13 +165,17 @@ public class GeneticAlgorithm implements Serializable {
 		//After constructor, epoch == 1,
 		//after deserialisation, epoch == epoch to be run next
 		for(; this.epoch <= epochs; this.epoch++){
+			//Save at the start of every epoch,
+			//so evolve() can be terminated and resumed
+			save();
+			
 			Logger.log(new InformationLowEvent("Beginning epoch " + this.epoch));
 			
 			newPop = new Brain[this.popLen];
 			
 			//Copy over elite to the end
 			for(j = 0; j < elite; j++){
-				newPop[this.popLen - 1 - j] = this.population[this.popLen -  1 - j];
+				newPop[this.popLen - 1 - j] = this.population[this.popLen - 1 - j];
 			}
 			
 			//Breed good (most fit half of the population, includes the elite)
@@ -210,15 +214,6 @@ public class GeneticAlgorithm implements Serializable {
 			Logger.log(new InformationHighEvent("Completed "
 				+ (this.epoch) / (double) epochs * 100
 				+ "% of GeneticAlgorithm evolution epochs"));
-			
-			//Save every epoch,
-			//so evolve() can be terminated and resumed
-			save();
-			//Write best brain so far to file
-			Brain b = this.population[this.popLen - 1].clone();
-			BrainParser.writeBrainTo(b, "ga_result_full");
-			b.trim();
-			BrainParser.writeBrainTo(b, "ga_result_trimmed");
 		}
 		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
 	}
@@ -553,6 +548,12 @@ public class GeneticAlgorithm implements Serializable {
 		}catch(IOException e){
 			Logger.log(new IOEvent(e.getMessage(), e));
 		}
+		
+		//Write best brain so far to file
+		Brain b = this.population[this.popLen - 1].clone();
+		BrainParser.writeBrainTo(b, "ga_result_full");
+		b.trim();
+		BrainParser.writeBrainTo(b, "ga_result_trimmed");
 	}
 	
 	/**

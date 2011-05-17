@@ -16,8 +16,8 @@ public class TimeEvent extends InformationEvent {
 	 * @param message
 	 */
 	public TimeEvent(String message) {
-		super("TIME: " + (Logger.getCurrentTime()) + " " + TimeUnit.NANOSECONDS +
-			";  MESSAGE: " + message);
+		super("TIME: " + (Logger.getCurrentTime()) + " " +
+			TimeUnit.NANOSECONDS.toString().toLowerCase() + ";  MESSAGE: " + message);
 	}
 	
 	/**
@@ -25,7 +25,7 @@ public class TimeEvent extends InformationEvent {
 	 */
 	public TimeEvent(String message, TimeUnit timeUnit) {
 		super("TIME: " + timeUnit.convert(Logger.getCurrentTime(), TimeUnit.NANOSECONDS) + " " +
-			timeUnit + ";  MESSAGE: " + message);
+			timeUnit.toString().toLowerCase() + ";  MESSAGE: " + message);
 	}
 
 	/**
@@ -33,8 +33,8 @@ public class TimeEvent extends InformationEvent {
 	 * @param cause
 	 */
 	public TimeEvent(String message, Throwable cause) {
-		super("TIME: " + (Logger.getCurrentTime()) + " " + TimeUnit.NANOSECONDS +
-			";  MESSAGE: " + message, cause);
+		super("TIME: " + (Logger.getCurrentTime()) + " " +
+			TimeUnit.NANOSECONDS.toString().toLowerCase() + ";  MESSAGE: " + message, cause);
 	}
 	
 	/**
@@ -42,8 +42,8 @@ public class TimeEvent extends InformationEvent {
 	 * @param cause
 	 */
 	public TimeEvent(String message, TimeUnit timeUnit, Throwable cause) {
-		super("TIME: " + timeUnit.convert(Logger.getCurrentTime(), TimeUnit.NANOSECONDS)
-			+ " " + timeUnit + ";  MESSAGE: " + message, cause);
+		super("TIME: " + timeUnit.convert(Logger.getCurrentTime(), TimeUnit.NANOSECONDS) + " " +
+			timeUnit.toString().toLowerCase() + ";  MESSAGE: " + message, cause);
 	}
 	
 	/**
@@ -51,6 +51,7 @@ public class TimeEvent extends InformationEvent {
 	 * @param message
 	 */
 	public TimeEvent(long time, TimeUnit timeUnit, String message) {
-		super("TIME: " + time + " " + timeUnit + ";  MESSAGE: " + message);
+		super("TIME: " + time + " " +
+			timeUnit.toString().toLowerCase()  + ";  MESSAGE: " + message);
 	}
 }

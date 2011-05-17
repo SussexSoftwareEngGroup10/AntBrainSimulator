@@ -911,7 +911,7 @@ public class World implements Cloneable {
 	 * @return
 	 */
 	public static int hexArea(int n) {
-		//Calculates the number of cells in a hex (e.g. anthill) given side length
+		//Calculates the number of cells in a hex (e.g. anthill) given side length n
 		if(n < 1){
 			return 0;
 		}

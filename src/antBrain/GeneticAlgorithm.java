@@ -212,7 +212,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param mutationConstant
 	 * @return a new brain containing possibly altered states from A, B and new entirely states
 	 */
-	private Brain breed(Brain brainA, Brain brainB, int mutationConstant) {
+	private static Brain breed(Brain brainA, Brain brainB, int mutationConstant) {
 		//The target Brain should contain a sensible number of states,
 		//it is not necessary for its size to change in the same direction on every breed
 		//The size of the brain resulting from evolution will reflect on the
@@ -286,7 +286,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param mutationConstant
 	 * @return a state containing parts of A, B and new parts
 	 */
-	private State combineStates(int index, State sa, State sb,
+	private static State combineStates(int index, State sa, State sb,
 		int states, int mutationConstant) {
 		int[] ga = sa.getGenes();
 		int[] gb = sb.getGenes();
@@ -337,7 +337,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param mutationConstant
 	 * @return
 	 */
-	private int[] mutateGenes(int[] gc, int states, int mutationConstant) {
+	private static int[] mutateGenes(int[] gc, int states, int mutationConstant) {
 		//All data is discrete, not continuous,
 		//so adding or subtracting a small amount is meaningless
 		//Rather, select a completely new value, independent from the old value
@@ -379,7 +379,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param states
 	 * @return genes as used by a state, but with logical random values
 	 */
-	private int[] ranGenes(int states) {
+	private static int[] ranGenes(int states) {
 		int[] values = State.getValues(states);
 		int[] gc = new int[9];
 		int i = 0;
@@ -590,11 +590,11 @@ public class GeneticAlgorithm implements Serializable {
 	 * @author pkew20 / 57116
 	 * @version 1.0
 	 */
-	protected class SerFilter implements FileFilter {
+	private class SerFilter implements FileFilter {
 		/**
 		 * 
 		 */
-		public SerFilter() {
+		protected SerFilter() {
 			//No code needed
 		}
 		
@@ -606,7 +606,7 @@ public class GeneticAlgorithm implements Serializable {
 		@Override
 		public boolean accept(File pathname) {
 			return pathname.getPath().startsWith(subFolderPathPrefix)
-			&& pathname.getPath().endsWith(".ser");
+				&& pathname.getPath().endsWith(".ser");
 		}
 	}
 }

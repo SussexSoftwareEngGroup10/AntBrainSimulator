@@ -319,7 +319,7 @@ public class GameEngine {
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step()
 		//TODO use jar on linux server
-		//TODO javac -O, JIT, java -prof
+		//TODO javac -O, java -prof, JIT
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

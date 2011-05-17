@@ -43,7 +43,7 @@ public class Random {
 	 * @param y
 	 * @return
 	 */
-	private int mod(int x, int y) {
+	private static int mod(int x, int y) {
 		int r = x % y;
 	    if(r < 0){
 	        return r + y - 1;

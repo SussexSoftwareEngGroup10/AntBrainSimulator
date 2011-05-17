@@ -384,6 +384,29 @@ public class World implements Cloneable {
 		createAnts();
 	}
 	
+	private World(int seed, int rows, int cols, int rocks, boolean rockAreaConsistency,
+		boolean borderRocks, int anthills, int anthillSideLength, boolean anthillAreaConsistency,
+		int foodBlobCount, int foodBlobSideLength, int foodBlobCellFoodCount,
+		boolean foodBlobAreaConsistency, int antInitialDirection, int gap, Cell[][] cells) {
+		this.seed = seed;
+		this.ran = new Random(seed);
+		this.rows = rows;
+		this.cols = cols;
+		this.rocks = rocks;
+		this.rockAreaConsistency = rockAreaConsistency;
+		this.borderRocks = borderRocks;
+		this.anthills = anthills;
+		this.anthillSideLength = anthillSideLength;
+		this.anthillAreaConsistency = anthillAreaConsistency;
+		this.foodBlobCount = foodBlobCount;
+		this.foodBlobSideLength = foodBlobSideLength;
+		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+		this.foodBlobAreaConsistency = foodBlobAreaConsistency;
+		this.antInitialDirection = antInitialDirection;
+		this.gap = gap;
+		this.cells = cells;
+	}
+	
 	/**
 	 * Places all objects specified into world, with required gap between objects
 	 * Generates and checks random locations for each object
@@ -1131,11 +1154,14 @@ public class World implements Cloneable {
 	 * @see java.lang.Object#clone()
 	 * 
 	 * Returns a World with the same Cell[][], does not copy Ants, generates new ones on anthills,
-	 * same as if passed a char[][] parsed from a file
+	 * same as if passed a char[][] parsed from a file, but without the slow checks
 	 */
 	@Override
 	public Object clone() {
-		return new World(getChars());
+		return new World(this.seed, this.rows, this.cols, this.rocks, this.rockAreaConsistency,
+			this.borderRocks, this.anthills, this.anthillSideLength, this.anthillAreaConsistency,
+			this.foodBlobCount, this.foodBlobSideLength, this.foodBlobCellFoodCount,
+			this.foodBlobAreaConsistency, this.antInitialDirection, this.gap, this.cells);
 	}
 	
 	/* (non-Javadoc)

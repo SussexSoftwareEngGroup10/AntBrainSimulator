@@ -19,6 +19,7 @@ public final class Simulation extends Thread {
 	private final Brain redBrain;
 	private final Semaphore semaphore;
 	private final int fitness;
+	private final boolean useFitness;
 	private final int rounds;
 	private final int sleepDur;
 	private int seed;
@@ -33,12 +34,13 @@ public final class Simulation extends Thread {
 	 * @param seed
 	 */
 	public Simulation(DummyEngine dummyEngine, Brain blackBrain, Brain redBrain,
-		Semaphore semaphore, int sleepDur, int fitness, int rounds, int seed) {
+		Semaphore semaphore, int sleepDur, int fitness, boolean useFitness, int rounds, int seed) {
 		this.dummyEngine = dummyEngine;
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
 		this.semaphore = semaphore;
 		this.fitness = fitness;
+		this.useFitness = useFitness;
 		this.seed = seed;
 		this.rounds = rounds;
 		this.sleepDur = sleepDur;
@@ -53,12 +55,13 @@ public final class Simulation extends Thread {
 	 * @param world
 	 */
 	public Simulation(DummyEngine dummyEngine, Brain blackBrain, Brain redBrain,
-		Semaphore semaphore, int sleepDur, int fitness, int rounds, World world) {
+		Semaphore semaphore, int sleepDur, int fitness, boolean useFitness, int rounds, World world) {
 		this.dummyEngine = dummyEngine;
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
 		this.semaphore = semaphore;
 		this.fitness = fitness;
+		this.useFitness = useFitness;
 		this.world = world;
 		this.rounds = rounds;
 		this.sleepDur = sleepDur;
@@ -119,8 +122,28 @@ public final class Simulation extends Thread {
 		//Store the result as the fitness of the red (GA) brain
 		int[] anthillFood = this.world.getFoodInAnthills();
 		
-		//Increment fitness by score
-		this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
+		if(this.useFitness){
+			//Increment fitness by score
+			this.blackBrain.setFitness(this.fitness, anthillFood[0] - anthillFood[1]);
+			this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
+		}else{
+			this.blackBrain.setFitness(1, 0);
+			this.redBrain.setFitness(1, 0);
+			this.blackBrain.setFitness(2, 0);
+			this.redBrain.setFitness(2, 0);
+			this.blackBrain.setFitness(3, 0);
+			this.redBrain.setFitness(3, 0);
+			if(anthillFood[0] > anthillFood[1]){
+				this.blackBrain.setFitness(0, this.blackBrain.getFitness() + 1);
+				this.redBrain.setFitness(0, 0);
+			}else if(anthillFood[1] > anthillFood[0]){
+				this.blackBrain.setFitness(0, 0);
+				this.redBrain.setFitness(0, this.redBrain.getFitness() + 1);
+			}else{
+				this.blackBrain.setFitness(0, 0);
+				this.redBrain.setFitness(0, 0);
+			}
+		}
 		
 		//Let the main thread know that this simulation has completed
 		if(this.semaphore != null){

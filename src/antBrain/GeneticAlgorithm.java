@@ -227,7 +227,7 @@ public class GeneticAlgorithm implements Serializable {
 		Semaphore semaphore, DummyEngine dummyEngine) {
 		//Calculates the fitness of all Brains with no fitness,
 		//then orders by fitness in ascending order
-		dummyEngine.sortByFitness(seed, threadPoolExecutor, semaphore, this.population);
+		dummyEngine.sortByFitness(seed, threadPoolExecutor, semaphore, true, this.population);
 		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness()
 			+ ";  avg: " + avgFitness() + ";  min: " + minFitness()));
 	}

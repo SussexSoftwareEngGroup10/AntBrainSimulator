@@ -351,9 +351,8 @@ public class DummyEngine {
 		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step()
-		//TODO add more information logging
-		//TODO reusing Worlds and bits of sims would increase efficiency
 		//TODO use jar on linux server
+		//TODO use world.clone() in ga
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

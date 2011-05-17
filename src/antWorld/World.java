@@ -405,6 +405,8 @@ public class World implements Cloneable {
 		this.antInitialDirection = antInitialDirection;
 		this.gap = gap;
 		this.cells = cells;
+		
+		createAnts();
 	}
 	
 	/**
@@ -1158,10 +1160,11 @@ public class World implements Cloneable {
 	 */
 	@Override
 	public Object clone() {
-		return new World(this.seed, this.rows, this.cols, this.rocks, this.rockAreaConsistency,
-			this.borderRocks, this.anthills, this.anthillSideLength, this.anthillAreaConsistency,
-			this.foodBlobCount, this.foodBlobSideLength, this.foodBlobCellFoodCount,
-			this.foodBlobAreaConsistency, this.antInitialDirection, this.gap, this.cells);
+		return new World(this.seed, this.rows, this.cols, this.rocks,
+			this.rockAreaConsistency, this.borderRocks, this.anthills, this.anthillSideLength,
+			this.anthillAreaConsistency, this.foodBlobCount, this.foodBlobSideLength,
+			this.foodBlobCellFoodCount,	this.foodBlobAreaConsistency, this.antInitialDirection,
+			this.gap, this.cells);
 	}
 	
 	/* (non-Javadoc)

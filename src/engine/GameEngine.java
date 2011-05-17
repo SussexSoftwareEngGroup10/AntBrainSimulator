@@ -422,15 +422,6 @@ public class GameEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//TODO combine GA and regular sim methods
-		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
-		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
-			//or at least allow a numOfStates parameter
-		//TODO remove polling in Ant.step()
-		//TODO use jar on linux server
-		//TODO use world.clone() in ga, make another constructor
-		//TODO javac -O, JIT, java -prof
-		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);

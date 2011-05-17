@@ -170,6 +170,13 @@ public class DummyEngine {
 		return geneticAlgorithm.getBestBrain();
 	}
 	
+	public void contest(Brain[] population) {
+		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(this.popLen * 4));
+		Semaphore semaphore = new Semaphore(this.popLen * 4, true);
+		sortByFitness(1, threadPoolExecutor, semaphore, false, population);
+	}
+	
 	/**
 	 * @param seed
 	 * @param threadPoolExecutor
@@ -177,9 +184,9 @@ public class DummyEngine {
 	 * @param population
 	 */
 	public void sortByFitness(int seed, ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore, Brain[] population) {
+		Semaphore semaphore, boolean useFitness, Brain[] population) {
 		//Ensure all Brains have a fitness
-		evaluateFitnessContest(seed, threadPoolExecutor, semaphore, population);
+		evaluateFitnessContest(seed, threadPoolExecutor, semaphore, useFitness, population);
 		
 		//Sort by fitnesses calculated
 		Arrays.sort(population);
@@ -192,7 +199,7 @@ public class DummyEngine {
 	 * @param population
 	 */
 	private void evaluateFitnessContest(int seed, ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore, Brain[] population) {
+		Semaphore semaphore, boolean useFitness, Brain[] population) {
 		//Ants let each other know they've finished a step with the stepBarrier
 		//Ants let their sim know they've finished all steps with the endBarrier
 		//Sims let the engine know they've finished their sim with the contestEndBarrier
@@ -218,27 +225,35 @@ public class DummyEngine {
 		//Get popLen permits, restore as runs complete
 		semaphore.acquireUninterruptibly(population.length * 4);
 		
-		//Set fitness for every brain in population
-		for(Brain brain : population){
-			if(brain.getFitness() == 0){
-				//Brain is not in elite
-				//Absolute fitness tests
+		if(useFitness){
+			//Set fitness for every brain in population
+			for(Brain brain : population){
+				if(brain.getFitness() == 0){
+					//Brain is not in elite
+					//Absolute fitness tests
+					threadPoolExecutor.execute(
+							new Simulation(this, this.absoluteTrainingBrain, brain,
+									semaphore, 0, 0, useFitness, this.rounds, seed));
+					threadPoolExecutor.execute(
+							new Simulation(this, brain, this.absoluteTrainingBrain,
+									semaphore, 0, 1, useFitness, this.rounds, seed));
+				}else{
+					semaphore.release(2);
+				}
+				//Relative fitness tests
 				threadPoolExecutor.execute(
-					new Simulation(this, this.absoluteTrainingBrain, brain,
-						semaphore, 0, 0, this.rounds, seed));
+						new Simulation(this, relativeTrainingBrain, brain,
+								semaphore, 0, 2, useFitness, this.rounds, seed));
 				threadPoolExecutor.execute(
-					new Simulation(this, brain, this.absoluteTrainingBrain,
-						semaphore, 0, 1, this.rounds, seed));
-			}else{
-				semaphore.release(2);
+						new Simulation(this, brain, relativeTrainingBrain,
+								semaphore, 0, 3, useFitness, this.rounds, seed));
 			}
-			//Relative fitness tests
-			threadPoolExecutor.execute(
-				new Simulation(this, relativeTrainingBrain, brain,
-					semaphore, 0, 2, this.rounds, seed));
-			threadPoolExecutor.execute(
-				new Simulation(this, brain, relativeTrainingBrain,
-					semaphore, 0, 3, this.rounds, seed));
+		}else{
+			for(Brain brainA : population){
+				for(Brain brainB : population){
+					
+				}
+			}
 		}
 		//Await completion of all Simulations
 		semaphore.acquireUninterruptibly(population.length * 4);
@@ -310,7 +325,7 @@ public class DummyEngine {
 		Logger.log(new InformationLowEvent("Begun simulation"));
 		
 		new Simulation(this, blackBrain, redBrain, null,
-			this.sleepDur, 0, this.rounds, world).run();
+			this.sleepDur, 0, false, this.rounds, world).run();
 		
 		//Ant results
 		Ant[][] antsBySpecies = world.getAntsBySpecies();

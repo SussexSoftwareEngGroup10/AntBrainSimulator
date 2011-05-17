@@ -64,52 +64,6 @@ public final class Simulation extends Thread {
 		this.sleepDur = sleepDur;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
-	@Override
-	public final void run() {
-		//Using a seed to construct a random means the worlds generated will be more
-		//uniform than using cloning, which seems to be slightly slower for some reason
-		//World now has better brain at 0, GA brain at 1
-		World world;
-		if(this.world == null){
-			world = this.dummyEngine.generateWorld(this.seed);
-		}else{
-			world = this.world;
-		}
-		
-		world.setBrain(this.blackBrain, 0);
-		world.setBrain(this.redBrain, 1);
-		
-		Ant[] ants = world.getAnts();
-		
-		//Run ants for all steps, serial / in this thread
-		for(int i = this.rounds; i > 0; i--){
-			for(Ant ant : ants){
-				ant.step();
-			}
-			if(this.sleepDur > 0){
-				try{
-					Thread.sleep(this.sleepDur);
-				}catch(InterruptedException e){
-					Logger.log(new WarningEvent(e.getMessage(), e));
-				}
-			}
-		}
-		
-		//Store the result as the fitness of the red (GA) brain
-		int[] anthillFood = world.getFoodInAnthills();
-		
-		//Increment fitness by score
-		this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
-		
-		//Let the main thread know that this simulation has completed
-		if(this.semaphore != null){
-			this.semaphore.release();
-		}
-	}
-	
 	/**
 	 * @return
 	 */
@@ -129,5 +83,48 @@ public final class Simulation extends Thread {
 	 */
 	public World getWorld() {
 		return this.world;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public final void run() {
+		//Using a seed to construct a random means the worlds generated will be more
+		//uniform than using cloning, which seems to be slightly slower for some reason
+		//World now has better brain at 0, GA brain at 1
+		if(this.world == null){
+			this.world = this.dummyEngine.generateWorld(this.seed);
+		}
+		
+		this.world.setBrain(this.blackBrain, 0);
+		this.world.setBrain(this.redBrain, 1);
+		
+		Ant[] ants = this.world.getAnts();
+		
+		//Run ants for all steps, serial / in this thread
+		for(int i = this.rounds; i > 0; i--){
+			for(Ant ant : ants){
+				ant.step();
+			}
+			if(this.sleepDur > 0){
+				try{
+					Thread.sleep(this.sleepDur);
+				}catch(InterruptedException e){
+					Logger.log(new WarningEvent(e.getMessage(), e));
+				}
+			}
+		}
+		
+		//Store the result as the fitness of the red (GA) brain
+		int[] anthillFood = this.world.getFoodInAnthills();
+		
+		//Increment fitness by score
+		this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
+		
+		//Let the main thread know that this simulation has completed
+		if(this.semaphore != null){
+			this.semaphore.release();
+		}
 	}
 }

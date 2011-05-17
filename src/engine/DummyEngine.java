@@ -170,10 +170,13 @@ public class DummyEngine {
 		return geneticAlgorithm.getBestBrain();
 	}
 	
+	/**
+	 * @param population
+	 */
 	public void contest(Brain[] population) {
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(this.popLen * 4));
-		Semaphore semaphore = new Semaphore(this.popLen * 4, true);
+			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(this.popLen * this.popLen * 2));
+		Semaphore semaphore = new Semaphore(this.popLen * this.popLen * 2, true);
 		sortByFitness(1, threadPoolExecutor, semaphore, false, population);
 	}
 	
@@ -181,6 +184,7 @@ public class DummyEngine {
 	 * @param seed
 	 * @param threadPoolExecutor
 	 * @param semaphore
+	 * @param useFitness
 	 * @param population
 	 */
 	public void sortByFitness(int seed, ThreadPoolExecutor threadPoolExecutor,
@@ -196,6 +200,7 @@ public class DummyEngine {
 	 * @param seed
 	 * @param threadPoolExecutor
 	 * @param semaphore
+	 * @param useFitness
 	 * @param population
 	 */
 	private void evaluateFitnessContest(int seed, ThreadPoolExecutor threadPoolExecutor,
@@ -249,23 +254,25 @@ public class DummyEngine {
 								semaphore, 0, 3, true, this.rounds, seed));
 			}
 		}else{
+			semaphore.acquireUninterruptibly(this.popLen * this.popLen * 2);
 			for(int j = population.length; j > 0; j--){
 				for(int k = population.length; k > 0; k--){
 					if(j == k){
+						semaphore.release(2);
 						continue;
 					}
 					threadPoolExecutor.execute(
 						new Simulation(this, population[j - 1], population[k - 1],
 							semaphore, 0, 0, false, this.rounds, seed));
 					threadPoolExecutor.execute(
-						new Simulation(this, population[j - 1], population[k - 1],
+						new Simulation(this, population[k - 1], population[j - 1],
 							semaphore, 0, 0, false, this.rounds, seed));
 				}
 			}
 		}
 		//Await completion of all Simulations
-		semaphore.acquireUninterruptibly(population.length * 4);
-		semaphore.release(population.length * 4);
+		semaphore.acquireUninterruptibly(this.popLen * this.popLen * 2);
+		semaphore.release(this.popLen * this.popLen * 2);
 	}
 	
 	/**

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
+import utilities.InformationNormEvent;
 import utilities.Logger;
 
 import antBrain.Brain;
@@ -35,23 +36,34 @@ import antWorld.World;
  * @version 1.0
  */
 public class GameEngine {
+	private static final int rounds = 300000;
 	private static final int cpus = Runtime.getRuntime().availableProcessors();
 	private World world;
-	private int rounds;
 	private int sleepDur;
 	
 	/**
 	 * @param world
-	 * @param epochs
 	 * @param rounds
-	 * @param popLen
-	 * @param elite
-	 * @param mutationRate
 	 * @param sleepDur
 	 */
-	public GameEngine(World world, int rounds, int sleepDur) {
-		setVariables(world, rounds, sleepDur);
+	public GameEngine(World world) {
+		setWorld(world);
+		setSleepDur(50);
 		Logger.log(new InformationLowEvent("New Engine object constructed"));
+	}
+	
+	/**
+	 * @param world
+	 */
+	public void setWorld(World world) {
+		this.world = world;
+	}
+	
+	/**
+	 * @param sleepDur
+	 */
+	private void setSleepDur(int sleepDur) {
+		this.sleepDur = sleepDur;
 	}
 	
 	/**
@@ -125,11 +137,7 @@ public class GameEngine {
 	 * @param population
 	 */
 	public void contest(Brain[] population) {
-		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(
-				population.length * population.length * 2));
-		Semaphore semaphore = new Semaphore(population.length * population.length * 2, true);
-		sortByFitness(threadPoolExecutor, semaphore, false, population, null);
+		sortByFitness(false, population, null);
 	}
 	
 	/**
@@ -138,14 +146,50 @@ public class GameEngine {
 	 * @param useFitness
 	 * @param population
 	 */
-	public void sortByFitness(ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore, boolean useFitness, Brain[] population, Brain absoluteTrainingBrain) {
+	public void sortByFitness(boolean useFitness, Brain[] population, Brain absoluteTrainingBrain) {
+		int sims = 0;
+		if(useFitness) {
+			sims = population.length * 4;
+		}else{
+			sims = population.length * population.length * 2;
+		}
+		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
+			GameEngine.cpus, GameEngine.cpus, 1, TimeUnit.NANOSECONDS,
+			new ArrayBlockingQueue<Runnable>(sims));
+		Semaphore semaphore = new Semaphore(sims, true);
+		
 		//Ensure all Brains have a fitness
 		evaluateFitnessContest(threadPoolExecutor, semaphore, useFitness, population,
 			absoluteTrainingBrain);
 		
 		//Sort by fitnesses calculated
 		Arrays.sort(population);
+		
+		//Log fitness stats
+		int maxIndex = 0;
+		for(int i = 1; i < population.length; i++){
+			if(population[i].getFitness() > population[maxIndex].getFitness()){
+				maxIndex = i;
+			}
+		}
+		int maxFitness = population[maxIndex].getFitness();
+		
+		int total = 0;
+		for(int i = 1; i < population.length; i++){
+			total += population[i].getFitness();
+		}
+		int avgFitness =  total / population.length;
+		
+		int minIndex = 0;
+		for(int i = 1; i < population.length; i++){
+			if(population[i].getFitness() < population[minIndex].getFitness()){
+				minIndex = i;
+			}
+		}
+		int minFitness = population[minIndex].getFitness();
+		
+		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness
+			+ ";  avg: " + avgFitness + ";  min: " + minFitness));
 	}
 	
 	/**
@@ -189,20 +233,20 @@ public class GameEngine {
 					//Absolute fitness tests
 					threadPoolExecutor.execute(
 						new Simulation(absoluteTrainingBrain, brain,
-							semaphore, 0, 0, true, this.rounds, (World) this.world.clone()));
+							semaphore, 0, 0, true, GameEngine.rounds, (World) this.world.clone()));
 					threadPoolExecutor.execute(
 						new Simulation(brain, absoluteTrainingBrain,
-							semaphore, 0, 1, true, this.rounds, (World) this.world.clone()));
+							semaphore, 0, 1, true, GameEngine.rounds, (World) this.world.clone()));
 				}else{
 					semaphore.release(2);
 				}
 				//Relative fitness tests
 				threadPoolExecutor.execute(
 					new Simulation(relativeTrainingBrain, brain,
-						semaphore, 0, 2, true, this.rounds, (World) this.world.clone()));
+						semaphore, 0, 2, true, GameEngine.rounds, (World) this.world.clone()));
 				threadPoolExecutor.execute(
 					new Simulation(brain, relativeTrainingBrain,
-						semaphore, 0, 3, true, this.rounds, (World) this.world.clone()));
+						semaphore, 0, 3, true, GameEngine.rounds, (World) this.world.clone()));
 			}
 		}else{
 			semaphore.acquireUninterruptibly(population.length * population.length * 2);
@@ -214,39 +258,16 @@ public class GameEngine {
 					}
 					threadPoolExecutor.execute(
 						new Simulation(population[j - 1], population[k - 1],
-							semaphore, 0, 0, false, this.rounds, (World) this.world.clone()));
+							semaphore, 0, 0, false, GameEngine.rounds, (World) this.world.clone()));
 					threadPoolExecutor.execute(
 						new Simulation(population[k - 1], population[j - 1],
-							semaphore, 0, 0, false, this.rounds, (World) this.world.clone()));
+							semaphore, 0, 0, false, GameEngine.rounds, (World) this.world.clone()));
 				}
 			}
 		}
 		//Await completion of all Simulations
 		semaphore.acquireUninterruptibly(population.length * population.length * 2);
 		semaphore.release(population.length * population.length * 2);
-	}
-	
-	/**
-	 * @param rows
-	 * @param cols
-	 * @param rocks
-	 * @param anthills
-	 * @param anthillSideLength
-	 * @param foodBlobCount
-	 * @param foodBlobSideLength
-	 * @param foodBlobCellFoodCount
-	 * @param antInitialDirection
-	 * @param gap
-	 * @param epochs
-	 * @param rounds
-	 * @param popLen
-	 * @param elite
-	 * @param mutationRate
-	 */
-	public void setVariables(World world, int rounds, int sleepDur) {
-		this.world = world;
-		this.rounds = rounds;
-		this.sleepDur = sleepDur;
 	}
 	
 	/**
@@ -265,7 +286,7 @@ public class GameEngine {
 		
 		//Runs in serial
 		new Simulation(blackBrain, redBrain, null,
-			this.sleepDur, 0, false, this.rounds, world).run();
+			this.sleepDur, 0, false, GameEngine.rounds, world).run();
 		
 		//Ant results
 		Ant[][] antsBySpecies = world.getAntsBySpecies();
@@ -320,9 +341,8 @@ public class GameEngine {
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
 		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
-		GameEngine gameEngine = new GameEngine(World.getContestWorld(1), 300000, 50);
-		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(gameEngine,
-			Integer.MAX_VALUE, 300000, 50/10, 50);
+		GameEngine gameEngine = new GameEngine(World.getContestWorld(1));
+		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		
 //		//World(char[][]) test:
 //		World world = World.getContestWorld(0);
@@ -331,7 +351,8 @@ public class GameEngine {
 //		System.out.println(world);
 //		System.out.println(world.getAttributes());
 		
-		Brain gaBrain = geneticAlgorithm.getBestBrain(trainingBrain, trainingBrain);
+		Brain gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
+			Integer.MAX_VALUE, 50, 50/10, 50);
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
 		
 		//Compact and remove null and unreachable states

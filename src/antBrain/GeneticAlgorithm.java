@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import utilities.IOEvent;
@@ -33,24 +30,18 @@ import engine.GameEngine;
  * @version 1.0
  */
 public class GeneticAlgorithm implements Serializable {
-	private static final long serialVersionUID = 1L;
-	private static final int cpus = Runtime.getRuntime().availableProcessors();
-	private static final String superFolderPath = "brain_populations";
-	private static final File superFolder = new File(superFolderPath);
-	private static int instances = 0;
-	private static final String subFolderPathPrefix =
+	private transient static final long serialVersionUID = 1L;
+	private transient static final String superFolderPath = "brain_populations";
+	private transient static final File superFolder = new File(superFolderPath);
+	private transient static int instances = 0;
+	private transient static final String subFolderPathPrefix =
 		superFolderPath + "\\" + "genetic_algorithm_";
-	private static final Random ran = new Random();
+	private transient static final Random ran = new Random();
 	
-	private final GameEngine gameEngine;
-	private final int epochs;
-	private final int rounds;
-	private final int elite;
-	private final int mutationRate;
-	private Brain absoluteTrainingBrain;
-	
-	private final transient int instance;
+	//Transient object variables
+	private transient final int instance;
 	private transient int popLen;
+	
 	//Persistent object variables which are read and written when the object is serialised
 	private int epoch;
 	private Brain[] population;
@@ -58,17 +49,10 @@ public class GeneticAlgorithm implements Serializable {
 	/**
 	 * 
 	 */
-	public GeneticAlgorithm(GameEngine gameEngine, int epochs, int rounds, int elite,
-		int mutationRate) {
+	public GeneticAlgorithm() {
 		this.instance = instances;
 		instances++;
 		this.epoch = 0;
-		
-		this.gameEngine = gameEngine;
-		this.epochs = epochs;
-		this.rounds = rounds;
-		this.elite = elite;
-		this.mutationRate = mutationRate;
 	}
 	
 	/**
@@ -77,7 +61,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param startBrain the default starting brain for new brains in the population
 	 * @param popLen the number of brains in the population
 	 */
-	public void createPopulation(Brain startBrain, int popLen) {
+	private void createPopulation(Brain startBrain, int popLen) {
 		//Try to resume last epochs()
 		if(loadLast()){
 			this.popLen = popLen;
@@ -120,26 +104,24 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param elite number of brains from the old population to retain in the new population
 	 * @param mutationRate the chance of altering any part of any command in any brain
 	 */
-	public void evolve(GameEngine dummyEngine, ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore) {
+	private void evolve(GameEngine gameEngine, Brain absoluteTrainingBrain, int epochs, int elite,
+		int mutationRate) {
 		//Log information on epoch and evolution
 		if(this.epoch == 1){
 			//Starting evolution from a newly created population
 			Logger.log(new InformationHighEvent("Began GeneticAlgorithm evolution for "
-				+ this.epochs + " epochs"
-				+ ", with " + this.rounds + " rounds per simulation"
+				+ epochs + " epochs"
 				+ ", " + this.population.length + " brains in the population"
-				+ ", an elite of " + this.elite
-				+ ", and a 1/" + this.mutationRate + " chance of mutation"));
+				+ ", an elite of " + elite
+				+ ", and a 1/" + mutationRate + " chance of mutation"));
 		}else{
 			//Resuming evolution from either a serialised object,
 			//or after an evolve() call has been completed on this population
 			Logger.log(new InformationHighEvent("Resumed GeneticAlgorithm evolution for "
-				+ this.epochs + " epochs at epoch: " + this.epoch
-				+ ", with " + this.rounds + " rounds per simulation"
+				+ epochs + " epochs at epoch: " + this.epoch
 				+ ", " + this.population.length + " brains in the population"
-				+ ", an elite of " + this.elite
-				+ ", and a 1/" + this.mutationRate + " chance of mutation"));
+				+ ", an elite of " + elite
+				+ ", and a 1/" + mutationRate + " chance of mutation"));
 		}
 		Brain[] newPop;
 		int j = 0;
@@ -161,16 +143,16 @@ public class GeneticAlgorithm implements Serializable {
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
-		sortByFitness(threadPoolExecutor, semaphore, dummyEngine);
+		gameEngine.sortByFitness(true, this.population, absoluteTrainingBrain);
 		Logger.log(new InformationLowEvent("Initial sort completed"));
-
+		
 		//Timing
 		Logger.log(new TimeEvent("from start to beginning of first epoch", TimeUnit.SECONDS));
 		Logger.restartTimer();
 		
 		//After constructor, epoch == 1,
 		//after deserialisation, epoch == epoch to be run next
-		for(; this.epoch <= this.epochs; this.epoch++){
+		for(; this.epoch <= epochs; this.epoch++){
 			//Save at the start of every epoch,
 			//so evolve() can be terminated and resumed
 			save();
@@ -180,13 +162,13 @@ public class GeneticAlgorithm implements Serializable {
 			newPop = new Brain[this.popLen];
 			
 			//Copy over elite to the end
-			for(j = 0; j < this.elite; j++){
+			for(j = 0; j < elite; j++){
 				newPop[this.popLen - 1 - j] = this.population[this.popLen - 1 - j];
 			}
 			
 			//Breed good (most fit half of the population, includes the elite)
 			//Fill newPop from beginning to where elite starts
-			for(j = 0; j < this.popLen - this.elite; j++){
+			for(j = 0; j < this.popLen - elite; j++){
 				// Spawn child from 2 random parents
 				//(popLen / 2) 
 				ran1 = ran.nextInt(this.popLen / 2) + this.popLen / 2;
@@ -206,11 +188,11 @@ public class GeneticAlgorithm implements Serializable {
 				if(ran2 >= ran1){
 					ran2++;
 				}
-				newPop[j] = breed(this.population[ran1], this.population[ran2], this.mutationRate);
+				newPop[j] = breed(this.population[ran1], this.population[ran2], mutationRate);
 			}
 			this.population = newPop;
 			//Order, ready for next epoch
-			sortByFitness(threadPoolExecutor, semaphore, dummyEngine);
+			gameEngine.sortByFitness(true, this.population, absoluteTrainingBrain);
 			
 			//Timing
 			Logger.log(new TimeEvent("for epoch " + (this.epoch - 1), TimeUnit.SECONDS));
@@ -218,78 +200,10 @@ public class GeneticAlgorithm implements Serializable {
 			
 			//Logging
 			Logger.log(new InformationHighEvent("Completed "
-				+ (this.epoch) / (double) this.epochs * 100
+				+ (this.epoch) / (double) epochs * 100
 				+ "% of GeneticAlgorithm evolution epochs"));
 		}
 		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
-	}
-	
-	/**
-	 * @param threadPoolExecutor
-	 * @param semaphore
-	 * @param dummyEngine
-	 */
-	private void sortByFitness(ThreadPoolExecutor threadPoolExecutor,
-		Semaphore semaphore, GameEngine dummyEngine) {
-		//Calculates the fitness of all Brains with no fitness,
-		//then orders by fitness in ascending order
-		dummyEngine.sortByFitness(threadPoolExecutor, semaphore, true, this.population,
-			this.absoluteTrainingBrain);
-		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness()
-			+ ";  avg: " + avgFitness() + ";  min: " + minFitness()));
-	}
-	
-	/**
-	 * @return
-	 */
-	private int avgFitness() {
-		int total = 0;
-		for(int i = 1; i < this.population.length; i++){
-			total += this.population[i].getFitness();
-		}
-		return total / this.population.length;
-	}
-	
-	/**
-	 * @return
-	 */
-	private int maxFitness() {
-		return maxFitnessBrain().getFitness();
-	}
-	
-	/**
-	 * @return
-	 */
-	private int minFitness() {
-		return minFitnessBrain().getFitness();
-	}
-	
-	/**
-	 * Does not assume population is ordered by fitness
-	 * @return
-	 */
-	private Brain maxFitnessBrain() {
-		int maxIndex = 0;
-		for(int i = 1; i < this.population.length; i++){
-			if(this.population[i].getFitness() > this.population[maxIndex].getFitness()){
-				maxIndex = i;
-			}
-		}
-		return this.population[maxIndex];
-	}
-	
-	/**
-	 * Does not assume population is ordered by fitness
-	 * @return
-	 */
-	private Brain minFitnessBrain() {
-		int minIndex = 0;
-		for(int i = 1; i < this.population.length; i++){
-			if(this.population[i].getFitness() < this.population[minIndex].getFitness()){
-				minIndex = i;
-			}
-		}
-		return this.population[minIndex];
 	}
 	
 	/**
@@ -495,22 +409,12 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param trainingBrain
 	 * @return
 	 */
-	public Brain getBestBrain(Brain startBrain, Brain absoluteTrainingBrain) {
-		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(cpus, cpus, 1,
-			TimeUnit.NANOSECONDS, new ArrayBlockingQueue<Runnable>(this.popLen * 4));
-		Semaphore semaphore = new Semaphore(this.popLen * 4, true);
-		
-		this.absoluteTrainingBrain = absoluteTrainingBrain;
+	public Brain getBestBrain(GameEngine gameEngine, Brain startBrain, Brain absoluteTrainingBrain, 
+		int epochs, int popLen, int elite, int mutationRate) {
+		this.popLen = popLen;
 		createPopulation(startBrain, this.popLen);
-		evolve(this.gameEngine, threadPoolExecutor, semaphore);
+		evolve(gameEngine, absoluteTrainingBrain, epochs, elite, mutationRate);
 		return this.population[this.population.length - 1];
-	}
-	
-	/**
-	 * 
-	 */
-	public void resetEpoch() {
-		this.epoch = 0;
 	}
 	
 	/**

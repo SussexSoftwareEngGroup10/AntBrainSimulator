@@ -233,25 +233,33 @@ public class DummyEngine {
 					//Absolute fitness tests
 					threadPoolExecutor.execute(
 							new Simulation(this, this.absoluteTrainingBrain, brain,
-									semaphore, 0, 0, useFitness, this.rounds, seed));
+									semaphore, 0, 0, true, this.rounds, seed));
 					threadPoolExecutor.execute(
 							new Simulation(this, brain, this.absoluteTrainingBrain,
-									semaphore, 0, 1, useFitness, this.rounds, seed));
+									semaphore, 0, 1, true, this.rounds, seed));
 				}else{
 					semaphore.release(2);
 				}
 				//Relative fitness tests
 				threadPoolExecutor.execute(
 						new Simulation(this, relativeTrainingBrain, brain,
-								semaphore, 0, 2, useFitness, this.rounds, seed));
+								semaphore, 0, 2, true, this.rounds, seed));
 				threadPoolExecutor.execute(
 						new Simulation(this, brain, relativeTrainingBrain,
-								semaphore, 0, 3, useFitness, this.rounds, seed));
+								semaphore, 0, 3, true, this.rounds, seed));
 			}
 		}else{
-			for(Brain brainA : population){
-				for(Brain brainB : population){
-					
+			for(int j = population.length; j > 0; j--){
+				for(int k = population.length; k > 0; k--){
+					if(j == k){
+						continue;
+					}
+					threadPoolExecutor.execute(
+						new Simulation(this, population[j - 1], population[k - 1],
+							semaphore, 0, 0, false, this.rounds, seed));
+					threadPoolExecutor.execute(
+						new Simulation(this, population[j - 1], population[k - 1],
+							semaphore, 0, 0, false, this.rounds, seed));
 				}
 			}
 		}

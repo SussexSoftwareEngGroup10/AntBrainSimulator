@@ -71,7 +71,7 @@ public final class Ant implements Comparable<Ant> {
 	/**
 	 * Execute the current state, then move to next state
 	 */
-	protected final void step() {
+	public final void step() {
 		//Removed local variables and parameters in step() and methods it calls
 		//to enable compiler to write an inline version,
 		//although it has no obligation to do this,
@@ -400,7 +400,7 @@ public final class Ant implements Comparable<Ant> {
 	/**
 	 * @return
 	 */
-	private final boolean isSurrounded() {
+	public final boolean isSurrounded() {
 		if(neighbourFoes() >= 5){
 			return true;
 		}
@@ -442,7 +442,7 @@ public final class Ant implements Comparable<Ant> {
 	/**
 	 * 
 	 */
-	private final void kill() {
+	public final void kill() {
 		this.alive = false;
 		
 		//Drop hasFood carried + 3

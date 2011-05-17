@@ -5,7 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import utilities.*;
-import engine.DummyEngine;
+import engine.GameEngine;
+import antWorld.World;
 
 /**
  * This class displays the main window GUI.  It display a window with the main
@@ -17,7 +18,8 @@ public class MainWindow {
 	private static final int WINDOW_WIDTH = 750;
 	private static final int WINDOW_HEIGHT = 850;
 	
-	DummyEngine gameEngine;
+	GameEngine gameEngine;
+	World world;
 	
 	//The other GUI components used
 	GameDisplay gameDisplay;
@@ -41,6 +43,7 @@ public class MainWindow {
 	 * Constructs a new MainWindow and draws it to the screen.
 	 */
 	public MainWindow() {
+		gameEngine = new GameEngine();
 		drawGUI();
 	}
 		
@@ -283,6 +286,12 @@ public class MainWindow {
 		}
 		public void actionPerformed(ActionEvent e) {
 			new WorldGenerateWindow(mainWindow);
+		}
+	}
+	
+	public class GoListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			gameEngine.run(30000, blackBrain, redBrain, world);
 		}
 	}
 }

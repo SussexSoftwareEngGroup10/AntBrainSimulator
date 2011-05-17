@@ -6,7 +6,7 @@ import processing.core.*;
 
 import org.gicentre.utils.move.*; 
 
-import engine.DummyEngine;
+import engine.GameEngine;
 import engine.GameEngine;
 
 import antWorld.Ant;
@@ -27,7 +27,7 @@ import antWorld.World;
 public class GameDisplay extends PApplet {
 	private static final long serialVersionUID = 1L;
 	
-	private DummyEngine gameEngine;
+	private GameEngine gameEngine;
 	private Cell[][] gridCells;
 	
 	private Random random;
@@ -91,6 +91,10 @@ public class GameDisplay extends PApplet {
 			return direction;
 		}
 	}
+	
+	private enum GameStates { DISPLAYING_GRID, RUNNING }
+	private GameStates currentGameState = GameStates.DISPLAYING_GRID;
+	
 	private ZoomPan zoomer; //Class for zooming and panning
 	
 	private int numHexCol; //Number of columns (in hexagons) wide
@@ -134,9 +138,10 @@ public class GameDisplay extends PApplet {
 	private PImage blackMarker;
 	private PImage redMarker;
 	
-	public GameDisplay(DummyEngine gameEngine) {
+	public GameDisplay(GameEngine gameEngine) {
 		this.gameEngine = gameEngine;
-		gridCells = gameEngine.generateWorld(100).getWorld();
+		//gameEngine. GENERATE WORLD
+		gridCells = gameEngine.getCells();
 	}
 
 	public void setup() {
@@ -290,21 +295,27 @@ public class GameDisplay extends PApplet {
 		updateImageScale();
 		if (currentImageScale == ImageDrawScales.LARGE) {
 			drawGird(LARGE_IMAGE);
-			drawMarkers();
-			drawFood(LARGE_IMAGE);
-			drawAnts(LARGE_IMAGE);
+			if (currentGameState == GameStates.RUNNING) {
+				drawMarkers();
+				drawFood(LARGE_IMAGE);
+				drawAnts(LARGE_IMAGE);
+			}
 		}
 		else if (currentImageScale == ImageDrawScales.MEDIUM) {
 			drawGird(MEDIUM_IMAGE);
-			drawMarkers();
-			drawFood(MEDIUM_IMAGE);
-			drawAnts(MEDIUM_IMAGE);
+			if (currentGameState == GameStates.RUNNING) {
+				drawMarkers();
+				drawFood(MEDIUM_IMAGE);
+				drawAnts(MEDIUM_IMAGE);
+			}
 		}
 		else {
 			drawGird(SMALL_IMAGE);
-			drawMarkers();
-			drawFood(MEDIUM_IMAGE);
-			drawAnts(MEDIUM_IMAGE);
+			if (currentGameState == GameStates.RUNNING) {
+				drawMarkers();
+				drawFood(MEDIUM_IMAGE);
+				drawAnts(MEDIUM_IMAGE);
+			}
 		}
 		
 		background(99, 99, 99);	
@@ -409,6 +420,42 @@ public class GameDisplay extends PApplet {
 						image(redAnt[imageScale], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 					}
 				} catch (NullPointerException nPE) {
+				}
+			}
+		}
+	}
+		
+		public void drawAnts2(int imageScale) {
+			Ant currentAnt;
+			for (int row = 0; row < numHexRow; row++) {
+				for (int col = 0; col < numHexCol; col++) {
+					try {
+						currentAnt = gridCells[row][col].getAnt();
+						if (imageScale == LARGE_IMAGE) {
+							pushMatrix();
+							//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
+							translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
+							//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
+							rotate(AntDirection.SOUTH_EAST.direction());
+							//Draw the image at an offset so that the origin is back to the top left of the tile.
+							if (currentAnt.getColour() == 0) { //If it's a black ant
+								if (currentAnt.hasFood()) {
+									image(blackAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT); //TODO: Decide on drawing method to use.
+								} else {
+									image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+								}
+							} else {
+								if (currentAnt.hasFood()) {
+									image(redAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+								} else {
+									image(redAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+								}
+							}
+							popMatrix();
+						} else {
+							image(redAnt[imageScale], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+						}
+					} catch (NullPointerException nPE) {
 				}
 			}
 		}

@@ -27,7 +27,16 @@ public final class WorldParser {
 	 * @return the world in the file "name"
 	 */
 	public static World readWorldFrom(String name) {
-		String path = folderName + "\\" + name + "" + fileNameSuffix;
+		String path;
+		if(name.endsWith(fileNameSuffix)){
+			path = name;
+		}else{
+			path = name + fileNameSuffix;
+		}
+		if(!path.contains("\\" + folderName + "\\")){
+			path = folderName + "\\" + path;
+		}
+		
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
 		BufferedReader br;
 		File f = new File(path);

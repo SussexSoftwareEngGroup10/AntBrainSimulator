@@ -47,7 +47,7 @@ public class GameEngine {
 	public GameEngine(World world) {
 		setWorld(world);
 		this.sleepDur = 500;
-		Logger.log(new InformationLowEvent("New Engine object constructed"));
+		Logger.log(new InformationLowEvent("New GameEngine object constructed"));
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class GameEngine {
 	 * @return
 	 */
 	public Brain simulate(Brain blackBrain, Brain redBrain) {
-		World world = (World) this.world.clone();
+		World world = this.world;
 		//Setup brains
 		world.setBrain(blackBrain, 0);
 		world.setBrain(redBrain, 1);

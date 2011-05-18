@@ -26,8 +26,16 @@ public class BrainParser {
 	 * @return
 	 */
 	public static Brain readBrainFrom(String name) {
-		String path = folderName + "\\"
-			+ name + "" + fileNameSuffix;
+		String path;
+		if(name.endsWith(fileNameSuffix)){
+			path = name;
+		}else{
+			path = name + fileNameSuffix;
+		}
+		if(!path.contains("\\" + folderName + "\\")){
+			path = folderName + "\\" + path;
+		}
+		
 		Logger.log(new InformationLowEvent("Begun reading Brain " +
 			"object from \"" + path + "\""));
 		Brain brain = new Brain(50);

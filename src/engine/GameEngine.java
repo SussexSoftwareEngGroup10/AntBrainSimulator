@@ -6,6 +6,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import utilities.ErrorEvent;
+import utilities.IOEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.InformationNormEvent;
@@ -298,10 +300,9 @@ public class GameEngine {
 		if(blackBrain.getFitness() > redBrain.getFitness()) {
 			return new GameStats(0, anthillFood[0], anthillFood[1],
 								  survivors[0], survivors[1]);
-		} else {
-			return new GameStats(1, anthillFood[0], anthillFood[1],
-					  			 survivors[0], survivors[1]);
 		}
+		return new GameStats(1, anthillFood[0], anthillFood[1],
+				  			 survivors[0], survivors[1]);
 	}
 	
 	/**
@@ -326,8 +327,19 @@ public class GameEngine {
 		//but more likely to get stuck there in the optima,
 		//blankBrain is a worse starting point, it would take longer to get to a good brain,
 		//but it encourages the brains generated to be more random
-		Brain trainingBrain = BrainParser.readBrainFrom("better_example");
-		GameEngine gameEngine = new GameEngine(World.getContestWorld(1));
+		Brain trainingBrain = null;
+		try{
+			trainingBrain = BrainParser.readBrainFrom("better_example");
+		}catch(IOEvent e){
+			Logger.log(e);
+		}
+		World world = null;
+		try{
+			world = World.getContestWorld(1);
+		}catch(ErrorEvent e){
+			Logger.log(new ErrorEvent(e.getMessage(), e));
+		}
+		GameEngine gameEngine = new GameEngine(world);
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		
 //		//World(char[][]) test:
@@ -342,8 +354,8 @@ public class GameEngine {
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
 		
 		//Compact and remove null and unreachable states
-		trainingBrain.trim();
-		gaBrain.trim();
+//		trainingBrain.trim();
+//		gaBrain.trim();
 		
 		gameEngine.simulate(trainingBrain, gaBrain);
 		

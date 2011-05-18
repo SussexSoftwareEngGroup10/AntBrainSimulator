@@ -211,6 +211,7 @@ public class GameDisplay extends PApplet {
 		size(PIXEL_WIDTH, PIXEL_HEIGHT);
 		
 		smooth(); //Turn on anti aliasing
+		frameRate(24); //Turn down the frame rate for less processing power
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
 		setInitialPanAndZoom();

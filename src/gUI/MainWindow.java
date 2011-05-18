@@ -15,7 +15,7 @@ import antWorld.WorldParser;
  * This class displays the main window GUI.  It display a window with the main
  * game display as well as buttons along the bottom.
  * 
- * @author will
+ * @author wjs25
  */
 public class MainWindow {
 	private static final int WINDOW_WIDTH = 750;
@@ -39,6 +39,8 @@ public class MainWindow {
 	
 	//The control buttons to be display at the bottom of the window
 	JButton startGameBtn;
+	JButton abortButton;
+	JButton finishButton;
 	JButton contestBtn;
 	JButton uploadRedBtn;
 	JButton uploadBlackBtn;
@@ -85,14 +87,17 @@ public class MainWindow {
 		gameDisplay.init();
 		pane.add(gridDisplayPanel, BorderLayout.NORTH);
 		
+		//Set up JPanel to hold the speed adjustment sliders and game control
+		//buttons
 		JPanel gameControlsPanel = new JPanel();
 		gameControlsPanel.setLayout(new FlowLayout());
 		
+		//Set up buttons to abort or finish the current game
 		JPanel controlButtonsPanel = new JPanel();
 		controlButtonsPanel.setLayout(new FlowLayout());
-		JButton abortButton = new JButton("Abort");
+		abortButton = new JButton("Abort");
 		abortButton.setEnabled(false);
-		JButton finishButton = new JButton("Finish");
+		finishButton = new JButton("Finish");
 		finishButton.setEnabled(false);
 		controlButtonsPanel.add(abortButton);
 		controlButtonsPanel.add(finishButton);

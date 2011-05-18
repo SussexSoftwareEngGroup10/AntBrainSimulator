@@ -28,12 +28,12 @@ public class GameStats {
 	 */
 	public GameStats(int winner, int foodInBlackAnthill, 
 					 int foodInRedAnthill, int blackAntsSurviving,
-					 int redAntsSurvivig) {
+					 int redAntsSurviving) {
 		this.winner = winner;
 		this.foodInBlackAnthill = foodInBlackAnthill;
 		this.foodInRedAnthill = foodInRedAnthill;
 		this.blackAntsSurviving = blackAntsSurviving;
-		this.redAntsSurviving = redAntsSurvivig;
+		this.redAntsSurviving = redAntsSurviving;
 	}
 	
 	/**

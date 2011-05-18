@@ -1,0 +1,2 @@
+Sense Ahead 1 0 Food     ; state 0:  If food is found, go to state one
+Turn Left 0              ; state 1:  turn left

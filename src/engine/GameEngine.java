@@ -256,7 +256,8 @@ public class GameEngine {
 	 * @param world
 	 * @return
 	 */
-	public Brain simulate(Brain blackBrain, Brain redBrain, World world) {
+	public Brain simulate(Brain blackBrain, Brain redBrain) {
+		World world = (World) this.world.clone();
 		//Setup brains
 		world.setBrain(blackBrain, 0);
 		world.setBrain(redBrain, 1);
@@ -338,7 +339,7 @@ public class GameEngine {
 		trainingBrain.trim();
 		gaBrain.trim();
 		
-		gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1));
+		gameEngine.simulate(trainingBrain, gaBrain);
 		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}

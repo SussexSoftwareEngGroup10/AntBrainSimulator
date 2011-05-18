@@ -9,11 +9,11 @@ import antBrain.Brain;
  */
 public class GameStats {
 	//The self explanatory stats it holds
-	private Brain winner;
+	private int winner; // 0 is black brain, 1 is red
 	private int foodInBlackAnthill;
 	private int foodInRedAnthill;
 	private int blackAntsSurviving;
-	private int redAntsSurvivig;
+	private int redAntsSurviving;
 	
 	/**
 	 * 
@@ -28,20 +28,20 @@ public class GameStats {
 	 * @param redAntsSurvivig Number of black ants left surviving at the end
 	 * 						  of the game.
 	 */
-	public GameStats(Brain winner, int foodInBlackAnthill, 
+	public GameStats(int winner, int foodInBlackAnthill, 
 					 int foodInRedAnthill, int blackAntsSurviving,
 					 int redAntsSurvivig) {
 		this.winner = winner;
 		this.foodInBlackAnthill = foodInBlackAnthill;
 		this.foodInRedAnthill = foodInRedAnthill;
 		this.blackAntsSurviving = blackAntsSurviving;
-		this.blackAntsSurviving = redAntsSurvivig;
+		this.redAntsSurviving = redAntsSurvivig;
 	}
 	
 	/**
 	 * @return The winner
 	 */
-	public Brain getWinner() {
+	public int getWinner() {
 		return winner;
 	}
 	
@@ -70,6 +70,6 @@ public class GameStats {
 	 * @return Amount of red ant survivors
 	 */
 	public int getRedAntsSurvivig() {
-		return redAntsSurvivig;
+		return redAntsSurviving;
 	}
 }

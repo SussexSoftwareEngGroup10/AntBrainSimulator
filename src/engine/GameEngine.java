@@ -296,10 +296,10 @@ public class GameEngine {
 		
 		//Create and return statistics based on winner
 		if(blackBrain.getFitness() > redBrain.getFitness()) {
-			return new GameStats(blackBrain, anthillFood[0], anthillFood[1],
+			return new GameStats(0, anthillFood[0], anthillFood[1],
 								  survivors[0], survivors[1]);
 		} else {
-			return new GameStats(redBrain, anthillFood[0], anthillFood[1],
+			return new GameStats(1, anthillFood[0], anthillFood[1],
 					  			 survivors[0], survivors[1]);
 		}
 	}

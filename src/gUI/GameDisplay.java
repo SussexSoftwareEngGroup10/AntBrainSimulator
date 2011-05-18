@@ -8,16 +8,9 @@ import antWorld.Ant;
 import antWorld.Cell;
 import antWorld.World;
 
-/* 
- * CURRENTLY AN EXPERIMENTAL CLASS - TESTING DRAWING HEXAGONS CORRECTLY TO THE SCREEN
- * IMAGES ARE ALSO NOT FINAL VERSIONS
- * TODO:
- * NOTES FOR MYSELF (WILL):
- * HOW SHOULD THE GRID COMMUNICATE WITH ENGINE, WILL ENGINE CALL AN UPDATE METHOD IN GUI?
- * HOW TO INTERFACE - FIRST HOW TO SET UP?  HOW TO PARSE IN INITIAL CONFIG DATA??? 
- * SECOND - WHAT METHODS WILL BE NEEDED TO INTERACTIVELY UPDATE??
- * HAVE DIFFERENT IMAGES FOR DIFFERENT SCALES
- * USE THE VALUE RETURN BY THE SCALE OF THE ZOOMER TO SIZE ELEMENTS
+/**
+ * This class is the Processing Sketch which displays the ant world to the
+ * screen in the main window.
  */
 public class GameDisplay extends PApplet {
 	private static final long serialVersionUID = 1L;

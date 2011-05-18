@@ -4,7 +4,7 @@ import javax.swing.JOptionPane;
 /**
  * Simple class used to display error messages to the user.
  * 
- * @author will
+ * @author wjs25
  */
 public class GUIErrorMsg {
 	/**

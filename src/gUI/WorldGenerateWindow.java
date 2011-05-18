@@ -15,6 +15,8 @@ import java.awt.event.*;
 public class WorldGenerateWindow {
 	MainWindow mainWindow;
 	
+	JFrame window;
+	
 	JRadioButton contestBtn;
 	JRadioButton standardBtn;
 	
@@ -42,7 +44,7 @@ public class WorldGenerateWindow {
 	 */
 	private void drawGUI() {
 		//Set up the JFrame
-		JFrame window = new JFrame("World Generator");
+		window = new JFrame("World Generator");
 		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		Container pane = window.getContentPane();
 		pane.setLayout(new BorderLayout());
@@ -122,6 +124,7 @@ public class WorldGenerateWindow {
 		JPanel generatePanel = new JPanel();
 		generatePanel.setLayout(new FlowLayout());
 		JButton generateBtn = new JButton("Generate");
+		generateBtn.addActionListener(new GenerateListener());
 		JButton cancelBtn = new JButton("Cancel");
 		cancelBtn.addActionListener(new CloseListener());
 		generatePanel.add(generateBtn);
@@ -192,6 +195,7 @@ public class WorldGenerateWindow {
 		public void actionPerformed(ActionEvent e) {
 			if (contestBtn.isSelected()) {
 				mainWindow.setupNewContestWorld();
+				window.setVisible(false);
 			}
 			else {
 				try {
@@ -202,6 +206,7 @@ public class WorldGenerateWindow {
 					
 					//TODO: Decide on a good maximum and minimum number of rows, cols, rocks.
 					mainWindow.setupNewWorldStandardWorld(rows, cols, rocks);
+					window.setVisible(false);
 				}
 				catch (NumberFormatException nFE) {
 					GUIErrorMsg.displayErrorMsg("Parameters must be an integer!");

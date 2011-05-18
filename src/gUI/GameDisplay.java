@@ -1,14 +1,9 @@
 package gUI;
 
+import java.util.ArrayList;
 import java.util.Random;
-
 import processing.core.*;
-
 import org.gicentre.utils.move.*; 
-
-import engine.GameEngine;
-import engine.GameEngine;
-
 import antWorld.Ant;
 import antWorld.Cell;
 import antWorld.World;
@@ -27,10 +22,8 @@ import antWorld.World;
 public class GameDisplay extends PApplet {
 	private static final long serialVersionUID = 1L;
 	
-	private GameEngine gameEngine;
+	World world;
 	private Cell[][] gridCells;
-	
-	private Random random;
 	
 	private static final int PIXEL_WIDTH = 700; //Used to store size of display in pixels
 	private static final int PIXEL_HEIGHT = 700;
@@ -95,7 +88,9 @@ public class GameDisplay extends PApplet {
 	private enum GameStates { DISPLAYING_GRID, RUNNING }
 	private GameStates currentGameState = GameStates.DISPLAYING_GRID;
 	
+	private Random random = new Random();
 	private ZoomPan zoomer; //Class for zooming and panning
+	private ArrayList<int[]> rockShadesList = new ArrayList<int[]>();
 	
 	private int numHexCol; //Number of columns (in hexagons) wide
 	private int numHexRow; //Number of rows (in hexagons) high
@@ -107,8 +102,8 @@ public class GameDisplay extends PApplet {
 	private static final int LARGE_IMAGE = 2;
 	
 	private static final int LIGHT_ROCK = 0;
-	private static final int NEUTRAL_ROCK = 0;
-	private static final int DARK_ROCK = 0;
+	private static final int NEUTRAL_ROCK = 1;
+	private static final int DARK_ROCK = 2;
 	
 	private static final int ONE_FOOD = 0;
 	private static final int TWO_FOOD = 1;
@@ -138,50 +133,26 @@ public class GameDisplay extends PApplet {
 	private PImage blackMarker;
 	private PImage redMarker;
 	
-	public GameDisplay(GameEngine gameEngine) {
-		this.gameEngine = gameEngine;
-		//gameEngine. GENERATE WORLD
-		gridCells = gameEngine.getCells();
-	}
-
-	public void setup() {
-		Random random = new Random();
-		
-		//Number of hexagons in columns and rows - change to modify quantity of hexagons
-		numHexCol = 140;
-		numHexRow = 140;
-		
-		if ((numHexCol * HEX_WIDTH) + (HEX_WIDTH / 2)> (numHexRow * HEX_HEIGHT) + HEX_ANGLE_HEIGHT) {
-			largestDimension = Dimensions.HORIZONTAL;
-		}
-		else {
-			largestDimension = Dimensions.VERTICAL;
-		}
-		
-		size(PIXEL_WIDTH, PIXEL_HEIGHT);
-		
-		smooth(); //Turn on anti aliasing
-		zoomer = new ZoomPan(this);  // Initialise the zoomer
-		zoomer.allowZoomButton(false); 
-		setInitialPanAndZoom();
+	public GameDisplay(World world) {
+		this.world = world;
 		
 		//Initialise image variables and load image files (files loaded here rather than dynamically when needed
 		//because it would require a large amount of loading/unloading image files which would slow the game down
 		//when running
 		grassTile = new PImage[3];
-		grassTile[SMALL_IMAGE] = loadImage("resources/images/tiles/grass_tile_small.png");
+		grassTile[SMALL_IMAGE] = loadImage("resources/images/tiles/grass_tile_small_test.png");
 		grassTile[MEDIUM_IMAGE] = loadImage("resources/images/tiles/grass_tile_medium.png");
 		grassTile[LARGE_IMAGE] = loadImage("resources/images/tiles/grass_tile_large.png");
 		
 		blackAnthillTile = new PImage[3];
 		blackAnthillTile[SMALL_IMAGE] = loadImage("resources/images/tiles/black_anthill_small.png");
-		blackAnthillTile[MEDIUM_IMAGE] = loadImage("resources/images/tiles/black_anthill_small.png");
-		blackAnthillTile[LARGE_IMAGE] = loadImage("resources/images/tiles/black_anthill_small.png");
+		blackAnthillTile[MEDIUM_IMAGE] = loadImage("resources/images/tiles/black_anthill_medium.png");
+		blackAnthillTile[LARGE_IMAGE] = loadImage("resources/images/tiles/black_anthill_large.png");
 		
 		redAnthillTile = new PImage[3];
 		redAnthillTile[SMALL_IMAGE] = loadImage("resources/images/tiles/red_anthill_small.png");
-		redAnthillTile[MEDIUM_IMAGE] = loadImage("resources/images/tiles/red_anthill_small.png");
-		redAnthillTile[LARGE_IMAGE] = loadImage("resources/images/tiles/red_anthill_small.png");
+		redAnthillTile[MEDIUM_IMAGE] = loadImage("resources/images/tiles/red_anthill_medium.png");
+		redAnthillTile[LARGE_IMAGE] = loadImage("resources/images/tiles/red_anthill_large.png");
 		
 		rockTile = new PImage[3][3];
 		rockTile[SMALL_IMAGE][LIGHT_ROCK] = loadImage("resources/images/tiles/rock_light_tile_small.png");
@@ -221,6 +192,28 @@ public class GameDisplay extends PApplet {
 		
 		blackMarker = loadImage("resources/images/markers/chemical_black.png");
 		redMarker = loadImage("resources/images/markers/chemical_red.png");
+	}
+
+	public void setup() {
+		gridCells = this.world.getCells();
+		//Number of hexagons in columns and rows - change to modify quantity of hexagons
+		numHexCol = gridCells.length;
+		numHexRow = gridCells[0].length;
+		setRockShadingMap();
+		
+		if ((numHexCol * HEX_WIDTH) + (HEX_WIDTH / 2)> (numHexRow * HEX_HEIGHT) + HEX_ANGLE_HEIGHT) {
+			largestDimension = Dimensions.HORIZONTAL;
+		}
+		else {
+			largestDimension = Dimensions.VERTICAL;
+		}
+		
+		size(PIXEL_WIDTH, PIXEL_HEIGHT);
+		
+		smooth(); //Turn on anti aliasing
+		zoomer = new ZoomPan(this);  // Initialise the zoomer
+		zoomer.allowZoomButton(false); 
+		setInitialPanAndZoom();
 	}
 	
 	/*
@@ -288,10 +281,43 @@ public class GameDisplay extends PApplet {
 		}
 	}
 	
+	private void setRockShadingMap() {
+		Cell[][] cells = world.getCells();
+		for (int row = 0; row < numHexRow; row++) {
+			for (int col = 0; col < numHexCol; col++) {
+				if (cells[row][col].isRocky()) {
+					int[] coordsAndVal = new int[3];
+					coordsAndVal[0] = row;
+					coordsAndVal[1] = col;
+					coordsAndVal[2] = random.nextInt(2);
+					rockShadesList.add(coordsAndVal);
+				}
+			}
+		}
+	}
+	
+	private int getRockShade(int row, int col) {
+		boolean found = false;
+		int shade = 0;
+		for (int i = 0; i < rockShadesList.size() && !found; i++) {
+			if (row == rockShadesList.get(i)[0] && col == rockShadesList.get(i)[1]) {
+				shade = rockShadesList.get(i)[2];
+				found = true;
+			}
+		}
+		return shade;
+	}
+	
+	public void updateWorld(World world) {
+		this.world = world;
+		setup();
+	}
+	
 	public void draw() {
 		zoomer.transform();
-		gridCells = gameEngine.getCells();
+		gridCells = world.getCells();
 		//Work out which size images to use.
+		background(50, 50, 50);	
 		updateImageScale();
 		if (currentImageScale == ImageDrawScales.LARGE) {
 			drawGird(LARGE_IMAGE);
@@ -317,8 +343,6 @@ public class GameDisplay extends PApplet {
 				drawAnts(MEDIUM_IMAGE);
 			}
 		}
-		
-		background(99, 99, 99);	
 	}
 	
 	private void drawGird(int imageScale) {
@@ -329,7 +353,7 @@ public class GameDisplay extends PApplet {
 			    } else if (gridCells[row][col].getAnthill() == 2) { //If it is black anthill
 			    	drawImage(redAnthillTile[imageScale], row, col);
 			    } else if (gridCells[row][col].isRocky()) { //If it's rocky
-			    	drawImage(rockTile[imageScale][random.nextInt(2)], row, col); //Randomly pick shade of grey
+			    	drawImage(rockTile[imageScale][getRockShade(row, col)], row, col); //Randomly pick shade of grey
 			    } else {
 			    	drawImage(grassTile[imageScale], row, col); //Otherwise it is a grass tile
 			    }

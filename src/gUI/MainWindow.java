@@ -6,7 +6,10 @@ import java.awt.event.*;
 import java.io.File;
 import utilities.*;
 import engine.GameEngine;
+import antBrain.Brain;
+import antBrain.BrainParser;
 import antWorld.World;
+import antWorld.WorldParser;
 
 /**
  * This class displays the main window GUI.  It display a window with the main
@@ -20,6 +23,9 @@ public class MainWindow {
 	
 	GameEngine gameEngine;
 	World world;
+	
+	Brain blackBrain;
+	Brain redBrain;
 	
 	//The other GUI components used
 	GameDisplay gameDisplay;
@@ -43,7 +49,8 @@ public class MainWindow {
 	 * Constructs a new MainWindow and draws it to the screen.
 	 */
 	public MainWindow() {
-		gameEngine = new GameEngine();
+		world = World.getContestWorld(0);
+		gameEngine = new GameEngine(world);
 		drawGUI();
 	}
 		
@@ -73,7 +80,7 @@ public class MainWindow {
 		JPanel gridDisplayPanel = new JPanel();
 		gridDisplayPanel.setLayout(new FlowLayout());
 		
-		gameDisplay = new GameDisplay(gameEngine);
+		gameDisplay = new GameDisplay(world);
 		gridDisplayPanel.add(gameDisplay);
 		gameDisplay.init();
 		pane.add(gridDisplayPanel, BorderLayout.NORTH);
@@ -93,6 +100,7 @@ public class MainWindow {
 		controlPanel.setLayout(new GridLayout(2, 3));
 		
 		startGameBtn = new JButton("Start Game");
+		startGameBtn.addActionListener(new StartGameListener());
 		startGameBtn.setEnabled(false);
 		contestBtn = new JButton("Contest Mode");
 		contestBtn.addActionListener(new ContestListener());
@@ -152,11 +160,13 @@ public class MainWindow {
 	}
 	
 	public void setupNewWorldStandardWorld(int rows, int cols, int rocks) {
-		//TODO: Implement
+		world = World.getRegularWorld(0, rows, cols, rocks);
+		gameDisplay.updateWorld(world);
 	}
 	
 	public void setupNewContestWorld() {
-		//TODO: Implement
+		world = World.getContestWorld(0);
+		gameDisplay.updateWorld(world);
 	}
 	
 	/**
@@ -207,19 +217,17 @@ public class MainWindow {
 							if (!clickedBtn.getText().contains("✔")) {
 								clickedBtn.setText(clickedBtn.getText() + " ✔");
 							}
-							redBrainPath = path;
+							redBrain = BrainParser.readBrainFrom(path);
 						}
 						else if (clickedBtn == uploadBlackBtn) {
 							if (!clickedBtn.getText().contains("✔")) {
 								clickedBtn.setText(clickedBtn.getText() + " ✔");
 							}
-							blackBrainPath = path;
+							blackBrain = BrainParser.readBrainFrom(path);
 						}
 						else {
-							if (!clickedBtn.getText().contains("✔")) {
-								clickedBtn.setText(clickedBtn.getText() + " ✔");
-							}
-							worldPath = path;
+							world = WorldParser.readWorldFrom(path);
+							gameDisplay.updateWorld(world);
 						}
 					}
 				}
@@ -289,9 +297,12 @@ public class MainWindow {
 		}
 	}
 	
-	public class GoListener implements ActionListener {
+	public class StartGameListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			gameEngine.run(30000, blackBrain, redBrain, world);
+			Brain blackBrain = BrainParser.readBrainFrom(blackBrainPath);
+			Brain redBrain = BrainParser.readBrainFrom(redBrainPath);
+			gameEngine.setWorld(world);
+			gameEngine.simulate(blackBrain, redBrain);
 		}
 	}
 }

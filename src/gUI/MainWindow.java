@@ -85,6 +85,18 @@ public class MainWindow {
 		gameDisplay.init();
 		pane.add(gridDisplayPanel, BorderLayout.NORTH);
 		
+		JPanel gameControlsPanel = new JPanel();
+		gameControlsPanel.setLayout(new FlowLayout());
+		
+		JPanel controlButtonsPanel = new JPanel();
+		controlButtonsPanel.setLayout(new FlowLayout());
+		JButton abortButton = new JButton("Abort");
+		abortButton.setEnabled(false);
+		JButton finishButton = new JButton("Finish");
+		finishButton.setEnabled(false);
+		controlButtonsPanel.add(abortButton);
+		controlButtonsPanel.add(finishButton);
+		
 		//Set up JPanel to display the speed adjustment slider
 		JPanel speedAdjustmentPanel = new JPanel();
 		JSlider speedAdjustmentSlider = new JSlider();
@@ -93,7 +105,10 @@ public class MainWindow {
 		speedAdjustmentSlider.setMajorTickSpacing(20);
 		speedAdjustmentSlider.setEnabled(false);
 		speedAdjustmentPanel.add(speedAdjustmentSlider);
-		pane.add(speedAdjustmentPanel);
+		
+		gameControlsPanel.add(controlButtonsPanel);
+		gameControlsPanel.add(speedAdjustmentPanel);
+		pane.add(gameControlsPanel, BorderLayout.CENTER);
 		
 		//Set up JPanel at the bottom to display the control buttons
 		JPanel controlPanel = new JPanel();

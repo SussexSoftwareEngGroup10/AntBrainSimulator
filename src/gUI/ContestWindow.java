@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import utilities.IOEvent;
 import utilities.Logger;
@@ -23,7 +24,7 @@ public class ContestWindow {
 	
 	//Stores arrays of GUI components
 	private JButton[] browseBtns;
-	private JTextArea[] brainPathLbls;
+	private JTextField[] brainPathLbls;
 	
 	/**
 	 * Constructs a new ContestWindow and draws it to the screen.
@@ -50,7 +51,8 @@ public class ContestWindow {
 		//upload a brain, and show the wins and losses for that brain
 		JPanel brainUploadPanel = new JPanel();
 		brainUploadPanel.setLayout(new GridLayout(numOfPlayers + 1, 5, 10, 10));
-
+		brainUploadPanel.setBorder(new EmptyBorder(0, 10, 0, 10) );
+		
 		//Labels that are the column headings
 		JLabel blankLbl1 = new JLabel("");
 		JLabel blankLbl2 = new JLabel("");
@@ -67,18 +69,20 @@ public class ContestWindow {
 		//Arrays of the components to be added on each row
 		JLabel[] nameLbls = new JLabel[numOfPlayers];
 		browseBtns = new JButton[numOfPlayers];
-		brainPathLbls = new JTextArea[numOfPlayers];
-		JLabel[] winsLbls = new JLabel[numOfPlayers];
-		JLabel[] lossesLbls = new JLabel[numOfPlayers];
+		brainPathLbls = new JTextField[numOfPlayers];
+		JTextField[] winsLbls = new JTextField[numOfPlayers];
+		JTextField[] lossesLbls = new JTextField[numOfPlayers];
 		
 		//Loop displays each row for uploading a brain for each player
 		for (int i = 0; i < numOfPlayers; i++) { 
 			nameLbls[i] = new JLabel("Player"  + (i + 1));
 			browseBtns[i] = new JButton("Browse");
 			browseBtns[i].addActionListener(new brainBrowseListener());
-			brainPathLbls[i] = new JTextArea();
-			winsLbls[i] = new JLabel("");
-			lossesLbls[i] = new JLabel("");
+			brainPathLbls[i] = new JTextField();
+			winsLbls[i] = new JTextField("");
+			winsLbls[i].setEnabled(false);
+			lossesLbls[i] = new JTextField("");
+			lossesLbls[i].setEnabled(false);
 			
 			brainUploadPanel.add(nameLbls[i]);
 			brainUploadPanel.add(browseBtns[i]);

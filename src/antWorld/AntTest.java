@@ -14,13 +14,16 @@ public class AntTest {
 	public Brain brain;
 	//world.getContestWorld(0) MAKES A NICE SHINY WORLD
 	
+	public AntTest(){
+		Logger.setLogLevel(Logger.LogLevel.WARNING_LOGGING);
+	}
 	/**
-	 * Acceptance tests
+	 * ACCEPTANCE TESTS
+	 * FUNCTIONALITY
 	 */
 	
 	@Test
 	public void testSenseFoodA() {
-		Logger.setLogLevel(Logger.LogLevel.WARNING_LOGGING);
 		testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
 		Ant[] testAnts = testWorld.getAnts();
 		brain = BrainParser.readBrainFrom("testBrains/senseFoodTestBrain"); //the ant will turn left if it senses food
@@ -131,8 +134,22 @@ public class AntTest {
 
 	@Test
 	public void testSetMark(){
-		
+		testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+		Ant[] testAnts = testWorld.getAnts();
+		brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
+		//this brain places a marker, moves, and turns around to sense, if detected, the ant turns left
+		testWorld.setBrain(brain, 0);
+		for (int i = 0; i < 3; i++){
+			testAnts[0].step();
+		}
+		assertEquals(4, testAnts[0].getDirection());
 	}
+	
+	@Test
+	public void testRemoveMark(){
+		fail("FINISH ME");
+	}
+	
 	
 	
 	

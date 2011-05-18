@@ -25,14 +25,14 @@ public class Random {
 	}
 	
 	/**
-	 * 
+	 * @return
 	 */
 	private int nextS() {
 		return this.s = this.s * 22695477 + 1;
 	}
 	
 	/**
-	 * 
+	 * @return
 	 */
 	private int nextX() {
 		return mod((nextS() / 65536), 16384);

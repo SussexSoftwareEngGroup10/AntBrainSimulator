@@ -239,7 +239,7 @@ public class MainWindow {
 						"Security violation with file!", sE));
 			}
 			//If all files have been selected, allow game to be played.
-			if (!blackBrainPath.equals("") && !redBrainPath.equals("") && !worldPath.equals("")) {
+			if (!(blackBrain == null) && !(redBrainPath == null)) {
 				startGameBtn.setEnabled(true);
 			}
 		}
@@ -299,8 +299,6 @@ public class MainWindow {
 	
 	public class StartGameListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			Brain blackBrain = BrainParser.readBrainFrom(blackBrainPath);
-			Brain redBrain = BrainParser.readBrainFrom(redBrainPath);
 			gameEngine.setWorld(world);
 			gameEngine.simulate(blackBrain, redBrain);
 		}

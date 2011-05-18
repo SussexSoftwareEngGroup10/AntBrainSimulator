@@ -432,6 +432,7 @@ public class World implements Cloneable {
 			failCount++;
 		}
 		
+		//TODO write better loops that fail nicely
 		if(this.anthills >= 1){
 			//Anthill1
 			failCount--;

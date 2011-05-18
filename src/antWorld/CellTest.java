@@ -58,4 +58,25 @@ public class CellTest {
 			fail("Marker was not initially set");
 		}
 	}
+	
+	@Test
+	public void testReturnIndividualNeighbours(){
+		Cell testCell = new Cell(1,1,'.');
+		Cell[] neighbors = new Cell[2];
+		neighbors[0] = new Cell(0,1,'#');
+		neighbors[1] = new Cell(2,1,'+');
+		testCell.setNeighbours(neighbors);
+		assertEquals("Neighbor 1 invalid", '#', testCell.getNeighbour(0).toChar());
+		assertEquals("Neighbor 2 invalid", '+', testCell.getNeighbour(1).toChar());
+	}
+	
+	@Test
+	public void testReturnNeighboursArray(){
+		Cell testCell = new Cell(1,1,'.');
+		Cell[] neighbors = new Cell[2];
+		neighbors[0] = new Cell(0,1,'#');
+		neighbors[1] = new Cell(2,1,'+');
+		testCell.setNeighbours(neighbors);
+		assertArrayEquals(neighbors, testCell.getNeighbours());
+	}
 }

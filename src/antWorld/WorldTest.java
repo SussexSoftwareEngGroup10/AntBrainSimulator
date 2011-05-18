@@ -46,4 +46,10 @@ public class WorldTest {
 		fail("FINISH ME");
 	}
 	
+	@Test
+	public void testGenerateRandomWorld(){
+		testWorld = World.getContestWorld(38457);
+		System.out.println(testWorld);
+	}
+	
 }

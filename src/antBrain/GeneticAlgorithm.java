@@ -63,35 +63,39 @@ public class GeneticAlgorithm implements Serializable {
 	 */
 	private void createPopulation(Brain startBrain, int popLen) {
 		//Try to resume last epochs()
-		if(loadLast()){
-			this.popLen = popLen;
-			Brain[] newPopulation = new Brain[popLen];
-			
-			//Copy serialised population to new population so that the Brain at 0 is
-			//lowest fitness, and the Brain at length - 1 is highest fitness,
-			//Any new Brains needing addition or removal as the population length is altered
-			//are added or removed from 0, maintaining the natural ordering of the population
-			for(int i = popLen - 1; i >= 0; i--){
-				if(popLen - 1 - i >= popLen - 1 - this.population.length){
-					newPopulation[popLen - 1 - i] = this.population[this.population.length - 1 - i];
-				}else{
-					//If there are more brains required than there are in the
-					//population read in from loadLast(), create new brains
-					newPopulation[i] = startBrain.clone();
+		try{
+			if(loadLast()){
+				this.popLen = popLen;
+				Brain[] newPopulation = new Brain[popLen];
+				
+				//Copy serialised population to new population so that the Brain at 0 is
+				//lowest fitness, and the Brain at length - 1 is highest fitness,
+				//Any new Brains needing addition or removal as the population length is altered
+				//are added or removed from 0, maintaining the natural ordering of the population
+				for(int i = popLen - 1; i >= 0; i--){
+					if(popLen - 1 - i >= popLen - 1 - this.population.length){
+						newPopulation[popLen - 1 - i] = this.population[this.population.length - 1 - i];
+					}else{
+						//If there are more brains required than there are in the
+						//population read in from loadLast(), create new brains
+						newPopulation[i] = startBrain.clone();
+					}
 				}
+				this.population = newPopulation;
+			}else{
+				//Otherwise create an entirely new population
+				this.epoch = 1;
+				this.popLen = popLen;
+				this.population = new Brain[popLen];
+				//Fill with number of startBrains
+				for(int i = 0; i < popLen; i++){
+					this.population[i] = startBrain.clone();
+				}
+				Logger.log(new InformationNormEvent("New GeneticAlgorithm Brain population of size "
+					+ popLen + " created"));
 			}
-			this.population = newPopulation;
-		}else{
-			//Otherwise create an entirely new population
-			this.epoch = 1;
-			this.popLen = popLen;
-			this.population = new Brain[popLen];
-			//Fill with number of startBrains
-			for(int i = 0; i < popLen; i++){
-				this.population[i] = startBrain.clone();
-			}
-			Logger.log(new InformationNormEvent("New GeneticAlgorithm Brain population of size "
-				+ popLen + " created"));
+		}catch(IOEvent e){
+			Logger.log(e);
 		}
 	}
 	
@@ -468,15 +472,24 @@ public class GeneticAlgorithm implements Serializable {
 		
 		//Write best brain so far to file
 		Brain b = this.population[this.popLen - 1].clone();
-		BrainParser.writeBrainTo(b, "ga_result_full");
+		try{
+			BrainParser.writeBrainTo(b, "ga_result_full");
+		}catch(IOEvent e){
+			Logger.log(e);
+		}
 		b.trim();
-		BrainParser.writeBrainTo(b, "ga_result_trimmed");
+		try{
+			BrainParser.writeBrainTo(b, "ga_result_trimmed");
+		}catch(IOEvent e){
+			Logger.log(e);
+		}
 	}
 	
 	/**
 	 * @return deduce the last written file, and read it in
+	 * @throws IOEvent 
 	 */
-	private boolean loadLast() {
+	private boolean loadLast() throws IOEvent {
 		//Get superFolder ending in highest number
 		File[] files = superFolder.listFiles();
 		if(files == null) return false;	//No superfolder
@@ -534,19 +547,20 @@ public class GeneticAlgorithm implements Serializable {
 	
 	/**
 	 * @param loadFile read the file specified and alter object variables accordingly
+	 * @throws IOEvent 
 	 */
-	private void load(File filePath) {
+	private void load(File filePath) throws IOEvent {
 		try{
 			readObject(new ObjectInputStream(new FileInputStream(filePath)));
 			Logger.log(new InformationNormEvent("Completed deserializing GeneticAlgorithm " +
 				"object from " + filePath.getPath()));
 		}catch(FileNotFoundException e){
-			Logger.log(new IOEvent("Save file: \""
-				+ filePath.getPath() + " not found", e));
+			throw new IOEvent("Save file: \""
+				+ filePath.getPath() + " not found", e);
 		}catch(ClassNotFoundException e){
-			Logger.log(new IOEvent(e.getMessage(), e));
+			throw new IOEvent(e.getMessage(), e);
 		}catch(IOException e){
-			Logger.log(new IOEvent(e.getMessage(), e));
+			throw new IOEvent(e.getMessage(), e);
 		}
 	}
 	

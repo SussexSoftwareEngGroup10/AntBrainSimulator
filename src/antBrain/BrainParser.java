@@ -24,8 +24,9 @@ public class BrainParser {
 	/**
 	 * @param name
 	 * @return
+	 * @throws IOEvent 
 	 */
-	public static Brain readBrainFrom(String name) {
+	public static Brain readBrainFrom(String name) throws IOEvent {
 		String path;
 		if(name.endsWith(fileNameSuffix)){
 			path = name;
@@ -75,7 +76,7 @@ public class BrainParser {
 			}
 			br.close();
 		}catch(IOException e){
-			Logger.log(new IOEvent(e.getMessage(), e));
+			throw new IOEvent(e.getMessage(), e);
 		}
 		Logger.log(new InformationHighEvent("Completed reading Brain " +
 			"object from \"" + path + "\""));
@@ -85,8 +86,9 @@ public class BrainParser {
 	/**
 	 * @param brain
 	 * @param name
+	 * @throws IOEvent 
 	 */
-	public static void writeBrainTo(Brain brain, String name) {
+	public static void writeBrainTo(Brain brain, String name) throws IOEvent {
 		String path = folderName + "\\"
 			+ name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun writing Brain object to \"" + path + "\""));
@@ -107,7 +109,7 @@ public class BrainParser {
 			bw.write(brain.toString());
 			bw.close();
 		}catch(IOException e){
-			Logger.log(new IOEvent(e.getMessage(), e));
+			throw new IOEvent(e.getMessage(), e);
 		}
 		Logger.log(new InformationHighEvent("Completed writing Brain " +
 			"object to \"" + path + "\""));

@@ -11,7 +11,6 @@ import utilities.IOEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.Logger;
-import utilities.WarningEvent;
 
 /**
  * @author pkew20 / 57116
@@ -25,8 +24,9 @@ public final class WorldParser {
 	/**
 	 * @param name
 	 * @return the world in the file "name"
+	 * @throws IOEvent 
 	 */
-	public static World readWorldFrom(String name) {
+	public static World readWorldFrom(String name) throws IOEvent {
 		String path;
 		if(name.endsWith(fileNameSuffix)){
 			path = name;
@@ -90,13 +90,12 @@ public final class WorldParser {
 			
 			world = new World(cellChars);
 		}catch(IOException e){
-			Logger.log(new IOEvent(e.getMessage(), e));
+			throw new IOEvent(e.getMessage(), e);
 		}
 		Logger.log(new InformationHighEvent("Completed reading World object from \"" + path + "\""));
-		if(world == null){
-			Logger.log(new WarningEvent("World read from \"" + path + "\" is null"));
-		}else if(!world.isContest()){
-			Logger.log(new WarningEvent("World read from \"" + path + "\" is not suitable for contests"));
+		if(!world.isContest()){
+			Logger.log(new InformationHighEvent("World read from \"" + path +
+				"\" is not suitable for contests"));
 		}
 		return world;
 	}
@@ -104,8 +103,9 @@ public final class WorldParser {
 	/**
 	 * @param world
 	 * @param name name to give the file
+	 * @throws IOEvent 
 	 */
-	public static void writeWorldTo(World world, String name) {
+	public static void writeWorldTo(World world, String name) throws IOEvent {
 		String path = folderName + "\\" + name + "" + fileNameSuffix;
 		Logger.log(new InformationLowEvent("Begun writing World object to \"" + path + "\""));
 		if(!folder.exists()){
@@ -125,7 +125,7 @@ public final class WorldParser {
 			bw.write(world.toString());
 			bw.close();
 		}catch(IOException e){
-			Logger.log(new IOEvent(e.getMessage(), e));
+			throw new IOEvent(e.getMessage(), e);
 		}
 		Logger.log(new InformationHighEvent("Completed writing World object to \"" + path + "\""));
 	}

@@ -1,6 +1,7 @@
 package antWorld;
 
 import engine.Random;
+import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
@@ -52,8 +53,9 @@ public class World implements Cloneable {
 	 * @param seed 0 to use random seed
 	 * 
 	 * @return a world which is fit to be used in a tournament
+	 * @throws ErrorEvent 
 	 */
-	public static World getContestWorld(int seed) {
+	public static World getContestWorld(int seed) throws ErrorEvent {
 		return getRegularWorld(seed, 140, 140, 13);
 	}
 	
@@ -67,8 +69,9 @@ public class World implements Cloneable {
 	 * @param brains
 	 * @param seed
 	 * @return
+	 * @throws ErrorEvent 
 	 */
-	public static World getRegularWorld(int seed, int rows, int cols, int rocks) {
+	public static World getRegularWorld(int seed, int rows, int cols, int rocks) throws ErrorEvent {
 		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0, 1);
 	}
 	
@@ -88,10 +91,11 @@ public class World implements Cloneable {
 	 * @param foodBlobSideLength
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
+	 * @throws ErrorEvent 
 	 */
 	public World(int seed, int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection, int gap) {
+		int foodBlobCellFoodCount, int antInitialDirection, int gap) throws ErrorEvent {
 		//Can either use a random or predefined seed
 		this.seed = seed;
 		this.ran = new Random(this.seed);
@@ -419,24 +423,30 @@ public class World implements Cloneable {
 	 * Method will hang if, by chance, objects are placed in a way that does not
 	 * leave room for all objects which are required to be placed.
 	 * Or the map is small, and all objects will not fit into the specified space
+	 * @throws ErrorEvent 
 	 */
-	private void createWorld() {
+	private void createWorld() throws ErrorEvent {
+		int maxFails = 100;
 		int failCount = 0;
 		int ranRow;
 		int ranCol;
 		int i = 0;
 		
 		//Border
-		failCount--;
 		if(!setBorderRocks()){
-			failCount++;
+			if(failCount > maxFails){
+				throw new ErrorEvent("failed to set border rocks 1 time(s)");
+			}
 		}
 		
 		//TODO write better loops that fail nicely
 		if(this.anthills >= 1){
 			//Anthill1
-			failCount--;
+			failCount = -1;
 			do{
+				if(failCount > maxFails){
+					throw new ErrorEvent("failed to set black anthill " + failCount + " time(s)");
+				}
 				failCount++;
 				ranRow = this.ran.randomInt(this.rows - 2) + 1;
 				ranCol = this.ran.randomInt(this.cols - 2) + 1;
@@ -445,8 +455,11 @@ public class World implements Cloneable {
 		
 		if(this.anthills >= 2){
 			//Anthill2
-			failCount--;
+			failCount = -1;
 			do{
+				if(failCount > maxFails){
+					throw new ErrorEvent("failed to set black anthill " + failCount + " time(s)");
+				}
 				failCount++;
 				ranRow = this.ran.randomInt(this.rows - 2) + 1;
 				ranCol = this.ran.randomInt(this.cols - 2) + 1;
@@ -459,8 +472,12 @@ public class World implements Cloneable {
 		
 		//Foods
 		for(i = 0; i < this.foodBlobCount; i++){
-			failCount--;
+			failCount = -1;
 			do{
+				if(failCount > maxFails){
+					throw new ErrorEvent("failed to set food blob " + i + " of " + this.foodBlobCount
+						+ " " + failCount + " time(s)");
+				}
 				failCount++;
 				ranRow = this.ran.randomInt(this.rows - 2) + 1;
 				ranCol = this.ran.randomInt(this.cols - 2) + 1;
@@ -470,8 +487,12 @@ public class World implements Cloneable {
 		
 		//Rocks
 		for(i = 0; i < this.rocks; i++){
-			failCount--;
+			failCount = -1;
 			do{
+				if(failCount > maxFails){
+					throw new ErrorEvent("failed to set rock " + i + " of " + this.rocks
+						+ " " + failCount + " time(s)");
+				}
 				failCount++;
 				ranRow = this.ran.randomInt(this.rows - 2) + 1;
 				ranCol = this.ran.randomInt(this.cols - 2) + 1;

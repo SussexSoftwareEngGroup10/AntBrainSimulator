@@ -21,7 +21,7 @@ public class WorldTest {
 	@Test
 	public void testCreation(){
 		testWorld = WorldParser.readWorldFrom("example");
-		assertTrue(testWorld != null);
+		assertTrue("ADD MORE TESTS",testWorld != null);
 	}
 	
 	@Test
@@ -29,7 +29,7 @@ public class WorldTest {
 	{
 		testWorld = WorldParser.readWorldFrom("example");
 		Cell[][] worldSize = testWorld.getCells();
-		assertEquals(10, worldSize.length);
+		assertEquals("ADD MORE TESTS",10, worldSize.length);
 		//the example world is size 10, that is what should be returned
 	}
 	

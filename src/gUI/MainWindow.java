@@ -264,7 +264,7 @@ public class MainWindow {
 								blackBrain = BrainParser.readBrainFrom(path);
 							}
 							else {
-								world = WorldParser.readWorldFrom(path);
+								world = WorldParser.readWorldFromContest(path);
 								gameDisplay.updateWorld(world);
 							}
 						} catch (IOEvent iOE) {

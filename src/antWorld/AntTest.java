@@ -26,7 +26,7 @@ public class AntTest {
 	@Test
 	public void testSenseFoodA() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/senseFoodTestBrain"); //the ant will turn left if it senses food
@@ -35,15 +35,14 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(5, testAnts[0].getDirection());
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testSenseFoodB() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/senseFoodTestBrain"); //the ant will turn left if it senses food
@@ -52,16 +51,14 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(0, testAnts[0].getDirection());
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 
 	@Test
 	public void testSenseAntA(){
-		
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseAnt");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseAnt");
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/senseAntTestBrain"); //the ant will turn left if it senses an enemy ant
 			testWorld.setBrain(brain,0);
@@ -75,15 +72,14 @@ public class AntTest {
 			assertEquals(5, testAnts[0].getDirection());//pass if turned left
 			}
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testSenseAntB(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/senseAntTestBrain"); //the ant will turn left if it senses an enemy ant
@@ -92,15 +88,14 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(1, testAnts[0].getDirection());
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testLeftTurn(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
@@ -108,15 +103,14 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(testAnts[0].getDirection(), 5); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testRightTurn(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/turnRightOnly");
@@ -124,15 +118,14 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(1,testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testMove(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("move_ahead");
@@ -140,15 +133,14 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(4, testAnts[0].getCell().getRow());
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
-		}
+	}
 	
 	@Test
 	public void testCollectFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/testCollectFood"); //load working brain with the ability to pick up food
@@ -158,15 +150,14 @@ public class AntTest {
 			}
 			assertTrue(testAnts[0].hasFood());
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testDropFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/testDropFood"); //load working brain with the ability to pick up food
@@ -181,15 +172,14 @@ public class AntTest {
 				assertTrue("The ant did not drop the food it had", !testAnts[0].hasFood());
 			}
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 
 	@Test
 	public void testSetMark(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
@@ -200,17 +190,12 @@ public class AntTest {
 			}
 			assertEquals(4, testAnts[0].getDirection());
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
-	@Test
-	public void testRemoveMark(){
-		fail("FINISH ME");
-	}
-	
-	
-	
-	
+//	@Test
+//	public void testRemoveMark(){
+//		fail("FINISH ME");
+//	}
 }

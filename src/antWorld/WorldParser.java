@@ -23,20 +23,29 @@ public final class WorldParser {
 	
 	/**
 	 * @param name
-	 * @return the world in the file "name"
+	 * @return
+	 * @throws IOEvent
+	 */
+	public static World readWorldFromContest(String name) throws IOEvent {
+		String path = getPath(name);
+		World world = readWorldFrom(path);
+		if(!world.isContest()){
+			throw new IOEvent("World read from \"" + path +
+				"\" is not suitable for contests");
+		}
+		return world;
+	}
+	
+	public static World readWorldFromCustom(String name) throws IOEvent {
+		return readWorldFrom(getPath(name));
+	}
+	
+	/**
+	 * @param name
+	 * @return the world in the file "name" 
 	 * @throws IOEvent 
 	 */
-	public static World readWorldFrom(String name) throws IOEvent {
-		String path;
-		if(name.endsWith(fileNameSuffix)){
-			path = name;
-		}else{
-			path = name + fileNameSuffix;
-		}
-		if(!path.contains("\\" + folderName + "\\")){
-			path = folderName + "\\" + path;
-		}
-		
+	private static World readWorldFrom(String path) throws IOEvent {
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
 		BufferedReader br;
 		File f = new File(path);
@@ -93,10 +102,6 @@ public final class WorldParser {
 			throw new IOEvent(e.getMessage(), e);
 		}
 		Logger.log(new InformationHighEvent("Completed reading World object from \"" + path + "\""));
-		if(!world.isContest()){
-			Logger.log(new InformationHighEvent("World read from \"" + path +
-				"\" is not suitable for contests"));
-		}
 		return world;
 	}
 	
@@ -128,5 +133,18 @@ public final class WorldParser {
 			throw new IOEvent(e.getMessage(), e);
 		}
 		Logger.log(new InformationHighEvent("Completed writing World object to \"" + path + "\""));
+	}
+	
+	private static String getPath(String name) {
+		String path;
+		if(name.endsWith(fileNameSuffix)){
+			path = name;
+		}else{
+			path = name + fileNameSuffix;
+		}
+		if(!path.contains("\\" + folderName + "\\")){
+			path = folderName + "\\" + path;
+		}
+		return path;
 	}
 }

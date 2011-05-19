@@ -23,7 +23,7 @@ public class WorldTest {
 	@Test
 	public void testCreation(){
 		try {
-			testWorld = WorldParser.readWorldFrom("example");
+			testWorld = WorldParser.readWorldFromCustom("example");
 		
 			assertTrue("ADD MORE TESTS",testWorld != null);
 		} catch (IOEvent e) {
@@ -36,7 +36,7 @@ public class WorldTest {
 	public void testReturnSize()
 	{
 		try {
-			testWorld = WorldParser.readWorldFrom("example");
+			testWorld = WorldParser.readWorldFromCustom("example");
 		
 			Cell[][] worldSize = testWorld.getCells();
 			assertEquals("ADD MORE TESTS",10, worldSize.length);
@@ -50,7 +50,7 @@ public class WorldTest {
 	@Test
 	public void testReturnAnts(){
 		try {
-			testWorld = WorldParser.readWorldFrom("example");
+			testWorld = WorldParser.readWorldFromCustom("example");
 			Ant[] testAnts = testWorld.getAnts();
 			assertEquals(32, testAnts.length);
 			//TODO: Works out length of hexagon with length 5
@@ -63,7 +63,7 @@ public class WorldTest {
 	@Test
 	public void testReturnFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("example");
+			testWorld = WorldParser.readWorldFromCustom("example");
 		
 		fail("FINISH ME");
 		} catch (IOEvent e) {

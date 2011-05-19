@@ -177,7 +177,7 @@ public final class Ant implements Comparable<Ant> {
 		//FOE
 		case 1:
 			if(this.senseCell.hasAnt()
-				&& this.senseCell.getAnt().getColour() != this.colour.ordinal()){
+				&& this.senseCell.getAnt().getColour() != getColour()){
 				this.state = this.brain.get(this.state.getSt1());
 				break;
 			}

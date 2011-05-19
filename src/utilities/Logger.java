@@ -17,7 +17,7 @@ public final class Logger {
 	
 	//Use these outside this class so that new levels can be inserted
 	public enum LogLevel { NO_LOGGING, ERROR_LOGGING, WARNING_LOGGING, TIME_LOGGING,
-	HIGH_LOGGING, NORM_LOGGING, LOW_LOGGING, ALL_LOGGING}
+	HIGH_LOGGING, NORM_LOGGING, LOW_LOGGING, ALL_LOGGING }
 	
 	private LogLevel logLevel = LogLevel.ALL_LOGGING;
 	private final long startTime = System.nanoTime();
@@ -27,7 +27,6 @@ public final class Logger {
 	private final File folder = new File(this.folderName);
 	private final String fileNamePrefix = "log_";
 	private final String fileNameSuffix = ".log";
-	private final PrintStream sysErr = System.err;
 	private PrintStream logErr;
 	private File file;
 	
@@ -131,15 +130,9 @@ public final class Logger {
 			return;
 		}
 		
-		//Setup writing to log file
-		System.setErr(logger.logErr);
-		
 		//Write the toString of e to a log file
+		logger.logErr.println(event.toString());
 		System.out.println(event.toString());
-		System.err.println(event.toString());
-		
-		//Reset printing to the console
-		System.setErr(logger.sysErr);
 	}
 	
 	/**

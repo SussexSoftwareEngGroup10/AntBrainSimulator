@@ -172,7 +172,6 @@ public class World implements Cloneable {
 			for(c = 0; c < this.cols; c++){
 				current = this.cells[r][c];
 				current.setNeighbours(getNeighbours(current));
-				current.setupMarkers(this.anthills);
 			}
 		}
 		
@@ -383,6 +382,12 @@ public class World implements Cloneable {
 		//I can't think of an efficient way of checking for the minimum gap between
 		//objects in the World
 		this.gap = 1;
+		
+		for(r = 0; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
+				this.cells[r][c].setupMarkers(this.anthills);
+			}
+		}
 		
 		createAnts();
 	}

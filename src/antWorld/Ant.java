@@ -263,6 +263,7 @@ public final class Ant implements Comparable<Ant> {
 	 * Mark marker st1
 	 */
 	private final void mark() {
+		System.out.println(this.colour.ordinal() + ", " + this.state.getMarker());
 		this.cell.mark(this.colour.ordinal(), this.state.getMarker());
 		this.state = this.brain.get(this.state.getSt1());
 	}
@@ -540,15 +541,15 @@ public final class Ant implements Comparable<Ant> {
 	@Override
 	public final String toString() {
 		String s = "";
-		s += "UID: " + uid;
-		s += "\ncell: " + cell;
+		s += "UID: " + this.uid;
+		s += "\ncell: " + this.cell;
 		s += "\nis ";
-		if(!alive) s += "not ";
+		if(!this.alive) s += "not ";
 		s += "alive";
-		s += "\nDirection: " + direction;
-		if(!hasFood) s += "\ndoes not have food"; else s += "\nhas food";
-		s += "\nrest: " + rest;
-		s += "\nstate: " + brain.get(state);
+		s += "\nDirection: " + this.direction;
+		if(!this.hasFood) s += "\ndoes not have food"; else s += "\nhas food";
+		s += "\nrest: " + this.rest;
+		s += "\nstate: " + this.brain.get(this.state);
 		
 		return s;
 	}

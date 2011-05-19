@@ -14,7 +14,7 @@ import antWorld.World;
  */
 public class GameDisplay extends PApplet {
 	private static final long serialVersionUID = 1L;
-	
+	//TODO: CREATE FIELD FOR TOTAL HEX WIDTH AND HEIGHT!  THESE WILL BE USED THROUGHOUT!
 	World world;
 	private Cell[][] gridCells;
 	
@@ -85,6 +85,10 @@ public class GameDisplay extends PApplet {
 	private ZoomPan zoomer; //Class for zooming and panning
 	private ArrayList<int[]> rockShadesList = new ArrayList<int[]>();
 	
+	private PGraphics backgroundBufferSmall;
+	private PGraphics backgroundBufferMedium;
+	private PGraphics backgroundBufferLarge;
+	
 	private int numHexCol; //Number of columns (in hexagons) wide
 	private int numHexRow; //Number of rows (in hexagons) high
 	
@@ -128,7 +132,6 @@ public class GameDisplay extends PApplet {
 	
 	public GameDisplay(World world) {
 		this.world = world;
-		
 		//Initialise image variables and load image files (files loaded here rather than dynamically when needed
 		//because it would require a large amount of loading/unloading image files which would slow the game down
 		//when running
@@ -202,9 +205,20 @@ public class GameDisplay extends PApplet {
 		}
 		
 		size(PIXEL_WIDTH, PIXEL_HEIGHT);
-		
+		//TODO: This runs out of heap space.  Need to find a way of using only 1 buffer.
+		//TODO: Maybe have only 2 scales.
+		backgroundBufferSmall = createGraphics(HEX_WIDTH * numHexCol,
+										 (HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) 
+										 * numHexRow + HEX_ANGLE_HEIGHT, P2D);
+		backgroundBufferMedium = createGraphics(HEX_WIDTH * numHexCol,
+				 						 (HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) 
+				 						 * numHexRow + HEX_ANGLE_HEIGHT, P2D);
+		backgroundBufferLarge = createGraphics(HEX_WIDTH * numHexCol,
+				 						 (HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) 
+				 						 * numHexRow + HEX_ANGLE_HEIGHT, P2D);
+		bufferWorld();
 		smooth(); //Turn on anti aliasing
-		frameRate(24); //Turn down the frame rate for less processing power
+		frameRate(10); //Turn down the frame rate for less processing power
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
 		setInitialPanAndZoom();
@@ -304,11 +318,43 @@ public class GameDisplay extends PApplet {
 	
 	public void updateWorld(World world) {
 		this.world = world;
+		bufferWorld();
 		setup();
 	}
 	
 	public void startRunning() {
 		currentGameState = GameStates.RUNNING;
+	}
+	
+	private void bufferWorld() {
+		backgroundBufferSmall.beginDraw();
+		drawWorld(SMALL_IMAGE);
+		backgroundBufferSmall.dispose();
+		backgroundBufferSmall.endDraw();
+		backgroundBufferMedium.beginDraw();
+		drawWorld(MEDIUM_IMAGE);
+		backgroundBufferMedium.dispose();
+		backgroundBufferMedium.endDraw();
+		backgroundBufferLarge.beginDraw();
+		drawWorld(LARGE_IMAGE);
+		backgroundBufferMedium.dispose();
+		backgroundBufferLarge.endDraw();
+	}
+	
+	private void drawWorld(int imageScale) {
+		for (int row = 0; row < numHexRow; row++) {
+			for (int col = 0; col < numHexCol; col++) {
+				if (gridCells[row][col].getAnthill() == 1) { //If the cell is a red anthill
+					drawImage(redAnthillTile[imageScale], row, col, 1);
+				} else if (gridCells[row][col].getAnthill() == 2) { //If it is black anthill
+					drawImage(blackAnthillTile[imageScale], row, col, 1);
+				} else if (gridCells[row][col].isRocky()) { //If it's rocky
+					drawImage(rockTile[imageScale][getRockShade(row, col)], row, col, 1); //Randomly pick shade of grey
+				} else {
+					drawImage(grassTile[imageScale], row, col, 1); //Otherwise it is a grass tile
+				}
+			}
+		}
 	}
 	
 	public void draw() {
@@ -329,37 +375,33 @@ public class GameDisplay extends PApplet {
 	}
 	
 	private void drawImages(int imageScale) {
-		for (int row = 0; row < numHexRow; row++) {
-			for (int col = 0; col < numHexCol; col++) {
-				drawTile(imageScale, row, col);
-				if (currentGameState == GameStates.RUNNING) {
+		if (imageScale == SMALL_IMAGE) {
+			image(backgroundBufferSmall, 0, 0);
+		} else if (imageScale == MEDIUM_IMAGE) {
+			image(backgroundBufferMedium, 0, 0);
+		} else {
+			image(backgroundBufferLarge, 0, 0);
+		}
+		if (currentGameState == GameStates.RUNNING) {
+			for (int row = 0; row < numHexRow; row++) {
+				for (int col = 0; col < numHexCol; col++) {
+					//drawTile(imageScale, row, col);
 					drawMarker(row, col);
 					drawFood(imageScale, row, col);
 					drawAnt(imageScale, row, col);
+
 				}
 			}
-		}
-	}
-	
-	private void drawTile(int imageScale, int row, int col) {
-		if (gridCells[row][col].getAnthill() == 1) { //If the cell is a red anthill
-			drawImage(redAnthillTile[imageScale], row, col);
-		} else if (gridCells[row][col].getAnthill() == 2) { //If it is black anthill
-			drawImage(blackAnthillTile[imageScale], row, col);
-		} else if (gridCells[row][col].isRocky()) { //If it's rocky
-			drawImage(rockTile[imageScale][getRockShade(row, col)], row, col); //Randomly pick shade of grey
-		} else {
-			drawImage(grassTile[imageScale], row, col); //Otherwise it is a grass tile
 		}
 	}
 	
 	private void drawMarker(int row, int col) {
 		for (int i = 0; i < 6; i++) { //Check in each type of the 6 markers
 			if (gridCells[row][col].getMarker(0, i)) {
-				drawImage(blackMarker, row, col); //COULD HAVE GOT THE SPECIES MIXED UP
+				drawImage(blackMarker, row, col, 0); //COULD HAVE GOT THE SPECIES MIXED UP
 			}
 			if (gridCells[row][col].getMarker(1, i)) {
-				drawImage(redMarker, row, col);
+				drawImage(redMarker, row, col, 0);
 			}
 		}
 	}
@@ -367,32 +409,32 @@ public class GameDisplay extends PApplet {
 	private void drawFood(int imageScale, int row, int col) {
 		if (imageScale == LARGE_IMAGE) { //If it's small, need to check quantity to show the correct image
 			switch (gridCells[row][col].foodCount()) {
-				case 1: drawImage(foodLarge[ONE_FOOD], row, col); 
+				case 1: drawImage(foodLarge[ONE_FOOD], row, col, 0); 
 				break;
-				case 2: drawImage(foodLarge[TWO_FOOD], row, col); 
+				case 2: drawImage(foodLarge[TWO_FOOD], row, col, 0); 
 				break;
-				case 3: drawImage(foodLarge[THREE_FOOD], row, col); 
+				case 3: drawImage(foodLarge[THREE_FOOD], row, col, 0); 
 				break;
-				case 4: drawImage(foodLarge[FOUR_FOOD], row, col); 
+				case 4: drawImage(foodLarge[FOUR_FOOD], row, col, 0); 
 				break;
-				case 5: drawImage(foodLarge[FIVE_FOOD], row, col); 
+				case 5: drawImage(foodLarge[FIVE_FOOD], row, col, 0); 
 				break;
-				case 6: drawImage(foodLarge[SIX_FOOD], row, col); 
+				case 6: drawImage(foodLarge[SIX_FOOD], row, col, 0); 
 				break;
-				case 7: drawImage(foodLarge[SEVEN_FOOD], row, col); 
+				case 7: drawImage(foodLarge[SEVEN_FOOD], row, col, 0); 
 				break;
-				case 8: drawImage(foodLarge[EIGHT_FOOD], row, col); 
+				case 8: drawImage(foodLarge[EIGHT_FOOD], row, col, 0); 
 				break;
-				case 9: drawImage(foodLarge[NINE_FOOD], row, col); 
+				case 9: drawImage(foodLarge[NINE_FOOD], row, col, 0); 
 				break;
 			}
 		} else if (imageScale == MEDIUM_IMAGE) { //Otherwise, just check if any is there
 			if (gridCells[row][col].hasFood()) {
-				drawImage(foodMedium, row, col); 
+				drawImage(foodMedium, row, col, 0); 
 			}
 		} else {
 			if (gridCells[row][col].hasFood()) {
-				drawImage(foodSmall, row, col); 
+				drawImage(foodSmall, row, col, 0); 
 			}
 		}
 	}
@@ -410,29 +452,29 @@ public class GameDisplay extends PApplet {
 						//Draw the image at an offset so that the origin is back to the top left of the tile.
 				if (currentAnt.getColour() == 0) { //If it's a black ant
 					if (currentAnt.hasFood()) {
-						drawImage(blackAntFood, row, col);
+						drawImage(blackAntFood, row, col, 0);
 					} else {
-						drawImage(blackAnt[LARGE_IMAGE], row, col);
+						drawImage(blackAnt[LARGE_IMAGE], row, col, 0);
 					}
 				} else {
 					if (currentAnt.hasFood()) {
-						drawImage(redAntFood, row, col);
+						drawImage(redAntFood, row, col, 0);
 					} else {
-								drawImage(redAnt[LARGE_IMAGE], row, col);
+								drawImage(redAnt[LARGE_IMAGE], row, col, 0);
 					}
 				}
 				//popMatrix();
 			} else if (imageScale == MEDIUM_IMAGE) {
 				if (currentAnt.getColour() == 0) { //If it's a black ant
-					drawImage(blackAnt[MEDIUM_IMAGE], row, col);
+					drawImage(blackAnt[MEDIUM_IMAGE], row, col, 0);
 				} else {
-					drawImage(redAnt[MEDIUM_IMAGE], row, col);
+					drawImage(redAnt[MEDIUM_IMAGE], row, col, 0);
 				}
 			} else {
 				if (currentAnt.getColour() == 0) { //If it's a black ant
-					drawImage(blackAnt[SMALL_IMAGE], row, col);
+					drawImage(blackAnt[SMALL_IMAGE], row, col, 0);
 				} else {
-					drawImage(redAnt[SMALL_IMAGE], row, col);
+					drawImage(redAnt[SMALL_IMAGE], row, col, 0);
 				}
 			}
 		} catch (NullPointerException nPE) {
@@ -487,13 +529,36 @@ public class GameDisplay extends PApplet {
 		}*/
 	}
 
-	private void drawImage(PImage image, int row, int col) {
-		 if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
-		 	image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-		 }
-		 else {
-		    image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-		} 
+	private void drawImage(PImage image, int row, int col, int type) {
+		if (type == 0) {
+			 if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
+			 	image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+			 }
+			 else {
+			    image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+			}
+		} else if (type == 1) {
+			if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
+				backgroundBufferSmall.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+			 }
+			 else {
+				backgroundBufferSmall.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+			}
+		} else if (type == 2) {
+			if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
+				backgroundBufferMedium.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+			 }
+			 else {
+				backgroundBufferMedium.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+			}
+		} else {
+			if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
+				backgroundBufferLarge.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+			 }
+			 else {
+				backgroundBufferLarge.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+			}
+		}
 	}
 	
 	/*

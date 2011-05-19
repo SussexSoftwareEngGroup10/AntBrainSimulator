@@ -142,6 +142,11 @@ public class GameEngine extends Thread {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	*/
 	
+	/**
+	 * Runs either a standard simulation or a contest depending on
+	 * isContestMode.  The world and the brains needed *must be set* before
+	 * this is run.
+	 */
 	public void run(){
 		if (isContestMode) {
 			runContest();
@@ -150,11 +155,10 @@ public class GameEngine extends Thread {
 		}
 	}
 	
-	/**
+	/*
 	 * Simulates each Brain against each other Brain in population,
 	 * sets their fitness to the number of wins they get,
 	 * then orders the population by fitness, so the most wins is at population[length - 1]
-	 * @param population
 	 */
 	private void runContest() {
 		evaluateFitnessContest(false, contestBrains, null);
@@ -271,11 +275,8 @@ public class GameEngine extends Thread {
 			+ ";  avg: " + avgFitness + ";  min: " + minFitness));
 	}
 	
-	/**
-	 * @param blackBrain
-	 * @param redBrain
-	 * @param world
-	 * @return
+	/*
+	 * Runs a standard simulation.
 	 */
 	private GameStats runStandard() {
 		World world = this.world;

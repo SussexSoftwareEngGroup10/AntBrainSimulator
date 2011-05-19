@@ -133,7 +133,7 @@ public class GameDisplay extends PApplet {
 		//because it would require a large amount of loading/unloading image files which would slow the game down
 		//when running
 		grassTile = new PImage[3];
-		grassTile[SMALL_IMAGE] = loadImage("resources/images/tiles/grass_tile_small_test.png");
+		grassTile[SMALL_IMAGE] = loadImage("resources/images/tiles/grass_tile_small.png");
 		grassTile[MEDIUM_IMAGE] = loadImage("resources/images/tiles/grass_tile_medium.png");
 		grassTile[LARGE_IMAGE] = loadImage("resources/images/tiles/grass_tile_large.png");
 		
@@ -345,7 +345,7 @@ public class GameDisplay extends PApplet {
 				if (gridCells[row][col].getAnthill() == 1) { //If the cell is a red anthill
 			    	drawImage(redAnthillTile[imageScale], row, col);
 			    } else if (gridCells[row][col].getAnthill() == 2) { //If it is black anthill
-			    	drawImage(redAnthillTile[imageScale], row, col);
+			    	drawImage(blackAnthillTile[imageScale], row, col);
 			    } else if (gridCells[row][col].isRocky()) { //If it's rocky
 			    	drawImage(rockTile[imageScale][getRockShade(row, col)], row, col); //Randomly pick shade of grey
 			    } else {

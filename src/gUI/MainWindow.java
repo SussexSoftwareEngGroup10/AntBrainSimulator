@@ -51,9 +51,14 @@ public class MainWindow {
 	 * Constructs a new MainWindow and draws it to the screen.
 	 */
 	public MainWindow() {
-		world = World.getContestWorld(0);
-		gameEngine = new GameEngine(world);
-		drawGUI();
+		try {
+			world = World.getContestWorld(0);
+			gameEngine = new GameEngine(world);
+			drawGUI();
+		} catch (ErrorEvent e) {
+			// TODO Find out error to display
+			e.printStackTrace();
+		}
 	}
 		
 	/**
@@ -180,13 +185,23 @@ public class MainWindow {
 	}
 	
 	public void setupNewWorldStandardWorld(int rows, int cols, int rocks) {
-		world = World.getRegularWorld(0, rows, cols, rocks);
-		gameDisplay.updateWorld(world);
+		try {
+			world = World.getRegularWorld(0, rows, cols, rocks);
+			gameDisplay.updateWorld(world);
+		} catch (ErrorEvent e) {
+			// TODO Find out error to display
+			e.printStackTrace();
+		}
 	}
 	
 	public void setupNewContestWorld() {
-		world = World.getContestWorld(0);
-		gameDisplay.updateWorld(world);
+		try {
+			world = World.getContestWorld(0);
+			gameDisplay.updateWorld(world);
+		} catch (ErrorEvent e) {
+			// TODO Find out error to display
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -233,21 +248,27 @@ public class MainWindow {
 						//Depending on which button triggered the event, a tick 
 						//symbol is displayed on that button, and the associated 
 						//file path is updated with the file chosen
-						if (clickedBtn == uploadRedBtn) {
-							if (!clickedBtn.getText().contains("✔")) {
-								clickedBtn.setText(clickedBtn.getText() + " ✔");
+						try {
+							if (clickedBtn == uploadRedBtn) {
+								if (!clickedBtn.getText().contains("✔")) {
+									clickedBtn.setText(
+												clickedBtn.getText() + " ✔");
+								}
+								redBrain = BrainParser.readBrainFrom(path);
 							}
-							redBrain = BrainParser.readBrainFrom(path);
-						}
-						else if (clickedBtn == uploadBlackBtn) {
-							if (!clickedBtn.getText().contains("✔")) {
-								clickedBtn.setText(clickedBtn.getText() + " ✔");
+							else if (clickedBtn == uploadBlackBtn) {
+								if (!clickedBtn.getText().contains("✔")) {
+									clickedBtn.setText(
+												clickedBtn.getText() + " ✔");
+								}
+								blackBrain = BrainParser.readBrainFrom(path);
 							}
-							blackBrain = BrainParser.readBrainFrom(path);
-						}
-						else {
-							world = WorldParser.readWorldFrom(path);
-							gameDisplay.updateWorld(world);
+							else {
+								world = WorldParser.readWorldFrom(path);
+								gameDisplay.updateWorld(world);
+							}
+						} catch (IOEvent iOE) {
+							// TODO Find out error to display
 						}
 					}
 				}

@@ -40,7 +40,7 @@ public class StatisticsWindow {
 		
 		//If black ant wins, draw the stats as it being the winner
 		if (stats.getWinner() == 0) {
-			winnerBrain = new JTextField("Black Brain (Winner)xxxx");
+			winnerBrain = new JTextField("Black Brain (Winner)");
 			winnerFood = 
 				new JTextField(Integer.toString(stats.getFoodInBlackAnthil()));
 			winnerSurvivors = 
@@ -86,6 +86,13 @@ public class StatisticsWindow {
 		pane.add(statsPanel, BorderLayout.CENTER);
 		
 		//TODO: Add close ("OK") button
+		JPanel closePanel = new JPanel();
+		closePanel.setLayout(new FlowLayout());
+		JButton closeButton = new JButton("Close");
+		closeButton.addActionListener(new CloseListener());
+		closePanel.add(closeButton);
+		pane.add(closePanel, BorderLayout.SOUTH);
+		
 		
 		window.pack();
 		window.setLocationRelativeTo(null);

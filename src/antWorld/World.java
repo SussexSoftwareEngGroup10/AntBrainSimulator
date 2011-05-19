@@ -868,8 +868,8 @@ public class World implements Cloneable {
 		int[] nextAntIndex = {0, 0};
 		
 		//Put new ants onto each anthill cell, and into the right arrays
-		for(r = this.rows - 1; r >= 0; r--){
-			for(c = this.cols - 1; c >= 0; c--){
+		for(r = 0; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
 				colour = -1;
 				cell = this.cells[r][c];
 				

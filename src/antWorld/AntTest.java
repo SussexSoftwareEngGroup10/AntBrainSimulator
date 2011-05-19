@@ -57,14 +57,27 @@ public class AntTest {
 
 	@Test
 	public void testSenseAntA(){
+		//Phil: I reversed the loop that created the Ants for efficiency,
+		//so it numbered them backwards
+		//I've changed it back though
+		//Turns out it was my code:(
 		try {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseAnt");
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/senseAntTestBrain"); //the ant will turn left if it senses an enemy ant
 			testWorld.setBrain(brain,0);
 			testWorld.setBrain(brain,1);
-			testAnts[0].step();
-			testAnts[0].step();
+			Ant ant = testAnts[0];
+
+//			System.out.println(testAnts[1] + "\n");
+			
+			System.out.println(ant + "\n");
+			for(int i = 0; i < 2; i++){
+				ant.step();
+//				System.out.println(ant + "\n");
+			}
+			
+			//Turn: left == 5 == pass, right == 1 == fail
 			if (testAnts[0].getDirection() == 1)
 			{
 			fail("No enemy ant detected");

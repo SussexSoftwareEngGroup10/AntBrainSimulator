@@ -533,4 +533,23 @@ public final class Ant implements Comparable<Ant> {
 			return 1;
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		String s = "";
+		s += "UID: " + uid;
+		s += "\ncell: " + cell;
+		s += "\nis ";
+		if(!alive) s += "not ";
+		s += "alive";
+		s += "\nDirection: " + direction;
+		if(!hasFood) s += "\ndoes not have food"; else s += "\nhas food";
+		s += "\nrest: " + rest;
+		s += "\nstate: " + brain.get(state);
+		
+		return s;
+	}
 }

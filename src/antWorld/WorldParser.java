@@ -22,6 +22,14 @@ public final class WorldParser {
 	private static final String fileNameSuffix = ".world";
 	
 	/**
+	 * @throws InstantiationException 
+	 * 
+	 */
+	public WorldParser() throws InstantiationException {
+		throw new InstantiationException("WorldParser class cannot be instantiated");
+	}
+	
+	/**
 	 * @param name
 	 * @return
 	 * @throws IOEvent

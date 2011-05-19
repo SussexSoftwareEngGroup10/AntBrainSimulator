@@ -22,6 +22,14 @@ public class BrainParser {
 	private static final String fileNameSuffix = ".brain";
 	
 	/**
+	 * @throws InstantiationException 
+	 * 
+	 */
+	public BrainParser() throws InstantiationException {
+		throw new InstantiationException("BrainParser class cannot be instantiated");
+	}
+	
+	/**
 	 * @param name
 	 * @return
 	 * @throws IOEvent 

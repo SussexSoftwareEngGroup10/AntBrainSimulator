@@ -164,8 +164,6 @@ public final class Ant implements Comparable<Ant> {
 		}
 		
 		//Break after state is altered, state is always altered once per call
-		//removed boolean which was not needed to increase efficiency,
-		//however, the amount of code needed increased and has become obfuscated
 		switch(this.state.getCondition()){
 		//FRIEND
 		case 0:

@@ -307,6 +307,10 @@ public class GameDisplay extends PApplet {
 		setup();
 	}
 	
+	public void startRunning() {
+		currentGameState = GameStates.RUNNING;
+	}
+	
 	public void draw() {
 		zoomer.transform();
 		gridCells = world.getCells();
@@ -314,132 +318,124 @@ public class GameDisplay extends PApplet {
 		background(50, 50, 50);	
 		updateImageScale();
 		if (currentImageScale == ImageDrawScales.LARGE) {
-			drawGird(LARGE_IMAGE);
-			if (currentGameState == GameStates.RUNNING) {
-				drawMarkers();
-				drawFood(LARGE_IMAGE);
-				drawAnts(LARGE_IMAGE);
-			}
+			drawImages(LARGE_IMAGE);
 		}
 		else if (currentImageScale == ImageDrawScales.MEDIUM) {
-			drawGird(MEDIUM_IMAGE);
-			if (currentGameState == GameStates.RUNNING) {
-				drawMarkers();
-				drawFood(MEDIUM_IMAGE);
-				drawAnts(MEDIUM_IMAGE);
-			}
+			drawImages(MEDIUM_IMAGE);
 		}
 		else {
-			drawGird(SMALL_IMAGE);
-			if (currentGameState == GameStates.RUNNING) {
-				drawMarkers();
-				drawFood(MEDIUM_IMAGE);
-				drawAnts(MEDIUM_IMAGE);
-			}
+			drawImages(SMALL_IMAGE);
 		}
 	}
 	
-	private void drawGird(int imageScale) {
+	private void drawImages(int imageScale) {
 		for (int row = 0; row < numHexRow; row++) {
 			for (int col = 0; col < numHexCol; col++) {
-				if (gridCells[row][col].getAnthill() == 1) { //If the cell is a red anthill
-			    	drawImage(redAnthillTile[imageScale], row, col);
-			    } else if (gridCells[row][col].getAnthill() == 2) { //If it is black anthill
-			    	drawImage(blackAnthillTile[imageScale], row, col);
-			    } else if (gridCells[row][col].isRocky()) { //If it's rocky
-			    	drawImage(rockTile[imageScale][getRockShade(row, col)], row, col); //Randomly pick shade of grey
-			    } else {
-			    	drawImage(grassTile[imageScale], row, col); //Otherwise it is a grass tile
-			    }
-			}
-		}
-	}
-	
-	private void drawMarkers() {
-		for (int row = 0; row < numHexRow; row++) {
-			for (int col = 0; col < numHexCol; col++) {
-				for (int i = 0; i < 6; i++) { //Check in each type of the 6 markers
-					if (gridCells[row][col].getMarker(0, i)) {
-						drawImage(blackMarker, row, col); //COULD HAVE GOT THE SPECIES MIXED UP
-					}
-					if (gridCells[row][col].getMarker(1, i)) {
-						drawImage(redMarker, row, col);
-					}
+				drawTile(imageScale, row, col);
+				if (currentGameState == GameStates.RUNNING) {
+					drawMarker(row, col);
+					drawFood(imageScale, row, col);
+					drawAnt(imageScale, row, col);
 				}
 			}
 		}
 	}
 	
-	private void drawFood(int imageScale) {
-		for (int row = 0; row < numHexRow; row++) {
-			for (int col = 0; col < numHexCol; col++) {
-				if (imageScale == LARGE_IMAGE) { //If it's small, need to check quantity to show the correct image
-					switch (gridCells[row][col].foodCount()) {
-						case 1: drawImage(foodLarge[ONE_FOOD], row, col); 
-						break;
-						case 2: drawImage(foodLarge[TWO_FOOD], row, col); 
-						break;
-						case 3: drawImage(foodLarge[THREE_FOOD], row, col); 
-						break;
-						case 4: drawImage(foodLarge[FOUR_FOOD], row, col); 
-						break;
-						case 5: drawImage(foodLarge[FIVE_FOOD], row, col); 
-						break;
-						case 6: drawImage(foodLarge[SIX_FOOD], row, col); 
-						break;
-						case 7: drawImage(foodLarge[SEVEN_FOOD], row, col); 
-						break;
-						case 8: drawImage(foodLarge[EIGHT_FOOD], row, col); 
-						break;
-						case 9: drawImage(foodLarge[NINE_FOOD], row, col); 
-						break;
-					}
-				} else if (imageScale == MEDIUM_IMAGE) { //Otherwise, just check if any is there
-					if (gridCells[row][col].hasFood()) {
-						drawImage(foodMedium, row, col); 
+	private void drawTile(int imageScale, int row, int col) {
+		if (gridCells[row][col].getAnthill() == 1) { //If the cell is a red anthill
+			drawImage(redAnthillTile[imageScale], row, col);
+		} else if (gridCells[row][col].getAnthill() == 2) { //If it is black anthill
+			drawImage(blackAnthillTile[imageScale], row, col);
+		} else if (gridCells[row][col].isRocky()) { //If it's rocky
+			drawImage(rockTile[imageScale][getRockShade(row, col)], row, col); //Randomly pick shade of grey
+		} else {
+			drawImage(grassTile[imageScale], row, col); //Otherwise it is a grass tile
+		}
+	}
+	
+	private void drawMarker(int row, int col) {
+		for (int i = 0; i < 6; i++) { //Check in each type of the 6 markers
+			if (gridCells[row][col].getMarker(0, i)) {
+				drawImage(blackMarker, row, col); //COULD HAVE GOT THE SPECIES MIXED UP
+			}
+			if (gridCells[row][col].getMarker(1, i)) {
+				drawImage(redMarker, row, col);
+			}
+		}
+	}
+	
+	private void drawFood(int imageScale, int row, int col) {
+		if (imageScale == LARGE_IMAGE) { //If it's small, need to check quantity to show the correct image
+			switch (gridCells[row][col].foodCount()) {
+				case 1: drawImage(foodLarge[ONE_FOOD], row, col); 
+				break;
+				case 2: drawImage(foodLarge[TWO_FOOD], row, col); 
+				break;
+				case 3: drawImage(foodLarge[THREE_FOOD], row, col); 
+				break;
+				case 4: drawImage(foodLarge[FOUR_FOOD], row, col); 
+				break;
+				case 5: drawImage(foodLarge[FIVE_FOOD], row, col); 
+				break;
+				case 6: drawImage(foodLarge[SIX_FOOD], row, col); 
+				break;
+				case 7: drawImage(foodLarge[SEVEN_FOOD], row, col); 
+				break;
+				case 8: drawImage(foodLarge[EIGHT_FOOD], row, col); 
+				break;
+				case 9: drawImage(foodLarge[NINE_FOOD], row, col); 
+				break;
+			}
+		} else if (imageScale == MEDIUM_IMAGE) { //Otherwise, just check if any is there
+			if (gridCells[row][col].hasFood()) {
+				drawImage(foodMedium, row, col); 
+			}
+		} else {
+			if (gridCells[row][col].hasFood()) {
+				drawImage(foodSmall, row, col); 
+			}
+		}
+	}
+	
+	public void drawAnt(int imageScale, int row, int col) {
+		Ant currentAnt;
+		try {
+			currentAnt = gridCells[row][col].getAnt();
+			if (imageScale == LARGE_IMAGE) {
+						//pushMatrix();
+						//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
+						//translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
+						//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
+						//rotate(AntDirection.SOUTH_EAST.direction());
+						//Draw the image at an offset so that the origin is back to the top left of the tile.
+				if (currentAnt.getColour() == 0) { //If it's a black ant
+					if (currentAnt.hasFood()) {
+						drawImage(blackAntFood, row, col);
+					} else {
+						drawImage(blackAnt[LARGE_IMAGE], row, col);
 					}
 				} else {
-					if (gridCells[row][col].hasFood()) {
-						drawImage(foodSmall, row, col); 
-					}
-				}
-			}
-		}
-	}
-	
-	public void drawAnts(int imageScale) {
-		Ant currentAnt;
-		for (int row = 0; row < numHexRow; row++) {
-			for (int col = 0; col < numHexCol; col++) {
-				try {
-					currentAnt = gridCells[row][col].getAnt();
-					if (imageScale == LARGE_IMAGE) {
-						pushMatrix();
-						//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
-						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
-						//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
-						rotate(AntDirection.SOUTH_EAST.direction());
-						//Draw the image at an offset so that the origin is back to the top left of the tile.
-						if (currentAnt.getColour() == 0) { //If it's a black ant
-							if (currentAnt.hasFood()) {
-								image(blackAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT); //TODO: Decide on drawing method to use.
-							} else {
-								image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-							}
-						} else {
-							if (currentAnt.hasFood()) {
-								image(redAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-							} else {
-								image(redAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-							}
-						}
-						popMatrix();
+					if (currentAnt.hasFood()) {
+						drawImage(redAntFood, row, col);
 					} else {
-						image(redAnt[imageScale], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+								drawImage(redAnt[LARGE_IMAGE], row, col);
 					}
-				} catch (NullPointerException nPE) {
+				}
+				//popMatrix();
+			} else if (imageScale == MEDIUM_IMAGE) {
+				if (currentAnt.getColour() == 0) { //If it's a black ant
+					drawImage(blackAnt[MEDIUM_IMAGE], row, col);
+				} else {
+					drawImage(redAnt[MEDIUM_IMAGE], row, col);
+				}
+			} else {
+				if (currentAnt.getColour() == 0) { //If it's a black ant
+					drawImage(blackAnt[SMALL_IMAGE], row, col);
+				} else {
+					drawImage(redAnt[SMALL_IMAGE], row, col);
 				}
 			}
+		} catch (NullPointerException nPE) {
 		}
 	}
 		

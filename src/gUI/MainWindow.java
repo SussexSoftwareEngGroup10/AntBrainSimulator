@@ -353,7 +353,10 @@ public class MainWindow {
 	public class StartGameListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			gameEngine.setWorld(world);
-			gameEngine.simulate(blackBrain, redBrain);
+			gameEngine.setblackBrain(blackBrain);
+			gameEngine.setblackRed(redBrain);
+			gameEngine.start();
+			gameDisplay.startRunning();
 		}
 	}
 }

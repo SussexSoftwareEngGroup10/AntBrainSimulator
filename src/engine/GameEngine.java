@@ -38,11 +38,15 @@ import antWorld.World;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class GameEngine {
+public class GameEngine extends Thread {
 	private static final int rounds = 300000;
 	private static final int processors = Runtime.getRuntime().availableProcessors();
 	private World world;
 	private int sleepDur;
+	private boolean isContestMode = false; //Whether to run it as a contest
+	private Brain[] contestBrains;
+	private Brain blackBrain;
+	private Brain redBrain;
 	
 	/**
 	 * @param world
@@ -72,6 +76,22 @@ public class GameEngine {
 	 */
 	public void speedUp() {
 		this.sleepDur = Math.max(this.sleepDur - 50, 0);
+	}
+	
+	public void setExecutionMode(boolean isContestMode) {
+		this.isContestMode = isContestMode;
+	}
+	
+	public void setContestBrains(Brain[] contestBrains) {
+		this.contestBrains = contestBrains;
+	}
+	
+	public void setblackBrain(Brain blackBrain) {
+		this.blackBrain = blackBrain;
+	}
+	
+	public void setblackRed(Brain redBrain) {
+		this.redBrain = redBrain;
 	}
 	
 	/*
@@ -122,14 +142,22 @@ public class GameEngine {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	*/
 	
+	public void run(){
+		if (isContestMode) {
+			runContest();
+		} else {
+			runStandard();
+		}
+	}
+	
 	/**
 	 * Simulates each Brain against each other Brain in population,
 	 * sets their fitness to the number of wins they get,
 	 * then orders the population by fitness, so the most wins is at population[length - 1]
 	 * @param population
 	 */
-	public void contest(Brain[] population) {
-		evaluateFitnessContest(false, population, null);
+	private void runContest() {
+		evaluateFitnessContest(false, contestBrains, null);
 	}
 	
 	/**
@@ -249,6 +277,53 @@ public class GameEngine {
 	 * @param world
 	 * @return
 	 */
+	private GameStats runStandard() {
+		World world = this.world;
+		//Setup brains
+		world.setBrain(blackBrain, 0);
+		world.setBrain(redBrain, 1);
+		
+		//Run the simulation, test the Brain result from the GA against bestBrain
+		Logger.log(new InformationLowEvent("Begun simulation"));
+		
+		//Runs in serial
+		new Simulation(blackBrain, redBrain, null,
+			this.sleepDur, 0, false, GameEngine.rounds, world).run();
+		
+		//Ant results
+		Ant[][] antsBySpecies = world.getAntsBySpecies();
+		int[] survivors = world.survivingAntsBySpecies();
+		if(survivors.length > 0){
+			int blackAnts = antsBySpecies[0].length;
+			Logger.log(new InformationHighEvent("Surviving black ants: "
+				+ survivors[0] + "/" + blackAnts));
+		}
+		if(survivors.length > 1){
+			int redAnts = antsBySpecies[1].length;
+			Logger.log(new InformationHighEvent("Surviving red   ants: "
+				+ survivors[1] + "/" + redAnts  ));
+		}
+		
+		//Food results
+		int[] anthillFood = world.getFoodInAnthills();
+		if(anthillFood.length > 0){
+			Logger.log(new InformationHighEvent("Food in black anthill: "
+				+ anthillFood[0]));
+		}
+		if(anthillFood.length > 1){
+			Logger.log(new InformationHighEvent("Food in red   anthill: "
+				+ anthillFood[1]));
+		}
+		
+		//Create and return statistics based on winner
+		if(blackBrain.getFitness() > redBrain.getFitness()) {
+			return new GameStats(0, anthillFood[0], anthillFood[1],
+				survivors[0], survivors[1]);
+		}
+		return new GameStats(1, anthillFood[0], anthillFood[1],
+			survivors[0], survivors[1]);
+	}
+	
 	public GameStats simulate(Brain blackBrain, Brain redBrain) {
 		World world = this.world;
 		//Setup brains
@@ -353,4 +428,6 @@ public class GameEngine {
 		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
+	
+	
 }

@@ -429,7 +429,7 @@ public final class Ant implements Comparable<Ant> {
 	/**
 	 * @param brain
 	 */
-	public final void setBrain(Brain brain) {
+	protected final void setBrain(Brain brain) {
 		this.brain = brain;
 		this.state = brain.get(0);
 	}

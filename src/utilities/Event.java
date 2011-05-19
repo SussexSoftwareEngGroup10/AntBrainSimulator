@@ -44,7 +44,7 @@ public abstract class Event extends Throwable {
 		
 		//Severity
 		s += "SEVERITY: ";
-		s += this.severity + ";  ";
+		s += this.severity.toString().toLowerCase() + ";  ";
 		//"SEVERITY: INFORMATION;  ".length == 24
 		while(s.length() < 24){
 			s += " ";

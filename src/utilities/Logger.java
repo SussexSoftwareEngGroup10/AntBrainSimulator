@@ -132,6 +132,7 @@ public final class Logger {
 		
 		//Write the toString of e to a log file
 		logger.logErr.println(event.toString());
+		//TODO remove this print
 		System.out.println(event.toString());
 	}
 	

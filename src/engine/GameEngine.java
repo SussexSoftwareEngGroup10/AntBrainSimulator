@@ -139,16 +139,10 @@ public class GameEngine {
 	 */
 	public void evaluateFitnessContest(boolean useFitness, Brain[] population,
 		Brain absoluteTrainingBrain) {
-		int sims = 0;
-		if(useFitness) {
-			sims = population.length * 4;
-		}else{
-			sims = population.length * population.length * 2;
-		}
 		ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
 			GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
-			new ArrayBlockingQueue<Runnable>(sims));
-		Semaphore semaphore = new Semaphore(sims, true);
+			new ArrayBlockingQueue<Runnable>(2));
+		Semaphore semaphore = new Semaphore(2, true);
 		
 		//Find Brain in elite with highest fitness
 		int index = population.length - 1;
@@ -166,40 +160,37 @@ public class GameEngine {
 			relativeTrainingBrain = population[index];
 		}
 		
-		//Give priority to the Simulation threads, so, in theory, 2 exist at any one time,
-		//when one finished, another one is started by the main thread,
-		//this is far more efficient in terms of memory
-		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-		
 		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
 		if(useFitness){
-			semaphore.acquireUninterruptibly(population.length * 4);
 			//Set fitness for every brain in population
 			for(Brain brain : population){
 				if(brain.getFitness() == 0){
 					//Brain is not in elite
 					//Absolute fitness tests
+					semaphore.acquireUninterruptibly(2);
 					threadPoolExecutor.execute(
 						new Simulation(absoluteTrainingBrain, brain,
 							semaphore, 0, 0, true, GameEngine.rounds, (World) this.world.clone()));
 					threadPoolExecutor.execute(
 						new Simulation(brain, absoluteTrainingBrain,
 							semaphore, 0, 1, true, GameEngine.rounds, (World) this.world.clone()));
-				}else{
+					//Await completion of Simulations
+					semaphore.acquireUninterruptibly(2);
 					semaphore.release(2);
 				}
 				//Relative fitness tests
+				semaphore.acquireUninterruptibly(2);
 				threadPoolExecutor.execute(
 					new Simulation(relativeTrainingBrain, brain,
 						semaphore, 0, 2, true, GameEngine.rounds, (World) this.world.clone()));
 				threadPoolExecutor.execute(
 					new Simulation(brain, relativeTrainingBrain,
 						semaphore, 0, 3, true, GameEngine.rounds, (World) this.world.clone()));
+				//Await completion of Simulations
+				semaphore.acquireUninterruptibly(2);
+				semaphore.release(2);
 			}
-			//Await completion of all Simulations
-			semaphore.acquireUninterruptibly(population.length * 4);
-			semaphore.release(population.length * 4);
 		}else{
 			semaphore.acquireUninterruptibly(population.length * population.length * 2);
 			for(int j = population.length - 1; j >= 0; j--){
@@ -208,20 +199,19 @@ public class GameEngine {
 						semaphore.release(2);
 						continue;
 					}
+					semaphore.acquireUninterruptibly(2);
 					threadPoolExecutor.execute(
 						new Simulation(population[j], population[k],
 							semaphore, 0, 0, false, GameEngine.rounds, (World) this.world.clone()));
 					threadPoolExecutor.execute(
 						new Simulation(population[k], population[j],
 							semaphore, 0, 0, false, GameEngine.rounds, (World) this.world.clone()));
+					//Await completion of Simulations
+					semaphore.acquireUninterruptibly(2);
+					semaphore.release(2);
 				}
 			}
-			//Await completion of all Simulations
-			semaphore.acquireUninterruptibly(population.length * population.length * 2);
-			semaphore.release(population.length * population.length * 2);
 		}
-		
-		Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 		
 		Arrays.sort(population);
 		

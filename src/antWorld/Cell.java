@@ -138,11 +138,6 @@ public class Cell implements Cloneable {
 	 */
 	public void mark(int species, int i) {
 		this.markers[species][i] = true;
-		for(int s = 0; s < this.markers.length; s++){
-			for(int j = 0; j < this.markers[s].length; j++){
-				System.out.println("markers[" + s + "][" + j + "]: " + this.markers[s][j]);
-			}
-		}
 	}
 	
 	/**

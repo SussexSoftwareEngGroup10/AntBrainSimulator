@@ -316,7 +316,6 @@ public class GameEngine {
 		//TODO remove polling in Ant.step()
 		//TODO use jar on linux server
 		//TODO javac -O, java -prof, JIT
-		//TODO sense ahead 0 0 foe
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

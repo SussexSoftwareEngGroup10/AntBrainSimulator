@@ -69,7 +69,6 @@ public class AntTest {
 			testWorld.setBrain(brain,1);
 			Ant ant = testAnts[0];
 			
-			System.out.println(ant + "\n");
 			for(int i = 0; i < 2; i++){
 				ant.step();
 			}

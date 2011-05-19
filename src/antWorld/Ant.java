@@ -128,9 +128,6 @@ public final class Ant implements Comparable<Ant> {
 			if(this.state.getCommand() == -1){
 				//null command
 				Logger.log(new ErrorEvent("Null Command in state"));
-				//This should never occur, fatal error,
-				//avoid further errors and logging
-				System.exit(1);
 			}else{
 				//command < -1 || > 7
 				Logger.log(new IllegalArgumentEvent("Illegal Command " +
@@ -263,7 +260,6 @@ public final class Ant implements Comparable<Ant> {
 	 * Mark marker st1
 	 */
 	private final void mark() {
-		System.out.println(this.colour.ordinal() + ", " + this.state.getMarker());
 		this.cell.mark(this.colour.ordinal(), this.state.getMarker());
 		this.state = this.brain.get(this.state.getSt1());
 	}

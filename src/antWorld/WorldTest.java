@@ -28,7 +28,7 @@ public class WorldTest {
 			assertTrue("ADD MORE TESTS",testWorld != null);
 		} catch (IOEvent e) {
 			
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class WorldTest {
 			//the example world is size 10, that is what should be returned
 		} catch (IOEvent e) {
 			
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class WorldTest {
 			//Works out length of hexagon with length
 		} catch (IOEvent e) {
 			
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
@@ -68,7 +68,7 @@ public class WorldTest {
 				assertEquals(254, testAnts.length);
 				} catch (ErrorEvent e) {
 		
-					e.printStackTrace();
+					fail(e.getMessage());
 				}
 	}
 	
@@ -78,7 +78,7 @@ public class WorldTest {
 			testWorld = WorldParser.readWorldFromCustom("example");
 			fail("FINISH ME");
 		} catch (IOEvent e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	
@@ -90,7 +90,7 @@ public class WorldTest {
 		System.out.println(testWorld);
 		} catch (ErrorEvent e) {
 			
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 	}
 	

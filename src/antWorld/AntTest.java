@@ -26,10 +26,10 @@ public class AntTest {
 	@Test
 	public void testSenseFoodA() {
 		try {
-			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds\\testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/senseFoodTestBrain"); //the ant will turn left if it senses food
+			brain = BrainParser.readBrainFrom("testBrains\\senseFoodTestBrain"); //the ant will turn left if it senses food
 			testWorld.setBrain(brain,0);
 			testAnts[0].step();
 			testAnts[0].step();

@@ -350,7 +350,7 @@ public class GameEngine {
 //		System.out.println(world.getAttributes());
 		
 		Brain gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
-			Integer.MAX_VALUE, 50, 50/10, 50);
+			Integer.MAX_VALUE, 50, 50/10, 100);
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
 		
 		//Compact and remove null and unreachable states

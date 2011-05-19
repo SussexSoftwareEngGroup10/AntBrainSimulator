@@ -254,17 +254,29 @@ public class MainWindow {
 									clickedBtn.setText(
 												clickedBtn.getText() + " ✔");
 								}
-								redBrain = BrainParser.readBrainFrom(path);
+								try{
+									redBrain = BrainParser.readBrainFrom(path);
+								} catch (IllegalArgumentEvent iae) {
+									Logger.log(iae);
+								}
 							}
 							else if (clickedBtn == uploadBlackBtn) {
 								if (!clickedBtn.getText().contains("✔")) {
 									clickedBtn.setText(
 												clickedBtn.getText() + " ✔");
 								}
-								blackBrain = BrainParser.readBrainFrom(path);
+								try{
+									blackBrain = BrainParser.readBrainFrom(path);
+								} catch (IllegalArgumentEvent iae) {
+									Logger.log(iae);
+								}
 							}
 							else {
-								world = WorldParser.readWorldFromContest(path);
+								try{
+									world = WorldParser.readWorldFromContest(path);
+								} catch (ErrorEvent err) {
+									Logger.log(err);
+								}
 								gameDisplay.updateWorld(world);
 							}
 						} catch (IOEvent iOE) {

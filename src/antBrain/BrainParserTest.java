@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 
 public class BrainParserTest {
 
@@ -19,6 +20,9 @@ public class BrainParserTest {
 		} catch (IOEvent e) {
 			// TODO Auto-generated catch block
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}

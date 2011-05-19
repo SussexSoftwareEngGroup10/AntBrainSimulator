@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import utilities.ErrorEvent;
 import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.InformationNormEvent;
@@ -320,6 +321,8 @@ public class GameEngine {
 		try{
 			trainingBrain = BrainParser.readBrainFrom("better_example");
 		}catch(IOEvent e){
+			Logger.log(e);
+		} catch (IllegalArgumentEvent e) {
 			Logger.log(e);
 		}
 		World world = null;

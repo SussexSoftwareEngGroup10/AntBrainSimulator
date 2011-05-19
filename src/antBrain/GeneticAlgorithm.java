@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.InformationNormEvent;
@@ -192,7 +193,11 @@ public class GeneticAlgorithm implements Serializable {
 				if(ran2 >= ran1){
 					ran2++;
 				}
-				newPop[j] = breed(this.population[ran1], this.population[ran2], mutationRate);
+				try {
+					newPop[j] = breed(this.population[ran1], this.population[ran2], mutationRate);
+				} catch (IllegalArgumentEvent e) {
+					Logger.log(e);
+				}
 			}
 			this.population = newPop;
 			//Order, ready for next epoch
@@ -215,8 +220,9 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param brainB
 	 * @param mutationConstant
 	 * @return a new brain containing possibly altered states from A, B and new entirely states
+	 * @throws IllegalArgumentEvent 
 	 */
-	private static Brain breed(Brain brainA, Brain brainB, int mutationConstant) {
+	private static Brain breed(Brain brainA, Brain brainB, int mutationConstant) throws IllegalArgumentEvent {
 		//The target Brain should contain a sensible number of states,
 		//it is not necessary for its size to change in the same direction on every breed
 		//The size of the brain resulting from evolution will reflect on the
@@ -289,9 +295,10 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param states
 	 * @param mutationConstant
 	 * @return a state containing parts of A, B and new parts
+	 * @throws IllegalArgumentEvent 
 	 */
 	private static State combineStates(int index, State sa, State sb,
-		int states, int mutationConstant) {
+		int states, int mutationConstant) throws IllegalArgumentEvent {
 		int[] ga = sa.getGenes();
 		int[] gb = sb.getGenes();
 		int[] gc = new int[9];
@@ -340,8 +347,9 @@ public class GeneticAlgorithm implements Serializable {
 	 * @param states
 	 * @param mutationConstant
 	 * @return
+	 * @throws IllegalArgumentEvent 
 	 */
-	private static int[] mutateGenes(int[] gc, int states, int mutationConstant) {
+	private static int[] mutateGenes(int[] gc, int states, int mutationConstant) throws IllegalArgumentEvent {
 		//All data is discrete, not continuous,
 		//so adding or subtracting a small amount is meaningless
 		//Rather, select a completely new value, independent from the old value
@@ -382,8 +390,9 @@ public class GeneticAlgorithm implements Serializable {
 	/**
 	 * @param states
 	 * @return genes as used by a state, but with logical random values
+	 * @throws IllegalArgumentEvent 
 	 */
-	private static int[] ranGenes(int states) {
+	private static int[] ranGenes(int states) throws IllegalArgumentEvent {
 		int[] values = State.getValues(states);
 		int[] gc = new int[9];
 		int i = 0;
@@ -477,10 +486,14 @@ public class GeneticAlgorithm implements Serializable {
 		}catch(IOEvent e){
 			Logger.log(e);
 		}
-		b.trim();
 		try{
-			BrainParser.writeBrainTo(b, "ga_result_trimmed");
-		}catch(IOEvent e){
+			b.trim();
+			try{
+				BrainParser.writeBrainTo(b, "ga_result_trimmed");
+			}catch(IOEvent e){
+				Logger.log(e);
+			}
+		}catch(IllegalArgumentEvent e){
 			Logger.log(e);
 		}
 	}

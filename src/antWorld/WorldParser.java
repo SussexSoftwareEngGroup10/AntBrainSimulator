@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import utilities.ErrorEvent;
 import utilities.IOEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
@@ -33,17 +34,23 @@ public final class WorldParser {
 	 * @param name
 	 * @return
 	 * @throws IOEvent
+	 * @throws ErrorEvent 
 	 */
-	public static World readWorldFromContest(String name) throws IOEvent {
+	public static World readWorldFromContest(String name) throws IOEvent, ErrorEvent {
 		String path = getPath(name);
 		World world = readWorldFrom(path);
 		if(!world.isContest()){
-			throw new IOEvent("World read from \"" + path +
+			throw new ErrorEvent("World read from \"" + path +
 				"\" is not suitable for contests");
 		}
 		return world;
 	}
 	
+	/**
+	 * @param name
+	 * @return
+	 * @throws IOEvent
+	 */
 	public static World readWorldFromCustom(String name) throws IOEvent {
 		return readWorldFrom(getPath(name));
 	}

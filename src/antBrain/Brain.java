@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 import utilities.WarningEvent;
 
@@ -78,8 +79,9 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	 * Removes unreachable states and compacts the brain by lowering state numbers
 	 * to the minimum possible so that there are no gaps and the state numbers
 	 * start at 0 and end at (the number of states - 1)
+	 * @throws IllegalArgumentEvent 
 	 */
-	public void trim() {
+	public void trim() throws IllegalArgumentEvent {
 		//True if reached from state 0
 		boolean[] states = new boolean[maxNumOfStates];
 		checkBranch(states, 0);
@@ -125,8 +127,9 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	 * Removes the state specified and compacts the states by decrementing the state
 	 * numbers of all following states and altering references to them to reflect this
 	 * @param removeStateNum
+	 * @throws IllegalArgumentEvent 
 	 */
-	private void removeState(int removeStateNum) {
+	private void removeState(int removeStateNum) throws IllegalArgumentEvent {
 		//Change state references in preceding states
 		for(int s = 0; s < removeStateNum; s++){
 			State state = get(s);

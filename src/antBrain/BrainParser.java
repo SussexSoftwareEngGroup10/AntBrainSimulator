@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.Logger;
@@ -33,8 +34,9 @@ public class BrainParser {
 	 * @param name
 	 * @return
 	 * @throws IOEvent 
+	 * @throws IllegalArgumentEvent 
 	 */
-	public static Brain readBrainFrom(String name) throws IOEvent {
+	public static Brain readBrainFrom(String name) throws IOEvent, IllegalArgumentEvent {
 		String path;
 		if(name.endsWith(fileNameSuffix)){
 			path = name;

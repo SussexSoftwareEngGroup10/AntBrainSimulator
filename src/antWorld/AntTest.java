@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 public class AntTest {
@@ -36,6 +37,8 @@ public class AntTest {
 			assertEquals(5, testAnts[0].getDirection());
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -52,6 +55,8 @@ public class AntTest {
 			assertEquals(0, testAnts[0].getDirection());
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 
@@ -64,7 +69,11 @@ public class AntTest {
 		try {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseAnt");
 			Ant[] testAnts = testWorld.getAnts();
+			try{
 			brain = BrainParser.readBrainFrom("testBrains/senseAntTestBrain"); //the ant will turn left if it senses an enemy ant
+			}catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
 			testWorld.setBrain(brain,0);
 			testWorld.setBrain(brain,1);
 			Ant ant = testAnts[0];
@@ -90,7 +99,11 @@ public class AntTest {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/senseAntTestBrain"); //the ant will turn left if it senses an enemy ant
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/senseAntTestBrain"); //the ant will turn left if it senses an enemy ant
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
 			testWorld.setBrain(brain,0); //turns right if no ant present
 			testAnts[0].step();
 			testAnts[0].step();
@@ -106,7 +119,11 @@ public class AntTest {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
 			testAnts[0].setBrain(brain);
 			testAnts[0].step();
 			assertEquals(testAnts[0].getDirection(), 5); //testing for 5, since 5 is after one left turn
@@ -121,7 +138,11 @@ public class AntTest {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/turnRightOnly");
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/turnRightOnly");
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
 			testAnts[0].setBrain(brain);
 			testAnts[0].step();
 			assertEquals(1,testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
@@ -136,7 +157,11 @@ public class AntTest {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("move_ahead");
+			try{
+				brain = BrainParser.readBrainFrom("move_ahead");
+			}catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
 			testAnts[0].setBrain(brain);
 			testAnts[0].step();
 			assertEquals(4, testAnts[0].getCell().getRow());
@@ -151,7 +176,11 @@ public class AntTest {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/testCollectFood"); //load working brain with the ability to pick up food
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/testCollectFood"); //load working brain with the ability to pick up food
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
 			testWorld.setBrain(brain, 0);
 			for (int i = 0; i < 17; i++){ //after 17 steps, the ant should have JUST picked up the food acording to the brain
 				testAnts[0].step();
@@ -168,7 +197,11 @@ public class AntTest {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFood");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/testDropFood"); //load working brain with the ability to pick up food
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/testDropFood"); //load working brain with the ability to pick up food
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
 			testWorld.setBrain(brain, 0);
 			for (int i = 0; i < 17; i++){
 				testAnts[0].step();
@@ -191,7 +224,11 @@ public class AntTest {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
 			//this brain places a marker, moves, and turns around to sense, if detected, the ant turns left
 			testWorld.setBrain(brain, 0);
 			for (int i = 0; i < 3; i++){

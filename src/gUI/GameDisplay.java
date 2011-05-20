@@ -85,9 +85,7 @@ public class GameDisplay extends PApplet {
 	private ZoomPan zoomer; //Class for zooming and panning
 	private ArrayList<int[]> rockShadesList = new ArrayList<int[]>();
 	
-	private PGraphics backgroundBufferSmall;
-	private PGraphics backgroundBufferMedium;
-	private PGraphics backgroundBufferLarge;
+	private PGraphics backgroundBuffer;
 	
 	private int numHexCol; //Number of columns (in hexagons) wide
 	private int numHexRow; //Number of rows (in hexagons) high
@@ -207,21 +205,17 @@ public class GameDisplay extends PApplet {
 		size(PIXEL_WIDTH, PIXEL_HEIGHT);
 		//TODO: This runs out of heap space.  Need to find a way of using only 1 buffer.
 		//TODO: Maybe have only 2 scales.
-		backgroundBufferSmall = createGraphics(HEX_WIDTH * numHexCol,
+		backgroundBuffer = createGraphics(HEX_WIDTH * numHexCol,
 										 (HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) 
 										 * numHexRow + HEX_ANGLE_HEIGHT, P2D);
-		backgroundBufferMedium = createGraphics(HEX_WIDTH * numHexCol,
-				 						 (HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) 
-				 						 * numHexRow + HEX_ANGLE_HEIGHT, P2D);
-		backgroundBufferLarge = createGraphics(HEX_WIDTH * numHexCol,
-				 						 (HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) 
-				 						 * numHexRow + HEX_ANGLE_HEIGHT, P2D);
-		bufferWorld();
+		
 		smooth(); //Turn on anti aliasing
 		frameRate(10); //Turn down the frame rate for less processing power
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
 		setInitialPanAndZoom();
+		updateImageScale();
+		bufferWorld();
 	}
 	
 	/*
@@ -327,18 +321,15 @@ public class GameDisplay extends PApplet {
 	}
 	
 	private void bufferWorld() {
-		backgroundBufferSmall.beginDraw();
-		drawWorld(SMALL_IMAGE);
-		backgroundBufferSmall.dispose();
-		backgroundBufferSmall.endDraw();
-		backgroundBufferMedium.beginDraw();
-		drawWorld(MEDIUM_IMAGE);
-		backgroundBufferMedium.dispose();
-		backgroundBufferMedium.endDraw();
-		backgroundBufferLarge.beginDraw();
-		drawWorld(LARGE_IMAGE);
-		backgroundBufferMedium.dispose();
-		backgroundBufferLarge.endDraw();
+		backgroundBuffer.beginDraw();
+		if (currentImageScale == ImageDrawScales.LARGE) {
+			drawWorld(LARGE_IMAGE);
+		} else if (currentImageScale == ImageDrawScales.MEDIUM) {
+			drawWorld(MEDIUM_IMAGE);
+		} else {
+			drawWorld(SMALL_IMAGE);
+		}
+		backgroundBuffer.endDraw();
 	}
 	
 	private void drawWorld(int imageScale) {
@@ -375,13 +366,7 @@ public class GameDisplay extends PApplet {
 	}
 	
 	private void drawImages(int imageScale) {
-		if (imageScale == SMALL_IMAGE) {
-			image(backgroundBufferSmall, 0, 0);
-		} else if (imageScale == MEDIUM_IMAGE) {
-			image(backgroundBufferMedium, 0, 0);
-		} else {
-			image(backgroundBufferLarge, 0, 0);
-		}
+		image(backgroundBuffer, 0, 0);
 		if (currentGameState == GameStates.RUNNING) {
 			for (int row = 0; row < numHexRow; row++) {
 				for (int col = 0; col < numHexCol; col++) {
@@ -539,24 +524,10 @@ public class GameDisplay extends PApplet {
 			}
 		} else if (type == 1) {
 			if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
-				backgroundBufferSmall.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+				backgroundBuffer.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
 			 }
 			 else {
-				backgroundBufferSmall.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			}
-		} else if (type == 2) {
-			if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
-				backgroundBufferMedium.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			 }
-			 else {
-				backgroundBufferMedium.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			}
-		} else {
-			if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
-				backgroundBufferLarge.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			 }
-			 else {
-				backgroundBufferLarge.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
+				backgroundBuffer.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
 			}
 		}
 	}

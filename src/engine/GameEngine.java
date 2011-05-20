@@ -202,10 +202,9 @@ public class GameEngine extends Thread {
 	 */
 	public void fitnessContestStep(Stack<World> worlds) {
 		//Multi-Threaded
-		//Get popLen permits, restore as runs complete
-		Brain brain;
 		//Set fitness for every brain in population
-		brain = this.population[this.count1];
+		Brain brain = this.population[this.count1];
+		
 		if(brain.getFitness() == 0){
 			//Brain is not in elite
 			//Absolute fitness tests
@@ -220,6 +219,7 @@ public class GameEngine extends Thread {
 			this.semaphore.acquireUninterruptibly(2);
 			this.semaphore.release(2);
 		}
+		
 		//Relative fitness tests
 		this.semaphore.acquireUninterruptibly(2);
 		this.threadPoolExecutor.execute(
@@ -252,10 +252,6 @@ public class GameEngine extends Thread {
 		}
 		for(int j = this.population.length - 1; j >= 0; j--){
 			for(int k = this.population.length - 1; k >= 0; k--){
-				if(j == k){
-					continue;
-				}
-				
 				while(worlds.size() < 2){
 					worlds.push((World) world.clone());
 				}
@@ -273,8 +269,15 @@ public class GameEngine extends Thread {
 		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
 		if(this.count1 == this.count2){
+			//increment count
+			this.count2++;
+			if(this.count2 >= this.population.length){
+				this.count1++;
+				this.count2 = 0;
+			}
 			return;
 		}
+		
 		this.semaphore.acquireUninterruptibly(2);
 		this.threadPoolExecutor.execute(
 			new Simulation(this.population[this.count1], this.population[this.count2],

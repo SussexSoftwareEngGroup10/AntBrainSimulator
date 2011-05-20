@@ -24,7 +24,6 @@ public class BrainParser {
 	
 	/**
 	 * @throws InstantiationException 
-	 * 
 	 */
 	public BrainParser() throws InstantiationException {
 		throw new InstantiationException("BrainParser class cannot be instantiated");
@@ -33,8 +32,8 @@ public class BrainParser {
 	/**
 	 * @param name
 	 * @return
-	 * @throws IOEvent 
-	 * @throws IllegalArgumentEvent 
+	 * @throws IOEvent  if file not found...etc
+	 * @throws IllegalArgumentEvent if state cannot be constructed
 	 */
 	public static Brain readBrainFrom(String name) throws IOEvent, IllegalArgumentEvent {
 		String path;
@@ -96,7 +95,7 @@ public class BrainParser {
 	/**
 	 * @param brain
 	 * @param name
-	 * @throws IOEvent 
+	 * @throws IOEvent if file not found...etc
 	 */
 	public static void writeBrainTo(Brain brain, String name) throws IOEvent {
 		String path = folderName + "\\"
@@ -136,18 +135,6 @@ public class BrainParser {
 	 * @return
 	 */
 	private static int getStateNum(String string) {
-//		Alternative method using regex,
-//		which is slower but more versatile
-//		//Regex which finds any int in the input string:
-//		Pattern patternInt = Pattern.compile("\\d+");
-//		Matcher matchInt = patternInt.matcher(string);
-//		
-//		//Find each character in stateStrings[1] which is an int
-//		matchInt.find();
-//
-//		//Group all ints found in stateStrings[1], as a string
-//		String stateNumString = matchInt.group();
-		
 		//Get a number from the string given, starting after "state "
 		String stateNumString = "";
 		String substring;

@@ -33,8 +33,8 @@ public final class WorldParser {
 	/**
 	 * @param name
 	 * @return
-	 * @throws IOEvent
-	 * @throws ErrorEvent 
+	 * @throws IOEvent if file not found...etc
+	 * @throws ErrorEvent if world is not a contest world
 	 */
 	public static World readWorldFromContest(String name) throws IOEvent, ErrorEvent {
 		String path = getPath(name);
@@ -49,7 +49,7 @@ public final class WorldParser {
 	/**
 	 * @param name
 	 * @return
-	 * @throws IOEvent
+	 * @throws IOEvent if file not found...etc
 	 */
 	public static World readWorldFromCustom(String name) throws IOEvent {
 		return readWorldFrom(getPath(name));
@@ -58,7 +58,7 @@ public final class WorldParser {
 	/**
 	 * @param name
 	 * @return the world in the file "name" 
-	 * @throws IOEvent 
+	 * @throws IOEvent if file not found...etc
 	 */
 	private static World readWorldFrom(String path) throws IOEvent {
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
@@ -123,7 +123,7 @@ public final class WorldParser {
 	/**
 	 * @param world
 	 * @param name name to give the file
-	 * @throws IOEvent 
+	 * @throws IOEvent if file not found...etc
 	 */
 	public static void writeWorldTo(World world, String name) throws IOEvent {
 		String path = folderName + "\\" + name + "" + fileNameSuffix;
@@ -150,6 +150,10 @@ public final class WorldParser {
 		Logger.log(new InformationHighEvent("Completed writing World object to \"" + path + "\""));
 	}
 	
+	/**
+	 * @param name
+	 * @return
+	 */
 	private static String getPath(String name) {
 		String path;
 		if(name.endsWith(fileNameSuffix)){

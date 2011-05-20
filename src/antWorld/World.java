@@ -53,7 +53,7 @@ public class World implements Cloneable {
 	 * @param seed 0 to use random seed
 	 * 
 	 * @return a world which is fit to be used in a tournament
-	 * @throws ErrorEvent 
+	 * @throws ErrorEvent if objects specified don't fit in area specified
 	 */
 	public static World getContestWorld(int seed) throws ErrorEvent {
 		return getRegularWorld(seed, 140, 140, 13);
@@ -69,7 +69,7 @@ public class World implements Cloneable {
 	 * @param brains
 	 * @param seed
 	 * @return
-	 * @throws ErrorEvent 
+	 * @throws ErrorEvent if objects specified don't fit in area specified
 	 */
 	public static World getRegularWorld(int seed, int rows, int cols, int rocks) throws ErrorEvent {
 		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0, 1);
@@ -91,7 +91,7 @@ public class World implements Cloneable {
 	 * @param foodBlobSideLength
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
-	 * @throws ErrorEvent 
+	 * @throws ErrorEvent if objects specified don't fit in area specified
 	 */
 	public World(int seed, int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,

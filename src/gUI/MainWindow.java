@@ -56,7 +56,6 @@ public class MainWindow {
 			gameEngine = new GameEngine(world);
 			drawGUI();
 		} catch (ErrorEvent e) {
-			// TODO Find out error to display
 			e.printStackTrace();
 		}
 	}
@@ -180,7 +179,7 @@ public class MainWindow {
 				"And The Winner Is...", JOptionPane.YES_NO_OPTION, 
 				JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
 		if (choice == 0) {
-			//TODO: Show StatisticsWindow
+			//new StatisticsWindow(gameStats);
 		}
 	}
 	
@@ -238,13 +237,11 @@ public class MainWindow {
 							!path.contains(".brain")) {
 							GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .brain file expected.");
-					}
-					else if (clickedBtn == uploadWorldBtn &&
+					} else if (clickedBtn == uploadWorldBtn &&
 							!path.contains(".world")) {
 							GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .world file expected.");
-					}
-					else {
+					} else {
 						//Depending on which button triggered the event, a tick 
 						//symbol is displayed on that button, and the associated 
 						//file path is updated with the file chosen
@@ -259,8 +256,7 @@ public class MainWindow {
 								} catch (IllegalArgumentEvent iae) {
 									Logger.log(iae);
 								}
-							}
-							else if (clickedBtn == uploadBlackBtn) {
+							} else if (clickedBtn == uploadBlackBtn) {
 								if (!clickedBtn.getText().contains("✔")) {
 									clickedBtn.setText(
 												clickedBtn.getText() + " ✔");
@@ -270,8 +266,7 @@ public class MainWindow {
 								} catch (IllegalArgumentEvent iae) {
 									Logger.log(iae);
 								}
-							}
-							else {
+							} else {
 								try{
 									world = WorldParser.readWorldFromContest(path);
 								} catch (ErrorEvent err) {
@@ -283,11 +278,9 @@ public class MainWindow {
 							// TODO Find out error to display
 						}
 					}
-				}
-				
-			}
-			//If the user does not have permission to access the file
-			catch (SecurityException sE) {
+				}	
+			} catch (SecurityException sE) {
+				//If the user does not have permission to access the file
 				Logger.log(new IOEvent(
 						"Security violation with file!", sE));
 			}
@@ -322,8 +315,7 @@ public class MainWindow {
 				numberOfPlayers = Integer.parseInt(stringNumberOfPlayers);
 				//Display contest window
 				contestWindow = new ContestWindow(numberOfPlayers);
-			}
-			catch (NumberFormatException nFE){
+			} catch (NumberFormatException nFE){
 				Logger.log(new IllegalArgumentEvent(
 					"Input number of players not an integer!", nFE));
 			}			
@@ -353,7 +345,7 @@ public class MainWindow {
 	public class StartGameListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			gameEngine.setWorld(world);
-			gameEngine.setblackBrain(blackBrain);
+			gameEngine.setblackBrain(blackBrain);s
 			gameEngine.setblackRed(redBrain);
 			gameEngine.start();
 			gameDisplay.startRunning();

@@ -6,30 +6,29 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * This class displays the window which allows the user to specify how a world is generated.
- * The user can either pick a contest style mode, or select their own parameters for world
- * generation.
+ * This class displays the window which allows the user to specify how a world 
+ * is generated. The user can either pick a contest style mode, or select their 
+ * own parameters for world generation.
  * 
  * @author Will
  */
 public class WorldGenerateWindow {
-	MainWindow mainWindow;
+	MainWindow mainWindow; //The parent window
 	
+	//Swing components which need to be accessed by the button listeners
 	JFrame window;
-	
 	JRadioButton contestBtn;
 	JRadioButton standardBtn;
-	
 	JLabel rowsSelectLbl;
 	JLabel colsSelectLbl;
 	JLabel rocksSelectLbl;
-	
 	JTextField rowsSelectText;
 	JTextField colsSelectText;
 	JTextField rocksSelectText;
 	
 	/**
-	 * Constructs a new instance of this window.  This draws the window to the screen.
+	 * Constructs a new instance of this window.  This draws the window to the 
+	 * screen.
 	 * 
 	 * @param mainWindow The main window which is the parent of this.
 	 */
@@ -53,27 +52,32 @@ public class WorldGenerateWindow {
 		JPanel descriptionPanel = new JPanel();
 		descriptionPanel.setLayout(new FlowLayout());
 		
-		JLabel descriptionLbl = new JLabel("Choose whether you want to play on a standard tournament world, " +
-											 "or if you would like to specify your own world parameters.");
+		JLabel descriptionLbl = 
+				new JLabel("Choose whether you want to play on a standard " +
+						   "tournament world, or if you would like to " +
+						   "specify your own world parameters.");
 		descriptionPanel.add(descriptionLbl);
 		pane.add(descriptionPanel, BorderLayout.NORTH);
 		
-		//Panel to give radio buttons used for selecting either a contest style world, or a custom world
+		//Panel to give radio buttons used for selecting either a contest style
+		//world, or a custom world
 		JPanel radioBtnPanel = new JPanel();
 		radioBtnPanel.setLayout(new FlowLayout());
 		
+		//Create the radio buttons, and group them
 		ButtonGroup radioBtnGroup = new ButtonGroup();
 		contestBtn = new JRadioButton("Contest Style World", true);
 		contestBtn.addItemListener(new ContestBtnListener());
 		standardBtn = new JRadioButton("Custom World", false);
 		radioBtnGroup.add(contestBtn);
 		radioBtnGroup.add(standardBtn);
-		
+		//Add the radio buttons to the JPanel, and then the window
 		radioBtnPanel.add(contestBtn);
 		radioBtnPanel.add(standardBtn);
 		pane.add(radioBtnPanel, BorderLayout.CENTER);
 		
-		//Panel to hold the input areas for the custom worl parameter, as well as the generate world button
+		//Panel to hold the input areas for the custom worl parameter, as well 
+		//as the generate world button
 		JPanel worldParamsAndGeneratePanel = new JPanel();
 		worldParamsAndGeneratePanel.setLayout(new BorderLayout());
 		
@@ -81,7 +85,8 @@ public class WorldGenerateWindow {
 		JPanel worldParametersPanel = new JPanel();
 		worldParametersPanel.setLayout(new FlowLayout());
 		
-		//Panel for selecting number of rows
+		//Panel for selecting number of rows, made up of a descriptive label,
+		//and a text field for the user to enter the desired value
 		JPanel rowsSelectPanel = new JPanel();
 		rowsSelectPanel.setLayout(new FlowLayout());
 		
@@ -119,8 +124,10 @@ public class WorldGenerateWindow {
 		rocksSelectPanel.add(rocksSelectText);
 		
 		worldParametersPanel.add(rocksSelectPanel);
-		worldParamsAndGeneratePanel.add(worldParametersPanel, BorderLayout.NORTH);
-		
+		worldParamsAndGeneratePanel.add(
+					worldParametersPanel, BorderLayout.NORTH);
+		//Panel to display the two buttons, to generate the world or cancel, at
+		//the bottom of the window
 		JPanel generatePanel = new JPanel();
 		generatePanel.setLayout(new FlowLayout());
 		JButton generateBtn = new JButton("Generate");
@@ -156,8 +163,8 @@ public class WorldGenerateWindow {
 		 * @param e The triggering event.
 		 */
 		public void itemStateChanged(ItemEvent e) {
-			//If contest button is selected, deselect parameter selection options
-			//otherwise, enable them
+			//If contest button is selected, deselect parameter selection 
+			//options otherwise, enable them
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				rowsSelectLbl.setEnabled(false);
 				colsSelectLbl.setEnabled(false);
@@ -166,8 +173,7 @@ public class WorldGenerateWindow {
 				rowsSelectText.setEnabled(false);
 				colsSelectText.setEnabled(false);
 				rocksSelectText.setEnabled(false);
-			}
-			else {
+			} else {
 				rowsSelectLbl.setEnabled(true);
 				colsSelectLbl.setEnabled(true);
 				rocksSelectLbl.setEnabled(true);
@@ -196,20 +202,25 @@ public class WorldGenerateWindow {
 			if (contestBtn.isSelected()) {
 				mainWindow.setupNewContestWorld();
 				window.setVisible(false);
-			}
-			else {
+			} else {
 				try {
 					//Try converting parameters to integers
 					int rows = Integer.parseInt(rowsSelectText.getText());
 					int cols = Integer.parseInt(colsSelectText.getText());
 					int rocks = Integer.parseInt(rocksSelectText.getText());
 					
-					//TODO: Decide on a good maximum and minimum number of rows, cols, rocks.
-					mainWindow.setupNewWorldStandardWorld(rows, cols, rocks);
-					window.setVisible(false);
-				}
-				catch (NumberFormatException nFE) {
-					GUIErrorMsg.displayErrorMsg("Parameters must be an integer!");
+					//Validate user input complies to this games rules
+					if (rows > 140 || cols > 140) {
+						GUIErrorMsg.displayErrorMsg("World dimensions must " +
+													"not exceed 140!");
+					} else {
+						mainWindow.setupNewWorldStandardWorld(rows, cols, rocks);
+						window.setVisible(false);
+					}
+					//TODO: Decide on a minimum number of rows, cols, and max rocks.
+				} catch (NumberFormatException nFE) {
+					GUIErrorMsg.displayErrorMsg(
+							"Parameters must be an integer!");
 				}
 			}
 		}

@@ -96,8 +96,7 @@ public class ContestWindow {
 		//of players is above 7 (the amount that fits into 300 pixels).
 		if (numOfPlayers > 7) {
 			scrollPanel.setPreferredSize(new Dimension(500, 300));
-		}
-		else {
+		} else {
 			//If there won't be scrolling, remove the border of the scroll panel
 			scrollPanel.setBorder(null);
 		}
@@ -152,8 +151,7 @@ public class ContestWindow {
 					if (!path.contains(".brain")) {
 						GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .brain file expected.");
-					}
-					else {
+					} else {
 						//Search for the index of the JButton clicked
 						JButton clickedBtn = (JButton) e.getSource();
 						int index = 0;

@@ -53,6 +53,7 @@ public class GameDisplay extends PApplet {
 	//Enum represents possible image draw scales for use by the variable below it
 	private enum ImageDrawScales { SMALL, MEDIUM, LARGE }
 	private ImageDrawScales currentImageScale = ImageDrawScales.MEDIUM;
+	private ImageDrawScales previousImageScale = ImageDrawScales.MEDIUM;
 	
 	//Enum represents the two possible directions for use by the variable below it
 	private enum Dimensions { HORIZONTAL, VERTICAL }
@@ -197,8 +198,7 @@ public class GameDisplay extends PApplet {
 		
 		if ((numHexCol * HEX_WIDTH) + (HEX_WIDTH / 2)> (numHexRow * HEX_HEIGHT) + HEX_ANGLE_HEIGHT) {
 			largestDimension = Dimensions.HORIZONTAL;
-		}
-		else {
+		} else {
 			largestDimension = Dimensions.VERTICAL;
 		}
 		
@@ -226,57 +226,44 @@ public class GameDisplay extends PApplet {
 		if (largestDimension.equals("width")) {
 			if (numHexCol <= 20) {
 				zoomer.setZoomScale(0.94);
-			}
-			else if (numHexCol <= 40) {
+			} else if (numHexCol <= 40) {
 				zoomer.setZoomScale(0.48);
 				zoomer.setPanOffset(-160, -160);
-			}
-			else if (numHexCol <= 60) {
+			} else if (numHexCol <= 60) {
 				zoomer.setZoomScale(0.32);
 				zoomer.setPanOffset(-220, -220);
-			}
-			else if (numHexCol <= 80) {
+			} else if (numHexCol <= 80) {
 				zoomer.setZoomScale(0.24);
 				zoomer.setPanOffset(-250, -250);
-			}
-			else if (numHexCol <= 100) {
+			} else if (numHexCol <= 100) {
 				zoomer.setZoomScale(0.19);
 				zoomer.setPanOffset(-270, -270);
-			}
-			else if (numHexCol <= 120) {
+			} else if (numHexCol <= 120) {
 				zoomer.setZoomScale(0.16);
 				zoomer.setPanOffset(-280, -280);
-			}
-			else if (numHexCol <= 140) {
+			} else if (numHexCol <= 140) {
 				zoomer.setZoomScale(0.14);
 				zoomer.setPanOffset(-290, -290);
 			}
-		}
-		else {
+		} else {
 			if (numHexRow <= 20) {
 				zoomer.setZoomScale(0.94);
-			}
-			else if (numHexRow <= 40) {
+			} else if (numHexRow <= 40) {
 				zoomer.setZoomScale(0.48);
 				zoomer.setPanOffset(-160, -160);
-			}
-			else if (numHexRow <= 60) {
+			} else if (numHexRow <= 60) {
 				zoomer.setZoomScale(0.32);
 				zoomer.setPanOffset(-220, -220);
-			}
-			else if (numHexRow <= 80) {
+			} else if (numHexRow <= 80) {
 				zoomer.setZoomScale(0.24);
 				zoomer.setPanOffset(-250, -250);
-			}
-			else if (numHexRow <= 100) {
+			} else if (numHexRow <= 100) {
 				zoomer.setZoomScale(0.19);
 				zoomer.setPanOffset(-270, -270);
-			}
-			else if (numHexRow <= 120) {
+			} else if (numHexRow <= 120) {
 				zoomer.setZoomScale(0.16);
 				zoomer.setPanOffset(-280, -280);
-			}
-			else if (numHexRow <= 140) {
+			} else if (numHexRow <= 140) {
 				zoomer.setZoomScale(0.14);
 				zoomer.setPanOffset(-290, -290);
 			}
@@ -353,14 +340,16 @@ public class GameDisplay extends PApplet {
 		gridCells = world.getCells();
 		//Work out which size images to use.
 		background(50, 50, 50);	
+		previousImageScale = currentImageScale;
 		updateImageScale();
+		if (currentImageScale != previousImageScale) {
+			bufferWorld();
+		}
 		if (currentImageScale == ImageDrawScales.LARGE) {
 			drawImages(LARGE_IMAGE);
-		}
-		else if (currentImageScale == ImageDrawScales.MEDIUM) {
+		} else if (currentImageScale == ImageDrawScales.MEDIUM) {
 			drawImages(MEDIUM_IMAGE);
-		}
-		else {
+		} else {
 			drawImages(SMALL_IMAGE);
 		}
 	}
@@ -518,15 +507,13 @@ public class GameDisplay extends PApplet {
 		if (type == 0) {
 			 if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
 			 	image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			 }
-			 else {
+			 } else {
 			    image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
 			}
 		} else if (type == 1) {
 			if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
 				backgroundBuffer.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			 }
-			 else {
+			 } else {
 				backgroundBuffer.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
 			}
 		}
@@ -539,44 +526,36 @@ public class GameDisplay extends PApplet {
 		if (numHexCol < 35) {
 			if (zoomer.getZoomScale() * (numHexCol / 2) > 16.5) {
 				currentImageScale = ImageDrawScales.LARGE;
-			}
-			else if (zoomer.getZoomScale() * (numHexCol / 2) > 4.3){
+			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 4.3){
 				currentImageScale = ImageDrawScales.MEDIUM;
-			}
-			else {
+			} else {
 				currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
 		else if (numHexCol < 70) {
 			if (zoomer.getZoomScale() * (numHexCol / 2) > 22.2) {
 				currentImageScale = ImageDrawScales.LARGE;
-			}
-			else if (zoomer.getZoomScale() * (numHexCol / 2) > 7.6){
+			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 7.6){
 				currentImageScale = ImageDrawScales.MEDIUM;
-			}
-			else {
+			} else {
 				currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
 		else if (numHexCol < 105) {
 			if (zoomer.getZoomScale() * (numHexCol / 2) > 32.6) {
 				currentImageScale = ImageDrawScales.LARGE;
-			}
-			else if (zoomer.getZoomScale() * (numHexCol / 2) > 13){
+			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 13){
 				currentImageScale = ImageDrawScales.MEDIUM;
-			}
-			else {
+			} else {
 				currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
 		else {
 			if (zoomer.getZoomScale() * (numHexCol / 2) > 44.4) {
 				currentImageScale = ImageDrawScales.LARGE;
-			}
-			else if (zoomer.getZoomScale() * (numHexCol / 2) > 22.4){
+			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 22.4){
 				currentImageScale = ImageDrawScales.MEDIUM;
-			}
-			else {
+			} else {
 				currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
@@ -594,14 +573,9 @@ public class GameDisplay extends PApplet {
 		//If it's an odd numbered row it needs to be shifted along
 		if (row % 2 == 0) {
 			pixelCol = (col * HEX_WIDTH);// - hexWidth / 2;
-		}
-		else {
+		} else {
 			pixelCol = ((col * HEX_WIDTH) - HEX_WIDTH / 2) + HEX_WIDTH;
 		}
 		return pixelCol;
-	}
-	
-	public void displayNewWorld(World world) {
-		//TODO: Implement (draw new world to screen)
 	}
 }

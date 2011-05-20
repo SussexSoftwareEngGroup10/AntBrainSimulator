@@ -13,8 +13,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
+import antWorld.World;
+
+import utilities.ErrorEvent;
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.InformationHighEvent;
@@ -148,7 +152,7 @@ public class GeneticAlgorithm implements Serializable {
 		//removes the less fit half of the population and
 		//breeds random members of the remaining population until
 		//the population is the same size as when it began the iteration
-		gameEngine.evaluateFitnessContest(true, this.population, absoluteTrainingBrain);
+		rank(gameEngine, absoluteTrainingBrain);
 		Logger.log(new InformationLowEvent("Initial sort completed"));
 		
 		//Timing
@@ -201,7 +205,7 @@ public class GeneticAlgorithm implements Serializable {
 			}
 			this.population = newPop;
 			//Order, ready for next epoch
-			gameEngine.evaluateFitnessContest(true, this.population, absoluteTrainingBrain);
+			rank(gameEngine, absoluteTrainingBrain);
 			
 			//Timing
 			Logger.log(new TimeEvent("for epoch " + (this.epoch - 1), TimeUnit.SECONDS));
@@ -213,6 +217,58 @@ public class GeneticAlgorithm implements Serializable {
 				+ "% of GeneticAlgorithm evolution epochs"));
 		}
 		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
+	}
+	
+	public void rank(GameEngine gameEngine, Brain absoluteTrainingBrain){
+		gameEngine.contestSetup(this.population, absoluteTrainingBrain);
+		
+		//Multi-Threaded
+		//Get popLen permits, restore as runs complete
+		Stack<World> worlds = new Stack<World>();
+		World world;
+		try {
+			world = World.getContestWorld(1);
+		} catch (ErrorEvent e) {
+			Logger.log(e);
+			return;
+		}
+		//Set fitness for every brain in population
+		for(int i = 0; i < this.population.length; i++){
+			while(worlds.size() < 4){
+				worlds.push((World) world.clone());
+			}
+			
+			gameEngine.fitnessContestStep(worlds);
+		}
+		
+		Arrays.sort(this.population);
+		
+		//Log fitness stats
+		int i;
+		int index = this.population.length - 1;
+		for(i = this.population.length - 2; i >= 0; i--){
+			if(this.population[i].getFitness() > this.population[index].getFitness()){
+				index = i;
+			}
+		}
+		int maxFitness = this.population[index].getFitness();
+		
+		int total = 0;
+		for(i = this.population.length - 1; i >= 0; i--){
+			total += this.population[i].getFitness();
+		}
+		int avgFitness =  total / this.population.length;
+
+		index = this.population.length - 1;
+		for(i = this.population.length - 2; i >= 0; i--){
+			if(this.population[i].getFitness() < this.population[index].getFitness()){
+				index = i;
+			}
+		}
+		int minFitness = this.population[index].getFitness();
+		
+		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness
+			+ ";  avg: " + avgFitness + ";  min: " + minFitness));
 	}
 	
 	/**

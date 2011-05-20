@@ -37,7 +37,7 @@ import antWorld.World;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class GameEngine extends Thread {
+public class GameEngine {//extends Thread {
 	private static final int rounds = 300000;
 	private static final int processors = Runtime.getRuntime().availableProcessors();
 	private int sleepDur = 500;
@@ -165,6 +165,7 @@ public class GameEngine extends Thread {
 //	}
 	
 	/**
+	 * call once at the start of each contest
 	 * @param threadPoolExecutor
 	 * @param semaphore
 	 * @param useFitness
@@ -197,8 +198,8 @@ public class GameEngine extends Thread {
 	}
 	
 	/**
+	 * worlds.size() == 4 (call pop.len times)
 	 * @param worlds
-	 * worlds.size() == 4 (run pop.len times)
 	 */
 	public void fitnessContestStep(Stack<World> worlds) {
 		//Multi-Threaded
@@ -237,7 +238,7 @@ public class GameEngine extends Thread {
 	}
 	
 	/**
-	 * 
+	 * automatically runs entire contest, cannot cannot pass worlds
 	 */
 	public void contestStepAll() {
 		//Multi-Threaded
@@ -262,8 +263,8 @@ public class GameEngine extends Thread {
 	}
 	
 	/**
-	 * @param worlds
 	 * worlds.size() == 2 (call method pop.len^2 times)
+	 * @param worlds
 	 */
 	public void contestStep(Stack<World> worlds) {
 		//Multi-Threaded
@@ -377,8 +378,10 @@ public class GameEngine extends Thread {
 			trainingBrain = BrainParser.readBrainFrom("better_example");
 		}catch(IOEvent e){
 			Logger.log(e);
+			return;
 		} catch (IllegalArgumentEvent e) {
 			Logger.log(e);
+			return;
 		}
 		GameEngine gameEngine = new GameEngine();
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
@@ -395,8 +398,16 @@ public class GameEngine extends Thread {
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
 		
 		//Compact and remove null and unreachable states
-//		trainingBrain.trim();
-//		gaBrain.trim();
+		try {
+			trainingBrain.trim();
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
+		}
+		try {
+			gaBrain.trim();
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
+		}
 		
 		try {
 			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1));
@@ -406,6 +417,4 @@ public class GameEngine extends Thread {
 		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
-	
-	
 }

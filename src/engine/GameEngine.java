@@ -171,6 +171,9 @@ public class GameEngine extends Thread {
 	 * @param population
 	 */
 	public void contestSetup(Brain[] population, Brain absoluteTrainingBrain) {
+		this.population = population;
+		this.absoluteTrainingBrain = absoluteTrainingBrain;
+		
 		this.threadPoolExecutor = new ThreadPoolExecutor(
 			GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
 			new ArrayBlockingQueue<Runnable>(2));

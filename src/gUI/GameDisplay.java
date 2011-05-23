@@ -304,8 +304,8 @@ public class GameDisplay extends PApplet {
 	
 	public void updateWorld(World world) {
 		this.world = world;
-		bufferWorld();
 		setup();
+		bufferWorld();
 	}
 	
 	public void startRunning() {

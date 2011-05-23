@@ -70,6 +70,10 @@ public class GameEngine {//extends Thread {
 		this.sleepDur = Math.max(this.sleepDur - 50, 0);
 	}
 	
+	public void setSpeed(int sleepDur) {
+		this.sleepDur = sleepDur;
+	}
+	
 	/*
 	//How many times GA-related methods are called in each run,
 	//ignoring elite (popLen -= elite)

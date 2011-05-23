@@ -21,7 +21,7 @@ public class ContestRunner extends Thread {
 	 * Runs a standard simulation.
 	 */
 	public void run(){
-		gameEngine.contestSetup(brains, absoluteTrainingBrain);
+		gameEngine.contestSetup(brains);
 		gameEngine.contestStepAll();
 	}
 }

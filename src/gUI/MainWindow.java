@@ -1,6 +1,7 @@
 package gUI;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -46,6 +47,7 @@ public class MainWindow {
 	JButton uploadBlackBtn;
 	JButton uploadWorldBtn;
 	JButton genWorldBtn;
+	JSlider speedAdjustmentSlider;
 	
 	/**
 	 * Constructs a new MainWindow and draws it to the screen.
@@ -108,7 +110,8 @@ public class MainWindow {
 		
 		//Set up JPanel to display the speed adjustment slider
 		JPanel speedAdjustmentPanel = new JPanel();
-		JSlider speedAdjustmentSlider = new JSlider();
+		speedAdjustmentSlider = new JSlider(0, 1000, 500);
+		speedAdjustmentSlider.addChangeListener(new speedSliderChangeListener());
 		//Add a border, and tick marks to slider
 		speedAdjustmentSlider.setBorder(BorderFactory.createTitledBorder("Speed Adjustment Slider"));
 		speedAdjustmentSlider.setMajorTickSpacing(20);
@@ -347,6 +350,17 @@ public class MainWindow {
 			new SimulationRunner(gameEngine, blackBrain, redBrain, world)
 					.start();
 			gameDisplay.startRunning();
+			
+			abortButton.setEnabled(true);
+			finishButton.setEnabled(true);
+			speedAdjustmentSlider.setEnabled(true);
+		}
+	}
+	
+	public class speedSliderChangeListener implements ChangeListener {
+		public void stateChanged(ChangeEvent e) {
+		    JSlider source = (JSlider)e.getSource();
+		    gameEngine.setSpeed((int)source.getValue()); //FINISH!
 		}
 	}
 }

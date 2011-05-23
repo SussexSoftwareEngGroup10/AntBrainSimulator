@@ -164,6 +164,10 @@ public class GameEngine {//extends Thread {
 //		evaluateFitnessContest(false, contestBrains, null);
 //	}
 	
+	public void contestSetup(Brain[] population) {
+		fitnessContestSetup(population, null);
+	}
+	
 	/**
 	 * call once at the start of each contest
 	 * @param threadPoolExecutor
@@ -171,7 +175,7 @@ public class GameEngine {//extends Thread {
 	 * @param useFitness
 	 * @param population
 	 */
-	public void contestSetup(Brain[] population, Brain absoluteTrainingBrain) {
+	public void fitnessContestSetup(Brain[] population, Brain absoluteTrainingBrain) {
 		this.population = population;
 		this.absoluteTrainingBrain = absoluteTrainingBrain;
 		

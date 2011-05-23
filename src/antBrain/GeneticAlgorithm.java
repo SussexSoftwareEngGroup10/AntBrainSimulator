@@ -220,7 +220,7 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	public void rank(GameEngine gameEngine, Brain absoluteTrainingBrain){
-		gameEngine.contestSetup(this.population, absoluteTrainingBrain);
+		gameEngine.fitnessContestSetup(this.population, absoluteTrainingBrain);
 		
 		//Multi-Threaded
 		//Get popLen permits, restore as runs complete

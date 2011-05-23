@@ -37,7 +37,7 @@ import antWorld.World;
  * @author pkew20 / 57116
  * @version 1.0
  */
-public class GameEngine {//extends Thread {
+public class GameEngine {
 	private static final int rounds = 300000;
 	private static final int processors = Runtime.getRuntime().availableProcessors();
 	private int sleepDur = 500;
@@ -57,19 +57,15 @@ public class GameEngine {//extends Thread {
 	}
 	
 	/**
-	 * 
+	 * @return
 	 */
-	public void slowDown() {
-		this.sleepDur = Math.min(this.sleepDur + 50, 1000);
-	}
-
-	/**
-	 * 
-	 */
-	public void speedUp() {
-		this.sleepDur = Math.max(this.sleepDur - 50, 0);
+	public long getSleepDur() {
+		return this.sleepDur;
 	}
 	
+	/**
+	 * @param sleepDur
+	 */
 	public void setSpeed(int sleepDur) {
 		this.sleepDur = sleepDur;
 	}
@@ -186,11 +182,11 @@ public class GameEngine {//extends Thread {
 			//Absolute fitness tests
 			this.semaphore.acquireUninterruptibly(2);
 			this.threadPoolExecutor.execute(
-				new Simulation(this.absoluteTrainingBrain, brain,
-					this.semaphore, 0, 0, true, GameEngine.rounds, worlds.pop()));
+				new Simulation(this, this.absoluteTrainingBrain, brain,
+					this.semaphore, 0, true, GameEngine.rounds, worlds.pop()));
 			this.threadPoolExecutor.execute(
-				new Simulation(brain, this.absoluteTrainingBrain,
-					this.semaphore, 0, 1, true, GameEngine.rounds, worlds.pop()));
+				new Simulation(this, brain, this.absoluteTrainingBrain,
+					this.semaphore, 1, true, GameEngine.rounds, worlds.pop()));
 			//Await completion of Simulations
 			this.semaphore.acquireUninterruptibly(2);
 			this.semaphore.release(2);
@@ -199,11 +195,11 @@ public class GameEngine {//extends Thread {
 		//Relative fitness tests
 		this.semaphore.acquireUninterruptibly(2);
 		this.threadPoolExecutor.execute(
-			new Simulation(this.relativeTrainingBrain, brain,
-				this.semaphore, 0, 2, true, GameEngine.rounds, worlds.pop()));
+			new Simulation(this, this.relativeTrainingBrain, brain,
+				this.semaphore, 2, true, GameEngine.rounds, worlds.pop()));
 		this.threadPoolExecutor.execute(
-			new Simulation(brain, this.relativeTrainingBrain,
-				this.semaphore, 0, 3, true, GameEngine.rounds, worlds.pop()));
+			new Simulation(this, brain, this.relativeTrainingBrain,
+				this.semaphore, 3, true, GameEngine.rounds, worlds.pop()));
 		//Await completion of Simulations
 		this.semaphore.acquireUninterruptibly(2);
 		this.semaphore.release(2);
@@ -256,11 +252,11 @@ public class GameEngine {//extends Thread {
 		
 		this.semaphore.acquireUninterruptibly(2);
 		this.threadPoolExecutor.execute(
-			new Simulation(this.population[this.count1], this.population[this.count2],
-				this.semaphore, 0, 0, false, GameEngine.rounds, worlds.pop()));
+			new Simulation(this, this.population[this.count1], this.population[this.count2],
+				this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
 		this.threadPoolExecutor.execute(
-			new Simulation(this.population[this.count2], this.population[this.count1],
-				this.semaphore, 0, 0, false, GameEngine.rounds, worlds.pop()));
+			new Simulation(this, this.population[this.count2], this.population[this.count1],
+				this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
 		//Await completion of Simulations
 		this.semaphore.acquireUninterruptibly(2);
 		this.semaphore.release(2);
@@ -289,8 +285,8 @@ public class GameEngine {//extends Thread {
 		Logger.log(new InformationLowEvent("Begun simulation"));
 		
 		//Runs in serial
-		new Simulation(blackBrain, redBrain, null,
-			this.sleepDur, 0, false, GameEngine.rounds, world).run();
+		new Simulation(this, blackBrain, redBrain, null,
+			this.sleepDur, false, GameEngine.rounds, world).run();
 		
 		//Ant results
 		Ant[][] antsBySpecies = world.getAntsBySpecies();

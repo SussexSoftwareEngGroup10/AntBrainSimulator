@@ -2,6 +2,8 @@ package antWorld;
 
 import java.util.concurrent.Semaphore;
 
+import engine.GameEngine;
+
 import utilities.Logger;
 import utilities.WarningEvent;
 
@@ -12,13 +14,13 @@ import antBrain.Brain;
  * @version 1.0
  */
 public final class Simulation extends Thread {
+	private final GameEngine gameEngine;
 	private final Brain blackBrain;
 	private final Brain redBrain;
 	private final Semaphore semaphore;
 	private final int fitness;
 	private final boolean useFitness;
 	private final int rounds;
-	private final int sleepDur;
 	private World world;
 	
 	/**
@@ -29,8 +31,9 @@ public final class Simulation extends Thread {
 	 * @param rounds
 	 * @param world
 	 */
-	public Simulation(Brain blackBrain, Brain redBrain, Semaphore semaphore,
-		int sleepDur, int fitness, boolean useFitness, int rounds, World world) {
+	public Simulation(GameEngine gameEngine, Brain blackBrain, Brain redBrain, Semaphore semaphore,
+		int fitness, boolean useFitness, int rounds, World world) {
+		this.gameEngine = gameEngine;
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
 		this.semaphore = semaphore;
@@ -38,7 +41,6 @@ public final class Simulation extends Thread {
 		this.useFitness = useFitness;
 		this.world = world;
 		this.rounds = rounds;
-		this.sleepDur = sleepDur;
 	}
 	
 	/**
@@ -80,12 +82,10 @@ public final class Simulation extends Thread {
 			for(Ant ant : ants){
 				ant.step();
 			}
-			if(this.sleepDur > 0){
-				try{
-					Thread.sleep(this.sleepDur);
-				}catch(InterruptedException e){
-					Logger.log(new WarningEvent(e.getMessage(), e));
-				}
+			try{
+				Thread.sleep(this.gameEngine.getSleepDur());
+			}catch(InterruptedException e){
+				Logger.log(new WarningEvent(e.getMessage(), e));
 			}
 		}
 		

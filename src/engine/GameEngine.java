@@ -48,10 +48,6 @@ public class GameEngine {//extends Thread {
 	private Brain[] population;
 	private int count1 = 0;
 	private int count2 = 0;
-//	private boolean isContestMode = false; //Whether to run it as a contest
-//	private Brain[] contestBrains;
-//	private Brain blackBrain;
-//	private Brain redBrain;
 	
 	/**
 	 * @param world
@@ -73,22 +69,6 @@ public class GameEngine {//extends Thread {
 	public void speedUp() {
 		this.sleepDur = Math.max(this.sleepDur - 50, 0);
 	}
-	
-//	public void setExecutionMode(boolean isContestMode) {
-//		this.isContestMode = isContestMode;
-//	}
-//	
-//	public void setContestBrains(Brain[] contestBrains) {
-//		this.contestBrains = contestBrains;
-//	}
-//	
-//	public void setblackBrain(Brain blackBrain) {
-//		this.blackBrain = blackBrain;
-//	}
-//	
-//	public void setblackRed(Brain redBrain) {
-//		this.redBrain = redBrain;
-//	}
 	
 	/*
 	//How many times GA-related methods are called in each run,
@@ -138,19 +118,6 @@ public class GameEngine {//extends Thread {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	*/
 	
-//	/**
-//	 * Runs either a standard simulation or a contest depending on
-//	 * isContestMode.  The world and the brains needed *must be set* before
-//	 * this is run.
-//	 */
-//	public void run(){
-//		if (isContestMode) {
-//			runContest();
-//		} else {
-//			runStandard();
-//		}
-//	}
-//	
 //	/*
 //	 * Simulates each Brain against each other Brain in population,
 //	 * sets their fitness to the number of wins they get,
@@ -242,7 +209,7 @@ public class GameEngine {//extends Thread {
 	}
 	
 	/**
-	 * automatically runs entire contest, cannot cannot pass worlds
+	 * automatically runs entire contest, cannot pass worlds
 	 */
 	public void contestStepAll() {
 		//Multi-Threaded

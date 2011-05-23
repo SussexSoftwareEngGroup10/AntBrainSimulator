@@ -50,6 +50,9 @@ public class GameDisplay extends PApplet {
 	private static final int HEX_ANGLE_HEIGHT = 10; //Corresponds to A
 	private static final int HEX_VERT_HEIGHT = 20; //Corresponds to B
 	
+	private int totalHexWidth;
+	private int totalHexHeight;
+	
 	//Enum represents possible image draw scales for use by the variable below it
 	private enum ImageDrawScales { SMALL, MEDIUM, LARGE }
 	private ImageDrawScales currentImageScale = ImageDrawScales.MEDIUM;
@@ -74,7 +77,7 @@ public class GameDisplay extends PApplet {
 			this.direction = direction;
 		}
 		
-		public float direction()  {
+		public float direction(int directionVal)  {
 			return direction;
 		}
 	}
@@ -194,9 +197,11 @@ public class GameDisplay extends PApplet {
 		//Number of hexagons in columns and rows - change to modify quantity of hexagons
 		numHexCol = gridCells.length;
 		numHexRow = gridCells[0].length;
+		totalHexWidth = (numHexCol * HEX_WIDTH) + (HEX_WIDTH / 2);
+		totalHexHeight = (numHexRow * HEX_HEIGHT) + HEX_ANGLE_HEIGHT;
 		setRockShadingMap();
 		
-		if ((numHexCol * HEX_WIDTH) + (HEX_WIDTH / 2)> (numHexRow * HEX_HEIGHT) + HEX_ANGLE_HEIGHT) {
+		if (totalHexWidth > totalHexHeight) {
 			largestDimension = Dimensions.HORIZONTAL;
 		} else {
 			largestDimension = Dimensions.VERTICAL;
@@ -417,27 +422,39 @@ public class GameDisplay extends PApplet {
 		Ant currentAnt;
 		try {
 			currentAnt = gridCells[row][col].getAnt();
-			if (imageScale == LARGE_IMAGE) {
-						//pushMatrix();
-						//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
-						//translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
-						//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
-						//rotate(AntDirection.SOUTH_EAST.direction());
-						//Draw the image at an offset so that the origin is back to the top left of the tile.
+			if (imageScale == LARGE_IMAGE) {	
 				if (currentAnt.getColour() == 0) { //If it's a black ant
 					if (currentAnt.hasFood()) {
-						drawImage(blackAntFood, row, col, 0);
+						pushMatrix();		
+						//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
+						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
+						//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
+						rotate(getAntDirection(currentAnt.getDirection()).direction);
+						//Draw the image at an offset so that the origin is back to the top left of the tile.
+						image(blackAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+						popMatrix();
 					} else {
-						drawImage(blackAnt[LARGE_IMAGE], row, col, 0);
+						pushMatrix();
+						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
+						rotate(getAntDirection(currentAnt.getDirection()).direction);
+						image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+						popMatrix();
 					}
 				} else {
 					if (currentAnt.hasFood()) {
-						drawImage(redAntFood, row, col, 0);
+						pushMatrix();
+						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
+						rotate(getAntDirection(currentAnt.getDirection()).direction);
+						image(redAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+						popMatrix();
 					} else {
-								drawImage(redAnt[LARGE_IMAGE], row, col, 0);
+						pushMatrix();
+						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
+						rotate(getAntDirection(currentAnt.getDirection()).direction);
+						image(redAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
+						popMatrix();
 					}
 				}
-				//popMatrix();
 			} else if (imageScale == MEDIUM_IMAGE) {
 				if (currentAnt.getColour() == 0) { //If it's a black ant
 					drawImage(blackAnt[MEDIUM_IMAGE], row, col, 0);
@@ -454,7 +471,26 @@ public class GameDisplay extends PApplet {
 		} catch (NullPointerException nPE) {
 		}
 	}
-		
+	
+	private AntDirection getAntDirection(int directionVal) {
+		AntDirection direction = AntDirection.EAST; ;
+		switch (directionVal) {
+			case 0: direction = AntDirection.EAST; 
+			break;
+			case 1: direction = AntDirection.SOUTH_EAST;
+			break;
+			case 2: direction = AntDirection.SOUTH_WEST; 
+			break;
+			case 3: direction = AntDirection.WEST;
+			break;
+			case 4: direction = AntDirection.NORTH_WEST; 
+			break;
+			case 5: direction = AntDirection.NORTH_EAST;
+			break;
+		}
+		return direction;
+	}
+		/*
 		public void drawAnts2(int imageScale) {
 			Ant currentAnt;
 			for (int row = 0; row < numHexRow; row++) {
@@ -501,24 +537,33 @@ public class GameDisplay extends PApplet {
 			image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 			popMatrix();
 		}*/
-	}
 
 	private void drawImage(PImage image, int row, int col, int type) {
 		if (type == 0) {
-			 if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
-			 	image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			 } else {
-			    image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			}
+			 image(image, getColPixelCoords(col, row), getRowPixelCoords(row), HEX_WIDTH, HEX_HEIGHT);
 		} else if (type == 1) {
-			if (row % 2 == 0) { //On odd numbered rows the row needs to be shifted to the right
-				backgroundBuffer.image(image, col * HEX_WIDTH, row * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			 } else {
-				backgroundBuffer.image(image, col * HEX_WIDTH + ((HEX_WIDTH / 2) + 0), row  * (HEX_VERT_HEIGHT + HEX_ANGLE_HEIGHT), HEX_WIDTH, HEX_HEIGHT);
-			}
+			backgroundBuffer.image(image, getColPixelCoords(col, row), getRowPixelCoords(row), HEX_WIDTH, HEX_HEIGHT);
 		}
 	}
 	
+	//TODO: DIFFERENCE BETWEEN THESE AND NEWER DRAW IMAGE METHOD??? NEED TO TEST!
+		//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)
+		private int getRowPixelCoords(int row) {
+			return row * (HEX_HEIGHT - HEX_ANGLE_HEIGHT);
+		}
+
+	//Equivalent method for finding the column in pixels
+		private int getColPixelCoords(int col, int row) {
+			int pixelCol;
+			//If it's an odd numbered row it needs to be shifted along
+			if (row % 2 == 0) {
+				pixelCol = (col * HEX_WIDTH);// - hexWidth / 2;
+			} else {
+				pixelCol = ((col * HEX_WIDTH) - HEX_WIDTH / 2) + HEX_WIDTH;
+			}
+			return pixelCol;
+		}
+
 	/*
 	 * Updates the scale at which images should be drawn for.
 	 */
@@ -559,23 +604,5 @@ public class GameDisplay extends PApplet {
 				currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
-	}
-
-	//TODO: DIFFERENCE BETWEEN THESE AND NEWER DRAW IMAGE METHOD??? NEED TO TEST!
-	//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)
-	private int getRowPixelCoords(int row) {
-		return row * (HEX_HEIGHT - HEX_ANGLE_HEIGHT);
-	}
-
-	//Equivalent method for finding the column in pixels
-	private int getColPixelCoords(int col, int row) {
-		int pixelCol;
-		//If it's an odd numbered row it needs to be shifted along
-		if (row % 2 == 0) {
-			pixelCol = (col * HEX_WIDTH);// - hexWidth / 2;
-		} else {
-			pixelCol = ((col * HEX_WIDTH) - HEX_WIDTH / 2) + HEX_WIDTH;
-		}
-		return pixelCol;
 	}
 }

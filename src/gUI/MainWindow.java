@@ -53,7 +53,7 @@ public class MainWindow {
 	public MainWindow() {
 		try {
 			world = World.getContestWorld(0);
-			gameEngine = new GameEngine(world);
+			gameEngine = new GameEngine();
 			drawGUI();
 		} catch (ErrorEvent e) {
 			e.printStackTrace();
@@ -344,10 +344,8 @@ public class MainWindow {
 	
 	public class StartGameListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			gameEngine.setWorld(world);
-			gameEngine.setblackBrain(blackBrain);s
-			gameEngine.setblackRed(redBrain);
-			gameEngine.start();
+			new SimulationRunner(gameEngine, blackBrain, redBrain, world)
+					.start();
 			gameDisplay.startRunning();
 		}
 	}

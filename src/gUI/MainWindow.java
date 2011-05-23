@@ -7,6 +7,7 @@ import java.awt.event.*;
 import java.io.File;
 import utilities.*;
 import engine.GameEngine;
+import engine.GameStats;
 import antBrain.Brain;
 import antBrain.BrainParser;
 import antWorld.World;
@@ -104,13 +105,14 @@ public class MainWindow {
 		abortButton = new JButton("Abort");
 		abortButton.setEnabled(false);
 		finishButton = new JButton("Finish");
+		finishButton.addActionListener(new finishListener());
 		finishButton.setEnabled(false);
 		controlButtonsPanel.add(abortButton);
 		controlButtonsPanel.add(finishButton);
 		
 		//Set up JPanel to display the speed adjustment slider
 		JPanel speedAdjustmentPanel = new JPanel();
-		speedAdjustmentSlider = new JSlider(0, 1000, 500);
+		speedAdjustmentSlider = new JSlider(1, 1000, 500);
 		speedAdjustmentSlider.addChangeListener(new speedSliderChangeListener());
 		//Add a border, and tick marks to slider
 		speedAdjustmentSlider.setBorder(BorderFactory.createTitledBorder("Speed Adjustment Slider"));
@@ -127,7 +129,7 @@ public class MainWindow {
 		controlPanel.setLayout(new GridLayout(2, 3));
 		
 		startGameBtn = new JButton("Start Game");
-		startGameBtn.addActionListener(new StartGameListener());
+		startGameBtn.addActionListener(new StartGameListener(this));
 		startGameBtn.setEnabled(false);
 		contestBtn = new JButton("Contest Mode");
 		contestBtn.addActionListener(new ContestListener());
@@ -162,8 +164,9 @@ public class MainWindow {
 	 * 
 	 * @param winner The winner of the game.
 	 */
-	public void notifyGameComplete(String winner) {
+	public void notifyGameComplete(GameStats gameStats) {
 		//TODO: Untested, Should it really be parsed a string?
+		/*
 		//Reset upload buttons to original text without ticks
 		uploadRedBtn.setText("Upload Red Brain");
 		uploadBlackBtn.setText("Upload Black Brain");
@@ -173,16 +176,31 @@ public class MainWindow {
 		redBrainPath = "";
 		blackBrainPath = "";
 		worldPath = "";
+		*/
 		
 		startGameBtn.setEnabled(true);
+		contestBtn.setEnabled(true);
+		uploadBlackBtn.setEnabled(true);
+		uploadRedBtn.setEnabled(true);
+		uploadWorldBtn.setEnabled(true);
+		genWorldBtn.setEnabled(true);
+		speedAdjustmentSlider.setEnabled(true);
+		
+		gameDisplay.switchState(DisplayStates.DISPLAYING_GRID);
 		
 		//Display dialog box asking if statistics should be displayed
 		String[] options = {"Statistics", "OK"};
-		int choice = JOptionPane.showOptionDialog(null, winner + " wins!",
+		String winningColour;
+		if (gameStats.getWinner() == 0) {
+			winningColour = "Black brain";
+		} else {
+			winningColour = "Red brain";
+		}
+		int choice = JOptionPane.showOptionDialog(null, winningColour + " wins!",
 				"And The Winner Is...", JOptionPane.YES_NO_OPTION, 
 				JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
 		if (choice == 0) {
-			//new StatisticsWindow(gameStats);
+			new StatisticsWindow(gameStats);
 		}
 	}
 	
@@ -346,21 +364,49 @@ public class MainWindow {
 	}
 	
 	public class StartGameListener implements ActionListener {
+		MainWindow mainWindow;
+		
+		public StartGameListener(MainWindow mainWindow) {
+			this.mainWindow = mainWindow;
+		}
+		
 		public void actionPerformed(ActionEvent e) {
-			new SimulationRunner(gameEngine, blackBrain, redBrain, world)
+			new SimulationRunner(gameEngine, blackBrain, redBrain, world, mainWindow)
 					.start();
-			gameDisplay.startRunning();
+			
 			
 			abortButton.setEnabled(true);
 			finishButton.setEnabled(true);
 			speedAdjustmentSlider.setEnabled(true);
+			
+			startGameBtn.setEnabled(false);
+			contestBtn.setEnabled(false);
+			uploadBlackBtn.setEnabled(false);
+			uploadRedBtn.setEnabled(false);
+			uploadWorldBtn.setEnabled(false);
+			genWorldBtn.setEnabled(false);
 		}
 	}
 	
 	public class speedSliderChangeListener implements ChangeListener {
 		public void stateChanged(ChangeEvent e) {
 		    JSlider source = (JSlider)e.getSource();
-		    gameEngine.setSpeed((int)source.getValue()); //FINISH!
+		    //Subtract from 1000, so that now, the lower the value, the faster.
+		    gameEngine.setSpeed(1001 - (int)source.getValue());
+		}
+	}
+	
+	public class abortListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			//TODO Implement.
+		}
+	}
+	
+	public class finishListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			gameEngine.setSpeed(0);
+			speedAdjustmentSlider.setEnabled(false);
+			gameDisplay.switchState(DisplayStates.PROCESSING);
 		}
 	}
 }

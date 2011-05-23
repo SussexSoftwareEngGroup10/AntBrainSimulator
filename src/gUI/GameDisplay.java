@@ -77,13 +77,12 @@ public class GameDisplay extends PApplet {
 			this.direction = direction;
 		}
 		
-		public float direction(int directionVal)  {
+		public float direction()  {
 			return direction;
 		}
 	}
 	
-	private enum GameStates { DISPLAYING_GRID, RUNNING }
-	private GameStates currentGameState = GameStates.DISPLAYING_GRID;
+	private DisplayStates currentGameState = DisplayStates.DISPLAYING_GRID;
 	
 	private Random random = new Random();
 	private ZoomPan zoomer; //Class for zooming and panning
@@ -131,6 +130,9 @@ public class GameDisplay extends PApplet {
 	
 	private PImage blackMarker;
 	private PImage redMarker;
+	
+	//Variable to hold the font file
+	private PFont courierFont;
 	
 	public GameDisplay(World world) {
 		this.world = world;
@@ -190,6 +192,9 @@ public class GameDisplay extends PApplet {
 		
 		blackMarker = loadImage("resources/images/markers/chemical_black.png");
 		redMarker = loadImage("resources/images/markers/chemical_red.png");
+		
+		//Load font
+		courierFont = loadFont("resources/fonts/courier_new_font.vlw");
 	}
 
 	public void setup() {
@@ -216,6 +221,9 @@ public class GameDisplay extends PApplet {
 		
 		smooth(); //Turn on anti aliasing
 		frameRate(10); //Turn down the frame rate for less processing power
+		//Text variables
+		textFont(courierFont, 30);
+		fill(255);
 		zoomer = new ZoomPan(this);  // Initialise the zoomer
 		zoomer.allowZoomButton(false); 
 		setInitialPanAndZoom();
@@ -308,8 +316,8 @@ public class GameDisplay extends PApplet {
 		bufferWorld();
 	}
 	
-	public void startRunning() {
-		currentGameState = GameStates.RUNNING;
+	public void switchState(DisplayStates gameState) {
+		currentGameState = gameState;
 	}
 	
 	private void bufferWorld() {
@@ -341,27 +349,32 @@ public class GameDisplay extends PApplet {
 	}
 	
 	public void draw() {
-		zoomer.transform();
-		gridCells = world.getCells();
-		//Work out which size images to use.
 		background(50, 50, 50);	
-		previousImageScale = currentImageScale;
-		updateImageScale();
-		if (currentImageScale != previousImageScale) {
-			bufferWorld();
-		}
-		if (currentImageScale == ImageDrawScales.LARGE) {
-			drawImages(LARGE_IMAGE);
-		} else if (currentImageScale == ImageDrawScales.MEDIUM) {
-			drawImages(MEDIUM_IMAGE);
+		if (currentGameState == DisplayStates.PROCESSING) {
+			text("Processing, please wait...", 30, 340); 
 		} else {
-			drawImages(SMALL_IMAGE);
+			zoomer.transform();
+			gridCells = world.getCells();
+			//Work out which size images to use.
+			
+			previousImageScale = currentImageScale;
+			updateImageScale();
+			if (currentImageScale != previousImageScale) {
+				bufferWorld();
+			}
+			if (currentImageScale == ImageDrawScales.LARGE) {
+				drawImages(LARGE_IMAGE);
+			} else if (currentImageScale == ImageDrawScales.MEDIUM) {
+				drawImages(MEDIUM_IMAGE);
+			} else {
+				drawImages(SMALL_IMAGE);
+			}
 		}
 	}
 	
 	private void drawImages(int imageScale) {
 		image(backgroundBuffer, 0, 0);
-		if (currentGameState == GameStates.RUNNING) {
+		if (currentGameState == DisplayStates.RUNNING) {
 			for (int row = 0; row < numHexRow; row++) {
 				for (int col = 0; col < numHexCol; col++) {
 					//drawTile(imageScale, row, col);
@@ -429,14 +442,14 @@ public class GameDisplay extends PApplet {
 						//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
 						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
 						//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
-						rotate(getAntDirection(currentAnt.getDirection()).direction);
+						rotate(getAntDirection(currentAnt.getDirection()).direction());
 						//Draw the image at an offset so that the origin is back to the top left of the tile.
 						image(blackAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 						popMatrix();
 					} else {
 						pushMatrix();
 						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
-						rotate(getAntDirection(currentAnt.getDirection()).direction);
+						rotate(getAntDirection(currentAnt.getDirection()).direction());
 						image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 						popMatrix();
 					}
@@ -444,13 +457,13 @@ public class GameDisplay extends PApplet {
 					if (currentAnt.hasFood()) {
 						pushMatrix();
 						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
-						rotate(getAntDirection(currentAnt.getDirection()).direction);
+						rotate(getAntDirection(currentAnt.getDirection()).direction());
 						image(redAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 						popMatrix();
 					} else {
 						pushMatrix();
 						translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
-						rotate(getAntDirection(currentAnt.getDirection()).direction);
+						rotate(getAntDirection(currentAnt.getDirection()).direction());
 						image(redAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 						popMatrix();
 					}

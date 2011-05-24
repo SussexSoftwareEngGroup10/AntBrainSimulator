@@ -22,6 +22,7 @@ import antWorld.WorldParser;
 public class MainWindow {
 	private static final int WINDOW_WIDTH = 750;
 	private static final int WINDOW_HEIGHT = 850;
+	//TODO sChange the window height!
 	
 	GameEngine gameEngine;
 	World world;

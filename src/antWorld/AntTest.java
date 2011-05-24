@@ -61,16 +61,16 @@ public class AntTest {
 	}
 
 	@Test
-	public void testSenseAntA(){
+	public void testSenseEnemyAntA(){
 		//Phil: I reversed the loop that created the Ants for efficiency,
 		//so it numbered them backwards
 		//I've changed it back though
 		//Turns out it was my code:(
 		try {
-			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseAnt");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseEnemyAnt");
 			Ant[] testAnts = testWorld.getAnts();
 			try{
-			brain = BrainParser.readBrainFrom("testBrains/senseAntTestBrain"); //the ant will turn left if it senses an enemy ant
+			brain = BrainParser.readBrainFrom("testBrains/senseEnemyAntTestBrain"); //the ant will turn left if it senses an enemy ant
 			}catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
@@ -94,13 +94,13 @@ public class AntTest {
 	}
 	
 	@Test
-	public void testSenseAntB(){
+	public void testSenseEnemyAntB(){
 		try {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
 			try{
-				brain = BrainParser.readBrainFrom("testBrains/senseAntTestBrain"); //the ant will turn left if it senses an enemy ant
+				brain = BrainParser.readBrainFrom("testBrains/senseEnemyAntTestBrain"); //the ant will turn left if it senses an enemy ant
 			} catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
@@ -113,6 +113,92 @@ public class AntTest {
 		}
 	}
 	
+	
+	@Test
+	public void testSenseFriendlyAntA(){
+		try {
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testSenseFriendlyAnt");
+			Ant[] testAnts = testWorld.getAnts();
+			try{
+			brain = BrainParser.readBrainFrom("testBrains/senseFriendlyAntTestBrain"); //the ant will turn left if it senses an enemy ant
+			}catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
+			Ant ant = testAnts[0];
+			ant.setBrain(brain);
+			
+			for(int i = 0; i < 2; i++){
+				ant.step();
+			}
+			
+			if (testAnts[0].getDirection() == 1)
+			{
+			fail("No Friendly ant detected");
+			}else{
+			assertEquals(5, testAnts[0].getDirection());//pass if turned left
+			}
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSenseFriendlyAntB(){
+		try {
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
+		
+			Ant[] testAnts = testWorld.getAnts();
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/senseFriendlyAntTestBrain"); //the ant will turn left if it senses an enemy ant
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
+			testWorld.setBrain(brain,0); //turns right if no ant present
+			testAnts[0].step();
+			testAnts[0].step();
+			assertEquals(1, testAnts[0].getDirection());
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSenseRocksA() {
+		try {
+			testWorld = WorldParser.readWorldFromCustom("testWorlds\\testSenseRock");
+		
+			Ant[] testAnts = testWorld.getAnts();
+			brain = BrainParser.readBrainFrom("testBrains\\senseRockTestBrain"); //the ant will turn left if it senses food
+			testWorld.setBrain(brain,0);
+			testAnts[0].step();
+			testAnts[0].step();
+			assertEquals(5, testAnts[0].getDirection());
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSenseRocksB() {
+		try {
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
+		
+			Ant[] testAnts = testWorld.getAnts();
+			brain = BrainParser.readBrainFrom("testBrains/senseRockTestBrain"); //the ant will turn left if it senses food
+			testWorld.setBrain(brain,0);
+			testAnts[0].step();
+			testAnts[0].step();
+			assertEquals(0, testAnts[0].getDirection());
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+
 	@Test
 	public void testLeftTurn(){
 		try {

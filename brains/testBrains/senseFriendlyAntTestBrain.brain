@@ -1,0 +1,3 @@
+Sense Ahead 1 2 Friend          ; state 0:  If Friendly ant is found, go to state one
+Turn Left 0                  ; state 1:  turn left
+turn right 0 				; state 2: turn right

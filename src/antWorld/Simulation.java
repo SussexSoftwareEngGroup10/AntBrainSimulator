@@ -24,10 +24,12 @@ public final class Simulation extends Thread {
 	private World world;
 	
 	/**
+	 * @param gameEngine
 	 * @param blackBrain
 	 * @param redBrain
 	 * @param semaphore
 	 * @param fitness
+	 * @param useFitness
 	 * @param rounds
 	 * @param world
 	 */
@@ -115,7 +117,7 @@ public final class Simulation extends Thread {
 			}
 		}
 		
-		//Let the main thread know that this simulation has completed
+		//Let the GameEngine thread know that this simulation has completed
 		if(this.semaphore != null){
 			this.semaphore.release();
 		}

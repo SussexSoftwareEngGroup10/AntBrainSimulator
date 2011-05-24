@@ -50,7 +50,7 @@ public class GameEngine {
 	private int count2 = 0;
 	
 	/**
-	 * @param world
+	 * 
 	 */
 	public GameEngine() {
 		Logger.log(new InformationLowEvent("New GameEngine object constructed"));

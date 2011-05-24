@@ -374,7 +374,7 @@ public class MainWindow {
 		public void actionPerformed(ActionEvent e) {
 			new SimulationRunner(gameEngine, blackBrain, redBrain, world, mainWindow)
 					.start();
-			
+			gameDisplay.switchState(DisplayStates.RUNNING);
 			
 			abortButton.setEnabled(true);
 			finishButton.setEnabled(true);

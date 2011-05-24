@@ -1,6 +1,5 @@
 package gUI;
 
-import java.util.ArrayList;
 import java.util.Random;
 import processing.core.*;
 import org.gicentre.utils.move.*; 
@@ -85,7 +84,6 @@ public class GameDisplay extends PApplet {
 	
 	private Random random = new Random();
 	private ZoomPan zoomer; //Class for zooming and panning
-	private ArrayList<int[]> rockShadesList = new ArrayList<int[]>();
 	
 	private PGraphics backgroundBuffer;
 	
@@ -145,13 +143,11 @@ public class GameDisplay extends PApplet {
 		
 		blackAnt = new PImage[3];
 		blackAnt[SMALL_IMAGE] = loadImage("resources/images/ants/black_ant_small.png");
-		blackAnt[MEDIUM_IMAGE] = loadImage("resources/images/ants/black_ant_medium.png");
 		blackAnt[LARGE_IMAGE] = loadImage("resources/images/ants/black_ant_large.png");
 		blackAntFood = loadImage("resources/images/ants/black_ant_food_large.png");
 		
 		redAnt = new PImage[3];
 		redAnt[SMALL_IMAGE] = loadImage("resources/images/ants/red_ant_small.png");
-		redAnt[MEDIUM_IMAGE] = loadImage("resources/images/ants/red_ant_medium.png");
 		redAnt[LARGE_IMAGE] = loadImage("resources/images/ants/red_ant_large.png");
 		redAntFood = loadImage("resources/images/ants/red_ant_food_large.png");
 		
@@ -381,7 +377,7 @@ public class GameDisplay extends PApplet {
 		Ant currentAnt;
 		try {
 			currentAnt = gridCells[row][col].getAnt();
-			if (imageScale == LARGE_IMAGE) {	
+			if (imageScale == LARGE_IMAGE || imageScale == MEDIUM_IMAGE) {	
 				if (currentAnt.getColour() == 0) { //If it's a black ant
 					if (currentAnt.hasFood()) {
 						pushMatrix();		
@@ -414,12 +410,6 @@ public class GameDisplay extends PApplet {
 						popMatrix();
 					}
 				}
-			} else if (imageScale == MEDIUM_IMAGE) {
-				if (currentAnt.getColour() == 0) { //If it's a black ant
-					drawImage(blackAnt[MEDIUM_IMAGE], row, col, 0);
-				} else {
-					drawImage(redAnt[MEDIUM_IMAGE], row, col, 0);
-				}
 			} else {
 				if (currentAnt.getColour() == 0) { //If it's a black ant
 					drawImage(blackAnt[SMALL_IMAGE], row, col, 0);
@@ -449,53 +439,6 @@ public class GameDisplay extends PApplet {
 		}
 		return direction;
 	}
-		/*
-		public void drawAnts2(int imageScale) {
-			Ant currentAnt;
-			for (int row = 0; row < numHexRow; row++) {
-				for (int col = 0; col < numHexCol; col++) {
-					try {
-						currentAnt = gridCells[row][col].getAnt();
-						if (imageScale == LARGE_IMAGE) {
-							pushMatrix();
-							//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
-							translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
-							//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
-							rotate(AntDirection.SOUTH_EAST.direction());
-							//Draw the image at an offset so that the origin is back to the top left of the tile.
-							if (currentAnt.getColour() == 0) { //If it's a black ant
-								if (currentAnt.hasFood()) {
-									image(blackAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT); //TODO: Decide on drawing method to use.
-								} else {
-									image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-								}
-							} else {
-								if (currentAnt.hasFood()) {
-									image(redAntFood, -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-								} else {
-									image(redAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-								}
-							}
-							popMatrix();
-						} else {
-							image(redAnt[imageScale], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-						}
-					} catch (NullPointerException nPE) {
-				}
-			}
-		}
-			/*
-		if (species == 0) {
-			//push and pop matrices so no further draws are affected by transforms below
-			pushMatrix();
-			//Translate the coords system so 0,0 is the centre of the tile where the ant should be drawn
-			translate((getColPixelCoords(col, row) + HEX_WIDTH / 2), (getRowPixelCoords(row) + HEX_VERT_HEIGHT));
-			//Rotate the coords system so that the and is drawn in the correct direction relative to the hexagon grid
-			rotate(AntDirection.SOUTH_EAST.direction());
-			//Draw the image at an offset so that the origin is back to the top left of the tile.
-			image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2), -HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
-			popMatrix();
-		}*/
 
 	private void drawImage(PImage image, int row, int col, int type) {
 		if (type == 0) {
@@ -530,7 +473,7 @@ public class GameDisplay extends PApplet {
 		if (numHexCol < 35) {
 			if (zoomer.getZoomScale() * (numHexCol / 2) > 16.5) {
 				currentImageScale = ImageDrawScales.LARGE;
-			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 4.3){
+			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 7){
 				currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
 				currentImageScale = ImageDrawScales.SMALL;
@@ -539,7 +482,7 @@ public class GameDisplay extends PApplet {
 		else if (numHexCol < 70) {
 			if (zoomer.getZoomScale() * (numHexCol / 2) > 22.2) {
 				currentImageScale = ImageDrawScales.LARGE;
-			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 7.6){
+			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 14.5){
 				currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
 				currentImageScale = ImageDrawScales.SMALL;
@@ -548,7 +491,7 @@ public class GameDisplay extends PApplet {
 		else if (numHexCol < 105) {
 			if (zoomer.getZoomScale() * (numHexCol / 2) > 32.6) {
 				currentImageScale = ImageDrawScales.LARGE;
-			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 13){
+			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 21){
 				currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
 				currentImageScale = ImageDrawScales.SMALL;
@@ -557,7 +500,7 @@ public class GameDisplay extends PApplet {
 		else {
 			if (zoomer.getZoomScale() * (numHexCol / 2) > 44.4) {
 				currentImageScale = ImageDrawScales.LARGE;
-			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 22.4){
+			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 28){
 				currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
 				currentImageScale = ImageDrawScales.SMALL;

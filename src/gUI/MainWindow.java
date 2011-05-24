@@ -22,7 +22,10 @@ import antWorld.WorldParser;
 public class MainWindow {
 	private static final int WINDOW_WIDTH = 750;
 	private static final int WINDOW_HEIGHT = 850;
-	//TODO sChange the window height!
+	//TODO Change the window height!
+	//TODO Add 1 px to the edge of some of the small images.
+	//TODO Contest mode
+	//TODO Abort button
 	
 	GameEngine gameEngine;
 	World world;

@@ -87,7 +87,7 @@ public class WorldTest {
 		try {
 			testWorld = World.getContestWorld(38457);
 		//TODO:TAKE OUT PRINnt
-		System.out.println(testWorld);
+		//System.out.println(testWorld);
 		} catch (ErrorEvent e) {
 			
 			fail(e.getMessage());

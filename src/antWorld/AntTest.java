@@ -212,7 +212,7 @@ public class AntTest {
 			}
 			testAnts[0].setBrain(brain);
 			testAnts[0].step();
-			assertEquals(testAnts[0].getDirection(), 5); //testing for 5, since 5 is after one left turn
+			assertEquals(5, testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
 			fail(e.getMessage());
 		}
@@ -329,5 +329,94 @@ public class AntTest {
 	@Test
 	public void testRemoveMark(){
 		fail("FINISH ME");
+	}
+	
+	@Test
+	public void testReturnColourA(){
+		try{
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/twoAnts");
+			
+			Ant[] testAnts = testWorld.getAnts();
+			
+			assertEquals(0, testAnts[0].getColour());
+			
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReturnColourB(){
+		try{
+			
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/twoAnts");
+			
+			Ant[] testAnts = testWorld.getAnts();
+			
+			assertEquals(1, testAnts[1].getColour());
+			
+			
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * BOUNDARY TESTS
+	 * Design testing
+	 */
+	
+	@Test
+	public void testContinualLeftTurning(){
+		try {
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
+		
+			Ant[] testAnts = testWorld.getAnts();
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
+			testAnts[0].setBrain(brain);
+			for (int i = 0; i < 10000000; i++){
+				testAnts[0].step();
+			}  /**
+			 * the ant takes 10,000,000 left turn steps, after this many
+			 *	the direction should be 4 as 10,000,000 / 6 
+			 * (steps divided by possible directions) = remainder of 4
+			 * so 10,000,00 left turns should result in a endind directions
+			 * of 2
+			 *
+			 */
+			assertEquals(2, testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testContinualRightTurning(){
+		try {
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
+		
+			Ant[] testAnts = testWorld.getAnts();
+			try{
+				brain = BrainParser.readBrainFrom("testBrains/turnRightOnly");
+			} catch (IllegalArgumentEvent e) {
+				fail(e.getMessage());
+			}
+			testAnts[0].setBrain(brain);
+			for (int i = 0; i < 10000000; i++){
+				testAnts[0].step();
+			} /**
+			 * the ant takes 10,000,000 right turn steps, after this many
+			 *	the direction should be 4 as 10,000,000 / 6 
+			 * (steps divided by possible directions) = remainder of 4
+			 * so 10,000,00 right turns should result in a inevitable direction of 4
+			 */
+			assertEquals(4, testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		}
 	}
 }

@@ -187,6 +187,10 @@ public class GameDisplay extends PApplet {
 		
 		size(PIXEL_WIDTH, PIXEL_HEIGHT);
 		
+		//Gives the garbage clearer time to free up
+		//memory before the background buffer is re
+		// calculated
+		backgroundBuffer = null; 
 		//Of screen buffer to where the background tiles of the ant world a are
 		//drawn.  This means that each time the buffer is drawn to the screen,
 		//rather than all the tiles which makes it much faster!
@@ -317,7 +321,9 @@ public class GameDisplay extends PApplet {
 	}
 	
 	private void drawImages(int imageScale) {
-		image(backgroundBuffer, 0, 0);
+		if (backgroundBuffer != null) {
+			image(backgroundBuffer, 0, 0);
+		}
 		if (currentGameState == DisplayStates.RUNNING) {
 			for (int row = 0; row < numHexRow; row++) {
 				for (int col = 0; col < numHexCol; col++) {

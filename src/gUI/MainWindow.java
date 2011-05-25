@@ -23,11 +23,9 @@ import antWorld.WorldParser;
 public class MainWindow {
 	private static final int WINDOW_WIDTH = 921;
 	private static final int WINDOW_HEIGHT = 738;
-	//TODO Change the window height!
 	//TODO Add 1 px to the edge of some of the small images.
 	//TODO Contest mode
 	//TODO Abort button
-	//TODO contest mode
 	
 	GameEngine gameEngine;
 	World world;
@@ -123,10 +121,10 @@ public class MainWindow {
 		genWorldBtn.addActionListener(new WorldGenListener(this));
 		
 		setupPanel.add(startGameBtn);
-		setupPanel.add(uploadRedBtn);
-		setupPanel.add(uploadWorldBtn);
 		setupPanel.add(contestBtn);
 		setupPanel.add(uploadBlackBtn);
+		setupPanel.add(uploadRedBtn);
+		setupPanel.add(uploadWorldBtn);
 		setupPanel.add(genWorldBtn);
 		
 		buttonsPanel.add(setupPanel, BorderLayout.NORTH);
@@ -178,19 +176,6 @@ public class MainWindow {
 	 * @param winner The winner of the game.
 	 */
 	public void notifyGameComplete(GameStats gameStats) {
-		//TODO: Untested, Should it really be parsed a string?
-		/*
-		//Reset upload buttons to original text without ticks
-		uploadRedBtn.setText("Upload Red Brain");
-		uploadBlackBtn.setText("Upload Black Brain");
-		uploadWorldBtn.setText("Upload World");
-		
-		//Flush stored file paths
-		redBrainPath = "";
-		blackBrainPath = "";
-		worldPath = "";
-		*/
-		
 		startGameBtn.setEnabled(true);
 		contestBtn.setEnabled(true);
 		uploadBlackBtn.setEnabled(true);
@@ -222,7 +207,6 @@ public class MainWindow {
 			world = World.getRegularWorld(0, rows, cols, rocks);
 			gameDisplay.updateWorld(world);
 		} catch (ErrorEvent e) {
-			// TODO Find out error to display
 			e.printStackTrace();
 		}
 	}
@@ -232,7 +216,6 @@ public class MainWindow {
 			world = World.getContestWorld(0);
 			gameDisplay.updateWorld(world);
 		} catch (ErrorEvent e) {
-			// TODO Find out error to display
 			e.printStackTrace();
 		}
 	}
@@ -309,7 +292,6 @@ public class MainWindow {
 								gameDisplay.updateWorld(world);
 							}
 						} catch (IOEvent iOE) {
-							// TODO Find out error to display
 						}
 					}
 				}	
@@ -348,7 +330,7 @@ public class MainWindow {
 			try {
 				numberOfPlayers = Integer.parseInt(stringNumberOfPlayers);
 				//Display contest window
-				contestWindow = new ContestWindow(numberOfPlayers);
+				contestWindow = new ContestWindow(numberOfPlayers, gameEngine);
 			} catch (NumberFormatException nFE){
 				Logger.log(new IllegalArgumentEvent(
 					"Input number of players not an integer!", nFE));

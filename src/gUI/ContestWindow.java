@@ -8,7 +8,13 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import antBrain.Brain;
+import antBrain.BrainParser;
+
+import engine.GameEngine;
+
 import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 /**
@@ -18,6 +24,7 @@ import utilities.Logger;
  * @author will
  */
 public class ContestWindow {
+	private GameEngine gameEngine;
 	private int numOfPlayers;
 	//Holds the file paths of the ant brains
 	private String[] brainPaths;
@@ -30,9 +37,11 @@ public class ContestWindow {
 	 * Constructs a new ContestWindow and draws it to the screen.
 	 * 
 	 * @param numOfPlayers The number of contest participants.
+	 * @param gameEngine The game engine to run the contest with.
 	 */
-	public ContestWindow(int numOfPlayers) {
+	public ContestWindow(int numOfPlayers, GameEngine gameEngine) {
 		this.numOfPlayers = numOfPlayers;
+		this.gameEngine = gameEngine;
 		brainPaths = new String[numOfPlayers];
 		drawGUI();
 	}
@@ -121,6 +130,10 @@ public class ContestWindow {
 		window.setVisible(true);
 	}
 	
+	public void notifyContestComplete() {
+		
+	}
+	
 	/**
 	 * Attached to the buttons which need to bring up a file browser window.
 	 * 
@@ -174,6 +187,34 @@ public class ContestWindow {
 				Logger.log(new IOEvent(
 						"Security violation with file!", sE));
 			}
+		}
+	}
+	
+	public class StartContestListener implements ActionListener {
+		ContestWindow contestWindow;
+		Container pane;
+		Brain[] brains;
+		
+		public StartContestListener(ContestWindow contestWindow, Container pane) {
+			this.contestWindow = contestWindow;
+			this.pane = pane;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			brains = new Brain[numOfPlayers];
+			for (int i = 0; i < numOfPlayers; i++) {
+				try {
+					brains[i] = BrainParser.readBrainFrom(brainPaths[i]);
+				} catch (IOEvent ioE) {
+					GUIErrorMsg.displayErrorMsg("An error occured while parsing an ant brain file!");
+				} catch (IllegalArgumentEvent iAE) {
+					GUIErrorMsg.displayErrorMsg("An error occured while parsing an ant brain file!");
+				}
+			}
+			new ContestRunner(gameEngine, brains, contestWindow).start();
+			JOptionPane.showMessageDialog(pane, "Eggs are not supposed to be green.");
+			//TODO finish
+			//Disable buttons?
 		}
 	}
 }

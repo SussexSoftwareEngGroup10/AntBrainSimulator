@@ -13,7 +13,7 @@ import antWorld.World;
  */
 public class GameDisplay extends PApplet {
 	private static final long serialVersionUID = 1L;
-	//TODO: CREATE FIELD FOR TOTAL HEX WIDTH AND HEIGHT!  THESE WILL BE USED THROUGHOUT!
+	
 	World world;
 	private Cell[][] gridCells;
 	
@@ -186,8 +186,10 @@ public class GameDisplay extends PApplet {
 		}
 		
 		size(PIXEL_WIDTH, PIXEL_HEIGHT);
-		//TODO: This runs out of heap space.  Need to find a way of using only 1 buffer.
-		//TODO: Maybe have only 2 scales.
+		
+		//Of screen buffer to where the background tiles of the ant world a are
+		//drawn.  This means that each time the buffer is drawn to the screen,
+		//rather than all the tiles which makes it much faster!
 		backgroundBuffer = createGraphics(totalHexWidth,
 				totalHexHeight, P2D);
 		
@@ -448,11 +450,10 @@ public class GameDisplay extends PApplet {
 		}
 	}
 	
-	//TODO: DIFFERENCE BETWEEN THESE AND NEWER DRAW IMAGE METHOD??? NEED TO TEST!
-		//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)
-		private int getRowPixelCoords(int row) {
-			return row * (HEX_HEIGHT - HEX_ANGLE_HEIGHT);
-		}
+	//Methods converts grid coords to pixel coords (gives the centre of the hexagon specified)
+	private int getRowPixelCoords(int row) {
+		return row * (HEX_HEIGHT - HEX_ANGLE_HEIGHT);
+	}
 
 	//Equivalent method for finding the column in pixels
 		private int getColPixelCoords(int col, int row) {

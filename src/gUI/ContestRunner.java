@@ -10,7 +10,7 @@ public class ContestRunner extends Thread {
 	
 	public ContestRunner(
 			GameEngine gameEngine, Brain[] brains, 
-			World world) {
+			ContestWindow contestWindow) {
 		this.gameEngine = gameEngine;
 		this.brains = brains;
 	}

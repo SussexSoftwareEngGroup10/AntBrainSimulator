@@ -1,6 +1,7 @@
 package gUI;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -20,12 +21,13 @@ import antWorld.WorldParser;
  * @author wjs25
  */
 public class MainWindow {
-	private static final int WINDOW_WIDTH = 750;
-	private static final int WINDOW_HEIGHT = 850;
+	private static final int WINDOW_WIDTH = 921;
+	private static final int WINDOW_HEIGHT = 738;
 	//TODO Change the window height!
 	//TODO Add 1 px to the edge of some of the small images.
 	//TODO Contest mode
 	//TODO Abort button
+	//TODO contest mode
 	
 	GameEngine gameEngine;
 	World world;
@@ -96,12 +98,43 @@ public class MainWindow {
 		gameDisplay = new GameDisplay(world);
 		gridDisplayPanel.add(gameDisplay);
 		gameDisplay.init();
-		pane.add(gridDisplayPanel, BorderLayout.NORTH);
+		pane.add(gridDisplayPanel, BorderLayout.WEST);
+		
+		JPanel buttonsPanel = new JPanel();
+		buttonsPanel.setLayout(new BorderLayout());
+		
+		//Set up JPanel at the bottom to display the control buttons
+		JPanel setupPanel = new JPanel();
+		setupPanel.setLayout(new GridLayout(6, 1, 5, 5));
+		setupPanel.setBorder(new EmptyBorder(200, 20, 30, 20) );
+		
+		startGameBtn = new JButton("Start Game");
+		startGameBtn.addActionListener(new StartGameListener(this));
+		startGameBtn.setEnabled(false);
+		contestBtn = new JButton("Contest Mode");
+		contestBtn.addActionListener(new ContestListener());
+		uploadRedBtn = new JButton("Upload Red Brain");
+		uploadRedBtn.addActionListener(new FileBrowseListener());
+		uploadBlackBtn = new JButton("Upload Black Brain");
+		uploadBlackBtn.addActionListener(new FileBrowseListener());
+		uploadWorldBtn = new JButton("Upload World");
+		uploadWorldBtn.addActionListener(new FileBrowseListener());
+		genWorldBtn = new JButton("Generate World");
+		genWorldBtn.addActionListener(new WorldGenListener(this));
+		
+		setupPanel.add(startGameBtn);
+		setupPanel.add(uploadRedBtn);
+		setupPanel.add(uploadWorldBtn);
+		setupPanel.add(contestBtn);
+		setupPanel.add(uploadBlackBtn);
+		setupPanel.add(genWorldBtn);
+		
+		buttonsPanel.add(setupPanel, BorderLayout.NORTH);
 		
 		//Set up JPanel to hold the speed adjustment sliders and game control
 		//buttons
 		JPanel gameControlsPanel = new JPanel();
-		gameControlsPanel.setLayout(new FlowLayout());
+		gameControlsPanel.setLayout(new BorderLayout());
 		
 		//Set up buttons to abort or finish the current game
 		JPanel controlButtonsPanel = new JPanel();
@@ -124,36 +157,12 @@ public class MainWindow {
 		speedAdjustmentSlider.setEnabled(false);
 		speedAdjustmentPanel.add(speedAdjustmentSlider);
 		
-		gameControlsPanel.add(controlButtonsPanel);
-		gameControlsPanel.add(speedAdjustmentPanel);
+		gameControlsPanel.add(controlButtonsPanel, BorderLayout.NORTH);
+		gameControlsPanel.add(speedAdjustmentPanel, BorderLayout.CENTER);
 		pane.add(gameControlsPanel, BorderLayout.CENTER);
 		
-		//Set up JPanel at the bottom to display the control buttons
-		JPanel controlPanel = new JPanel();
-		controlPanel.setLayout(new GridLayout(2, 3));
-		
-		startGameBtn = new JButton("Start Game");
-		startGameBtn.addActionListener(new StartGameListener(this));
-		startGameBtn.setEnabled(false);
-		contestBtn = new JButton("Contest Mode");
-		contestBtn.addActionListener(new ContestListener());
-		uploadRedBtn = new JButton("Upload Red Brain");
-		uploadRedBtn.addActionListener(new FileBrowseListener());
-		uploadBlackBtn = new JButton("Upload Black Brain");
-		uploadBlackBtn.addActionListener(new FileBrowseListener());
-		uploadWorldBtn = new JButton("Upload World");
-		uploadWorldBtn.addActionListener(new FileBrowseListener());
-		genWorldBtn = new JButton("Generate World");
-		genWorldBtn.addActionListener(new WorldGenListener(this));
-		
-		controlPanel.add(startGameBtn);
-		controlPanel.add(uploadRedBtn);
-		controlPanel.add(uploadWorldBtn);
-		controlPanel.add(contestBtn);
-		controlPanel.add(uploadBlackBtn);
-		controlPanel.add(genWorldBtn);
-		
-		pane.add(controlPanel, BorderLayout.SOUTH);
+		buttonsPanel.add(gameControlsPanel, BorderLayout.CENTER);
+		pane.add(buttonsPanel, BorderLayout.EAST);
 		
 		//Centre frame on screen and set visable
 		window.setLocationRelativeTo(null);

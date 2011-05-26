@@ -132,6 +132,9 @@ public class GameEngine {
 //	}
 	
 	public void contestSetup(Brain[] population) {
+		for(Brain brain : population){
+			brain.resetFitnesses();
+		}
 		fitnessContestSetup(population, null);
 	}
 	

@@ -68,11 +68,24 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		return t;
 	}
 	
+	public void setFitness(int fitness) {
+		this.fitnesses[0] = fitness;
+	}
+	
 	/**
 	 * @param fitness
 	 */
 	public void setFitness(int i, int fitness) {
 		this.fitnesses[i] = fitness;
+	}
+	
+	/**
+	 * 
+	 */
+	public void resetFitnesses() {
+		for(int i = 0; i < this.fitnesses.length; i++){
+			this.fitnesses[i] = 0;
+		}
 	}
 	
 	/**

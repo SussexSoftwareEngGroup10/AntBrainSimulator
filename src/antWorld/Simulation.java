@@ -99,21 +99,11 @@ public final class Simulation extends Thread {
 			this.blackBrain.setFitness(this.fitness, anthillFood[0] - anthillFood[1]);
 			this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
 		}else{
-			this.blackBrain.setFitness(1, 0);
-			this.redBrain.setFitness(1, 0);
-			this.blackBrain.setFitness(2, 0);
-			this.redBrain.setFitness(2, 0);
-			this.blackBrain.setFitness(3, 0);
-			this.redBrain.setFitness(3, 0);
+			//increment the fitness of the winner
 			if(anthillFood[0] > anthillFood[1]){
-				this.blackBrain.setFitness(0, this.blackBrain.getFitness() + 1);
-				this.redBrain.setFitness(0, 0);
+				this.blackBrain.setFitness(this.blackBrain.getFitness() + 1);
 			}else if(anthillFood[1] > anthillFood[0]){
-				this.blackBrain.setFitness(0, 0);
-				this.redBrain.setFitness(0, this.redBrain.getFitness() + 1);
-			}else{
-				this.blackBrain.setFitness(0, 0);
-				this.redBrain.setFitness(0, 0);
+				this.redBrain.setFitness(this.redBrain.getFitness() + 1);
 			}
 		}
 		

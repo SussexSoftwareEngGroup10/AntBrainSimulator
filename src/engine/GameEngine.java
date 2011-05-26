@@ -74,10 +74,14 @@ public class GameEngine {
 	 * @param x should be between 0 and 1000, but is not checked
 	 * @return a value between 1 and 1000 proportional to 2^x
 	 */
-	public static int logScale(int x){
+	public static int expScale(int x) {
 		return ((int) Math.pow(2, (x * log2(1000) / 1000)));
 	}
 	
+	/**
+	 * @param x
+	 * @return log base 2 of x
+	 */
 	public static double log2(int x) {
 		return Math.log(x)/Math.log(2);
 	}

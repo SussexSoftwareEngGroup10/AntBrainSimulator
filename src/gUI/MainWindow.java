@@ -387,7 +387,7 @@ public class MainWindow {
 		public void stateChanged(ChangeEvent e) {
 		    JSlider source = (JSlider)e.getSource();
 		    //Subtract from 1000, so that now, the lower the value, the faster.
-		    gameEngine.setSpeed(GameEngine.logScale(1001 - (int)source.getValue()));
+		    gameEngine.setSpeed(GameEngine.expScale(1001 - (int)source.getValue()));
 		}
 	}
 	

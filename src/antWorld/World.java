@@ -311,9 +311,11 @@ public class World implements Cloneable {
 							anthillAreaConsistency = false;
 							break anthillAreaLoop;
 						}
-					}else if(this.cells[r][c].getAnthill() != 0){
-						anthillAreaConsistency = false;
-						break anthillAreaLoop;
+					}else{
+						if(this.cells[r][c].getAnthill() != 0){
+							anthillAreaConsistency = false;
+							break anthillAreaLoop;
+						}
 					}
 				}
 			}
@@ -370,9 +372,11 @@ public class World implements Cloneable {
 							foodBlobAreaConsistency = false;
 							break foodBlobAreaConsistencyLoop;
 						}
-					}else if(this.cells[r][c].hasFood()){
-						foodBlobAreaConsistency = false;
-						break foodBlobAreaConsistencyLoop;
+					}else{
+						if(this.cells[r][c].hasFood()){
+							foodBlobAreaConsistency = false;
+							break foodBlobAreaConsistencyLoop;
+						}
 					}
 				}
 			}

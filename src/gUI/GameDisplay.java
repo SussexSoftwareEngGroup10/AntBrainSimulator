@@ -17,7 +17,8 @@ public class GameDisplay extends PApplet {
 	World world;
 	private Cell[][] gridCells;
 	
-	private static final int PIXEL_WIDTH = 700; //Used to store size of display in pixels
+	//Used to store size of display in pixels
+	private static final int PIXEL_WIDTH = 700; 
 	private static final int PIXEL_HEIGHT = 700;
 	
 	/*
@@ -187,9 +188,8 @@ public class GameDisplay extends PApplet {
 		
 		size(PIXEL_WIDTH, PIXEL_HEIGHT);
 		
-		//Gives the garbage clearer time to free up
-		//memory before the background buffer is re
-		// calculated
+		//Gives the garbage clearer time to free up memory before the 
+		//background buffer is recalculated
 		backgroundBuffer = null; 
 		//Of screen buffer to where the background tiles of the ant world a are
 		//drawn.  This means that each time the buffer is drawn to the screen,

@@ -7,8 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import utilities.*;
-import engine.GameEngine;
-import engine.GameStats;
+import engine.*;
 import antBrain.Brain;
 import antBrain.BrainParser;
 import antWorld.World;
@@ -23,9 +22,9 @@ import antWorld.WorldParser;
 public class MainWindow {
 	private static final int WINDOW_WIDTH = 921;
 	private static final int WINDOW_HEIGHT = 738;
-	//TODO Add 1 px to the edge of some of the small images.
 	//TODO Contest mode
-	//TODO Abort button
+	//TODO Known issue, heap space error when more than about 4 or 5 worlds
+	//	   are changed.
 	
 	GameEngine gameEngine;
 	World world;
@@ -137,20 +136,19 @@ public class MainWindow {
 		//Set up buttons to abort or finish the current game
 		JPanel controlButtonsPanel = new JPanel();
 		controlButtonsPanel.setLayout(new FlowLayout());
-		abortButton = new JButton("Abort");
-		abortButton.setEnabled(false);
 		finishButton = new JButton("Finish");
 		finishButton.addActionListener(new finishListener());
 		finishButton.setEnabled(false);
-		controlButtonsPanel.add(abortButton);
 		controlButtonsPanel.add(finishButton);
 		
 		//Set up JPanel to display the speed adjustment slider
 		JPanel speedAdjustmentPanel = new JPanel();
 		speedAdjustmentSlider = new JSlider(1, 1000, 500);
-		speedAdjustmentSlider.addChangeListener(new speedSliderChangeListener());
+		speedAdjustmentSlider.addChangeListener(
+				new speedSliderChangeListener());
 		//Add a border, and tick marks to slider
-		speedAdjustmentSlider.setBorder(BorderFactory.createTitledBorder("Speed Adjustment Slider"));
+		speedAdjustmentSlider.setBorder(
+				BorderFactory.createTitledBorder("Speed Adjustment Slider"));
 		speedAdjustmentSlider.setMajorTickSpacing(20);
 		speedAdjustmentSlider.setEnabled(false);
 		speedAdjustmentPanel.add(speedAdjustmentSlider);
@@ -194,30 +192,23 @@ public class MainWindow {
 		} else {
 			winningColour = "Red brain";
 		}
-		int choice = JOptionPane.showOptionDialog(null, winningColour + " wins!",
-				"And The Winner Is...", JOptionPane.YES_NO_OPTION, 
+		int choice = JOptionPane.showOptionDialog(null, winningColour 
+				+ " wins!", "And The Winner Is...", JOptionPane.YES_NO_OPTION, 
 				JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
 		if (choice == 0) {
 			new StatisticsWindow(gameStats);
 		}
 	}
 	
-	public void setupNewWorldStandardWorld(int rows, int cols, int rocks) {
-		try {
-			world = World.getRegularWorld(0, rows, cols, rocks);
-			gameDisplay.updateWorld(world);
-		} catch (ErrorEvent e) {
-			e.printStackTrace();
-		}
+	public void setupNewWorldStandardWorld(int rows, int cols, int rocks) 
+			throws ErrorEvent {
+		world = World.getRegularWorld(0, rows, cols, rocks);
+		gameDisplay.updateWorld(world);
 	}
 	
-	public void setupNewContestWorld() {
-		try {
+	public void setupNewContestWorld() throws ErrorEvent {
 			world = World.getContestWorld(0);
 			gameDisplay.updateWorld(world);
-		} catch (ErrorEvent e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
@@ -279,15 +270,19 @@ public class MainWindow {
 												clickedBtn.getText() + " ✔");
 								}
 								try{
-									blackBrain = BrainParser.readBrainFrom(path);
+									blackBrain = 
+										BrainParser.readBrainFrom(path);
 								} catch (IllegalArgumentEvent iae) {
 									Logger.log(iae);
 								}
 							} else {
 								try{
-									world = WorldParser.readWorldFromContest(path);
-								} catch (ErrorEvent err) {
-									Logger.log(err);
+									world = 
+										WorldParser.readWorldFromCustom(path);
+								} catch (IOEvent iOE) {
+									GUIErrorMsg.displayErrorMsg(
+											"Unable to parse file. " +
+											"World syntactically incorrect!");
 								}
 								gameDisplay.updateWorld(world);
 							}
@@ -366,7 +361,8 @@ public class MainWindow {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			new SimulationRunner(gameEngine, blackBrain, redBrain, world, mainWindow)
+			new SimulationRunner(
+					gameEngine, blackBrain, redBrain, world, mainWindow)
 					.start();
 			gameDisplay.switchState(DisplayStates.RUNNING);
 			
@@ -387,13 +383,8 @@ public class MainWindow {
 		public void stateChanged(ChangeEvent e) {
 		    JSlider source = (JSlider)e.getSource();
 		    //Subtract from 1000, so that now, the lower the value, the faster.
-		    gameEngine.setSpeed(GameEngine.expScale(1001 - (int)source.getValue()));
-		}
-	}
-	
-	public class abortListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			//TODO Implement.
+		    gameEngine.setSpeed(
+		    		GameEngine.expScale(1001 - (int)source.getValue()));
 		}
 	}
 	

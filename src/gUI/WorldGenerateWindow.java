@@ -2,6 +2,8 @@ package gUI;
 
 import javax.swing.*;
 
+import utilities.ErrorEvent;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -200,8 +202,13 @@ public class WorldGenerateWindow {
 		 */
 		public void actionPerformed(ActionEvent e) {
 			if (contestBtn.isSelected()) {
-				mainWindow.setupNewContestWorld();
-				window.setVisible(false);
+				try {
+					mainWindow.setupNewContestWorld();
+				} catch (ErrorEvent eE) {
+					GUIErrorMsg.displayErrorMsg(
+							"World is not a legal standard world!");
+					window.setVisible(false);
+				}
 			} else {
 				try {
 					//Try converting parameters to integers
@@ -214,10 +221,15 @@ public class WorldGenerateWindow {
 						GUIErrorMsg.displayErrorMsg("World dimensions must " +
 													"not exceed 140!");
 					} else {
-						mainWindow.setupNewWorldStandardWorld(rows, cols, rocks);
-						window.setVisible(false);
+						try {
+							mainWindow.setupNewWorldStandardWorld(
+									rows, cols, rocks);
+							window.setVisible(false);
+						} catch (ErrorEvent eE) {
+							GUIErrorMsg.displayErrorMsg(
+									"World is not a legal standard world!");
+						}
 					}
-					//TODO: Decide on a minimum number of rows, cols, and max rocks.
 				} catch (NumberFormatException nFE) {
 					GUIErrorMsg.displayErrorMsg(
 							"Parameters must be an integer!");

@@ -195,7 +195,8 @@ public class ContestWindow {
 		Container pane;
 		Brain[] brains;
 		
-		public StartContestListener(ContestWindow contestWindow, Container pane) {
+		public StartContestListener(
+				ContestWindow contestWindow, Container pane) {
 			this.contestWindow = contestWindow;
 			this.pane = pane;
 		}
@@ -206,13 +207,18 @@ public class ContestWindow {
 				try {
 					brains[i] = BrainParser.readBrainFrom(brainPaths[i]);
 				} catch (IOEvent ioE) {
-					GUIErrorMsg.displayErrorMsg("An error occured while parsing an ant brain file!");
+					GUIErrorMsg.displayErrorMsg(
+							"An error occured while parsing an ant brain " +
+							"file!");
 				} catch (IllegalArgumentEvent iAE) {
-					GUIErrorMsg.displayErrorMsg("An error occured while parsing an ant brain file!");
+					GUIErrorMsg.displayErrorMsg(
+							"An error occured while parsing an ant brain " +
+							"file!");
 				}
 			}
 			new ContestRunner(gameEngine, brains, contestWindow).start();
-			JOptionPane.showMessageDialog(pane, "Eggs are not supposed to be green.");
+			JOptionPane.showMessageDialog(
+					pane, "Running contest, please wait.");
 			//TODO finish
 			//Disable buttons?
 		}

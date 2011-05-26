@@ -67,7 +67,18 @@ public class GameEngine {
 	 * @param sleepDur
 	 */
 	public void setSpeed(int sleepDur) {
-		this.sleepDur = sleepDur;
+		//sleepDur = 0 to 100
+		//want to get it even spacing, so that each number is, say, double the last
+		//from: 1, 2, 3, 4,  5,  6,  7,   8,   9,  10 ... 100
+		//to:   1, 2, 4, 8, 16, 32, 64, 128, 256, 512 ... 1.2676506 × 10^30
+		//but these values are too high,
+		//need to normalise to values between 1 and 100
+		//need to normalize before pow, as int can't store large numbers
+		sleepDur /= 10;
+		int newSD = ((int) Math.pow(1.1, sleepDur));
+//		int newSD = ((int) Math.log(sleepDur));
+		System.out.println(sleepDur + ", " + newSD);
+		this.sleepDur = newSD;
 	}
 	
 	/*

@@ -293,12 +293,12 @@ public class World implements Cloneable {
 		//anthillAreaConsistency
 		int[][] anthillAreas = new int[this.rows][this.cols];
 		if(existingAnthills[0]){
-			//TODO allow gap, can only border clear
+			//TODO force gap, can only border clear
 			setHexBool(anthillLocs[0][0], anthillLocs[0][1], 
 				this.anthillSideLength, '+', anthillAreas, '+');
 		}
 		if(existingAnthills[1]){
-			//TODO allow gap, can only border clear
+			//TODO force gap, can only border clear
 			setHexBool(anthillLocs[1][0], anthillLocs[1][1], 
 				this.anthillSideLength, '-', anthillAreas, '-');
 		}
@@ -347,7 +347,6 @@ public class World implements Cloneable {
 								if(foodBlobSideLength == -1){
 									foodBlobSideLength = lenC - c;
 								}
-								//TODO allow gap, can only border food or clear
 								setRectBool(r, c, foodBlobSideLength, foodBlobSideLength,
 									foodBlobAreas, true);
 								break foodBlobSideLengthLoop;
@@ -360,6 +359,7 @@ public class World implements Cloneable {
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		
+		//TODO force gap, can only border food or clear
 		//foodBlobAreaConsistency
 		boolean foodBlobAreaConsistency = true;
 		foodBlobAreaConsistencyLoop:
@@ -446,7 +446,6 @@ public class World implements Cloneable {
 			}
 		}
 		
-		//TODO write better loops that fail nicely
 		if(this.anthills >= 1){
 			//Anthill1
 			failCount = -1;

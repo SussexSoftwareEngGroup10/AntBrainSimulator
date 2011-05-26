@@ -283,6 +283,10 @@ public class MainWindow {
 									GUIErrorMsg.displayErrorMsg(
 											"Unable to parse file. " +
 											"World syntactically incorrect!");
+								} catch (IllegalArgumentEvent iAE) {
+									GUIErrorMsg.displayErrorMsg(
+											"Unable to parse file. " +
+											"World syntactically incorrect!");
 								}
 								gameDisplay.updateWorld(world);
 							}

@@ -32,6 +32,8 @@ public class ContestWindow {
 	//Stores arrays of GUI components
 	private JButton[] browseBtns;
 	private JTextField[] brainPathLbls;
+	private JTextField[] winsFields;
+	private JTextField[] lossesFields;
 	
 	/**
 	 * Constructs a new ContestWindow and draws it to the screen.
@@ -79,8 +81,8 @@ public class ContestWindow {
 		JLabel[] nameLbls = new JLabel[numOfPlayers];
 		browseBtns = new JButton[numOfPlayers];
 		brainPathLbls = new JTextField[numOfPlayers];
-		JTextField[] winsLbls = new JTextField[numOfPlayers];
-		JTextField[] lossesLbls = new JTextField[numOfPlayers];
+		winsFields = new JTextField[numOfPlayers];
+		lossesFields = new JTextField[numOfPlayers];
 		
 		//Loop displays each row for uploading a brain for each player
 		for (int i = 0; i < numOfPlayers; i++) { 
@@ -88,16 +90,16 @@ public class ContestWindow {
 			browseBtns[i] = new JButton("Browse");
 			browseBtns[i].addActionListener(new brainBrowseListener());
 			brainPathLbls[i] = new JTextField();
-			winsLbls[i] = new JTextField("");
-			winsLbls[i].setEnabled(false);
-			lossesLbls[i] = new JTextField("");
-			lossesLbls[i].setEnabled(false);
+			winsFields[i] = new JTextField("");
+			winsFields[i].setEnabled(false);
+			lossesFields[i] = new JTextField("");
+			lossesFields[i].setEnabled(false);
 			
 			brainUploadPanel.add(nameLbls[i]);
 			brainUploadPanel.add(browseBtns[i]);
 			brainUploadPanel.add(brainPathLbls[i]);
-			brainUploadPanel.add(winsLbls[i]);
-			brainUploadPanel.add(lossesLbls[i]);
+			brainUploadPanel.add(winsFields[i]);
+			brainUploadPanel.add(lossesFields[i]);
 		}
 		
 		JScrollPane scrollPanel = new JScrollPane(brainUploadPanel);
@@ -116,6 +118,7 @@ public class ContestWindow {
 		JPanel goPanel = new JPanel();
 		goPanel.setLayout(new FlowLayout());
 		JButton goBtn = new JButton("Go");
+		goBtn.addActionListener(new StartContestListener(this, pane));
 		JButton cancelBtn = new JButton("Cancel");
 		cancelBtn.addActionListener(new CloseListener());
 		goPanel.add(goBtn);
@@ -130,8 +133,13 @@ public class ContestWindow {
 		window.setVisible(true);
 	}
 	
-	public void notifyContestComplete() {
-		
+	public void notifyContestComplete(Brain[] brains) {
+		for (int i = 0; i < brains.length; i++) {
+			String wins = Integer.toString(brains[i].getFitness());
+			String losses = Integer.toString(((brains.length - 1) * 2) - brains[i].getFitness());
+			winsFields[i].setText(wins);
+			lossesFields[i].setText(losses);
+		}
 	}
 	
 	/**
@@ -214,11 +222,11 @@ public class ContestWindow {
 					GUIErrorMsg.displayErrorMsg(
 							"An error occured while parsing an ant brain " +
 							"file!");
-				}
+				} //TODO don't run contest if this happens ^
 			}
-			new ContestRunner(gameEngine, brains, contestWindow).start();
 			JOptionPane.showMessageDialog(
 					pane, "Running contest, please wait.");
+			new ContestRunner(gameEngine, brains, contestWindow).start();
 			//TODO finish
 			//Disable buttons?
 		}

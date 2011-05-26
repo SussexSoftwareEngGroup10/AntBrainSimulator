@@ -6,21 +6,9 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import utilities.ErrorEvent;
-import utilities.Event;
-import utilities.IOEvent;
-import utilities.IllegalArgumentEvent;
-import utilities.InformationHighEvent;
-import utilities.InformationLowEvent;
-import utilities.Logger;
-
-import antBrain.Brain;
-import antBrain.BrainParser;
-import antBrain.GeneticAlgorithm;
-import antWorld.Ant;
-import antWorld.Simulation;
-import antWorld.World;
-import antWorld.WorldParser;
+import utilities.*;
+import antBrain.*;
+import antWorld.*;
 
 /**
  * Dummy DummyEngine class

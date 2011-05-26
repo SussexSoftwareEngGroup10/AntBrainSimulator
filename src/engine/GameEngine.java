@@ -75,7 +75,6 @@ public class GameEngine {
 	 * @return a value between 1 and 1000 proportional to 2^x
 	 */
 	public static int logScale(int x){
-		//change the scale so the result of the second line will be a value between 1 and 1000
 		return ((int) Math.pow(2, (x * log2(1000) / 1000)));
 	}
 	

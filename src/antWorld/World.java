@@ -54,6 +54,7 @@ public class World implements Cloneable {
 	 * 
 	 * @return a world which is fit to be used in a tournament
 	 * @throws ErrorEvent if objects specified don't fit in area specified
+	 * @throws IllegalArgumentEvent 
 	 */
 	public static World getContestWorld(int seed) throws ErrorEvent {
 		return getRegularWorld(seed, 140, 140, 13);
@@ -70,6 +71,7 @@ public class World implements Cloneable {
 	 * @param seed
 	 * @return
 	 * @throws ErrorEvent if objects specified don't fit in area specified
+	 * @throws IllegalArgumentEvent 
 	 */
 	public static World getRegularWorld(int seed, int rows, int cols, int rocks) throws ErrorEvent {
 		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0, 1);
@@ -92,52 +94,57 @@ public class World implements Cloneable {
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
 	 * @throws ErrorEvent if objects specified don't fit in area specified
+	 * @throws IllegalArgumentEvent 
 	 */
 	public World(int seed, int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
 		int foodBlobCellFoodCount, int antInitialDirection, int gap) throws ErrorEvent {
-		//Can either use a random or predefined seed
-		this.seed = seed;
-		this.ran = new Random(this.seed);
-		
-		this.rows = rows;
-		this.cols = cols;
-		this.rocks = rocks;
-		this.rockAreaConsistency = true;
-		this.borderRocks = true;
-		this.anthills = anthills;
-		this.anthillSideLength = anthillSideLength;
-		this.anthillAreaConsistency = true;
-		this.foodBlobCount = foodBlobCount;
-		this.foodBlobSideLength = foodBlobSideLength;
-		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
-		this.foodBlobAreaConsistency = true;
-		this.antInitialDirection = antInitialDirection;
-		this.gap = gap;
-		
-		//Initialise every cell to be clear
-		int r = 0;
-		int c = 0;
-		this.cells = new Cell[rows][cols];
-		for(r = 0; r < rows; r++){
-			this.cells[r] = new Cell[cols];
-			for(c = 0; c < cols; c++){
-				this.cells[r][c] = new Cell(r, c, '.');
+		try{
+			//Can either use a random or predefined seed
+			this.seed = seed;
+			this.ran = new Random(this.seed);
+
+			this.rows = rows;
+			this.cols = cols;
+			this.rocks = rocks;
+			this.rockAreaConsistency = true;
+			this.borderRocks = true;
+			this.anthills = anthills;
+			this.anthillSideLength = anthillSideLength;
+			this.anthillAreaConsistency = true;
+			this.foodBlobCount = foodBlobCount;
+			this.foodBlobSideLength = foodBlobSideLength;
+			this.foodBlobCellFoodCount = foodBlobCellFoodCount;
+			this.foodBlobAreaConsistency = true;
+			this.antInitialDirection = antInitialDirection;
+			this.gap = gap;
+
+			//Initialise every cell to be clear
+			int r = 0;
+			int c = 0;
+			this.cells = new Cell[rows][cols];
+			for(r = 0; r < rows; r++){
+				this.cells[r] = new Cell[cols];
+				for(c = 0; c < cols; c++){
+					this.cells[r][c] = new Cell(r, c, '.');
+				}
 			}
-		}
-		
-		Cell current;
-		//Setup markers in each cell
-		//Use this. for fields, local variables created above
-		for(r = 0; r < rows; r++){
-			for(c = 0; c < cols; c++){
-				current = this.cells[r][c];
-				current.setNeighbours(getNeighbours(current));
-				current.setupMarkers(this.anthills);
+
+			Cell current;
+			//Setup markers in each cell
+			//Use this. for fields, local variables created above
+			for(r = 0; r < rows; r++){
+				for(c = 0; c < cols; c++){
+					current = this.cells[r][c];
+					current.setNeighbours(getNeighbours(current));
+					current.setupMarkers(this.anthills);
+				}
 			}
+
+			createWorld();
+		} catch (IllegalArgumentEvent e) {
+			throw new ErrorEvent(e.getMessage(), e);
 		}
-		
-		createWorld();
 	}
 	
 	/**
@@ -145,8 +152,9 @@ public class World implements Cloneable {
 	 * Used by the WorldParser class
 	 * 
 	 * @param cellChars
+	 * @throws IllegalArgumentEvent 
 	 */
-	protected World(char[][] cellChars) {
+	protected World(char[][] cellChars) throws ErrorEvent {
 		//Random is not needed for world generation, but is for Ant.step()
 		this.seed = 0;
 		this.ran = new Random(this.seed);
@@ -162,7 +170,11 @@ public class World implements Cloneable {
 		for(r = 0; r < this.rows; r++){
 			this.cells[r] = new Cell[this.cols];
 			for(c = 0; c < this.cols; c++){
-				this.cells[r][c] = new Cell(r, c, cellChars[r][c]);
+				try {
+					this.cells[r][c] = new Cell(r, c, cellChars[r][c]);
+				} catch (IllegalArgumentEvent e) {
+					throw new ErrorEvent(e.getMessage(), e);
+				}
 			}
 		}
 		
@@ -215,6 +227,9 @@ public class World implements Cloneable {
 		
 		//borderRocks
 		this.borderRocks = checkBorder(0, '#');
+		if(!this.borderRocks){
+			throw new ErrorEvent("border not completely rocky");
+		}
 		
 		//anthills
 		boolean[] existingAnthills = {false, false};
@@ -265,48 +280,34 @@ public class World implements Cloneable {
 		this.anthillSideLength = lenC - c;
 		
 		//find anthill centres
-		//[0][0] 1 [0][ 0 ]	[EO/OE]
-		//[0][0] 2 [1][0/1]
-		//[0][0] 3 [2][ 1 ]
-		//[0][0] 4 [3][1/2]
-		//[0][0] 5 [4][ 2 ]
-		//[0][0] 6 [5][2/3]
-		//[0][0] 7 [6][ 3 ]
-		//[0][0] 8 [7][3/4]
-		//[0][0] 9 [8][ 4 ]
 		for(int anthill = 0; anthill < this.anthills; anthill++){
 			if(anthillLocs[anthill][0] % 2 == 0
 				&& (anthillLocs[anthill][0] % 2) + this.anthillSideLength - 1 == 1){
-				//EO
 				anthillLocs[anthill][1] += (this.anthillSideLength / 2) - 1;
 			}else{
-				//OO, OE, OO
 				anthillLocs[anthill][1] += this.anthillSideLength / 2;
 			}
 			anthillLocs[anthill][0] += this.anthillSideLength - 1;
 		}
 		
 		//anthillAreaConsistency
-		char ch = 0;
-		boolean[][] anthillAreas = new boolean[this.rows][this.cols];
-		for(int anthill = 0; anthill < this.anthills; anthill++){
-			if(anthill == 0){
-				ch = '+';
-			}else if(anthill == 1){
-				ch = '-';
-			}
-			if(existingAnthills[anthill]){
-				//TODO allow gap, can only border clear
-				setHexBool(anthillLocs[anthill][0], anthillLocs[anthill][1], 
-					this.anthillSideLength, ch, anthillAreas, true);
-			}
+		int[][] anthillAreas = new int[this.rows][this.cols];
+		if(existingAnthills[0]){
+			//TODO allow gap, can only border clear
+			setHexBool(anthillLocs[0][0], anthillLocs[0][1], 
+				this.anthillSideLength, '+', anthillAreas, '+');
+		}
+		if(existingAnthills[1]){
+			//TODO allow gap, can only border clear
+			setHexBool(anthillLocs[1][0], anthillLocs[1][1], 
+				this.anthillSideLength, '-', anthillAreas, '-');
 		}
 		boolean anthillAreaConsistency = true;
 		anthillAreaLoop:
 			for(r = 0; r < this.rows; r++){
 				for(c = 0; c < this.cols; c++){
-					if(anthillAreas[r][c]){
-						if(this.cells[r][c].getAnthill() == 0){
+					if(anthillAreas[r][c] != 0){
+						if(this.cells[r][c].getAnthill() != anthillAreas[r][c]){
 							anthillAreaConsistency = false;
 							break anthillAreaLoop;
 						}
@@ -429,8 +430,9 @@ public class World implements Cloneable {
 	 * leave room for all objects which are required to be placed.
 	 * Or the map is small, and all objects will not fit into the specified space
 	 * @throws ErrorEvent 
+	 * @throws IllegalArgumentEvent 
 	 */
-	private void createWorld() throws ErrorEvent {
+	private void createWorld() throws ErrorEvent, IllegalArgumentEvent {
 		int maxFails = 100;
 		int failCount = 0;
 		int ranRow;
@@ -507,8 +509,9 @@ public class World implements Cloneable {
 	
 	/**
 	 * @return set the first and last rows and columns as rocks
+	 * @throws IllegalArgumentEvent 
 	 */
-	private boolean setBorderRocks() {
+	private boolean setBorderRocks() throws IllegalArgumentEvent {
 		if(!checkBorder(this.gap, '.')){
 			return false;
 		}
@@ -548,8 +551,9 @@ public class World implements Cloneable {
 	 * @param col of centre hex
 	 * @param sideLength
 	 * @param c new value for every cell in the area
+	 * @throws IllegalArgumentEvent 
 	 */
-	private boolean setHex(int row, int col, int sideLength, char ch) {
+	private boolean setHex(int row, int col, int sideLength, char ch) throws IllegalArgumentEvent {
 		if(!checkHex(row, col, sideLength, this.gap, '.')){
 			return false;
 		}
@@ -564,8 +568,9 @@ public class World implements Cloneable {
 	 * @param recurseNum
 	 * @param recurseDepth
 	 * @param ch
+	 * @throws IllegalArgumentEvent 
 	 */
-	private void setHexRecurse(Cell cell, int recurseNum, int recurseDepth, char ch) {
+	private void setHexRecurse(Cell cell, int recurseNum, int recurseDepth, char ch) throws IllegalArgumentEvent {
 		//Need both checks to allow for hexes
 		//containing elements on first or last rows or columns
 		//and hexes with side length 0
@@ -600,8 +605,9 @@ public class World implements Cloneable {
 	 * @param width
 	 * @param ch
 	 * @return
+	 * @throws IllegalArgumentEvent 
 	 */
-	private boolean setRect(int row, int col, int height, int width, char ch) {
+	private boolean setRect(int row, int col, int height, int width, char ch) throws IllegalArgumentEvent {
 		if(!checkRect(row, col, height, width, '.')){
 			return false;
 		}
@@ -622,8 +628,9 @@ public class World implements Cloneable {
 	 * @param col
 	 * @param ch
 	 * @return
+	 * @throws IllegalArgumentEvent 
 	 */
-	private boolean setCell(int row, int col, char ch) {
+	private boolean setCell(int row, int col, char ch) throws IllegalArgumentEvent {
 		if(!checkCellClear(row, col)){
 			return false;
 		}
@@ -687,7 +694,7 @@ public class World implements Cloneable {
 	 * @return
 	 */
 	private void setHexBool(int r, int c, int anthillSideLength, char ch,
-		boolean[][] anthillAreas, boolean set){
+		int[][] anthillAreas, int set){
 		
 		setHexBoolRecurse(r, c, 0, anthillSideLength, ch, anthillAreas, set);
 	}
@@ -701,7 +708,7 @@ public class World implements Cloneable {
 	 * @param set
 	 */
 	private void setHexBoolRecurse(int r, int c, int recurseNum, int recurseDepth, char ch,
-		boolean[][] anthillAreas, boolean set) {
+		int[][] anthillAreas, int set) {
 		//Don't set if over required length
 		if(recurseNum > recurseDepth - 1){
 			return;
@@ -864,12 +871,26 @@ public class World implements Cloneable {
 		Cell cell;
 		Ant ant;
 		int colour = -1;
+		int black = 0;
+		int red = 0;
 		int r = 0;
 		int c = 0;
 		int uid = 0;
 		
-		this.ants = new Ant[this.anthills * hexArea(this.anthillSideLength)];
-		this.antsBySpecies = new Ant[this.anthills][hexArea(this.anthillSideLength)];
+		for(r = 0; r < this.rows; r++){
+			for(c = 0; c < this.cols; c++){
+				cell = this.cells[r][c];
+				
+				if(cell.toChar() == '+'){
+					black++;
+				}else if(cell.toChar() == '-'){
+					red++;
+				}
+			}
+		}
+		
+		this.ants = new Ant[black + red];
+		this.antsBySpecies = new Ant[this.anthills][black + red];
 		int[] nextAntIndex = {0, 0};
 		
 		//Put new ants onto each anthill cell, and into the right arrays

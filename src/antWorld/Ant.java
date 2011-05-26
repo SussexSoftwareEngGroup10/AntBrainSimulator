@@ -347,8 +347,11 @@ public final class Ant implements Comparable<Ant> {
 			this.state = this.brain.get(this.state.getSt2());
 		}
 		
-		//Check 3 neighbour ants for becoming surrounded
+		//Check this and 3 neighbour ants for becoming surrounded
 		//removed use of an array, more efficient
+		if(this.isSurrounded()){
+			this.kill();
+		}
 		this.neighbourAnt = antsMovedTo(this.direction - 1);
 		if(this.neighbourAnt != null){
 			if(this.neighbourAnt.isSurrounded()){

@@ -19,6 +19,7 @@ import antBrain.GeneticAlgorithm;
 import antWorld.Ant;
 import antWorld.Simulation;
 import antWorld.World;
+import antWorld.WorldParser;
 
 /**
  * Dummy DummyEngine class
@@ -345,66 +346,75 @@ public class GameEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//TODO combine GA and regular sim methods
-		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
-		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
-			//or at least allow a numOfStates parameter
-		//TODO remove polling in Ant.step()
-		//TODO use jar on linux server
-		//TODO javac -O, java -prof, JIT
-		//TODO separate parts of contest method so no memory error
-		
-		Logger.clearLogs();
-//		GeneticAlgorithm.clearSaves();
-		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
-		
-		//Evolve and get the best brain from the GeneticAlgorithm
-		//trainingBrain is a decent place to start from
-		//but more likely to get stuck there in the optima,
-		//blankBrain is a worse starting point, it would take longer to get to a good brain,
-		//but it encourages the brains generated to be more random
-		Brain trainingBrain = null;
-		try{
-			trainingBrain = BrainParser.readBrainFrom("better_example");
-		}catch(IOEvent e){
-			Logger.log(e);
-			return;
-		} catch (IllegalArgumentEvent e) {
-			Logger.log(e);
-			return;
-		}
-		GameEngine gameEngine = new GameEngine();
-		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-		
-//		//World(char[][]) test:
-//		World world = World.getContestWorld(0);
-//		WorldParser.writeWorldTo(world, "test");
-//		world = WorldParser.readWorldFrom("test");
-//		System.out.println(world);
-//		System.out.println(world.getAttributes());
-		
-		Brain gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
-			Integer.MAX_VALUE, 50, 50/10, 100);
-//		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
-		
-		//Compact and remove null and unreachable states
 		try {
-			trainingBrain.trim();
+			System.out.println(WorldParser.readWorldFromContest("seed_1 - Copy"));
+		} catch (IOEvent e) {
+			e.printStackTrace();
 		} catch (IllegalArgumentEvent e) {
-			Logger.log(e);
-		}
-		try {
-			gaBrain.trim();
-		} catch (IllegalArgumentEvent e) {
-			Logger.log(e);
-		}
-		
-		try {
-			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1));
+			e.printStackTrace();
 		} catch (ErrorEvent e) {
-			Logger.log(e);
+			e.printStackTrace();
 		}
-		
+//		//TODO combine GA and regular sim methods
+//		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
+//		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
+//			//or at least allow a numOfStates parameter
+//		//TODO remove polling in Ant.step()
+//		//TODO use jar on linux server
+//		//TODO javac -O, java -prof, JIT
+//		//TODO separate parts of contest method so no memory error
+//		
+//		Logger.clearLogs();
+////		GeneticAlgorithm.clearSaves();
+//		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
+//		
+//		//Evolve and get the best brain from the GeneticAlgorithm
+//		//trainingBrain is a decent place to start from
+//		//but more likely to get stuck there in the optima,
+//		//blankBrain is a worse starting point, it would take longer to get to a good brain,
+//		//but it encourages the brains generated to be more random
+//		Brain trainingBrain = null;
+//		try{
+//			trainingBrain = BrainParser.readBrainFrom("better_example");
+//		}catch(IOEvent e){
+//			Logger.log(e);
+//			return;
+//		} catch (IllegalArgumentEvent e) {
+//			Logger.log(e);
+//			return;
+//		}
+//		GameEngine gameEngine = new GameEngine();
+//		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+//		
+////		//World(char[][]) test:
+////		World world = World.getContestWorld(0);
+////		WorldParser.writeWorldTo(world, "test");
+////		world = WorldParser.readWorldFrom("test");
+////		System.out.println(world);
+////		System.out.println(world.getAttributes());
+//		
+//		Brain gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
+//			Integer.MAX_VALUE, 50, 50/10, 100);
+////		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
+//		
+//		//Compact and remove null and unreachable states
+//		try {
+//			trainingBrain.trim();
+//		} catch (IllegalArgumentEvent e) {
+//			Logger.log(e);
+//		}
+//		try {
+//			gaBrain.trim();
+//		} catch (IllegalArgumentEvent e) {
+//			Logger.log(e);
+//		}
+//		
+//		try {
+//			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1));
+//		} catch (ErrorEvent e) {
+//			Logger.log(e);
+//		}
+//		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 }

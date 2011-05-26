@@ -26,8 +26,9 @@ public class Cell implements Cloneable {
 	 * @param row
 	 * @param col
 	 * @param c
+	 * @throws IllegalArgumentEvent 
 	 */
-	public Cell(int row, int col, char c) {
+	public Cell(int row, int col, char c) throws IllegalArgumentEvent {
 		this.row = row;
 		this.col = col;
 		
@@ -44,8 +45,15 @@ public class Cell implements Cloneable {
 	
 	/**
 	 * @param c
+	 * @throws IllegalArgumentEvent 
 	 */
-	public void setCell(char c) {
+	public void setCell(char c) throws IllegalArgumentEvent {
+		if(c - 48 > 0 && c - 48 < 10){ //'0 to 9'
+			this.rocky = false;
+			this.food = c - 48;
+			this.anthill = 0;
+			return;
+		}
 		switch(c) {
 		case '#':
 			this.rocky = true;
@@ -67,19 +75,8 @@ public class Cell implements Cloneable {
 			this.food = 0;
 			this.anthill = 2;
 			break;
-		default: //'0 to 9'
-			//Only case left is int/food (or inappropriate char value)
-			try{
-				this.rocky = false;
-				//48 is the ascii code for '0', 58 for 9
-				//Need to convert from (48 to 58) to (0 to 9)
-				this.food = c - 48;
-				this.anthill = 0;
-			}catch(NumberFormatException e){
-				//Cell must contain food, otherwise switch would have broken at '.'
-				Logger.log(new IllegalArgumentEvent("Illegal food " +
-					"argument in Cell setCell", e));
-			}
+		default:
+			throw new IllegalArgumentEvent("Illegal argument in Cell setCell");
 		}
 	}
 	

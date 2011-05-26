@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import utilities.ErrorEvent;
 import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.Logger;
@@ -35,8 +36,9 @@ public final class WorldParser {
 	 * @return
 	 * @throws IOEvent if file not found...etc
 	 * @throws ErrorEvent if world is not a contest world
+	 * @throws IllegalArgumentEvent 
 	 */
-	public static World readWorldFromContest(String name) throws IOEvent, ErrorEvent {
+	public static World readWorldFromContest(String name) throws IOEvent, ErrorEvent, IllegalArgumentEvent {
 		String path = getPath(name);
 		World world = readWorldFrom(path);
 		if(!world.isContest()){
@@ -50,17 +52,19 @@ public final class WorldParser {
 	 * @param name
 	 * @return
 	 * @throws IOEvent if file not found...etc
+	 * @throws IllegalArgumentEvent 
 	 */
-	public static World readWorldFromCustom(String name) throws IOEvent {
+	public static World readWorldFromCustom(String name) throws IOEvent, IllegalArgumentEvent {
 		return readWorldFrom(getPath(name));
 	}
 	
 	/**
 	 * @param name
 	 * @return the world in the file "name" 
-	 * @throws IOEvent if file not found...etc
+	 * @throws IOEvent if file not found...etc...
+	 * @throws IllegalArgumentEvent 
 	 */
-	private static World readWorldFrom(String path) throws IOEvent {
+	private static World readWorldFrom(String path) throws IOEvent, IllegalArgumentEvent {
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
 		BufferedReader br;
 		File f = new File(path);
@@ -70,8 +74,6 @@ public final class WorldParser {
 		char[][] cellChars;
 		int rows;
 		int cols;
-		int r;
-		int c;
 		
 		try{
 			br = new BufferedReader(new FileReader(f));
@@ -89,31 +91,38 @@ public final class WorldParser {
 			cellChars = new char[rows][cols];
 			
 			//Read in the file 1 line at a time, not including first 2 lines
-			r = 0;
-			while(true){
+			for(int r = 0; r < rows; r++){
 				line = br.readLine();
 				
 				if(line == null){
-					//End of file has been reached
-					break;
+					//End of file has been reached early
+					throw new IOEvent("rows < number declared");
 				}
 				
-				//Remove indentation from some lines
+				//Remove indentation
 				line = line.trim();
 				
 				//Convert into an array of chars split by space
 				rowCellStrings = line.split(" ");
-				for(c = 0; c < cols; c++){
+				if(rowCellStrings.length < cols){
+					throw new IOEvent("cols in row " + r + " < number declared");
+				}
+				if(rowCellStrings.length > cols){
+					throw new IOEvent("cols in row " + r + " > number declared");
+				}
+				for(int c = 0; c < cols; c++){
 					cellChars[r][c] = rowCellStrings[c].charAt(0);
 				}
-				
-				r++;
 			}
-			
+			if(br.readLine() != null){
+				throw new IOEvent("rows > number declared");
+			}
 			br.close();
 			
 			world = new World(cellChars);
 		}catch(IOException e){
+			throw new IOEvent(e.getMessage(), e);
+		} catch (ErrorEvent e) {
 			throw new IOEvent(e.getMessage(), e);
 		}
 		Logger.log(new InformationHighEvent("Completed reading World object from \"" + path + "\""));

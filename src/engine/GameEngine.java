@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import utilities.ErrorEvent;
+import utilities.Event;
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.InformationHighEvent;
@@ -347,13 +348,10 @@ public class GameEngine {
 	 */
 	public static void main(String[] args) {
 		try {
-			System.out.println(WorldParser.readWorldFromContest("seed_1 - Copy"));
-		} catch (IOEvent e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentEvent e) {
-			e.printStackTrace();
-		} catch (ErrorEvent e) {
-			e.printStackTrace();
+			World world = WorldParser.readWorldFromContest("seed_1 - Copy");
+			System.out.println(world + "\n" + world.getAttributes());
+		} catch (Event e) {
+			System.out.println(e);
 		}
 //		//TODO combine GA and regular sim methods
 //		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine

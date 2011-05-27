@@ -34,6 +34,7 @@ public class ContestWindow {
 	private JTextField[] brainPathLbls;
 	private JTextField[] winsFields;
 	private JTextField[] lossesFields;
+	private JButton goBtn;
 	
 	/**
 	 * Constructs a new ContestWindow and draws it to the screen.
@@ -117,7 +118,7 @@ public class ContestWindow {
 		
 		JPanel goPanel = new JPanel();
 		goPanel.setLayout(new FlowLayout());
-		JButton goBtn = new JButton("Go");
+		goBtn = new JButton("Go");
 		goBtn.addActionListener(new StartContestListener(this, pane));
 		JButton cancelBtn = new JButton("Cancel");
 		cancelBtn.addActionListener(new CloseListener());
@@ -139,6 +140,11 @@ public class ContestWindow {
 			String losses = Integer.toString(((brains.length - 1) * 2) - brains[i].getFitness());
 			winsFields[i].setText(wins);
 			lossesFields[i].setText(losses);
+			
+			goBtn.setEnabled(true);
+			for (JButton browseBtn : browseBtns) {
+				browseBtn.setEnabled(true);
+			}
 		}
 	}
 	
@@ -211,24 +217,29 @@ public class ContestWindow {
 		
 		public void actionPerformed(ActionEvent e) {
 			brains = new Brain[numOfPlayers];
-			for (int i = 0; i < numOfPlayers; i++) {
-				try {
+			try {
+				for (int i = 0; i < numOfPlayers; i++) {
 					brains[i] = BrainParser.readBrainFrom(brainPaths[i]);
-				} catch (IOEvent ioE) {
-					GUIErrorMsg.displayErrorMsg(
-							"An error occured while parsing an ant brain " +
-							"file!");
-				} catch (IllegalArgumentEvent iAE) {
-					GUIErrorMsg.displayErrorMsg(
-							"An error occured while parsing an ant brain " +
-							"file!");
-				} //TODO don't run contest if this happens ^
+				}
+				new ContestRunner(gameEngine, brains, contestWindow).start();
+				//Need to disable run button on main window
+				goBtn.setEnabled(false);
+				
+				for (JButton browseBtn : browseBtns) {
+					browseBtn.setEnabled(false);
+				}
+				
+				JOptionPane.showMessageDialog(
+						pane, "Running contest, please wait.");
+			} catch (IOEvent ioE) {
+				GUIErrorMsg.displayErrorMsg(
+						"An error occured while parsing an ant brain " +
+						"file!");
+			} catch (IllegalArgumentEvent iAE) {
+				GUIErrorMsg.displayErrorMsg(
+						"An error occured while parsing an ant brain " +
+						"file!");
 			}
-			JOptionPane.showMessageDialog(
-					pane, "Running contest, please wait.");
-			new ContestRunner(gameEngine, brains, contestWindow).start();
-			//TODO finish
-			//Disable buttons?
 		}
 	}
 }

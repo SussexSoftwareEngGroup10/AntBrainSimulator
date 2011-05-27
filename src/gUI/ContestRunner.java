@@ -2,7 +2,6 @@ package gUI;
 
 import engine.GameEngine;
 import antBrain.Brain;
-import antWorld.World;
 
 public class ContestRunner extends Thread {
 	private GameEngine gameEngine;

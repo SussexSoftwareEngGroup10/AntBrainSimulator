@@ -328,8 +328,14 @@ public class MainWindow {
 			int numberOfPlayers;
 			try {
 				numberOfPlayers = Integer.parseInt(stringNumberOfPlayers);
-				//Display contest window
-				contestWindow = new ContestWindow(numberOfPlayers, gameEngine);
+				if (numberOfPlayers > 1) {
+					//Display contest window
+					contestWindow = 
+						new ContestWindow(numberOfPlayers, gameEngine);
+				} else {
+					GUIErrorMsg.displayErrorMsg(
+							"Can't run a contest with less that two brains!");
+				}
 			} catch (NumberFormatException nFE){
 				Logger.log(new IllegalArgumentEvent(
 					"Input number of players not an integer!", nFE));

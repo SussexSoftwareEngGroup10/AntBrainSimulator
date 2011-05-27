@@ -293,12 +293,10 @@ public class World implements Cloneable {
 		//anthillAreaConsistency
 		int[][] anthillAreas = new int[this.rows][this.cols];
 		if(existingAnthills[0]){
-			//TODO force gap, can only border clear
 			setHexBool(anthillLocs[0][0], anthillLocs[0][1], 
 				this.anthillSideLength, '+', anthillAreas, '+');
 		}
 		if(existingAnthills[1]){
-			//TODO force gap, can only border clear
 			setHexBool(anthillLocs[1][0], anthillLocs[1][1], 
 				this.anthillSideLength, '-', anthillAreas, '-');
 		}
@@ -361,7 +359,6 @@ public class World implements Cloneable {
 		this.foodBlobSideLength = foodBlobSideLength;
 		this.foodBlobCellFoodCount = foodBlobCellFoodCount;
 		
-		//TODO force gap, can only border food or clear
 		//foodBlobAreaConsistency
 		boolean foodBlobAreaConsistency = true;
 		foodBlobAreaConsistencyLoop:
@@ -382,11 +379,46 @@ public class World implements Cloneable {
 			}
 		this.foodBlobAreaConsistency = foodBlobAreaConsistency;
 		
-		//other
+		//check minimum gap
+		Cell neighbour;
+		int gap = 0;
+		gapCheck:
+			for(r = 1; r < this.rows - 1; r++){
+				for(c = 1; c < this.cols - 1; c++){
+					current = this.cells[r][c];
+					if(current.getAnthill() != 0){
+						anthillType = current.getAnthill();
+						for(int i = 0; i < 6; i++){
+							neighbour = current.getNeighbour(i);
+							if(neighbour.isRocky() ||
+								(neighbour.getAnthill() != 0
+								&& neighbour.getAnthill() != anthillType)){
+								gap = 0;
+								break gapCheck;
+							}
+						}
+					}else if(current.hasFood()){
+						for(int i = 0; i < 6; i++){
+							neighbour = current.getNeighbour(i);
+							if(neighbour.isRocky() || neighbour.getAnthill() != 0){
+								gap = 0;
+								break gapCheck;
+							}
+						}
+					}else if(current.isRocky()){
+						for(int i = 0; i < 6; i++){
+							neighbour = current.getNeighbour(i);
+							if(neighbour.isRocky() || neighbour.hasFood() || neighbour.getAnthill() != 0){
+								gap = 0;
+								break gapCheck;
+							}
+						}
+					}
+				}
+			}
+		this.gap = gap;
+		
 		this.antInitialDirection = 0;
-		//I can't think of an efficient way of checking for the minimum gap between
-		//objects in the World
-		this.gap = 1;
 		
 		for(r = 0; r < this.rows; r++){
 			for(c = 0; c < this.cols; c++){

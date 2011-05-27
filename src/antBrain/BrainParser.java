@@ -70,6 +70,11 @@ public class BrainParser {
 					break;
 				}
 				
+				line.trim();
+				if(line.equals("")){
+					continue;
+				}
+				
 				lineParts = line.split(";");
 				//Gives: "Sense Ahead 1 3 Food  "," state 0:
 				//[SEARCH] is there food in front of me?"

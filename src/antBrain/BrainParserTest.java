@@ -14,15 +14,13 @@ public class BrainParserTest {
 	public void testReadBrainFrom() {
 		Brain testBrain;
 		try {
-			testBrain = BrainParser.readBrainFrom("worlds\\example");
+			testBrain = BrainParser.readBrainFrom("example");
 			assertTrue(testBrain != null);
 			//validity checking in brain
 		} catch (IOEvent e) {
-			// TODO Auto-generated catch block
 			fail(e.getMessage());
 		} catch (IllegalArgumentEvent e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
 		
 	}

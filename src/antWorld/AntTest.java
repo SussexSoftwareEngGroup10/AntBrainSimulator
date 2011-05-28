@@ -90,6 +90,8 @@ public class AntTest {
 			}
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -109,6 +111,8 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(1, testAnts[0].getDirection());
 		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -139,6 +143,8 @@ public class AntTest {
 			}
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -158,6 +164,8 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(1, testAnts[0].getDirection());
 		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -215,6 +223,8 @@ public class AntTest {
 			assertEquals(5, testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -234,6 +244,8 @@ public class AntTest {
 			assertEquals(1,testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -252,6 +264,8 @@ public class AntTest {
 			testAnts[0].step();
 			assertEquals(4, testAnts[0].getCell().getRow());
 		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -273,6 +287,8 @@ public class AntTest {
 			}
 			assertTrue(testAnts[0].hasFood());
 		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -300,6 +316,8 @@ public class AntTest {
 			}
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 
@@ -323,6 +341,8 @@ public class AntTest {
 			assertEquals(5, testAnts[0].getDirection());
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -342,6 +362,8 @@ public class AntTest {
 			
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -357,6 +379,8 @@ public class AntTest {
 			
 			
 		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -391,6 +415,8 @@ public class AntTest {
 			assertEquals(2, testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -416,6 +442,8 @@ public class AntTest {
 			 */
 			assertEquals(4, testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}

@@ -1,9 +1,11 @@
 package antWorld;
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import utilities.ErrorEvent;
 import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 
@@ -29,6 +31,8 @@ public class WorldTest {
 		} catch (IOEvent e) {
 			
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -44,6 +48,8 @@ public class WorldTest {
 		} catch (IOEvent e) {
 			
 			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
 		}
 	}
 	
@@ -56,6 +62,8 @@ public class WorldTest {
 			//Works out length of hexagon with length
 		} catch (IOEvent e) {
 			
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -78,6 +86,8 @@ public class WorldTest {
 			testWorld = WorldParser.readWorldFromCustom("example");
 			fail("FINISH ME");
 		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}

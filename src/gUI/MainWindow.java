@@ -376,7 +376,7 @@ public class MainWindow {
 					.start();
 			gameDisplay.switchState(DisplayStates.RUNNING);
 			
-			abortButton.setEnabled(true);
+//			abortButton.setEnabled(true);TODO
 			finishButton.setEnabled(true);
 			speedAdjustmentSlider.setEnabled(true);
 			

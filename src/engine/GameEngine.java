@@ -335,12 +335,47 @@ public class GameEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		World world = null;
 		try {
-			World world = WorldParser.readWorldFromContest("seed_1 - Copy");
-			System.out.println(world + "\n" + world.getAttributes());
-		} catch (Event e) {
-			System.out.println(e);
+			world = World.getContestWorld(1);
+		} catch (ErrorEvent e) {
+			Logger.log(e);
+			return;
 		}
+		try {
+			world.setBrain(BrainParser.readBrainFrom("ga_result_trimmed"), 0);
+		} catch (IOEvent e) {
+			Logger.log(e);
+			return;
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
+			return;
+		}
+		try {
+			world.setBrain(BrainParser.readBrainFrom("example"), 1);
+		} catch (IOEvent e) {
+			Logger.log(e);
+			return;
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
+			return;
+		}
+		
+//		Ant[][] ants = world.getAntsBySpecies();
+//		for(int colour = 0; colour < 2; colour++){
+//			Ant[] species = ants[colour];
+//			for(int a = 0; a < species.length; a++){
+//				Ant ant = species[a];
+//				System.out.println("[" + colour + "][" + a + "] exists == " + ant != null);
+//			}
+//		}
+//		try {
+//			World world = WorldParser.readWorldFromContest("seed_1 - Copy");
+//			System.out.println(world + "\n" + world.getAttributes());
+//		} catch (Event e) {
+//			System.out.println(e);
+//		}
+//		
 //		//TODO combine GA and regular sim methods
 //		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
 //		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states

@@ -925,7 +925,9 @@ public class World implements Cloneable {
 		}
 		
 		this.ants = new Ant[black + red];
-		this.antsBySpecies = new Ant[this.anthills][black + red];
+		this.antsBySpecies = new Ant[this.anthills][];
+		this.antsBySpecies[0] = new Ant[black];
+		this.antsBySpecies[1] = new Ant[red];
 		int[] nextAntIndex = {0, 0};
 		
 		//Put new ants onto each anthill cell, and into the right arrays
@@ -1010,7 +1012,12 @@ public class World implements Cloneable {
 	 */
 	public void setBrain(Brain brain, int i) {
 		for(Ant ant : this.antsBySpecies[i]){
-			ant.setBrain(brain);
+			try{
+				ant.setBrain(brain);
+			}catch(NullPointerException e){
+				System.out.println(ant);
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -1046,6 +1053,15 @@ public class World implements Cloneable {
 	 */
 	public Ant[][] getAntsBySpecies() {
 		return this.antsBySpecies;
+	}
+	
+	/**
+	 * 
+	 */
+	protected void step() {
+		for(Ant ant : this.ants){
+			ant.step();
+		}
 	}
 	
 	/**

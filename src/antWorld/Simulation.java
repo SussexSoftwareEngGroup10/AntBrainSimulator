@@ -77,13 +77,9 @@ public final class Simulation extends Thread {
 		this.world.setBrain(this.blackBrain, 0);
 		this.world.setBrain(this.redBrain, 1);
 		
-		Ant[] ants = this.world.getAnts();
-		
 		//Run ants for all steps, serial / in this thread
 		for(int i = this.rounds; i > 0; i--){
-			for(Ant ant : ants){
-				ant.step();
-			}
+			this.world.step();
 			try{
 				Thread.sleep(this.gameEngine.getSleepDur());
 			}catch(InterruptedException e){

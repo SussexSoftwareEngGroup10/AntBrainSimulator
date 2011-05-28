@@ -103,13 +103,23 @@ public class WorldTest {
 	
 	@Test
 	public void testGenerateRandomWorld(){
-		try {
+		try{
 			testWorld = World.getContestWorld(38457);
 			assertTrue(testWorld.isContest());
-		} catch (ErrorEvent e) {
-			
+		}  catch (ErrorEvent e) {
 			fail(e.getMessage());
 		}
 	}
+	
+	@Test
+	public void testInvalidWorld(){
+		try {
+			testWorld = World.getRegularWorld(12, 100, 100, 15);
+			assertFalse(testWorld.isContest());
+		} catch (ErrorEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
 	
 }

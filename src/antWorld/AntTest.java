@@ -379,7 +379,6 @@ public class AntTest {
 			}
 			if(testAnts[0].getDirection() == 5){
 				for(int i = 0; i < 4; i++){
-					System.out.println(testAnts[0].getDirection());
 					testAnts[0].step();
 					
 				}

@@ -89,17 +89,25 @@ public final class Simulation extends Thread {
 		
 		//Store the result as the fitness of the red (GA) brain
 		int[] anthillFood = this.world.getFoodInAnthills();
+//		System.out.println(anthillFood[0]);
+//		System.out.println(anthillFood[1]);
+//		System.out.println(this.world);
 		
 		if(this.useFitness){
 			//Increment fitness by score
 			this.blackBrain.setFitness(this.fitness, anthillFood[0] - anthillFood[1]);
 			this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
 		}else{
-			//increment the fitness of the winner
+			//set wins, losses and draws
 			if(anthillFood[0] > anthillFood[1]){
-				this.blackBrain.setFitness(this.blackBrain.getFitness() + 1);
-			}else if(anthillFood[1] > anthillFood[0]){
-				this.redBrain.setFitness(this.redBrain.getFitness() + 1);
+				this.blackBrain.incrementWins();
+				this.redBrain.incrementLosses();
+			}else if(anthillFood[0] < anthillFood[1]){
+				this.blackBrain.incrementLosses();
+				this.redBrain.incrementWins();
+			}else{
+				this.blackBrain.incrementDraws();
+				this.redBrain.incrementDraws();
 			}
 		}
 		

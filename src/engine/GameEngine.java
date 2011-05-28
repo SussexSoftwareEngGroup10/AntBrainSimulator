@@ -1,5 +1,6 @@
 package engine;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -30,7 +31,7 @@ import antWorld.*;
 public class GameEngine {
 	private static final int rounds = 300000;
 	private static final int processors = Runtime.getRuntime().availableProcessors();
-	private int sleepDur = 500;
+	private int sleepDur = 0;
 	private Brain absoluteTrainingBrain;
 	private Brain relativeTrainingBrain;
 	private ThreadPoolExecutor threadPoolExecutor;
@@ -175,6 +176,7 @@ public class GameEngine {
 			this.relativeTrainingBrain = population[index];
 		}
 		this.count1 = 0;
+		this.count2 = 0;
 	}
 	
 	/**
@@ -182,7 +184,6 @@ public class GameEngine {
 	 * @param worlds
 	 */
 	public void fitnessContestStep(Stack<World> worlds) {
-		//Multi-Threaded
 		//Set fitness for every brain in population
 		Brain brain = this.population[this.count1];
 		
@@ -221,7 +222,6 @@ public class GameEngine {
 	 * automatically runs entire contest, cannot pass worlds
 	 */
 	public void contestStepAll() {
-		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
 		Stack<World> worlds = new Stack<World>();
 		World world;
@@ -247,34 +247,41 @@ public class GameEngine {
 	 * @param worlds
 	 */
 	public void contestStep(Stack<World> worlds) {
-		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
+		if(this.count1 >= this.population.length - 1 && this.count2 >= this.population.length - 1){
+			Logger.log(new ErrorEvent("all contest steps executed"));
+			return;
+		}
 		if(this.count1 == this.count2){
 			//increment count
-			this.count2++;
-			if(this.count2 >= this.population.length){
-				this.count1++;
-				this.count2 = 0;
+			this.count1++;
+			if(this.count1 >= this.population.length){
+				this.count2++;
+				this.count1 = 0;
 			}
 			return;
 		}
 		
 		this.semaphore.acquireUninterruptibly(2);
-		this.threadPoolExecutor.execute(
-			new Simulation(this, this.population[this.count1], this.population[this.count2],
-				this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
-		this.threadPoolExecutor.execute(
-			new Simulation(this, this.population[this.count2], this.population[this.count1],
-				this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
+		try{
+			this.threadPoolExecutor.execute(
+				new Simulation(this, this.population[this.count1], this.population[this.count2],
+					this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
+			this.threadPoolExecutor.execute(
+				new Simulation(this, this.population[this.count2], this.population[this.count1],
+					this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
+		}catch(EmptyStackException e){
+			throw new IllegalArgumentException(e.getMessage(), e);
+		}
 		//Await completion of Simulations
 		this.semaphore.acquireUninterruptibly(2);
 		this.semaphore.release(2);
-
+		
 		//increment count
-		this.count2++;
-		if(this.count2 >= this.population.length){
-			this.count1++;
-			this.count2 = 0;
+		this.count1++;
+		if(this.count1 >= this.population.length){
+			this.count2++;
+			this.count1 = 0;
 		}
 	}
 	
@@ -335,6 +342,7 @@ public class GameEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		/*
 		World world = null;
 		try {
 			world = World.getContestWorld(1);
@@ -360,35 +368,108 @@ public class GameEngine {
 			Logger.log(e);
 			return;
 		}
+		Ant[][] ants = world.getAntsBySpecies();
+		for(int colour = 0; colour < 2; colour++){
+			Ant[] species = ants[colour];
+			for(int a = 0; a < species.length; a++){
+				Ant ant = species[a];
+				System.out.println("[" + colour + "][" + a + "] exists == " + ant != null);
+			}
+		}
 		
-//		Ant[][] ants = world.getAntsBySpecies();
-//		for(int colour = 0; colour < 2; colour++){
-//			Ant[] species = ants[colour];
-//			for(int a = 0; a < species.length; a++){
-//				Ant ant = species[a];
-//				System.out.println("[" + colour + "][" + a + "] exists == " + ant != null);
-//			}
-//		}
+		try {
+			World world = WorldParser.readWorldFromContest("seed_1 - Copy");
+			System.out.println(world + "\n" + world.getAttributes());
+		} catch (Event e) {
+			System.out.println(e);
+		}
+		*/
+		
+		//TODO combine GA and regular sim methods
+		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
+		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
+			//or at least allow a numOfStates parameter
+		//TODO remove polling in Ant.step()
+		//TODO use jar on linux server
+		//TODO javac -O, java -prof, JIT
+		//TODO separate parts of contest method so no memory error
+		//TODO bloody world.clone still doesnt work
+		
+		Logger.clearLogs();
+//		GeneticAlgorithm.clearSaves();
+		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
+		
+		Brain ga = null;
+		Brain betterExample = null;
+		Brain example = null;
+		Brain moveAhead = null;
+		try {
+			ga = BrainParser.readBrainFrom("ga_result_trimmed");
+			betterExample = BrainParser.readBrainFrom("better_example");
+			moveAhead = BrainParser.readBrainFrom("example");
+			example = BrainParser.readBrainFrom("move_ahead");
+		} catch (Event e) {
+			Logger.log(e);
+			return;
+		}
+		Brain[] population = { ga, betterExample, example, moveAhead };
+		Stack<World> worlds = new Stack<World>();
+		
+		GameEngine gameEngine = new GameEngine();
+		gameEngine.contestSetup(population);
+		
+		for(int s = 0; s < population.length * population.length - 1; s++){
+			for(int w = 0; w < 2; w++){
+				try {
+					worlds.push(World.getContestWorld(1));
+				} catch (ErrorEvent e) {
+					Logger.log(e);
+				}
+			}
+			gameEngine.contestStep(worlds);
+			worlds.empty();
+		}
+		
+		for(int i = 0; i < population.length; i++){
+			System.out.println("brain: " + i + ", wins: " + population[i].getWins() + 
+				", losses: " + population[i].getLosses() + ", draws: " + population[i].getDraws());
+		}
+		
+//		Brain ga = null;
+//		Brain betterExample = null;
+//		Brain example = null;
+//		Brain moveAhead = null;
+//		World world = null;
 //		try {
-//			World world = WorldParser.readWorldFromContest("seed_1 - Copy");
-//			System.out.println(world + "\n" + world.getAttributes());
+//			ga = BrainParser.readBrainFrom("ga_result_trimmed");
+//			betterExample = BrainParser.readBrainFrom("better_example");
+//			moveAhead = BrainParser.readBrainFrom("example");
+//			example = BrainParser.readBrainFrom("move_ahead");
+//			world = WorldParser.readWorldFromContest("seed_1");
 //		} catch (Event e) {
-//			System.out.println(e);
+//			Logger.log(e);
+//			return;
+//		}
+//		Brain[] population = { ga, betterExample, example, moveAhead };
+//		Stack<World> worlds = new Stack<World>();
+//		
+//		GameEngine gameEngine = new GameEngine();
+//		gameEngine.contestSetup(population);
+//		
+//		for(int s = 0; s < population.length * population.length - 1; s++){
+//			for(int w = 0; w < 2; w++){
+//				worlds.push((World) world.clone());
+//			}
+//			gameEngine.contestStep(worlds);
+//			worlds.empty();
 //		}
 //		
-//		//TODO combine GA and regular sim methods
-//		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
-//		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
-//			//or at least allow a numOfStates parameter
-//		//TODO remove polling in Ant.step()
-//		//TODO use jar on linux server
-//		//TODO javac -O, java -prof, JIT
-//		//TODO separate parts of contest method so no memory error
-//		
-//		Logger.clearLogs();
-////		GeneticAlgorithm.clearSaves();
-//		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
-//		
+//		for(int i = 0; i < population.length; i++){
+//			System.out.println("brain: " + i + ", wins: " + population[i].getWins() + 
+//				", losses: " + population[i].getLosses() + ", draws: " + population[i].getDraws());
+//		}
+		
+		
 //		//Evolve and get the best brain from the GeneticAlgorithm
 //		//trainingBrain is a decent place to start from
 //		//but more likely to get stuck there in the optima,
@@ -435,7 +516,7 @@ public class GameEngine {
 //		} catch (ErrorEvent e) {
 //			Logger.log(e);
 //		}
-//		
+		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 }

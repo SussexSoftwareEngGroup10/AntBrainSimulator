@@ -24,6 +24,9 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	private static final int maxNumOfStates = 10000;
 	private static final int fitnessLength = 4;
 	private int[] fitnesses;
+	private int wins = 0;
+	private int losses = 0;
+	private int draws = 0;
 	
 	/**
 	 * @param initialCapacity
@@ -68,11 +71,15 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		return t;
 	}
 	
+	/**
+	 * @param fitness
+	 */
 	public void setFitness(int fitness) {
 		this.fitnesses[0] = fitness;
 	}
 	
 	/**
+	 * @param i
 	 * @param fitness
 	 */
 	public void setFitness(int i, int fitness) {
@@ -86,6 +93,51 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		for(int i = 0; i < this.fitnesses.length; i++){
 			this.fitnesses[i] = 0;
 		}
+		this.wins = 0;
+		this.losses = 0;
+		this.draws = 0;
+	}
+	
+	/**
+	 * 
+	 */
+	public void incrementWins() {
+		this.wins++;
+	}
+	
+	/**
+	 * 
+	 */
+	public void incrementLosses() {
+		this.losses++;
+	}
+	
+	/**
+	 * 
+	 */
+	public void incrementDraws() {
+		this.draws++;
+	}
+	
+	/**
+	 * @return
+	 */
+	public int getWins() {
+		return this.wins;
+	}
+	
+	/**
+	 * @return
+	 */
+	public int getLosses() {
+		return this.losses;
+	}
+	
+	/**
+	 * @return
+	 */
+	public int getDraws() {
+		return this.draws;
 	}
 	
 	/**

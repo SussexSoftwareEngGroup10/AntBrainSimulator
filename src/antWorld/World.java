@@ -294,12 +294,13 @@ public class World implements Cloneable {
 		int[][] anthillAreas = new int[this.rows][this.cols];
 		if(existingAnthills[0]){
 			setHexBool(anthillLocs[0][0], anthillLocs[0][1], 
-				this.anthillSideLength, '+', anthillAreas, '+');
+				this.anthillSideLength, '+', anthillAreas, 1);
 		}
 		if(existingAnthills[1]){
 			setHexBool(anthillLocs[1][0], anthillLocs[1][1], 
-				this.anthillSideLength, '-', anthillAreas, '-');
+				this.anthillSideLength, '-', anthillAreas, 2);
 		}
+		
 		boolean anthillAreaConsistency = true;
 		anthillAreaLoop:
 			for(r = 0; r < this.rows; r++){
@@ -381,7 +382,7 @@ public class World implements Cloneable {
 		
 		//check minimum gap
 		Cell neighbour;
-		int gap = 0;
+		int gap = 1;
 		gapCheck:
 			for(r = 1; r < this.rows - 1; r++){
 				for(c = 1; c < this.cols - 1; c++){
@@ -931,8 +932,8 @@ public class World implements Cloneable {
 		int[] nextAntIndex = {0, 0};
 		
 		//Put new ants onto each anthill cell, and into the right arrays
-		for(r = 0; r < this.rows; r++){
-			for(c = 0; c < this.cols; c++){
+		for(r = 1; r < this.rows - 1; r++){
+			for(c = 1; c < this.cols - 1; c++){
 				colour = -1;
 				cell = this.cells[r][c];
 				

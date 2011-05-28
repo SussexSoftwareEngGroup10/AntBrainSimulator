@@ -78,23 +78,22 @@ public abstract class Event extends Throwable {
 			s += " ";
 		}
 		
+		//Message/Description
+		s += "DESCRIPTION: ";
+		s += this.getMessage();
+		s += ";  ";
+		while(s.length() < 250){
+			s += " ";
+		}
+		
 		//Object throw location/cause
 		s += "SOURCE: ";
 		String cause = "";
 		StackTraceElement[] trace = this.getStackTrace();
-		int i = 0;
-		for(i = 0; i < trace.length; i++){
-			cause += trace[i];
+		for(StackTraceElement ste : trace){
+			cause += ste + ", ";
 		}
 		s += cause;
-		s += ";  ";
-		while(s.length() < 500){
-			s += " ";
-		}
-		
-		//Message/Description
-		s += "DESCRIPTION: ";
-		s += this.getMessage();
 		
 		return s;
 	}

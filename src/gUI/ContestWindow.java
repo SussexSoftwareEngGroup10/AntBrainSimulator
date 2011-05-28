@@ -4,18 +4,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import antBrain.Brain;
 import antBrain.BrainParser;
-
 import engine.GameEngine;
-
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
-import utilities.Logger;
 
 /**
  * This class displays the window that allows the user to set up a contest.
@@ -25,6 +20,7 @@ import utilities.Logger;
  */
 public class ContestWindow {
 	private GameEngine gameEngine;
+	private ContestRunner contestRunner;
 	private int numOfPlayers;
 	//Holds the file paths of the ant brains
 	private String[] brainPaths;
@@ -161,6 +157,7 @@ public class ContestWindow {
 		 * 
 		 * @param e The triggering event.
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			//Set the initial directory to the current project dir
@@ -198,8 +195,8 @@ public class ContestWindow {
 			}
 			//If the user does not have permission to access the file
 			catch (SecurityException sE) {
-				Logger.log(new IOEvent(
-						"Security violation with file!", sE));
+				GUIErrorMsg.displayErrorMsg(
+						"Security violation with file!");
 			}
 		}
 	}
@@ -215,13 +212,15 @@ public class ContestWindow {
 			this.pane = pane;
 		}
 		
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			brains = new Brain[numOfPlayers];
 			try {
 				for (int i = 0; i < numOfPlayers; i++) {
 					brains[i] = BrainParser.readBrainFrom(brainPaths[i]);
 				}
-				new ContestRunner(gameEngine, brains, contestWindow).start();
+				contestRunner = new ContestRunner(gameEngine, brains, contestWindow);
+				contestRunner.start();
 				//Need to disable run button on main window
 				goBtn.setEnabled(false);
 				
@@ -240,6 +239,18 @@ public class ContestWindow {
 						"An error occured while parsing an ant brain " +
 						"file!");
 			}
+		}
+	}
+	
+	public class CloseContestListener extends CloseListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//Get the button
+			JButton triggeringBtn = (JButton) e.getSource();
+			//Get the frame the button was on
+			JFrame window = (JFrame) SwingUtilities.getRoot(triggeringBtn);
+			contestRunner.interrupt();
+			window.setVisible(false);
 		}
 	}
 }

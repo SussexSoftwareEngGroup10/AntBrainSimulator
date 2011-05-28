@@ -1,6 +1,5 @@
 package antWorld;
 import antBrain.Brain;
-import antBrain.State;
 import antBrain.BrainParser;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -206,6 +205,28 @@ public class AntTest {
 		}
 	}
 	
+	@Test
+	public void testKill(){
+		try{
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testKill");
+			
+			Ant[] testAnts = testWorld.getAnts();
+			brain = BrainParser.readBrainFrom("move_ahead");
+			testWorld.setBrain(brain, 0);
+			testWorld.setBrain(brain, 1);
+			for(int i = 0; i < 15; i++){
+				for(int r = 0; r < testAnts.length; r++){
+					testAnts[r].step();
+				}
+			}
+			assertFalse("Ant not dead", testAnts[3].isAlive());
+		}catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
 
 	@Test
 	public void testLeftTurn(){
@@ -328,11 +349,8 @@ public class AntTest {
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
 		
 			Ant[] testAnts = testWorld.getAnts();
-			try{
-				brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
-			} catch (IllegalArgumentEvent e) {
-				fail(e.getMessage());
-			}
+			brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
+
 			//this brain places a marker, moves, and turns around to sense, if detected, the ant turns left
 			testWorld.setBrain(brain, 0);
 			for (int i = 0; i < 3; i++){
@@ -348,7 +366,32 @@ public class AntTest {
 	
 	@Test
 	public void testRemoveMark(){
-		fail("FINISH ME");
+		try {
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/blank");
+		
+			Ant[] testAnts = testWorld.getAnts();
+		
+			brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndRemove"); 
+			//this brain places a marker, moves, and turns around to sense, if detected, the ant turns left
+			testWorld.setBrain(brain, 0);
+			for (int i = 0; i < 3; i++){
+				testAnts[0].step();
+			}
+			if(testAnts[0].getDirection() == 5){
+				for(int i = 0; i < 4; i++){
+					System.out.println(testAnts[0].getDirection());
+					testAnts[0].step();
+					
+				}
+				assertEquals("mark not removed",1, testAnts[0].getDirection());
+			}else{
+				fail("mark not set");
+			}
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
 	}
 	
 	@Test
@@ -379,6 +422,39 @@ public class AntTest {
 			
 			
 		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testGetCell(){
+		try{
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testCell");
+			
+			Ant[] testAnts = testWorld.getAnts();
+			assertEquals("wrong cell returned","11", testAnts[0].getCell().getRow() + "" + testAnts[0].getCell().getCol());
+			assertEquals("wrong cell returned","88", testAnts[1].getCell().getRow() + "" + testAnts[1].getCell().getCol());
+
+		}catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSetCell(){
+		try{
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testCell");
+			
+			Ant[] testAnts = testWorld.getAnts();
+			
+			Cell testCell = new Cell(5,5,'+');
+			testAnts[0].setCell(testCell);
+			assertEquals("cell not set/read properly", testCell, testAnts[0].getCell());
+		}catch (IOEvent e) {
 			fail(e.getMessage());
 		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());

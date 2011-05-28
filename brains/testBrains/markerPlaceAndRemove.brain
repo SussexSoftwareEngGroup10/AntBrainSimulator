@@ -1,0 +1,7 @@
+mark 0 1				 ; state 0: Place marker
+sense here 2 1 marker 0                  ; state 1: sense for marker
+turn left 3			         ; state 2: turn left to signify mark placed and sensed
+turn right 4				; state 3: resetting position for unmarking
+unmark 0 5					; state 4: unmark
+sense here 2 6 marker 0		; state 5: turn left if marker, right if no marker
+turn right 0				; state 6:

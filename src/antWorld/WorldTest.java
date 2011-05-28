@@ -11,6 +11,8 @@ import utilities.Logger;
 
 public class WorldTest {
 
+	
+	//world.getContestWorld(0) MAKES A NICE SHINY WORLD
 	public World testWorld;
 	
 	public WorldTest(){
@@ -27,7 +29,7 @@ public class WorldTest {
 		try {
 			testWorld = WorldParser.readWorldFromCustom("example");
 		
-			assertTrue("ADD MORE TESTS",testWorld != null);
+			assertTrue("world not created/stored",testWorld != null);
 		} catch (IOEvent e) {
 			
 			fail(e.getMessage());
@@ -43,7 +45,7 @@ public class WorldTest {
 			testWorld = WorldParser.readWorldFromCustom("example");
 		
 			Cell[][] worldSize = testWorld.getCells();
-			assertEquals("ADD MORE TESTS",10, worldSize.length);
+			assertEquals("retrned wrong size",10, worldSize.length);
 			//the example world is size 10, that is what should be returned
 		} catch (IOEvent e) {
 			
@@ -75,7 +77,6 @@ public class WorldTest {
 				Ant[] testAnts = testWorld.getAnts();
 				assertEquals(254, testAnts.length);
 				} catch (ErrorEvent e) {
-		
 					fail(e.getMessage());
 				}
 	}
@@ -83,8 +84,16 @@ public class WorldTest {
 	@Test
 	public void testReturnFood(){
 		try {
-			testWorld = WorldParser.readWorldFromCustom("example");
-			fail("FINISH ME");
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/testFood");
+			// this world has a total of 50 foods in
+			Cell[][] worldCells = testWorld.getCells();
+			int foodCount = 0;
+			for(int x = 0; x < 9; x++){
+				for(int y = 0; y < 9; y++){
+					foodCount += worldCells[x][y].foodCount();
+				}
+			}
+			assertEquals(50, foodCount);
 		} catch (IOEvent e) {
 			fail(e.getMessage());
 		} catch (IllegalArgumentEvent e) {
@@ -96,8 +105,7 @@ public class WorldTest {
 	public void testGenerateRandomWorld(){
 		try {
 			testWorld = World.getContestWorld(38457);
-		//TODO:TAKE OUT PRINnt
-		//System.out.println(testWorld);
+			assertTrue(testWorld.isContest());
 		} catch (ErrorEvent e) {
 			
 			fail(e.getMessage());

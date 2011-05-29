@@ -1,5 +1,6 @@
 package gUI;
 
+import utilities.IllegalArgumentEvent;
 import engine.GameEngine;
 import antBrain.Brain;
 
@@ -20,7 +21,11 @@ public class ContestRunner extends Thread {
 	 * Runs a standard simulation.
 	 */
 	public void run(){
-		gameEngine.contestSetup(brains);
+		try {
+			gameEngine.contestSetup(brains);
+		} catch (IllegalArgumentEvent iAE) {
+			GUIErrorMsg.displayErrorMsg("A supplied brain is not valid!");
+		}
 		gameEngine.contestStepAll();
 		contestWindow.notifyContestComplete(brains);
 	}

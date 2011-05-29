@@ -132,15 +132,14 @@ public class ContestWindow {
 	
 	public void notifyContestComplete(Brain[] brains) {
 		for (int i = 0; i < brains.length; i++) {
-			String wins = Integer.toString(brains[i].getFitness());
-			String losses = Integer.toString(((brains.length - 1) * 2) - brains[i].getFitness());
+			String wins = Integer.toString(brains[i].getWins());
+			String losses = Integer.toString(brains[i].getLosses());
 			winsFields[i].setText(wins);
 			lossesFields[i].setText(losses);
-			
-			goBtn.setEnabled(true);
-			for (JButton browseBtn : browseBtns) {
-				browseBtn.setEnabled(true);
 			}
+		goBtn.setEnabled(true);
+		for (JButton browseBtn : browseBtns) {
+			browseBtn.setEnabled(true);
 		}
 	}
 	

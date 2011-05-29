@@ -25,6 +25,8 @@ public class MainWindow {
 	//TODO Contest mode
 	//TODO Known issue, heap space error when more than about 4 or 5 worlds
 	//	   are changed.
+	//TODO Progress bar for contest mode?
+	//TODO disable main display buttons when contest running?
 	
 	GameEngine gameEngine;
 	World world;

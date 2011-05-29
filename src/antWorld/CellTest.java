@@ -1,5 +1,8 @@
 package antWorld;
 import static org.junit.Assert.*;
+
+import java.util.Random;
+
 import org.junit.Test;
 
 import utilities.IllegalArgumentEvent;
@@ -110,6 +113,104 @@ public class CellTest {
 			neighbors[1] = new Cell(2,1,'+');
 			testCell.setNeighbours(neighbors);
 			assertArrayEquals(neighbors, testCell.getNeighbours());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSetGetCoordinates(){
+		try{
+			Random rand = new Random();
+			int x = rand.nextInt(100);
+			int y = rand.nextInt(100);
+			Cell testCell = new Cell(x,y,'.');
+			assertEquals("X-COOrdinate incorrect",x,testCell.getRow());
+			assertEquals("Y-COOrdinate incorrect",y,testCell.getCol());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testHasAnt(){
+		try{
+			Cell testCell = new Cell(8,8,'.');
+			engine.Random rand = new engine.Random(500);
+			Ant testAnt = new Ant(177,rand,0,0,testCell);
+			testCell.setAnt(testAnt);
+			assertTrue(testCell.hasAnt());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSetGetAnt(){
+		try{
+			Cell testCell = new Cell(8,8,'.');
+			engine.Random rand = new engine.Random(500);
+			Ant testAnt = new Ant(177,rand,0,0,testCell);
+			testCell.setAnt(testAnt);
+			assertEquals(testAnt,testCell.getAnt());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testHasFood(){
+		try{
+			for(int i = 49; i < 58; i++){
+				Cell testCell = new Cell(4,4,(char)(i));
+				assertTrue(testCell.hasFood());
+			}
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSetGetFood(){
+		try{
+			Random rand = new Random();
+			char food = (char) (rand.nextInt(8) + 49);
+			//random from 8 and +49 because removing 0 from the equation
+			Cell testCell = new Cell(4,4,food);
+			assertEquals(food - 48,testCell.foodCount());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testPickupFood(){
+		try{
+			Random rand = new Random();
+			char food = (char) (rand.nextInt(8) + 49);
+			//random from 8 and +49 because removing 0 from the equation
+			Cell testCell = new Cell(4,4,food);
+			testCell.pickupFood();
+			assertEquals(food - 49,testCell.foodCount());
+			// - 49 because translating from char and removing one!
+			
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testDropFood(){
+		try{
+			Cell testCell = new Cell(4,4,'.');
+			for(int droppedFood = 0; droppedFood <= 9; droppedFood++){
+				testCell.dropFood(droppedFood);
+				assertEquals(droppedFood,testCell.foodCount());
+				for(int i = 0; i < droppedFood; i++){
+					testCell.pickupFood();
+				}
+			}
+		
 		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}

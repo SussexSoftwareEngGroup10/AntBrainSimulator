@@ -37,8 +37,7 @@ public class GameEngine {
 	private ThreadPoolExecutor threadPoolExecutor;
 	private Semaphore semaphore;
 	private Brain[] population;
-	private int count1 = 0;
-	private int count2 = 0;
+	private int stepCount = 0;
 	
 	/**
 	 * 
@@ -138,7 +137,8 @@ public class GameEngine {
 //		evaluateFitnessContest(false, contestBrains, null);
 //	}
 	
-	public void contestSetup(Brain[] population) {
+	public void contestSetup(Brain[] population) throws IllegalArgumentEvent {
+		if(population.length < 2) throw new IllegalArgumentEvent("Insufficient brains");
 		for(Brain brain : population){
 			brain.resetFitnesses();
 		}
@@ -158,8 +158,8 @@ public class GameEngine {
 		
 		this.threadPoolExecutor = new ThreadPoolExecutor(
 			GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
-			new ArrayBlockingQueue<Runnable>(2));
-		this.semaphore = new Semaphore(2, true);
+			new ArrayBlockingQueue<Runnable>(population.length - 1));
+		this.semaphore = new Semaphore(population.length - 1, true);
 		
 		//Find Brain in elite with highest fitness
 		int index = population.length - 1;
@@ -175,8 +175,7 @@ public class GameEngine {
 		}else{
 			this.relativeTrainingBrain = population[index];
 		}
-		this.count1 = 0;
-		this.count2 = 0;
+		this.stepCount = 0;
 	}
 	
 	/**
@@ -185,7 +184,7 @@ public class GameEngine {
 	 */
 	public void fitnessContestStep(Stack<World> worlds) {
 		//Set fitness for every brain in population
-		Brain brain = this.population[this.count1];
+		Brain brain = this.population[this.stepCount];
 		
 		if(brain.getFitness() == 0){
 			//Brain is not in elite
@@ -215,74 +214,61 @@ public class GameEngine {
 		this.semaphore.release(2);
 		
 		//increment count
-		this.count1++;
+		this.stepCount++;
 	}
 	
 	/**
-	 * automatically runs entire contest, cannot pass worlds
+	 * automatically runs entire contest, cannot pass a world
 	 */
 	public void contestStepAll() {
-		//Get popLen permits, restore as runs complete
-		Stack<World> worlds = new Stack<World>();
-		World world;
 		try {
-			world = World.getContestWorld(1);
+			contestStepAll(World.getContestWorld(1));
 		} catch (ErrorEvent e) {
 			Logger.log(e);
-			return;
-		}
-		for(int j = this.population.length - 1; j >= 0; j--){
-			for(int k = this.population.length - 1; k >= 0; k--){
-				while(worlds.size() < 2){
-					worlds.push((World) world.clone());
-				}
-				
-				contestStep(worlds);
-			}
 		}
 	}
 	
 	/**
-	 * worlds.size() == 2 (call method pop.len^2 times)
+	 * automatically runs entire contest, can only pass a single template world
+	 * @param world
+	 */
+	public void contestStepAll(World world) {
+		//Get popLen permits, restore as runs complete
+		Stack<World> worlds = new Stack<World>();
+		for(int j = this.population.length; j >= 0; j--){
+			while(worlds.size() < this.population.length - 1) worlds.push((World) world.clone());
+			contestStep(worlds);
+		}
+	}
+	
+	/**
+	 * worlds.size() == pop.len - 1 (call method pop.len times)
 	 * @param worlds
 	 */
 	public void contestStep(Stack<World> worlds) {
 		//Get popLen permits, restore as runs complete
-		if(this.count1 >= this.population.length - 1 && this.count2 >= this.population.length - 1){
-			Logger.log(new ErrorEvent("all contest steps executed"));
-			return;
-		}
-		if(this.count1 == this.count2){
-			//increment count
-			this.count1++;
-			if(this.count1 >= this.population.length){
-				this.count2++;
-				this.count1 = 0;
-			}
+		if(this.stepCount >= this.population.length){
+			Logger.log(new WarningEvent("all contest steps executed"));
 			return;
 		}
 		
-		this.semaphore.acquireUninterruptibly(2);
+		this.semaphore.acquireUninterruptibly(this.population.length - 1);
 		try{
-			this.threadPoolExecutor.execute(
-				new Simulation(this, this.population[this.count1], this.population[this.count2],
+			for(int i = 0; i < this.population.length; i++){
+				if(i == this.stepCount) continue;
+				this.threadPoolExecutor.execute(
+					new Simulation(this, this.population[this.stepCount], this.population[i],
 					this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
-			this.threadPoolExecutor.execute(
-				new Simulation(this, this.population[this.count2], this.population[this.count1],
-					this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
+			}
 		}catch(EmptyStackException e){
 			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 		//Await completion of Simulations
-		this.semaphore.acquireUninterruptibly(2);
-		this.semaphore.release(2);
+		this.semaphore.acquireUninterruptibly(this.population.length - 1);
+		this.semaphore.release(this.population.length - 1);
 		
 		//increment count
-		this.count1++;
-		if(this.count1 >= this.population.length){
-			this.count2++;
-			this.count1 = 0;
-		}
+		this.stepCount++;
 	}
 	
 	/**
@@ -331,60 +317,16 @@ public class GameEngine {
 		
 		//Create and return statistics based on winner
 		if(blackBrain.getFitness() > redBrain.getFitness()) {
-			return new GameStats(0, anthillFood[0], anthillFood[1],
-				survivors[0], survivors[1]);
-		}
-		return new GameStats(1, anthillFood[0], anthillFood[1],
-			survivors[0], survivors[1]);
+			return new GameStats(0, anthillFood[0], anthillFood[1],	survivors[0], survivors[1]);
+		}else if(blackBrain.getFitness() < redBrain.getFitness()) {
+			return new GameStats(1, anthillFood[0], anthillFood[1],	survivors[0], survivors[1]);
+		}else return new GameStats(-1, anthillFood[0], anthillFood[1],	survivors[0], survivors[1]);
 	}
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		/*
-		World world = null;
-		try {
-			world = World.getContestWorld(1);
-		} catch (ErrorEvent e) {
-			Logger.log(e);
-			return;
-		}
-		try {
-			world.setBrain(BrainParser.readBrainFrom("ga_result_trimmed"), 0);
-		} catch (IOEvent e) {
-			Logger.log(e);
-			return;
-		} catch (IllegalArgumentEvent e) {
-			Logger.log(e);
-			return;
-		}
-		try {
-			world.setBrain(BrainParser.readBrainFrom("example"), 1);
-		} catch (IOEvent e) {
-			Logger.log(e);
-			return;
-		} catch (IllegalArgumentEvent e) {
-			Logger.log(e);
-			return;
-		}
-		Ant[][] ants = world.getAntsBySpecies();
-		for(int colour = 0; colour < 2; colour++){
-			Ant[] species = ants[colour];
-			for(int a = 0; a < species.length; a++){
-				Ant ant = species[a];
-				System.out.println("[" + colour + "][" + a + "] exists == " + ant != null);
-			}
-		}
-		
-		try {
-			World world = WorldParser.readWorldFromContest("seed_1 - Copy");
-			System.out.println(world + "\n" + world.getAttributes());
-		} catch (Event e) {
-			System.out.println(e);
-		}
-		*/
-		
 		//TODO combine GA and regular sim methods
 		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
 		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
@@ -394,128 +336,47 @@ public class GameEngine {
 		//TODO javac -O, java -prof, JIT
 		//TODO separate parts of contest method so no memory error
 		//TODO bloody world.clone still doesnt work
+		//TODO fix the thread thing to do with null ant cells
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
 		
-		Brain ga = null;
-		Brain betterExample = null;
-		Brain example = null;
-		Brain moveAhead = null;
-		try {
-			ga = BrainParser.readBrainFrom("ga_result_trimmed");
-			betterExample = BrainParser.readBrainFrom("better_example");
-			moveAhead = BrainParser.readBrainFrom("example");
-			example = BrainParser.readBrainFrom("move_ahead");
-		} catch (Event e) {
+		//Evolve and get the best brain from the GeneticAlgorithm
+		//trainingBrain is a decent place to start from
+		//but more likely to get stuck there in the optima,
+		//blankBrain is a worse starting point, it would take longer to get to a good brain,
+		//but it encourages the brains generated to be more random
+		Brain trainingBrain = null;
+		try{
+			trainingBrain = BrainParser.readBrainFrom("better_example");
+		}catch(IOEvent e){
+			Logger.log(e);
+			return;
+		} catch (IllegalArgumentEvent e) {
 			Logger.log(e);
 			return;
 		}
-		Brain[] population = { ga, betterExample, example, moveAhead };
-		Stack<World> worlds = new Stack<World>();
-		
 		GameEngine gameEngine = new GameEngine();
-		gameEngine.contestSetup(population);
+		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		
-		for(int s = 0; s < population.length * population.length - 1; s++){
-			for(int w = 0; w < 2; w++){
-				try {
-					worlds.push(World.getContestWorld(1));
-				} catch (ErrorEvent e) {
-					Logger.log(e);
-				}
-			}
-			gameEngine.contestStep(worlds);
-			worlds.empty();
+		Brain gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
+			Integer.MAX_VALUE, 50, 50/10, 100);
+//		Brain gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
+		
+		//Compact and remove null and unreachable states
+		try {
+			trainingBrain.trim();
+			gaBrain.trim();
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
 		}
 		
-		for(int i = 0; i < population.length; i++){
-			System.out.println("brain: " + i + ", wins: " + population[i].getWins() + 
-				", losses: " + population[i].getLosses() + ", draws: " + population[i].getDraws());
+		try {
+			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1));
+		} catch (ErrorEvent e) {
+			Logger.log(e);
 		}
-		
-//		Brain ga = null;
-//		Brain betterExample = null;
-//		Brain example = null;
-//		Brain moveAhead = null;
-//		World world = null;
-//		try {
-//			ga = BrainParser.readBrainFrom("ga_result_trimmed");
-//			betterExample = BrainParser.readBrainFrom("better_example");
-//			moveAhead = BrainParser.readBrainFrom("example");
-//			example = BrainParser.readBrainFrom("move_ahead");
-//			world = WorldParser.readWorldFromContest("seed_1");
-//		} catch (Event e) {
-//			Logger.log(e);
-//			return;
-//		}
-//		Brain[] population = { ga, betterExample, example, moveAhead };
-//		Stack<World> worlds = new Stack<World>();
-//		
-//		GameEngine gameEngine = new GameEngine();
-//		gameEngine.contestSetup(population);
-//		
-//		for(int s = 0; s < population.length * population.length - 1; s++){
-//			for(int w = 0; w < 2; w++){
-//				worlds.push((World) world.clone());
-//			}
-//			gameEngine.contestStep(worlds);
-//			worlds.empty();
-//		}
-//		
-//		for(int i = 0; i < population.length; i++){
-//			System.out.println("brain: " + i + ", wins: " + population[i].getWins() + 
-//				", losses: " + population[i].getLosses() + ", draws: " + population[i].getDraws());
-//		}
-		
-		
-//		//Evolve and get the best brain from the GeneticAlgorithm
-//		//trainingBrain is a decent place to start from
-//		//but more likely to get stuck there in the optima,
-//		//blankBrain is a worse starting point, it would take longer to get to a good brain,
-//		//but it encourages the brains generated to be more random
-//		Brain trainingBrain = null;
-//		try{
-//			trainingBrain = BrainParser.readBrainFrom("better_example");
-//		}catch(IOEvent e){
-//			Logger.log(e);
-//			return;
-//		} catch (IllegalArgumentEvent e) {
-//			Logger.log(e);
-//			return;
-//		}
-//		GameEngine gameEngine = new GameEngine();
-//		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-//		
-////		//World(char[][]) test:
-////		World world = World.getContestWorld(0);
-////		WorldParser.writeWorldTo(world, "test");
-////		world = WorldParser.readWorldFrom("test");
-////		System.out.println(world);
-////		System.out.println(world.getAttributes());
-//		
-//		Brain gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
-//			Integer.MAX_VALUE, 50, 50/10, 100);
-////		Brain gaBrain = BrainParser.readBrainFrom("ga_result_full");
-//		
-//		//Compact and remove null and unreachable states
-//		try {
-//			trainingBrain.trim();
-//		} catch (IllegalArgumentEvent e) {
-//			Logger.log(e);
-//		}
-//		try {
-//			gaBrain.trim();
-//		} catch (IllegalArgumentEvent e) {
-//			Logger.log(e);
-//		}
-//		
-//		try {
-//			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1));
-//		} catch (ErrorEvent e) {
-//			Logger.log(e);
-//		}
 		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}

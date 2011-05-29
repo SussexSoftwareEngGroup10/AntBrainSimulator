@@ -90,8 +90,11 @@ public abstract class Event extends Throwable {
 		s += "SOURCE: ";
 		String cause = "";
 		StackTraceElement[] trace = this.getStackTrace();
-		for(StackTraceElement ste : trace){
-			cause += ste + ", ";
+		for(int i = 0; i < trace.length; i++){
+			cause += trace[i];
+			if(i < trace.length - 1){
+				cause += ", ";
+			}
 		}
 		s += cause;
 		

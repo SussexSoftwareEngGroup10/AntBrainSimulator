@@ -339,39 +339,37 @@ public final class Ant implements Comparable<Ant> {
 		this.newCell = this.cell.getNeighbour(this.direction);
 		if(!this.newCell.isRocky() && !this.newCell.hasAnt()){
 			//Move to cell
+			Cell oldCell = this.cell;
 			this.newCell.setAnt(this);
 			this.cell.setAnt(null);
 			this.cell = this.newCell;
 			this.state = this.brain.get(this.state.getSt1());
+			
+			//Check this and 3 neighbour ants for becoming surrounded
+			//removed use of an array, more efficient
+			
+			if(this.cell == null) System.out.println("NULL " + this.cell + "," + oldCell.getRow() +
+				"," + oldCell.getCol() + ", " + this.direction + ", " + this.alive);
+			
+			this.neighbourAnt = this.cell.getNeighbour(this.direction - 1).getAnt();
+			if(this.neighbourAnt != null){
+				if(this.neighbourAnt.isSurrounded()) this.neighbourAnt.kill();
+			}
+			this.neighbourAnt = this.cell.getNeighbour(this.direction).getAnt();
+			if(this.neighbourAnt != null){
+				if(this.neighbourAnt.isSurrounded()) this.neighbourAnt.kill();
+			}
+			this.neighbourAnt = this.cell.getNeighbour(this.direction + 1).getAnt();
+			if(this.neighbourAnt != null){
+				if(this.neighbourAnt.isSurrounded()) this.neighbourAnt.kill();
+			}
+			
+			this.rest = 14;
+			
+			if(this.isSurrounded())	this.kill();
 		}else{
 			this.state = this.brain.get(this.state.getSt2());
 		}
-		
-		//Check this and 3 neighbour ants for becoming surrounded
-		//removed use of an array, more efficient
-		if(this.isSurrounded()){
-			this.kill();
-		}
-		this.neighbourAnt = antsMovedTo(this.direction - 1);
-		if(this.neighbourAnt != null){
-			if(this.neighbourAnt.isSurrounded()){
-				this.neighbourAnt.kill();
-			}
-		}
-		this.neighbourAnt = antsMovedTo(this.direction);
-		if(this.neighbourAnt != null){
-			if(this.neighbourAnt.isSurrounded()){
-				this.neighbourAnt.kill();
-			}
-		}
-		this.neighbourAnt = antsMovedTo(this.direction + 1);
-		if(this.neighbourAnt != null){
-			if(this.neighbourAnt.isSurrounded()){
-				this.neighbourAnt.kill();
-			}
-		}
-		
-		this.rest = 14;
 	}
 	
 	/**
@@ -384,15 +382,6 @@ public final class Ant implements Comparable<Ant> {
 		}else{
 			this.state = this.brain.get(this.state.getSt2());
 		}
-	}
-	
-	/**
-	 * @param dir
-	 * @return
-	 */
-	private final Ant antsMovedTo(int dir) {
-		//May return null ant
-		return this.cell.getNeighbour(dir + 1).getAnt();
 	}
 	
 	/**

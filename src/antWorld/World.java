@@ -451,6 +451,14 @@ public class World implements Cloneable {
 		this.antInitialDirection = antInitialDirection;
 		this.gap = gap;
 		this.cells = cells;
+
+		for(int r = this.rows - 1; r >= 0; r--){
+			for(int c = this.cols - 1; c >= 0; c--){
+				Cell current = cells[r][c];
+				current.setNeighbours(getNeighbours(current));
+				current.setupMarkers(this.anthills);
+			}
+		}
 		
 		createAnts();
 	}
@@ -906,15 +914,13 @@ public class World implements Cloneable {
 	private void createAnts() {
 		Cell cell;
 		Ant ant;
-		int colour = -1;
+		int colour;
 		int black = 0;
 		int red = 0;
-		int r = 0;
-		int c = 0;
 		int uid = 0;
 		
-		for(r = 0; r < this.rows; r++){
-			for(c = 0; c < this.cols; c++){
+		for(int r = 0; r < this.rows; r++){
+			for(int c = 0; c < this.cols; c++){
 				cell = this.cells[r][c];
 				
 				if(cell.toChar() == '+'){
@@ -932,8 +938,8 @@ public class World implements Cloneable {
 		int[] nextAntIndex = {0, 0};
 		
 		//Put new ants onto each anthill cell, and into the right arrays
-		for(r = 1; r < this.rows - 1; r++){
-			for(c = 1; c < this.cols - 1; c++){
+		for(int r = 1; r < this.rows - 1; r++){
+			for(int c = 1; c < this.cols - 1; c++){
 				colour = -1;
 				cell = this.cells[r][c];
 				
@@ -1218,7 +1224,6 @@ public class World implements Cloneable {
 	 */
 	public String getAttributes() {
 		String s = "";
-		int i = 0;
 		
 		s += "\nseed: " + this.seed;
 		s += "\nrows: " + this.rows;
@@ -1236,7 +1241,7 @@ public class World implements Cloneable {
 		s += "\nant initial direction: " + this.antInitialDirection;
 		s += "\ngap: " + this.gap;
 		s += "\nants: ";
-		for(i = 0; i < this.antsBySpecies.length; i++){
+		for(int i = 0; i < this.antsBySpecies.length; i++){
 			s += this.antsBySpecies[i].length;
 			if(i < this.antsBySpecies.length - 1){
 				s += ", ";
@@ -1260,19 +1265,9 @@ public class World implements Cloneable {
 	@Override
 	public Object clone() {
 		Cell[][] newCells = new Cell[this.rows][this.cols];
-		int r;
-		int c;
-		Cell current;
-		for(r = this.rows - 1; r >= 0; r--){
-			for(c = this.cols - 1; c >= 0; c--){
+		for(int r = this.rows - 1; r >= 0; r--){
+			for(int c = this.cols - 1; c >= 0; c--){
 				newCells[r][c] = (Cell) this.cells[r][c].clone();
-			}
-		}
-		for(r = this.rows - 1; r >= 0; r--){
-			for(c = this.cols - 1; c >= 0; c--){
-				current = newCells[r][c];
-				current.setNeighbours(getNeighbours(current));
-				current.setupMarkers(this.anthills);
 			}
 		}
 		World world = new World(this.seed, this.rows, this.cols, this.rocks,

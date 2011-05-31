@@ -31,6 +31,7 @@ public class ContestWindow {
 	private JTextField[] winsFields;
 	private JTextField[] lossesFields;
 	private JButton goBtn;
+	private JProgressBar progressBar;
 	
 	/**
 	 * Constructs a new ContestWindow and draws it to the screen.
@@ -112,6 +113,10 @@ public class ContestWindow {
 		scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		pane.add(scrollPanel, BorderLayout.NORTH);
 		
+		progressBar = new JProgressBar(0, numOfPlayers);
+		progressBar.setBorder(new EmptyBorder(10, 10, 10, 10) );
+		pane.add(progressBar, BorderLayout.CENTER);
+		
 		JPanel goPanel = new JPanel();
 		goPanel.setLayout(new FlowLayout());
 		goBtn = new JButton("Go");
@@ -128,6 +133,10 @@ public class ContestWindow {
 		window.setLocationRelativeTo(null);
 		window.setResizable(false);
 		window.setVisible(true);
+	}
+	
+	public void setProgressBarVal(int val) {
+		progressBar.setValue(val);
 	}
 	
 	public void notifyContestComplete(Brain[] brains) {
@@ -213,6 +222,13 @@ public class ContestWindow {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			//If a contest has already been run on this window, reset the wins
+			//and losses text fields
+			for (int i = 0; i < numOfPlayers; i++) { 
+				winsFields[i].setText("");
+				lossesFields[i].setText("");
+			}
+			
 			brains = new Brain[numOfPlayers];
 			try {
 				for (int i = 0; i < numOfPlayers; i++) {

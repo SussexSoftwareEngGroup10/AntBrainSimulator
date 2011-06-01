@@ -1,10 +1,23 @@
 package gUI;
 
-import java.awt.*;
+import java.io.File;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import antBrain.Brain;
 import antBrain.BrainParser;
@@ -101,16 +114,19 @@ public class ContestWindow {
 		}
 		
 		JScrollPane scrollPanel = new JScrollPane(brainUploadPanel);
-		//Only add scroll bars by limiting the preferred size of the scroll panel if the number 
-		//of players is above 7 (the amount that fits into 300 pixels).
+		//Only add scroll bars by limiting the preferred size of the scroll 
+		//panel if the number of players is above 7 (the amount that fits into 
+		//300 pixels).
 		if (numOfPlayers > 7) {
 			scrollPanel.setPreferredSize(new Dimension(500, 300));
 		} else {
 			//If there won't be scrolling, remove the border of the scroll panel
 			scrollPanel.setBorder(null);
 		}
-		scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrollPanel.setHorizontalScrollBarPolicy(
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPanel.setVerticalScrollBarPolicy(
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		pane.add(scrollPanel, BorderLayout.NORTH);
 		
 		progressBar = new JProgressBar(0, numOfPlayers);
@@ -234,7 +250,8 @@ public class ContestWindow {
 				for (int i = 0; i < numOfPlayers; i++) {
 					brains[i] = BrainParser.readBrainFrom(brainPaths[i]);
 				}
-				contestRunner = new ContestRunner(gameEngine, brains, contestWindow);
+				contestRunner = 
+						new ContestRunner(gameEngine, brains, contestWindow);
 				contestRunner.start();
 				//Need to disable run button on main window
 				goBtn.setEnabled(false);

@@ -1,17 +1,31 @@
 package gUI;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
-import utilities.*;
-import engine.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import engine.GameEngine;
+import engine.GameStats;
 import antBrain.Brain;
 import antBrain.BrainParser;
 import antWorld.World;
 import antWorld.WorldParser;
+import utilities.ErrorEvent;
+import utilities.IOEvent;
+import utilities.IllegalArgumentEvent;
 
 /**
  * This class displays the main window GUI.  It displays a window with the main
@@ -277,8 +291,8 @@ public class MainWindow {
 								"Invalid file format, .world file expected.");
 					} else {
 						//Depending on which button triggered the event, a tick 
-						//symbol is displayed on that button, and the associated 
-						//file path is updated with the file chosen
+						//symbol is displayed on that button, and the 
+						//associated file path is updated with the file chosen
 						try {
 							if (clickedBtn == uploadRedBtn) {
 								if (!clickedBtn.getText().contains("✔")) {
@@ -288,7 +302,9 @@ public class MainWindow {
 								try{
 									redBrain = BrainParser.readBrainFrom(path);
 								} catch (IllegalArgumentEvent iae) {
-									Logger.log(iae);
+									GUIErrorMsg.displayErrorMsg(
+											"Unable to parse file. " +
+											"Brain syntactically incorrect!");
 								}
 							} else if (clickedBtn == uploadBlackBtn) {
 								if (!clickedBtn.getText().contains("✔")) {
@@ -299,7 +315,9 @@ public class MainWindow {
 									blackBrain = 
 										BrainParser.readBrainFrom(path);
 								} catch (IllegalArgumentEvent iae) {
-									Logger.log(iae);
+									GUIErrorMsg.displayErrorMsg(
+											"Unable to parse file. " +
+											"Brain syntactically incorrect!");
 								}
 							} else { //Else world button was clicked
 								try{

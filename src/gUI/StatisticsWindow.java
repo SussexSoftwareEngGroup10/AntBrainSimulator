@@ -1,16 +1,23 @@
 package gUI;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-
 import engine.GameStats;
 
 /**
  * Represents a window that displays the statistics from a regular game once
  * it is finished.
  * 
- * @author will
+ * @author wjs25
  */
 public class StatisticsWindow {
 	
@@ -70,7 +77,8 @@ public class StatisticsWindow {
 				new JTextField(Integer.toString(stats.getFoodInRedAnthill()));
 			loserSurvivors = 
 				new JTextField(Integer.toString(stats.getRedAntsSurvivig()));
-		} else { //Else draw stats as red brain as the winner
+		} else if (stats.getWinner() == 1) { 
+			//Else draw stats as red brain as the winner
 			winnerBrain = new JTextField("Red Brain (Winner)");
 			winnerFood = 
 				new JTextField(Integer.toString(stats.getFoodInRedAnthill()));
@@ -81,6 +89,17 @@ public class StatisticsWindow {
 				new JTextField(Integer.toString(stats.getFoodInBlackAnthil()));
 			loserSurvivors = 
 				new JTextField(Integer.toString(stats.getBlackAntsSurviving()));
+		} else { //It was a draw
+			winnerBrain = new JTextField("Black Brain (Draw)");
+			winnerFood = 
+				new JTextField(Integer.toString(stats.getFoodInBlackAnthil()));
+			winnerSurvivors = 
+				new JTextField(Integer.toString(stats.getBlackAntsSurviving()));
+			loserBrain = new JTextField("Red Brain (Draw)");
+			loserFood = 
+				new JTextField(Integer.toString(stats.getFoodInRedAnthill()));
+			loserSurvivors = 
+				new JTextField(Integer.toString(stats.getRedAntsSurvivig()));
 		}
 		
 		//Made the field un editable

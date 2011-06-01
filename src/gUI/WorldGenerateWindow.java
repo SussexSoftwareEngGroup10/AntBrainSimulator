@@ -1,18 +1,27 @@
 package gUI;
 
-import javax.swing.*;
-
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import utilities.ErrorEvent;
-
-import java.awt.*;
-import java.awt.event.*;
 
 /**
  * This class displays the window which allows the user to specify how a world 
  * is generated. The user can either pick a contest style mode, or select their 
  * own parameters for world generation.
  * 
- * @author Will
+ * @author wjs25
  */
 public class WorldGenerateWindow {
 	MainWindow mainWindow; //The parent window
@@ -154,7 +163,7 @@ public class WorldGenerateWindow {
 	  * Attached to the contest radio button to turn on and off the
 	  * parameter selection depending on if it is selected or not.
 	  * 
-	  * @author Will
+	  * @author wjs25
 	  */
 	public class ContestBtnListener implements ItemListener {
 		
@@ -164,6 +173,7 @@ public class WorldGenerateWindow {
 		 * 
 		 * @param e The triggering event.
 		 */
+		@Override
 		public void itemStateChanged(ItemEvent e) {
 			//If contest button is selected, deselect parameter selection 
 			//options otherwise, enable them
@@ -190,7 +200,7 @@ public class WorldGenerateWindow {
 	/**
 	 * Listener to attach to the generate button.
 	 * 
-	 * @author Will
+	 * @author wjs25
 	 */
 	public class GenerateListener implements ActionListener {
 		
@@ -200,6 +210,7 @@ public class WorldGenerateWindow {
 		 * 
 		 * @param e The triggering event.
 		 */
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (contestBtn.isSelected()) {
 				try {

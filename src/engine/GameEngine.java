@@ -218,7 +218,7 @@ public class GameEngine {
 	}
 	
 	/**
-	 * automatically runs entire contest, cannot pass a world
+	 * automatically runs entire contest, with the default seed 0 world
 	 */
 	public void contestStepAll() {
 		try {
@@ -327,16 +327,11 @@ public class GameEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//TODO combine GA and regular sim methods
-		//TODO make sure 2 evolve()s can be run using 1 GeneticAlgorithm and DummyEngine
 		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step()
 		//TODO use jar on linux server
 		//TODO javac -O, java -prof, JIT
-		//TODO separate parts of contest method so no memory error
-		//TODO bloody world.clone still doesnt work
-		//TODO fix the thread thing to do with null ant cells
 		
 		Logger.clearLogs();
 //		GeneticAlgorithm.clearSaves();

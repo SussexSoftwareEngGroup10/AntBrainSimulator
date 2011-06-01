@@ -30,13 +30,14 @@ public class MainWindow {
 	//	   are changed.
 	//TODO disable main display buttons when contest running?
 	//TODO numbers to indicate chemical marker?
-	//TODO why is the game running so fast now?
-	//TODO any easy way to reset the sate of the world?
+	//TODO winning and losing brain are not correct, gives -1 in stats
 	
 	//The game engine to use for running the back end code
 	private GameEngine gameEngine;
 	//The world currently displaying in the display
 	private World world;
+	//Used to reset the world back to the state before the game is run
+	private World clonedWorld;
 	
 	//The two ant brains to vs each other
 	private Brain blackBrain;
@@ -189,6 +190,9 @@ public class MainWindow {
 		genWorldBtn.setEnabled(true);
 		speedAdjustmentSlider.setEnabled(true);
 		
+		//Swap back the state of the world before the game was run
+		world = clonedWorld;
+		gameDisplay.updateWorld(world);
 		gameDisplay.switchState(DisplayStates.DISPLAYING_GRID);
 		
 		//Display dialog box asking if statistics should be displayed
@@ -421,6 +425,10 @@ public class MainWindow {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			//First clone the state of the world so it can be restored later
+			clonedWorld = (World) world.clone();
+			//Set the speed of the simulation to default
+			gameEngine.setSpeed(500);
 			//State a new simulation runner to run the simulation in a new
 			//thread
 			new SimulationRunner(

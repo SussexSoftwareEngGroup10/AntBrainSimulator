@@ -44,7 +44,8 @@ public class MainWindow {
 	//	   are changed.
 	//TODO disable main display buttons when contest running?
 	//TODO numbers to indicate chemical marker?
-	//TODO winning and losing brain are not correct, gives -1 in stats
+	//TODO randomly decide on which chemical marker to display
+	//TODO display a bit of progress bar when contest first run
 	
 	//The game engine to use for running the back end code
 	private GameEngine gameEngine;

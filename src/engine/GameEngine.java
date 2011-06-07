@@ -375,7 +375,7 @@ public class GameEngine {
 		
 		Brain gaBrain = null;
 		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
-			Integer.MAX_VALUE, 50, 50/10, 20);
+			Integer.MAX_VALUE, 50, 50/10, 100);
 //		try {
 //			gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
 //		} catch (IOEvent e) {

@@ -38,7 +38,7 @@ public class GeneticAlgorithm implements Serializable {
 	private transient static final long serialVersionUID = 1L;
 	private transient static final String superFolderPath = "brain_populations";
 	private transient static final File superFolder = new File(superFolderPath);
-	private transient static int instances = 1;
+	private transient static int instances = 0;
 	private transient static final String subFolderPathPrefix =
 		superFolderPath + "\\" + "genetic_algorithm_";
 	private transient static final Random ran = new Random();

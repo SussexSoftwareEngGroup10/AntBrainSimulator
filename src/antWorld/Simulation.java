@@ -78,7 +78,7 @@ public final class Simulation extends Thread {
 		this.world.setBrain(this.redBrain, 1);
 		
 		//Run ants for all steps, serial / in this thread
-		for(int i = this.rounds; i > 0; i--){
+		for(int i = this.rounds - 1; i >= 0; i--){
 			this.world.step();
 			try{
 				Thread.sleep(this.gameEngine.getSleepDur());
@@ -89,9 +89,7 @@ public final class Simulation extends Thread {
 		
 		//Store the result as the fitness of the red (GA) brain
 		int[] anthillFood = this.world.getFoodInAnthills();
-//		System.out.println(anthillFood[0]);
-//		System.out.println(anthillFood[1]);
-//		System.out.println(this.world);
+		int[] ants = this.world.survivingAntsBySpecies();
 		
 		if(this.useFitness){
 			//Increment fitness by score

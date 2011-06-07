@@ -156,20 +156,24 @@ public class GameEngine {
 		this.population = population;
 		this.absoluteTrainingBrain = absoluteTrainingBrain;
 		
-		this.threadPoolExecutor = new ThreadPoolExecutor(
-			GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
-			new ArrayBlockingQueue<Runnable>(population.length - 1));
-		this.semaphore = new Semaphore(population.length - 1, true);
+		if(absoluteTrainingBrain != null){
+			this.threadPoolExecutor = new ThreadPoolExecutor(
+				GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
+					new ArrayBlockingQueue<Runnable>(2));
+			this.semaphore = new Semaphore(2, true);
+		}else{
+			this.threadPoolExecutor = new ThreadPoolExecutor(
+				GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
+					new ArrayBlockingQueue<Runnable>(population.length - 1));
+			this.semaphore = new Semaphore(population.length - 1, true);
+		}
 		
 		//Find Brain in elite with highest fitness
 		int index = population.length - 1;
-		int i;
-		for(i = population.length - 2; i >= 0; i--){
-			if(population[i].getFitness() > population[index].getFitness()){
-				index = i;
-			}
+		for(int i = population.length - 2; i >= 0; i--){
+			if(population[i].getFitness() > population[index].getFitness())	index = i;
 		}
-		if(population[index].getFitness() == 0){
+		if(population[index].getFitness() <= 0 && absoluteTrainingBrain != null){
 			//Either no elite or first epoch, so use absoluteTrainingBrain
 			this.relativeTrainingBrain = absoluteTrainingBrain;
 		}else{
@@ -185,17 +189,14 @@ public class GameEngine {
 	public void fitnessContestStep(Stack<World> worlds) {
 		//Set fitness for every brain in population
 		Brain brain = this.population[this.stepCount];
-		
 		if(brain.getFitness() == 0){
 			//Brain is not in elite
 			//Absolute fitness tests
 			this.semaphore.acquireUninterruptibly(2);
-			this.threadPoolExecutor.execute(
-				new Simulation(this, this.absoluteTrainingBrain, brain,
-					this.semaphore, 0, true, GameEngine.rounds, worlds.pop()));
-			this.threadPoolExecutor.execute(
-				new Simulation(this, brain, this.absoluteTrainingBrain,
-					this.semaphore, 1, true, GameEngine.rounds, worlds.pop()));
+			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
+				this.semaphore, 0, true, GameEngine.rounds, worlds.pop()));
+			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
+				this.semaphore, 1, true, GameEngine.rounds, worlds.pop()));
 			//Await completion of Simulations
 			this.semaphore.acquireUninterruptibly(2);
 			this.semaphore.release(2);
@@ -203,12 +204,10 @@ public class GameEngine {
 		
 		//Relative fitness tests
 		this.semaphore.acquireUninterruptibly(2);
-		this.threadPoolExecutor.execute(
-			new Simulation(this, this.relativeTrainingBrain, brain,
-				this.semaphore, 2, true, GameEngine.rounds, worlds.pop()));
-		this.threadPoolExecutor.execute(
-			new Simulation(this, brain, this.relativeTrainingBrain,
-				this.semaphore, 3, true, GameEngine.rounds, worlds.pop()));
+		this.threadPoolExecutor.execute(new Simulation(this, this.relativeTrainingBrain, brain,
+			this.semaphore, 2, true, GameEngine.rounds, worlds.pop()));
+		this.threadPoolExecutor.execute(new Simulation(this, brain, this.relativeTrainingBrain,
+			this.semaphore, 3, true, GameEngine.rounds, worlds.pop()));
 		//Await completion of Simulations
 		this.semaphore.acquireUninterruptibly(2);
 		this.semaphore.release(2);
@@ -218,7 +217,7 @@ public class GameEngine {
 	}
 	
 	/**
-	 * automatically runs entire contest, with the default seed 0 world
+	 * automatically runs entire contest, with the default seed 1 world
 	 */
 	public void contestStepAll() {
 		try {
@@ -256,9 +255,8 @@ public class GameEngine {
 		try{
 			for(int i = 0; i < this.population.length; i++){
 				if(i == this.stepCount) continue;
-				this.threadPoolExecutor.execute(
-					new Simulation(this, this.population[this.stepCount], this.population[i],
-					this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
+				this.threadPoolExecutor.execute(new Simulation(this, this.population[this.stepCount],
+					this.population[i],	this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
 			}
 		}catch(EmptyStackException e){
 			throw new IllegalArgumentException(e.getMessage(), e);
@@ -337,6 +335,25 @@ public class GameEngine {
 //		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
 		
+		
+//		World referent = null;
+//		WeakReference<World> wr = null;
+//		try {
+//			referent = World.getContestWorld(1);
+//			wr = new WeakReference<World>(referent);
+//			Stack<World> s = new Stack<World>();
+//			s.push(referent);
+//			s.pop();
+//			referent = null;
+//			s = null;
+//		} catch (ErrorEvent e) {
+//			Logger.log(e);
+//		}
+//		System.out.println("exists == " + (wr.get() != null));
+//		System.gc();
+//		System.out.println("exists == " + (wr.get() != null));
+		
+		
 		//Evolve and get the best brain from the GeneticAlgorithm
 		//trainingBrain is a decent place to start from
 		//but more likely to get stuck there in the optima,
@@ -356,7 +373,7 @@ public class GameEngine {
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		
 		Brain gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
-			Integer.MAX_VALUE, 50, 50/10, 100);
+			Integer.MAX_VALUE, 50, 50/10, 20);
 //		Brain gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
 		
 		//Compact and remove null and unreachable states

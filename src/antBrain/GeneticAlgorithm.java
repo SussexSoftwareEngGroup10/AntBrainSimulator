@@ -219,53 +219,39 @@ public class GeneticAlgorithm implements Serializable {
 		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
 	}
 	
+	/**
+	 * @param gameEngine
+	 * @param absoluteTrainingBrain
+	 */
 	public void rank(GameEngine gameEngine, Brain absoluteTrainingBrain){
 		gameEngine.fitnessContestSetup(this.population, absoluteTrainingBrain);
-		
-		//Multi-Threaded
 		//Get popLen permits, restore as runs complete
 		Stack<World> worlds = new Stack<World>();
-		World world;
-		try {
-			world = World.getContestWorld(1);
-		} catch (ErrorEvent e) {
-			Logger.log(e);
-			return;
-		}
 		//Set fitness for every brain in population
-		for(int i = 0; i < this.population.length; i++){
-			while(worlds.size() < 4){
-				worlds.push((World) world.clone());
-			}
-			
+		for(int i = this.population.length - 1; i >= 0; i--){
+			while(worlds.size() < 4)
+				try{
+					worlds.push(World.getContestWorld(1));
+				}catch(ErrorEvent e){
+					Logger.log(e);
+				}
 			gameEngine.fitnessContestStep(worlds);
 		}
 		
 		Arrays.sort(this.population);
 		
-		//Log fitness stats
-		int i;
-		int index = this.population.length - 1;
-		for(i = this.population.length - 2; i >= 0; i--){
-			if(this.population[i].getFitness() > this.population[index].getFitness()){
-				index = i;
-			}
-		}
-		int maxFitness = this.population[index].getFitness();
-		
+		//Log fitness statistics
 		int total = 0;
-		for(i = this.population.length - 1; i >= 0; i--){
+		int maxIndex = this.population.length - 1;
+		int minIndex = this.population.length - 1;
+		for(int i = this.population.length - 2; i >= 0; i--){
 			total += this.population[i].getFitness();
+			if(this.population[i].getFitness() > this.population[maxIndex].getFitness()) maxIndex = i;
+			if(this.population[i].getFitness() < this.population[minIndex].getFitness()) minIndex = i;
 		}
 		int avgFitness =  total / this.population.length;
-
-		index = this.population.length - 1;
-		for(i = this.population.length - 2; i >= 0; i--){
-			if(this.population[i].getFitness() < this.population[index].getFitness()){
-				index = i;
-			}
-		}
-		int minFitness = this.population[index].getFitness();
+		int maxFitness = this.population[maxIndex].getFitness();
+		int minFitness = this.population[minIndex].getFitness();
 		
 		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness
 			+ ";  avg: " + avgFitness + ";  min: " + minFitness));

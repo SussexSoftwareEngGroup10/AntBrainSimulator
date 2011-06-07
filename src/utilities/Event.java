@@ -82,7 +82,7 @@ public abstract class Event extends Throwable {
 		s += "DESCRIPTION: ";
 		s += this.getMessage();
 		s += ";  ";
-		while(s.length() < 250){
+		while(s.length() < 300){
 			s += " ";
 		}
 		

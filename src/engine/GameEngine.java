@@ -159,8 +159,8 @@ public class GameEngine {
 		if(absoluteTrainingBrain != null){
 			this.threadPoolExecutor = new ThreadPoolExecutor(
 				GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
-					new ArrayBlockingQueue<Runnable>(2));
-			this.semaphore = new Semaphore(2, true);
+					new ArrayBlockingQueue<Runnable>(4));
+			this.semaphore = new Semaphore(4, true);
 		}else{
 			this.threadPoolExecutor = new ThreadPoolExecutor(
 				GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
@@ -189,28 +189,29 @@ public class GameEngine {
 	public void fitnessContestStep(Stack<World> worlds) {
 		//Set fitness for every brain in population
 		Brain brain = this.population[this.stepCount];
+		
+		this.semaphore.acquireUninterruptibly(4);
+		
+		//Absolute fitness tests
 		if(brain.getFitness() == 0){
 			//Brain is not in elite
-			//Absolute fitness tests
-			this.semaphore.acquireUninterruptibly(2);
 			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
 				this.semaphore, 0, true, GameEngine.rounds, worlds.pop()));
 			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
 				this.semaphore, 1, true, GameEngine.rounds, worlds.pop()));
 			//Await completion of Simulations
-			this.semaphore.acquireUninterruptibly(2);
+		}else{
 			this.semaphore.release(2);
 		}
 		
 		//Relative fitness tests
-		this.semaphore.acquireUninterruptibly(2);
 		this.threadPoolExecutor.execute(new Simulation(this, this.relativeTrainingBrain, brain,
 			this.semaphore, 2, true, GameEngine.rounds, worlds.pop()));
 		this.threadPoolExecutor.execute(new Simulation(this, brain, this.relativeTrainingBrain,
 			this.semaphore, 3, true, GameEngine.rounds, worlds.pop()));
 		//Await completion of Simulations
-		this.semaphore.acquireUninterruptibly(2);
-		this.semaphore.release(2);
+		this.semaphore.acquireUninterruptibly(4);
+		this.semaphore.release(4);
 		
 		//increment count
 		this.stepCount++;
@@ -372,9 +373,16 @@ public class GameEngine {
 		GameEngine gameEngine = new GameEngine();
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		
-		Brain gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
+		Brain gaBrain = null;
+		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
 			Integer.MAX_VALUE, 50, 50/10, 20);
-//		Brain gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
+//		try {
+//			gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
+//		} catch (IOEvent e) {
+//			Logger.log(e);
+//		} catch (IllegalArgumentEvent e) {
+//			Logger.log(e);
+//		}
 		
 		//Compact and remove null and unreachable states
 		try {

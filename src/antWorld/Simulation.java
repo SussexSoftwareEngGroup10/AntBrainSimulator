@@ -93,8 +93,8 @@ public final class Simulation extends Thread {
 		
 		if(this.useFitness){
 			//Increment fitness by score
-			this.blackBrain.setFitness(this.fitness, anthillFood[0] - anthillFood[1]);
-			this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
+			this.blackBrain.setFitness(this.fitness, (anthillFood[0] - anthillFood[1]) + ((ants[0] - ants[1]) * 50));
+			this.redBrain.setFitness(this.fitness, (anthillFood[1] - anthillFood[0]) + ((ants[1] - ants[0]) * 50));
 		}else{
 			//set wins, losses and draws
 			if(anthillFood[0] > anthillFood[1]){

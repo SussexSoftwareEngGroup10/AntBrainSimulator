@@ -185,30 +185,31 @@ public class GameEngine {
 	/**
 	 * worlds.size() == 4 (call pop.len times)
 	 * @param worlds
+	 * @throws IllegalArgumentEvent 
 	 */
-	public void fitnessContestStep(Stack<World> worlds) {
+	public void fitnessContestStep(Stack<World> worlds, String goal) throws IllegalArgumentEvent {
 		//Set fitness for every brain in population
 		Brain brain = this.population[this.stepCount];
 		
 		this.semaphore.acquireUninterruptibly(4);
 		
 		//Absolute fitness tests
-		if(brain.getFitness() == 0){
+//		if(brain.getFitness() == 0){
 			//Brain is not in elite
 			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
-				this.semaphore, 0, true, GameEngine.rounds, worlds.pop()));
+				this.semaphore, 0, true, GameEngine.rounds, worlds.pop(), goal));
 			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
-				this.semaphore, 1, true, GameEngine.rounds, worlds.pop()));
+				this.semaphore, 1, true, GameEngine.rounds, worlds.pop(), goal));
 			//Await completion of Simulations
-		}else{
-			this.semaphore.release(2);
-		}
+//		}else{
+//			this.semaphore.release(2);
+//		}
 		
 		//Relative fitness tests
 		this.threadPoolExecutor.execute(new Simulation(this, this.relativeTrainingBrain, brain,
-			this.semaphore, 2, true, GameEngine.rounds, worlds.pop()));
+			this.semaphore, 2, true, GameEngine.rounds, worlds.pop(), goal));
 		this.threadPoolExecutor.execute(new Simulation(this, brain, this.relativeTrainingBrain,
-			this.semaphore, 3, true, GameEngine.rounds, worlds.pop()));
+			this.semaphore, 3, true, GameEngine.rounds, worlds.pop(), goal));
 		//Await completion of Simulations
 		this.semaphore.acquireUninterruptibly(4);
 		this.semaphore.release(4);
@@ -257,10 +258,12 @@ public class GameEngine {
 			for(int i = 0; i < this.population.length; i++){
 				if(i == this.stepCount) continue;
 				this.threadPoolExecutor.execute(new Simulation(this, this.population[this.stepCount],
-					this.population[i],	this.semaphore, 0, false, GameEngine.rounds, worlds.pop()));
+					this.population[i],	this.semaphore, 0, false, GameEngine.rounds, worlds.pop(), "food"));
 			}
 		}catch(EmptyStackException e){
 			throw new IllegalArgumentException(e.getMessage(), e);
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
 		}
 		//Await completion of Simulations
 		this.semaphore.acquireUninterruptibly(this.population.length - 1);
@@ -286,8 +289,12 @@ public class GameEngine {
 		Logger.log(new InformationLowEvent("Begun simulation"));
 		
 		//Runs in serial
-		new Simulation(this, blackBrain, redBrain, null,
-			this.sleepDur, false, GameEngine.rounds, world).run();
+		try {
+			new Simulation(this, blackBrain, redBrain, null,
+				this.sleepDur, false, GameEngine.rounds, world, "food").run();
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
+		}
 		
 		//Ant results
 		Ant[][] antsBySpecies = world.getAntsBySpecies();
@@ -333,27 +340,7 @@ public class GameEngine {
 		//TODO javac -O, java -prof, JIT
 		
 		Logger.clearLogs();
-//		GeneticAlgorithm.clearSaves();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
-		
-		
-//		World referent = null;
-//		WeakReference<World> wr = null;
-//		try {
-//			referent = World.getContestWorld(1);
-//			wr = new WeakReference<World>(referent);
-//			Stack<World> s = new Stack<World>();
-//			s.push(referent);
-//			s.pop();
-//			referent = null;
-//			s = null;
-//		} catch (ErrorEvent e) {
-//			Logger.log(e);
-//		}
-//		System.out.println("exists == " + (wr.get() != null));
-//		System.gc();
-//		System.out.println("exists == " + (wr.get() != null));
-		
 		
 		//Evolve and get the best brain from the GeneticAlgorithm
 		//trainingBrain is a decent place to start from
@@ -371,11 +358,11 @@ public class GameEngine {
 			return;
 		}
 		GameEngine gameEngine = new GameEngine();
-		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
+		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm("kills");
 		
 		Brain gaBrain = null;
 		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
-			Integer.MAX_VALUE, 50, 50/10, 100);
+			Integer.MAX_VALUE, 50, 50/10, 50);
 //		try {
 //			gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
 //		} catch (IOEvent e) {

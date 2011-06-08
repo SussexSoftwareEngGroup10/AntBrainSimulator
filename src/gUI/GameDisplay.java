@@ -449,7 +449,9 @@ public class GameDisplay extends PApplet {
 	private void drawFood(int imageScale, int row, int col) {
 		 //If scale is small, need to check quantity to show the correct image
 		if (imageScale == LARGE_IMAGE) {
-			switch (gridCells[row][col].foodCount()) {
+			int foodCount = gridCells[row][col].foodCount();
+			if(foodCount > 9) foodCount = 9;
+			switch (foodCount) {
 				case 1: drawImage(foodLarge[ONE_FOOD], row, col, 0); 
 				break;
 				case 2: drawImage(foodLarge[TWO_FOOD], row, col, 0); 

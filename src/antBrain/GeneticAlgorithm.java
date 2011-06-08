@@ -38,12 +38,12 @@ public class GeneticAlgorithm implements Serializable {
 	private transient static final long serialVersionUID = 1L;
 	private transient static final String superFolderPath = "brain_populations";
 	private transient static final File superFolder = new File(superFolderPath);
-	private transient static int instances = 0;
 	private transient static final String subFolderPathPrefix =
 		superFolderPath + "\\" + "genetic_algorithm_";
 	private transient static final Random ran = new Random();
 	
 	//Transient object variables
+	private transient final String goal;
 	private transient final int instance;
 	private transient int popLen;
 	
@@ -54,9 +54,15 @@ public class GeneticAlgorithm implements Serializable {
 	/**
 	 * 
 	 */
-	public GeneticAlgorithm() {
-		this.instance = instances;
-		instances++;
+	public GeneticAlgorithm(String goal) {
+		this.goal = goal;
+		if(goal.equals("kills")){
+			this.instance = 0;
+		}else if(goal.equals("food")){
+			this.instance = 1;
+		}else{
+			this.instance = -1;
+		}
 		this.epoch = 0;
 	}
 	
@@ -235,7 +241,11 @@ public class GeneticAlgorithm implements Serializable {
 				}catch(ErrorEvent e){
 					Logger.log(e);
 				}
-			gameEngine.fitnessContestStep(worlds);
+			try {
+				gameEngine.fitnessContestStep(worlds, this.goal);
+			} catch (IllegalArgumentEvent e) {
+				Logger.log(e);
+			}
 		}
 		
 		Arrays.sort(this.population);
@@ -476,7 +486,7 @@ public class GeneticAlgorithm implements Serializable {
 	 * Delete all except latest toRetain save files
 	 */
 	public void clearSaves(int toRetain) {
-		File folder = new File(subFolderPathPrefix + this.instance);
+		File folder = new File(subFolderPathPrefix + this.instance + "_(" + this.goal + ")");
 		//Get all .ser files in this GA's save folder
 		File[] files = folder.listFiles(new SerFilter());
 		if(files == null) return;
@@ -499,7 +509,7 @@ public class GeneticAlgorithm implements Serializable {
 		if(!superFolder.exists()) superFolder.mkdir();
 		
 		//Setup save subFolder
-		String subFolderPath = subFolderPathPrefix + this.instance;
+		String subFolderPath = subFolderPathPrefix + this.instance + "_(" + this.goal + ")";
 		File subFolder = new File(subFolderPath);
 		subFolder.mkdir();
 		
@@ -524,14 +534,14 @@ public class GeneticAlgorithm implements Serializable {
 		//Write best brain so far to file
 		Brain b = this.population[this.popLen - 1].clone();
 		try{
-			BrainParser.writeBrainTo(b, "ga_result_full_" + this.instance);
+			BrainParser.writeBrainTo(b, "ga_result_full_" + this.instance + "_(" + this.goal + ")");
 		}catch(IOEvent e){
 			Logger.log(e);
 		}
 		try{
 			b.trim();
 			try{
-				BrainParser.writeBrainTo(b, "ga_result_trimmed_" + this.instance);
+				BrainParser.writeBrainTo(b, "ga_result_" + this.instance + "_(" + this.goal + ")");
 			}catch(IOEvent e){
 				Logger.log(e);
 			}
@@ -551,22 +561,7 @@ public class GeneticAlgorithm implements Serializable {
 		int max = Integer.MIN_VALUE;
 		int num;
 		String filePath;
-//		for(File f1 : files){
-//			//Genetic_Algorithms\Genetic_Algorithm_instance
-//			filePath = f1.getPath();
-//			if(filePath.startsWith(subFolderPathPrefix)){
-//				//Add number that the path ends with
-//				filePath = filePath.replace(subFolderPathPrefix, "");
-//				num = Integer.parseInt(filePath);
-//				if(num > max){
-//					max = num;
-//				}
-//			}
-//		}
-//		if(max == -1){
-//			return false;				//No subfolders
-//		}
-		String subFolderPath = subFolderPathPrefix + this.instance;//max;
+		String subFolderPath = subFolderPathPrefix + this.instance + "_(" + this.goal + ")";
 		File folder = new File(subFolderPath);
 		
 		//Get file ending in highest number

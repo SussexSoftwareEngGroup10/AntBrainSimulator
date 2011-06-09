@@ -158,13 +158,21 @@ public final class Logger {
 		//else time since start of main()
 		return System.nanoTime() - logger.restartTime;
 	}
-	
+
 	/**
 	 * @param message
 	 */
 	public static void logCurrentTime(String message) {
+		logCurrentTime(message, TimeUnit.NANOSECONDS);
+	}
+	
+	/**
+	 * @param message
+	 * @param timeUnit
+	 */
+	public static void logCurrentTime(String message, TimeUnit timeUnit) {
 		//Logs time since custom point, rather than the default time since a point
-		Logger.log(new TimeEvent(getCurrentTime(), TimeUnit.NANOSECONDS, message));
+		Logger.log(new TimeEvent(message, getCurrentTime(), timeUnit));
 	}
 	
 	/**

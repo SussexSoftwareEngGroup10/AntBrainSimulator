@@ -194,16 +194,15 @@ public class GameEngine {
 		this.semaphore.acquireUninterruptibly(4);
 		
 		//Absolute fitness tests
-//		if(brain.getFitness() == 0){
+		if(brain.getFitness() == 0){
 			//Brain is not in elite
 			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
 				this.semaphore, 0, true, GameEngine.rounds, worlds.pop(), goal));
 			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
 				this.semaphore, 1, true, GameEngine.rounds, worlds.pop(), goal));
-			//Await completion of Simulations
-//		}else{
-//			this.semaphore.release(2);
-//		}
+		}else{
+			this.semaphore.release(2);
+		}
 		
 		//Relative fitness tests
 		this.threadPoolExecutor.execute(new Simulation(this, this.relativeTrainingBrain, brain,
@@ -362,7 +361,7 @@ public class GameEngine {
 		
 		Brain gaBrain = null;
 		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
-			Integer.MAX_VALUE, 50, 50/10, 50);
+			Integer.MAX_VALUE, 50, 50/10, 20);
 //		try {
 //			gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
 //		} catch (IOEvent e) {

@@ -22,6 +22,7 @@ public class TimeEvent extends InformationEvent {
 	
 	/**
 	 * @param message
+	 * @param timeUnit
 	 */
 	public TimeEvent(String message, TimeUnit timeUnit) {
 		super("TIME: " + timeUnit.convert(Logger.getCurrentTime(), TimeUnit.NANOSECONDS) + " " +
@@ -39,6 +40,7 @@ public class TimeEvent extends InformationEvent {
 	
 	/**
 	 * @param message
+	 * @param timeUnit
 	 * @param cause
 	 */
 	public TimeEvent(String message, TimeUnit timeUnit, Throwable cause) {
@@ -47,11 +49,23 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @param time
 	 * @param message
+	 * @param time
+	 * @param timeUnit
 	 */
-	public TimeEvent(long time, TimeUnit timeUnit, String message) {
+	public TimeEvent(String message, long time, TimeUnit timeUnit) {
 		super("TIME: " + time + " " +
 			timeUnit.toString().toLowerCase()  + ";  MESSAGE: " + message);
+	}
+	
+	/**
+	 * @param message
+	 * @param time
+	 * @param timeUnit
+	 * @param cause
+	 */
+	public TimeEvent(String message, long time, TimeUnit timeUnit, Throwable cause) {
+		super("TIME: " + time + " " +
+			timeUnit.toString().toLowerCase()  + ";  MESSAGE: " + message, cause);
 	}
 }

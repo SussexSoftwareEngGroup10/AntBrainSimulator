@@ -7,7 +7,6 @@ package engine;
 public class Random {
 	private static final long serialVersionUID = 1L;
 	private int s;
-	private int i = -1;
 	
 	/**
 	 * @param seed
@@ -56,7 +55,6 @@ public class Random {
 	 * @return
 	 */
 	public int randomInt(int n) {
-		this.i++;
-		return Math.round(mod(nextX(), n));
+		return mod(nextX(), n);
 	}
 }

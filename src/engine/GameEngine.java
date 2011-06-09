@@ -348,7 +348,8 @@ public class GameEngine {
 		//but it encourages the brains generated to be more random
 		Brain trainingBrain = null;
 		try{
-			trainingBrain = BrainParser.readBrainFrom("better_example");
+//			trainingBrain = BrainParser.readBrainFrom("better_example");
+			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
 		}catch(IOEvent e){
 			Logger.log(e);
 			return;

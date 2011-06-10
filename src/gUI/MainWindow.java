@@ -205,6 +205,9 @@ public class MainWindow {
 		genWorldBtn.setEnabled(true);
 		speedAdjustmentSlider.setEnabled(true);
 		
+		//Set speed adjustment slider back to default
+		speedAdjustmentSlider.setValue(500);
+		
 		//Swap back the state of the world before the game was run
 		world = clonedWorld;
 		gameDisplay.updateWorld(world);

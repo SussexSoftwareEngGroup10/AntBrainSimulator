@@ -1,6 +1,7 @@
 package antWorld;
 
 import engine.Random;
+import engine.SoundPlayer;
 import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
@@ -36,6 +37,15 @@ public final class Ant implements Comparable<Ant> {
 	private Ant[] neighbourAnts = new Ant[6];
 	private Ant neighbourAnt;
 	
+	/*
+	//Sound players for the possible sound effects ants can produce
+	private SoundPlayer dieSoundPlayer = new SoundPlayer("die");
+	private SoundPlayer foodCollectionSoundPlayer 
+			= new SoundPlayer("food_collection");
+	private SoundPlayer foodDepositionSoundPlayer
+			= new SoundPlayer("food_deposition");*/
+	private SoundPlayer soundPlayer;
+	
 	/**
 	 * @param uid
 	 * @param ran
@@ -43,7 +53,7 @@ public final class Ant implements Comparable<Ant> {
 	 * @param colour
 	 * @param cell
 	 */
-	public Ant(int uid, Random ran, int direction, int colour, Cell cell) {
+	public Ant(int uid, Random ran, int direction, int colour, Cell cell, SoundPlayer soundPlayer) {
 		this.uid = uid;
 		
 		if(ran == null){
@@ -66,6 +76,8 @@ public final class Ant implements Comparable<Ant> {
 		}
 		this.direction = direction;
 		this.cell = cell;
+		
+		this.soundPlayer = soundPlayer;
 	}
 	
 	/**
@@ -284,6 +296,8 @@ public final class Ant implements Comparable<Ant> {
 			this.cell.pickupFood();
 			this.hasFood = true;
 			this.state = this.brain.get(this.state.getSt1());
+			//Play sound effect
+			this.soundPlayer.playSound("food_collection");
 		}else{
 			this.state = this.brain.get(this.state.getSt2());
 		}
@@ -300,6 +314,8 @@ public final class Ant implements Comparable<Ant> {
 			this.cell.dropFood(1);
 			this.hasFood = false;
 			this.state = this.brain.get(this.state.getSt1());
+			//Play sound effect
+			this.soundPlayer.playSound("food_deposition");
 		}
 	}
 	
@@ -441,6 +457,8 @@ public final class Ant implements Comparable<Ant> {
 		//Remove from world
 		this.cell.setAnt(null);
 		this.cell = null;
+		//Play sound effect
+		this.soundPlayer.playSound("die");
 	}
 	
 	/**

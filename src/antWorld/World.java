@@ -1,6 +1,7 @@
 package antWorld;
 
 import engine.Random;
+import engine.SoundPlayer;
 import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
@@ -45,6 +46,7 @@ public class World implements Cloneable {
 	private Ant[] ants;
 	private Ant[][] antsBySpecies;
 	
+	private SoundPlayer soundPlayer = new SoundPlayer();
 	//Ant colours:
 	//'+' == black
 	//'-' == red
@@ -952,7 +954,7 @@ public class World implements Cloneable {
 				}
 				
 				//Create and store ant
-				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell);
+				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell, soundPlayer);
 				cell.setAnt(ant);
 				this.ants[nextAntIndex[0] + nextAntIndex[1]] = ant;
 				//Use nextAntIndex[colour] value BEFORE increment (opposite to ++i)

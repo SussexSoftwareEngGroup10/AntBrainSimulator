@@ -5,6 +5,8 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import engine.SoundPlayer;
+
 import utilities.IllegalArgumentEvent;
 
 public class CellTest {

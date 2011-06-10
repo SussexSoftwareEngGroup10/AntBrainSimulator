@@ -46,7 +46,11 @@ public class World implements Cloneable {
 	private Ant[] ants;
 	private Ant[][] antsBySpecies;
 	
-	private SoundPlayer soundPlayer = new SoundPlayer();
+	//Sound player for the possible sound effects ants can produce
+	//This can be null (in the case of contests, so checks for null need to be
+	//made before sounds are played)
+	private SoundPlayer soundPlayer = null;
+	
 	//Ant colours:
 	//'+' == black
 	//'-' == red
@@ -1028,6 +1032,15 @@ public class World implements Cloneable {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Assigns a sound player to this world.
+	 * 
+	 * @param soundPlayer The sound player to use.
+	 */
+	public void setSoundPlayer(SoundPlayer soundPlayer) {
+		this.soundPlayer = soundPlayer;
 	}
 	
 	/**

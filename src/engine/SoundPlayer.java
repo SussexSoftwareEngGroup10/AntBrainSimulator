@@ -13,7 +13,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
-
+/**
+ * NOT CURRENTLY INTEGRATED INTO THE GAME - WILL CONTINUE TOMORROW ON IT
+ * @author Will
+ *
+ */
 public class SoundPlayer implements LineListener {
 	private Line dieLine;
 	private Clip dieSound;

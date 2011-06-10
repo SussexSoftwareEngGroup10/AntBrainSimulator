@@ -3,6 +3,7 @@ package antWorld;
 import java.util.concurrent.Semaphore;
 
 import engine.GameEngine;
+import engine.SoundPlayer;
 
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;

@@ -37,13 +37,9 @@ public final class Ant implements Comparable<Ant> {
 	private Ant[] neighbourAnts = new Ant[6];
 	private Ant neighbourAnt;
 	
-	/*
-	//Sound players for the possible sound effects ants can produce
-	private SoundPlayer dieSoundPlayer = new SoundPlayer("die");
-	private SoundPlayer foodCollectionSoundPlayer 
-			= new SoundPlayer("food_collection");
-	private SoundPlayer foodDepositionSoundPlayer
-			= new SoundPlayer("food_deposition");*/
+	//Sound player for the possible sound effects ants can produce
+	//This can be null (in the case of contests, so checks for null need to be
+	//made before sounds are played)
 	private SoundPlayer soundPlayer;
 	
 	/**
@@ -297,7 +293,9 @@ public final class Ant implements Comparable<Ant> {
 			this.hasFood = true;
 			this.state = this.brain.get(this.state.getSt1());
 			//Play sound effect
-			this.soundPlayer.playSound("food_collection");
+			if (this.soundPlayer != null) {
+				this.soundPlayer.playSound("food_collection");
+			}
 		}else{
 			this.state = this.brain.get(this.state.getSt2());
 		}
@@ -315,7 +313,9 @@ public final class Ant implements Comparable<Ant> {
 			this.hasFood = false;
 			this.state = this.brain.get(this.state.getSt1());
 			//Play sound effect
-			this.soundPlayer.playSound("food_deposition");
+			if (this.soundPlayer != null) {
+				this.soundPlayer.playSound("food_deposition");
+			}
 		}
 	}
 	
@@ -458,7 +458,9 @@ public final class Ant implements Comparable<Ant> {
 		this.cell.setAnt(null);
 		this.cell = null;
 		//Play sound effect
-		this.soundPlayer.playSound("die");
+		if (this.soundPlayer != null) {
+			this.soundPlayer.playSound("die");
+		}
 	}
 	
 	/**

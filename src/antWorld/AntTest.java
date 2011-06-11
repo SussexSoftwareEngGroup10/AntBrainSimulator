@@ -206,7 +206,7 @@ public class AntTest {
 	}
 	
 	@Test
-	public void testKill(){
+	public void testAttackandKill(){
 		try{
 			testWorld = WorldParser.readWorldFromCustom("testWorlds/testKill");
 			

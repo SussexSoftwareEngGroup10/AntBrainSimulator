@@ -65,6 +65,7 @@ public class BrainTest {
 		}
 	}
 	
+	
 	@Test
 	public void testSetAndGetFitness(){
 		try{

@@ -139,7 +139,7 @@ public class CellTest {
 		try{
 			Cell testCell = new Cell(8,8,'.');
 			engine.Random rand = new engine.Random(500);
-			Ant testAnt = new Ant(177,rand,0,0,testCell);
+			Ant testAnt = new Ant(177,rand,0,0,testCell, null);
 			testCell.setAnt(testAnt);
 			assertTrue(testCell.hasAnt());
 		} catch (IllegalArgumentEvent e) {
@@ -152,7 +152,7 @@ public class CellTest {
 		try{
 			Cell testCell = new Cell(8,8,'.');
 			engine.Random rand = new engine.Random(500);
-			Ant testAnt = new Ant(177,rand,0,0,testCell);
+			Ant testAnt = new Ant(177,rand,0,0,testCell, null);
 			testCell.setAnt(testAnt);
 			assertEquals(testAnt,testCell.getAnt());
 		} catch (IllegalArgumentEvent e) {

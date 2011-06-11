@@ -522,4 +522,18 @@ public class AntTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	//TODO: MORE TESTS AFTER THIS
+	
+	@Test
+	public void testSomething() {
+		try {
+			fail("testSomething");
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
 }

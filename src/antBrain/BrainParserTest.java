@@ -30,10 +30,12 @@ public class BrainParserTest {
 	@Test
 	public void testReadInvalidBrain() {
 		try{
-			Brain testBrain = BrainParser.readBrainFrom("invalid");
+			Brain testBrain = BrainParser.readBrainFrom("testBrains/invalid");
 			fail("Invalid Brain accepted");
-		}catch (IOEvent e) {
+		}catch (Exception e){
 			assertTrue(true);
+		} catch (IOEvent e) {
+			fail(e.getMessage());
 		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}

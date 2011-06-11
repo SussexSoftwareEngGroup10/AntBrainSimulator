@@ -24,6 +24,46 @@ public class BrainParserTest {
 		}
 		
 	}
+	
+	//TODO: NEW TESTS FROM HERE MORGAN!! 
+	
+	@Test
+	public void testReadInvalidBrain() {
+		try{
+			Brain testBrain = BrainParser.readBrainFrom("invalid");
+			fail("Invalid Brain accepted");
+		}catch (IOEvent e) {
+			assertTrue(true);
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReadNonExistantBrain(){
+		try{
+			Brain testBrain = BrainParser.readBrainFrom("abcde");
+			fail("Non-existant brain loaded");
+		}catch (IOEvent e) {
+			assertTrue(true);
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testWriteBrain(){
+		try{
+			Brain testBrain = BrainParser.readBrainFrom("example");
+			BrainParser.writeBrainTo(testBrain, "testBrains/testWriteBrain");
+			Brain testReadNewBrain = BrainParser.readBrainFrom("testBrains/testWriteBrain");
+			assertTrue(testReadNewBrain != null);
+		}catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
 
 
 }

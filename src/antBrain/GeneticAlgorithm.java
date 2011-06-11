@@ -237,7 +237,7 @@ public class GeneticAlgorithm implements Serializable {
 		for(int i = this.population.length - 1; i >= 0; i--){
 			while(worlds.size() < 4)
 				try{
-					worlds.push(World.getContestWorld(1));
+					worlds.push(World.getContestWorld(1, null));
 				}catch(ErrorEvent e){
 					Logger.log(e);
 				}

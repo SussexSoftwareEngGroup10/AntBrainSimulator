@@ -42,7 +42,7 @@ public class ContestRunner extends Thread {
 		try {
 			gameEngine.contestSetup(brains);
 			//Create a world to use
-			world = World.getContestWorld(1);
+			world = World.getContestWorld(1, null);
 			Stack<World> worlds = new Stack<World>();
 			for(int i = 0 ; i <= brains.length; i++) {
 				//Create a new clone of the world for all the matches in this 

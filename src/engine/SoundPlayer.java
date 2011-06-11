@@ -90,6 +90,10 @@ public class SoundPlayer implements LineListener {
 	public void setMute(boolean mute) {
 		this.mute = mute;
 	}
+	
+	public boolean isMute() {
+		return mute;
+	}
 
 	@Override
 	public void update(LineEvent le) {

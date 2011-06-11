@@ -19,6 +19,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import engine.GameEngine;
 import engine.GameStats;
+import engine.SoundPlayer;
 import antBrain.Brain;
 import antBrain.BrainParser;
 import antWorld.World;
@@ -42,8 +43,6 @@ public class MainWindow {
 	private static final int WINDOW_HEIGHT = 738;
 	//TODO Known issue, heap space error when more than about 4 or 5 worlds
 	//	   are changed.
-	//TODO disable main display buttons when contest running?
-	//TODO numbers to indicate chemical marker?
 	//TODO randomly decide on which chemical marker to display
 	//TODO display a bit of progress bar when contest first run
 	
@@ -70,13 +69,17 @@ public class MainWindow {
 	private JButton uploadWorldBtn;
 	private JButton genWorldBtn;
 	private JSlider speedAdjustmentSlider;
+	private JButton muteBtn;
+
+	private SoundPlayer soundPlayer = new SoundPlayer();
+	private boolean isMuteBeforeFinish = false;
 	
 	/**
 	 * Constructs a new MainWindow and draws it to the screen.
 	 */
 	public MainWindow() {
 		try {
-			world = World.getContestWorld(0);
+			world = World.getContestWorld(0, soundPlayer);
 			gameEngine = new GameEngine();
 			drawGUI();
 		} catch (ErrorEvent e) {
@@ -124,7 +127,7 @@ public class MainWindow {
 		JPanel setupPanel = new JPanel();
 		setupPanel.setLayout(new GridLayout(6, 1, 5, 5));
 		//Empty border adds padding - pushing it halfway down the window
-		setupPanel.setBorder(new EmptyBorder(200, 20, 30, 20) );
+		setupPanel.setBorder(new EmptyBorder(150, 20, 30, 20) );
 		
 		//Create the buttons and assign listeners
 		startGameBtn = new JButton("Start Game");
@@ -167,7 +170,7 @@ public class MainWindow {
 		JPanel speedAdjustmentPanel = new JPanel();
 		speedAdjustmentSlider = new JSlider(1, 1000, 500);
 		speedAdjustmentSlider.addChangeListener(
-				new speedSliderChangeListener());
+				new SpeedSliderChangeListener());
 		//Add a border, and tick marks to slider
 		speedAdjustmentSlider.setBorder(
 				BorderFactory.createTitledBorder("Speed Adjustment Slider"));
@@ -175,8 +178,17 @@ public class MainWindow {
 		speedAdjustmentSlider.setEnabled(false);
 		speedAdjustmentPanel.add(speedAdjustmentSlider);
 		
+		//Set a panel to contain the mute button
+		JPanel mutePanel = new JPanel();
+		mutePanel.setLayout(new FlowLayout());
+		mutePanel.setBorder(new EmptyBorder(0, 0, 200, 0) );
+		muteBtn = new JButton("Mute");
+		muteBtn.addActionListener(new MuteListener());
+		mutePanel.add(muteBtn);
+		
 		gameControlsPanel.add(controlButtonsPanel, BorderLayout.NORTH);
 		gameControlsPanel.add(speedAdjustmentPanel, BorderLayout.CENTER);
+		gameControlsPanel.add(mutePanel, BorderLayout.SOUTH);
 		pane.add(gameControlsPanel, BorderLayout.CENTER);
 		
 		buttonsPanel.add(gameControlsPanel, BorderLayout.CENTER);
@@ -196,6 +208,11 @@ public class MainWindow {
 	 * @param winner The winner of the game.
 	 */
 	public void notifyGameComplete(GameStats gameStats) {
+		//Restore whether the game was muted or not
+		soundPlayer.setMute(isMuteBeforeFinish);
+		//Play the end of game sound
+		soundPlayer.playSound("finish");
+		
 		//re-enable buttons
 		startGameBtn.setEnabled(true);
 		contestBtn.setEnabled(true);
@@ -204,6 +221,7 @@ public class MainWindow {
 		uploadWorldBtn.setEnabled(true);
 		genWorldBtn.setEnabled(true);
 		speedAdjustmentSlider.setEnabled(true);
+		muteBtn.setEnabled(true);
 		
 		//Set speed adjustment slider back to default
 		speedAdjustmentSlider.setValue(500);
@@ -240,7 +258,7 @@ public class MainWindow {
 	 */
 	public void setupNewWorldStandardWorld(int rows, int cols, int rocks) 
 			throws ErrorEvent {
-		world = World.getRegularWorld(0, rows, cols, rocks);
+		world = World.getRegularWorld(0, rows, cols, rocks, soundPlayer);
 		gameDisplay.updateWorld(world); //Update game display with the world
 	}
 	
@@ -250,7 +268,7 @@ public class MainWindow {
 	 * @throws ErrorEvent When the world generation fails.
 	 */
 	public void setupNewContestWorld() throws ErrorEvent {
-			world = World.getContestWorld(0);
+			world = World.getContestWorld(0, soundPlayer);
 			gameDisplay.updateWorld(world);
 	}
 	
@@ -451,6 +469,12 @@ public class MainWindow {
 			clonedWorld = (World) world.clone();
 			//Set the speed of the simulation to default
 			gameEngine.setSpeed(500);
+			//Set the mute preference to the state the button is in
+			if (muteBtn.getText().equals("Mute")) {
+				soundPlayer.setMute(false);
+			} else {
+				soundPlayer.setMute(true);
+			}
 			//State a new simulation runner to run the simulation in a new
 			//thread
 			new SimulationRunner(
@@ -478,7 +502,7 @@ public class MainWindow {
 	 * 
 	 * @author wjs25
 	 */
-	public class speedSliderChangeListener implements ChangeListener {
+	public class SpeedSliderChangeListener implements ChangeListener {
 		
 		/**
 		 * Sets the speed of the game to the new speed of the slider.
@@ -488,9 +512,35 @@ public class MainWindow {
 		@Override
 		public void stateChanged(ChangeEvent e) {
 		    JSlider source = (JSlider)e.getSource();
-		    //Subtract from 1000, so that now, the lower the value, the faster.
+		    //Subtract from 1000, so that now, the lower the value, the faster
 		    gameEngine.setSpeed(
 		    		GameEngine.expScale(1001 - (int)source.getValue()));
+		    //Mute the sound if it runs faster than 750 after the change
+		    if (source.getValue() > 700) {
+		    	soundPlayer.setMute(true);
+		    	muteBtn.setEnabled(false);
+		    } else if (muteBtn.getText().equals("Mute")) {
+		    	soundPlayer.setMute(false);
+		    	muteBtn.setEnabled(true);
+		    } else {
+		    	muteBtn.setEnabled(true);
+		    }
+		}
+	}
+	
+	public class MuteListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton source = (JButton) e.getSource();
+			if (source.getText().equals("Mute")) {
+				soundPlayer.setMute(true);
+				source.setText("Unmute");
+			} else {
+				soundPlayer.setMute(false);
+				source.setText("Mute");
+			}
+			
 		}
 	}
 	
@@ -513,7 +563,12 @@ public class MainWindow {
 			//Sets the game to the fastest speed (as fast as the CPU can handle)
 			gameEngine.setSpeed(0);
 			speedAdjustmentSlider.setEnabled(false);
+			muteBtn.setEnabled(false);
 			gameDisplay.switchState(DisplayStates.PROCESSING);
+			//Store whether the game was muted before the game is skipped to
+			//the end. Then mute
+			isMuteBeforeFinish = soundPlayer.isMute();
+			soundPlayer.setMute(true);
 		}
 	}
 }

@@ -38,7 +38,6 @@ public class GameEngine {
 	private Semaphore semaphore;
 	private Brain[] population;
 	private int stepCount = 0;
-	private SoundPlayer soundPlayer = new SoundPlayer();
 	
 	/**
 	 * 
@@ -223,7 +222,7 @@ public class GameEngine {
 	 */
 	public void contestStepAll() {
 		try {
-			contestStepAll(World.getContestWorld(1));
+			contestStepAll(World.getContestWorld(1, null));
 		} catch (ErrorEvent e) {
 			Logger.log(e);
 		}
@@ -284,10 +283,7 @@ public class GameEngine {
 		//Setup brains
 		world.setBrain(blackBrain, 0);
 		world.setBrain(redBrain, 1);
-		
-		//Setup sound player
-		world.setSoundPlayer(soundPlayer);
-		
+
 		//Run the simulation, test the Brain result from the GA against bestBrain
 		Logger.log(new InformationLowEvent("Begun simulation"));
 		
@@ -323,9 +319,6 @@ public class GameEngine {
 			Logger.log(new InformationHighEvent("Food in red   anthill: "
 				+ anthillFood[1]));
 		}
-		
-		//Play the end of game sound
-		soundPlayer.playSound("finish");
 		
 		//Create and return statistics based on winner
 		if(anthillFood[0] > anthillFood[1]) {
@@ -387,7 +380,7 @@ public class GameEngine {
 		}
 		
 		try {
-			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1));
+			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1, null));
 		} catch (ErrorEvent e) {
 			Logger.log(e);
 		}

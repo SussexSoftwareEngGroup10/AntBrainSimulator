@@ -62,8 +62,8 @@ public class World implements Cloneable {
 	 * @throws ErrorEvent if objects specified don't fit in area specified
 	 * @throws IllegalArgumentEvent 
 	 */
-	public static World getContestWorld(int seed) throws ErrorEvent {
-		return getRegularWorld(seed, 140, 140, 13);
+	public static World getContestWorld(int seed, SoundPlayer soundPlayer) throws ErrorEvent {
+		return getRegularWorld(seed, 140, 140, 13, soundPlayer);
 	}
 	
 	/**
@@ -75,12 +75,14 @@ public class World implements Cloneable {
 	 * @param rocks
 	 * @param brains
 	 * @param seed
+	 * @param soundPlayer The sound player for sound effects, if this is null,
+	 * 					  no sounds will be played.
 	 * @return
 	 * @throws ErrorEvent if objects specified don't fit in area specified
 	 * @throws IllegalArgumentEvent 
 	 */
-	public static World getRegularWorld(int seed, int rows, int cols, int rocks) throws ErrorEvent {
-		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0, 1);
+	public static World getRegularWorld(int seed, int rows, int cols, int rocks, SoundPlayer soundPlayer) throws ErrorEvent {
+		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0, 1, soundPlayer);
 	}
 	
 	/**
@@ -99,12 +101,14 @@ public class World implements Cloneable {
 	 * @param foodBlobSideLength
 	 * @param foodBlobCellFoodCount
 	 * @param antInitialDirection
+	 * @param soundPlayer The sound player for sound effects, if this is null,
+	 * 					  no sounds will be played.
 	 * @throws ErrorEvent if objects specified don't fit in area specified
 	 * @throws IllegalArgumentEvent 
 	 */
 	public World(int seed, int rows, int cols, int rocks,
 		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection, int gap) throws ErrorEvent {
+		int foodBlobCellFoodCount, int antInitialDirection, int gap, SoundPlayer soundPlayer) throws ErrorEvent {
 		try{
 			//Can either use a random or predefined seed
 			this.seed = seed;
@@ -124,6 +128,7 @@ public class World implements Cloneable {
 			this.foodBlobAreaConsistency = true;
 			this.antInitialDirection = antInitialDirection;
 			this.gap = gap;
+			this.soundPlayer = soundPlayer;
 
 			//Initialise every cell to be clear
 			int r = 0;
@@ -439,7 +444,7 @@ public class World implements Cloneable {
 	private World(int seed, int rows, int cols, int rocks, boolean rockAreaConsistency,
 		boolean borderRocks, int anthills, int anthillSideLength, boolean anthillAreaConsistency,
 		int foodBlobCount, int foodBlobSideLength, int foodBlobCellFoodCount,
-		boolean foodBlobAreaConsistency, int antInitialDirection, int gap, Cell[][] cells) {
+		boolean foodBlobAreaConsistency, int antInitialDirection, int gap, Cell[][] cells, SoundPlayer soundPlayer) {
 		this.seed = seed;
 		this.ran = new Random(seed);
 		this.rows = rows;
@@ -457,6 +462,7 @@ public class World implements Cloneable {
 		this.antInitialDirection = antInitialDirection;
 		this.gap = gap;
 		this.cells = cells;
+		this.soundPlayer = soundPlayer;
 
 		for(int r = this.rows - 1; r >= 0; r--){
 			for(int c = this.cols - 1; c >= 0; c--){
@@ -1289,7 +1295,7 @@ public class World implements Cloneable {
 			this.rockAreaConsistency, this.borderRocks, this.anthills, this.anthillSideLength,
 			this.anthillAreaConsistency, this.foodBlobCount, this.foodBlobSideLength,
 			this.foodBlobCellFoodCount,	this.foodBlobAreaConsistency, this.antInitialDirection,
-			this.gap, newCells);
+			this.gap, newCells, soundPlayer);
 		return world;
 	}
 	

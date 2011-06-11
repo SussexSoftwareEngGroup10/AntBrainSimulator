@@ -217,4 +217,97 @@ public class CellTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	//TODO: MORE TESTS FROM HERE MORGAN
+	
+	/**
+	 * BOUNDARY AND FAULT TESTS
+	 */
+	
+	@Test
+	public void testInitInvalidCharacter(){
+		try{
+			Cell testCell = new Cell(4,4,'%');
+			if(testCell.toChar() == '%'){
+				fail("invalid cell set");
+			}else{
+				assertTrue(true);
+			}
+		} catch (IllegalArgumentEvent e) {
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void testSetInvalidChar(){
+		try{
+			Cell testCell = new Cell(10,10,'.');
+			testCell.setCell('%');
+			if(testCell.toChar() == '%'){
+				fail("invalid cell set");
+			}else{
+				assertTrue(true);
+			}
+		} catch (IllegalArgumentEvent e) {
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void testSetSignedPosition(){
+		try{
+			Cell testCell = new Cell(-10,-10,'.');
+			assertEquals("invalid Co-ordinates set",10,testCell.getCol());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSetOverMaxFood(){
+		try{
+			Cell testCell = new Cell(10,10,'.');
+			testCell.dropFood(10);
+			if(testCell.foodCount() == 10){
+				fail("Invalid amount of food set");
+			}else{
+				assertTrue(true);
+			}
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSetSignedFood(){
+		try{
+			Cell testCell = new Cell(10,10,'.');
+			testCell.dropFood(-2);
+			if(testCell.foodCount() == -2){
+				fail("signed food set");
+			}else{
+				assertTrue(true);
+			}
+		} catch (IllegalArgumentEvent e) {
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void testPickupOverMaxFood(){
+		try{
+			Cell testCell = new Cell(10,10,'.');
+			testCell.dropFood(4);
+			for(int i = 0; i < 10; i++){
+				testCell.pickupFood();
+			}
+			if(testCell.foodCount() > 0){
+				fail("Food count is below 0");
+			}else{
+				assertTrue(true);
+			}
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
 }

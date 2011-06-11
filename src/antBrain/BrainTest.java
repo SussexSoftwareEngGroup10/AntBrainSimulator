@@ -135,4 +135,30 @@ public class BrainTest {
 		
 	}
 	
+	//TODO: MORE TESTS FROM HERE MORGAN
+	
+	/**
+	 * 
+	 */
+	
+	@Test
+	public void testBoundaryIncrements(){
+		try{
+			Brain testBrain = BrainParser.readBrainFrom("example");
+			for(int i = 0; i < 10000000; i++)
+			{
+				testBrain.incrementWins();
+				testBrain.incrementDraws();
+				testBrain.incrementLosses();
+			}
+			assertEquals(10000000,testBrain.getWins());
+			assertEquals(10000000,testBrain.getDraws());
+			assertEquals(10000000,testBrain.getLosses());
+		} catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
 }

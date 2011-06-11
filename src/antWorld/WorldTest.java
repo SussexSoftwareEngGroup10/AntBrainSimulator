@@ -121,5 +121,48 @@ public class WorldTest {
 		}
 	}
 	
+	//TODO: MORE TESTS TO WRITE UP
+	
+	@Test
+	public void testTooMuchFood(){
+		try{
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/tooMuchFood");
+			if(testWorld.getCells()[1][1].foodCount() == 10){
+				fail("world with 10 food loaded");
+			}else{
+				assertTrue(true);
+			}
+		}catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testLoadInvalidWorld(){
+		try{
+			testWorld = WorldParser.readWorldFromCustom("testWorlds/invalid");
+			assertTrue("Invalid world loaded",testWorld == null);
+		}catch (IOEvent e) {
+			fail(e.getMessage());
+		} catch (IllegalArgumentEvent e) {
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void testLoadNonExistantWorld(){
+		try{
+			testWorld = WorldParser.readWorldFromCustom("abcdefg");
+			assertTrue("Invalid world loaded",testWorld == null);
+		}catch (IOEvent e) {
+			assertTrue(true);
+		} catch (IllegalArgumentEvent e) {
+			assertTrue(true);
+		}
+	}
+
+	
 	
 }

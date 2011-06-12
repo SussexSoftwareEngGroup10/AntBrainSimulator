@@ -45,6 +45,7 @@ public class MainWindow {
 	//	   are changed.
 	//TODO randomly decide on which chemical marker to display
 	//TODO display a bit of progress bar when contest first run
+	//TODO add singletons
 	
 	//The game engine to use for running the back end code
 	private GameEngine gameEngine;
@@ -71,7 +72,9 @@ public class MainWindow {
 	private JSlider speedAdjustmentSlider;
 	private JButton muteBtn;
 
+	//Sound player used to play all the sounds in the game
 	private SoundPlayer soundPlayer = new SoundPlayer();
+	//Specifies whether the game was muted before the finish button was pressed
 	private boolean isMuteBeforeFinish = false;
 	
 	/**
@@ -515,11 +518,13 @@ public class MainWindow {
 		    //Subtract from 1000, so that now, the lower the value, the faster
 		    gameEngine.setSpeed(
 		    		GameEngine.expScale(1001 - (int)source.getValue()));
-		    //Mute the sound if it runs faster than 750 after the change
+		    //Mute the sound if it runs faster than 700 after the change
 		    if (source.getValue() > 700) {
 		    	soundPlayer.setMute(true);
 		    	muteBtn.setEnabled(false);
 		    } else if (muteBtn.getText().equals("Mute")) {
+		    	//If it's slower than 700, unmute if the mute button is toggled
+		    	//to not be muted
 		    	soundPlayer.setMute(false);
 		    	muteBtn.setEnabled(true);
 		    } else {
@@ -528,11 +533,23 @@ public class MainWindow {
 		}
 	}
 	
+	/**
+	 * Attched to the mute button to allow the sounds of the game to be toggled
+	 * on and off.
+	 * 
+	 * @author wjs25
+	 */
 	public class MuteListener implements ActionListener {
 
+		/**
+		 * Depending on what state the button was currently in, flip the state
+		 * of the button, and mute or unmute the sound.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JButton source = (JButton) e.getSource();
+			//If it was set to being unmuted, set it to being muted and change
+			//the text of the button, otherwise do the opposite
 			if (source.getText().equals("Mute")) {
 				soundPlayer.setMute(true);
 				source.setText("Unmute");

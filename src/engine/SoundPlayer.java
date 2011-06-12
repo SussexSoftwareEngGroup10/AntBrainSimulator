@@ -11,14 +11,18 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import utilities.ErrorEvent;
+import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
+
 /**
- * NOT CURRENTLY INTEGRATED INTO THE GAME - WILL CONTINUE TOMORROW ON IT
- * @author Will
- *
+ * A class which allows the playing of four different sound effects.
+ * 
+ * @author wjs25
  */
 public class SoundPlayer implements LineListener {
+	//Variables to hold the different sound clips, and the lines they use
 	private Line dieLine;
 	private Clip dieSound;
 	private Line finishLine;
@@ -28,52 +32,69 @@ public class SoundPlayer implements LineListener {
 	private Line foodDepositionLine;
 	private Clip foodDepositionSound;
 	
+	//This is set to true when the sound should be muted
 	private boolean mute = false;
 
+	/**
+	 * Constructor for the sound player.  This loads in all the audio files.
+	 */
 	public SoundPlayer() {
 		try {
-			Line.Info linfo = new Line.Info(Clip.class);
-			AudioInputStream ais;
+			//Get an info object about the line using the clip class
+			Line.Info lineInfo = new Line.Info(Clip.class);
+			//The input stream of the audio files
+			AudioInputStream audioInputStream;
 			
-			dieLine = AudioSystem.getLine(linfo);
+			//Tese blocks of code get an audio line to use, create the clip,
+			//and open the relevent audio file with it
+			dieLine = AudioSystem.getLine(lineInfo);
 			dieSound = (Clip) dieLine;
 			dieSound.addLineListener(this);
-			ais = AudioSystem.getAudioInputStream(new File("resources/sounds/die.wav"));
-			dieSound.open(ais);
+			audioInputStream = AudioSystem.getAudioInputStream(
+					new File("resources/sounds/die.wav"));
+			dieSound.open(audioInputStream);
 			
-			finishLine = AudioSystem.getLine(linfo);
+			finishLine = AudioSystem.getLine(lineInfo);
 			finishSound = (Clip) finishLine;
 			finishSound.addLineListener(this);
-			ais = AudioSystem.getAudioInputStream(new File("resources/sounds/finish.wav"));
-			finishSound.open(ais);
+			audioInputStream = AudioSystem.getAudioInputStream(
+					new File("resources/sounds/finish.wav"));
+			finishSound.open(audioInputStream);
 
-			foodCollectionLine = AudioSystem.getLine(linfo);
+			foodCollectionLine = AudioSystem.getLine(lineInfo);
 			foodCollectionSound = (Clip) foodCollectionLine;
 			foodCollectionSound.addLineListener(this);
-			ais = AudioSystem.getAudioInputStream(new File("resources/sounds/food_collection.wav"));
-			foodCollectionSound.open(ais);
+			audioInputStream = AudioSystem.getAudioInputStream(
+					new File("resources/sounds/food_collection.wav"));
+			foodCollectionSound.open(audioInputStream);
 			
-			foodDepositionLine = AudioSystem.getLine(linfo);
+			foodDepositionLine = AudioSystem.getLine(lineInfo);
 			foodDepositionSound = (Clip) foodDepositionLine;
 			foodDepositionSound.addLineListener(this);
-			ais = AudioSystem.getAudioInputStream(new File("resources/sounds/food_deposition.wav"));
-			foodDepositionSound.open(ais);
+			audioInputStream = AudioSystem.getAudioInputStream(
+					new File("resources/sounds/food_deposition.wav"));
+			foodDepositionSound.open(audioInputStream);
 			
-		} catch (LineUnavailableException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (LineUnavailableException lUE) {
+			Logger.log(new ErrorEvent("Requested audio line is unavailable."));
 		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.log(new ErrorEvent("Requested audio file is unsuppoted."));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.log(new IOEvent("IO error when loading an audio file"));
 		}
 	}
 
+	/**
+	 * Plays the sound specified.
+	 * 
+	 * @param sound Supported sounds: "die", "finish", "food_collection",
+	 * 				"food deposition".
+	 */
 	public void playSound(String sound) {
+		//Do not play if muted
 		if (!mute) {
 			if (sound.equals("die")) {
+				//Call the start methods of the clips
 				dieSound.start();
 			} else if (sound.equals("finish")) {
 				finishSound.start();
@@ -82,19 +103,35 @@ public class SoundPlayer implements LineListener {
 			} else if (sound.equals("food_deposition")) {
 				foodDepositionSound.start();
 			} else {
-				Logger.log(new IllegalArgumentEvent("Non existant sound requested."));
+				Logger.log(new IllegalArgumentEvent(
+						"Non existant sound requested."));
 			}
 		}
 	}
 	
+	/**
+	 * Set whether the sounds should be muted.
+	 * 
+	 * @param mute True if it should be muted.
+	 */
 	public void setMute(boolean mute) {
 		this.mute = mute;
 	}
 	
+	/**
+	 * Check whether the sounds are muted.
+	 * 
+	 * @return True if it is muted.
+	 */
 	public boolean isMute() {
 		return mute;
 	}
 
+	/**
+	 * This is called automatically when the state of the clip changes.  In
+	 * this case we only check for when a clip stops, so we can reset the
+	 * read position for the clip to the beginning of the file.
+	 */
 	@Override
 	public void update(LineEvent le) {
 		LineEvent.Type type = le.getType();

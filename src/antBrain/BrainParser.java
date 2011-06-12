@@ -20,7 +20,7 @@ import utilities.Logger;
 public class BrainParser {
 	private static final String folderName = "brains";
 	private static final File folder = new File(folderName);
-	private static final String fileNameSuffix = ".brain";
+	private static final String fileNameSuffix = ".ant";
 	
 	/**
 	 * @throws InstantiationException 

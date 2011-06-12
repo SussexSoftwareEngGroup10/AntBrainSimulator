@@ -366,7 +366,7 @@ public class GameEngine {
 		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
 			trainingBrain, Integer.MAX_VALUE, 50, 50/10, 20);
 //		try {
-//			gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
+//			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
 //		} catch (IOEvent e) {
 //			Logger.log(e);
 //		} catch (IllegalArgumentEvent e) {

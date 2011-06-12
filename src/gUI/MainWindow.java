@@ -410,15 +410,17 @@ public class MainWindow {
 			int numberOfPlayers;
 			if (stringNumberOfPlayers != null) {
 				try {
-					System.out.println(stringNumberOfPlayers);
 					numberOfPlayers = Integer.parseInt(stringNumberOfPlayers);
-					if (numberOfPlayers > 1) {
-						//Display contest window
-						new ContestWindow(numberOfPlayers, gameEngine);
-					} else {
+					if (numberOfPlayers < 2) {
 						GUIErrorMsg.displayErrorMsg(
 								"Can't run a contest with less that two " +
 								"brains!");
+					} else if (numberOfPlayers > 200) {
+						GUIErrorMsg.displayErrorMsg(
+								"Upper limit of 200 players for contests!");
+					} else {
+						//Display contest window
+						new ContestWindow(numberOfPlayers, gameEngine);
 					}
 				} catch (NumberFormatException nFE){
 					GUIErrorMsg.displayErrorMsg(

@@ -231,6 +231,9 @@ public class WorldGenerateWindow {
 					if (rows > 140 || cols > 140) {
 						GUIErrorMsg.displayErrorMsg("World dimensions must " +
 													"not exceed 140!");
+					} else if (rows < 1 || cols < 1 || rocks < 1) {
+						GUIErrorMsg.displayErrorMsg("Values cannot be " +
+													"negative!");
 					} else {
 						try {
 							mainWindow.setupNewWorldStandardWorld(

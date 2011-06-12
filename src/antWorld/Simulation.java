@@ -50,6 +50,8 @@ public final class Simulation extends Thread {
 			this.instance = 0;
 		}else if(goal.equals("food")){
 			this.instance = 1;
+		}else if(goal.equals("surround")){
+			this.instance = 2;
 		}else{
 			throw new IllegalArgumentEvent("Illegal type in Simulation constructor");
 		}
@@ -106,6 +108,10 @@ public final class Simulation extends Thread {
 				this.blackBrain.setFitness(this.fitness, ants[0] - ants[1]);
 				this.redBrain.setFitness(this.fitness, ants[1] - ants[0]);
 			}else if(this.instance == 1){	//food
+				int[] anthillFood = this.world.getFoodInAnthills();
+				this.blackBrain.setFitness(this.fitness, anthillFood[0] - anthillFood[1]);
+				this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);
+			}else if(this.instance == 2){	//surround
 				int[] anthillFood = this.world.getFoodInAnthills();
 				this.blackBrain.setFitness(this.fitness, anthillFood[0] - anthillFood[1]);
 				this.redBrain.setFitness(this.fitness, anthillFood[1] - anthillFood[0]);

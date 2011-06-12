@@ -60,6 +60,8 @@ public class GeneticAlgorithm implements Serializable {
 			this.instance = 0;
 		}else if(goal.equals("food")){
 			this.instance = 1;
+		}else if(goal.equals("surround")){
+			this.instance = 2;
 		}else{
 			this.instance = -1;
 		}
@@ -570,6 +572,9 @@ public class GeneticAlgorithm implements Serializable {
 		files = folder.listFiles();
 		String maxFilePath = null;
 		max = Integer.MIN_VALUE;
+		if(files == null){
+			return false;
+		}
 		for(File f2 : files){
 			filePath = f2.getPath();
 			if(filePath.startsWith(filePathPrefix)

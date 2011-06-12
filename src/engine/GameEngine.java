@@ -27,6 +27,7 @@ import antWorld.*;
  * 
  * @author pkew20 / 57116
  * @version 1.0
+ * 
  */
 public class GameEngine {
 	private static final int rounds = 300000;
@@ -332,6 +333,7 @@ public class GameEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		//TODO make deterministic
 		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step()
@@ -358,11 +360,11 @@ public class GameEngine {
 			return;
 		}
 		GameEngine gameEngine = new GameEngine();
-		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm("kills");
+		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm("surround");
 		
 		Brain gaBrain = null;
-		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain, trainingBrain, 
-			Integer.MAX_VALUE, 50, 50/10, 20);
+		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
+			trainingBrain, Integer.MAX_VALUE, 50, 50/10, 20);
 //		try {
 //			gaBrain = BrainParser.readBrainFrom("ga_result_trimmed");
 //		} catch (IOEvent e) {

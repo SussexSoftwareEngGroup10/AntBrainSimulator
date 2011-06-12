@@ -60,6 +60,7 @@ public class BrainParser {
 			br = new BufferedReader(new FileReader(f));
 			
 			//Read in the file 1 line at a time, creating a State from each line
+			int state = 0;
 			while(true){
 				line = br.readLine();
 				//Gives: "Sense Ahead 1 3 Food  ; state 0:
@@ -82,11 +83,15 @@ public class BrainParser {
 				lineParts[0] = lineParts[0].trim();
 				//Gives: "Sense Ahead 1 3 Food"
 				
-				//Get stateNum from stateStrings[1]
-				lineParts[1] = lineParts[1].trim();
-				stateNum = getStateNum(lineParts[1]);
-				
+				try{
+					//Get stateNum from stateStrings[1]
+					lineParts[1] = lineParts[1].trim();
+					stateNum = getStateNum(lineParts[1]);
+				}catch(ArrayIndexOutOfBoundsException e){
+					stateNum = state;
+				}
 				brain.put(stateNum, new State(stateNum, lineParts[0]));
+				state++;
 			}
 			br.close();
 		}catch(IOException e){

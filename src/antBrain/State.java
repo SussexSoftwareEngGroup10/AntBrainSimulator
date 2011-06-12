@@ -200,8 +200,8 @@ public class State implements Serializable {
 			this.senseDir = null;
 			this.turnDir = null;
 			this.marker = -1;
-			if(genes[4] < 2 || genes[4] > 10){
-				throw new IllegalArgumentEvent("Illegal st1 " +
+			if(genes[4] < 1){
+				throw new IllegalArgumentEvent("Illegal p " +
 					"argument in State constructor");
 			}
 			this.p = genes[4];
@@ -426,7 +426,7 @@ public class State implements Serializable {
 			this.turnDir = null;
 			this.marker = -1;
 			iVal = Integer.parseInt(terms[1]);
-			if(iVal < 2 || iVal > 10){
+			if(iVal < 1){
 				throw new IllegalArgumentEvent("Illegal p " +
 					"argument in State constructor");
 			}

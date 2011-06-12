@@ -1,5 +1,6 @@
 package gUI;
 
+import java.util.HashMap;
 import java.util.Random;
 import org.gicentre.utils.move.ZoomPan;
 import processing.core.PApplet;
@@ -98,6 +99,10 @@ public class GameDisplay extends PApplet {
 			return direction;
 		}
 	}
+	
+	//For each cell a random integer (1 or 0) will dictate which species
+	//chemical marker should be drawn last
+	private HashMap<Cell, Integer> markerDrawOrders;
 	
 	//Holds the current state of the display.  The states the display can be in
 	//are enumerated in DisplayStates.  The display while draw differently
@@ -225,6 +230,7 @@ public class GameDisplay extends PApplet {
 	@Override
 	public void setup() {
 		gridCells = this.world.getCells();
+		setMarkerDrawOrders(gridCells);
 		//Number of hexagons in columns and rows
 		numHexRow = gridCells.length;
 		numHexCol = gridCells[0].length;
@@ -261,6 +267,20 @@ public class GameDisplay extends PApplet {
 		updateImageScale(); //Update the image scales because zoom scale has
 							//been changed
 		bufferWorld(); //Buffer the background tiles
+	}
+	
+	/*
+	 * Used to randomly decide which marker is drawn first (so if there
+	 * is more than one on the tile, it will randomly pick which one
+	 * is drawn last and actually displayed)
+	 */
+	private void setMarkerDrawOrders(Cell[][] cells) {
+		for (Cell[] cellCol : cells) {
+			for (Cell cell : cellCol) {
+				int order = random.nextInt(2);
+				markerDrawOrders.put(cell, order);
+			}
+		}
 	}
 	
 	/*
@@ -397,11 +417,11 @@ public class GameDisplay extends PApplet {
 			updateImageScale();
 			//Draw the images to the sketch based on the current scale
 			if (currentImageScale == ImageDrawScales.LARGE) {
-				drawImages(LARGE_IMAGE);
+				drawImages(LARGE_IMAGE, gridCells);
 			} else if (currentImageScale == ImageDrawScales.MEDIUM) {
-				drawImages(MEDIUM_IMAGE);
+				drawImages(MEDIUM_IMAGE, gridCells);
 			} else {
-				drawImages(SMALL_IMAGE);
+				drawImages(SMALL_IMAGE, gridCells);
 			}
 		}
 	}
@@ -409,7 +429,7 @@ public class GameDisplay extends PApplet {
 	/*
 	 * This helper method draws all the images to the sketch area.
 	 */
-	private void drawImages(int imageScale) {
+	private void drawImages(int imageScale, Cell[][] gridCells) {
 		//If the background buffer isn't null, draw it to the screen
 		if (backgroundBuffer != null) {
 			image(backgroundBuffer, 0, 0);
@@ -419,7 +439,7 @@ public class GameDisplay extends PApplet {
 			//ants in that order
 			for (int row = 0; row < numHexRow; row++) {
 				for (int col = 0; col < numHexCol; col++) {
-					drawMarker(row, col);
+					drawMarker(row, col, gridCells);
 					drawFood(imageScale, row, col);
 					drawAnt(imageScale, row, col);
 
@@ -431,14 +451,25 @@ public class GameDisplay extends PApplet {
 	/*
 	 * Helper method for drawing a marker on a specific hexagon if this is one.
 	 */
-	private void drawMarker(int row, int col) {
+	private void drawMarker(int row, int col, Cell[][] gridCells) {
 		for (int i = 0; i < 6; i++) { //Check in each type of the 6 markers
-			//Draw a marker if one exists for either of the species
-			if (gridCells[row][col].getMarker(0, i)) {
-				drawImage(blackMarker, row, col, 0);
-			}
-			if (gridCells[row][col].getMarker(1, i)) {
-				drawImage(redMarker, row, col, 0);
+			//Get the draw order and draw in that order
+			int drawOrder = markerDrawOrders.get(gridCells[row][col]);
+			if (drawOrder == 0) {
+				//Draw a marker if one exists for either of the species
+				if (gridCells[row][col].getMarker(0, i)) {
+					drawImage(blackMarker, row, col, 0);
+				}
+				if (gridCells[row][col].getMarker(1, i)) {
+					drawImage(redMarker, row, col, 0);
+				}
+			} else {
+				if (gridCells[row][col].getMarker(1, i)) {
+					drawImage(redMarker, row, col, 0);
+				}
+				if (gridCells[row][col].getMarker(0, i)) {
+					drawImage(blackMarker, row, col, 0);
+				}
 			}
 		}
 	}

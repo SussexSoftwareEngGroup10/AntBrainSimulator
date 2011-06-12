@@ -260,6 +260,9 @@ public class ContestWindow {
 					browseBtn.setEnabled(false);
 				}
 				
+				//Show a part of the progress bar so it's clear what it is for
+				progressBar.setValue(1);
+				
 				JOptionPane.showMessageDialog(
 						pane, "Running contest, please wait.");
 			} catch (IOEvent ioE) {

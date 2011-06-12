@@ -23,7 +23,7 @@ public class GameEngineTest {
 			Brain[] brainArray = new Brain[2];
 			brainArray[0] = BrainParser.readBrainFrom("blank");
 			brainArray[1] = BrainParser.readBrainFrom("better_example");
-			World testWorld = World.getContestWorld(0);
+			World testWorld = World.getContestWorld(0, null);
 			stats = testEngine.simulate(brainArray[0], brainArray[1], testWorld);
 		} catch (IOEvent e) {
 			fail(e.getMessage());

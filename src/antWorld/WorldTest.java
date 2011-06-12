@@ -73,7 +73,7 @@ public class WorldTest {
 	@Test
 	public void testReturnAntsValidWorld(){
 		try {
-				testWorld = World.getContestWorld(93745);
+				testWorld = World.getContestWorld(93745, null);
 				Ant[] testAnts = testWorld.getAnts();
 				assertEquals(254, testAnts.length);
 				} catch (ErrorEvent e) {
@@ -104,7 +104,7 @@ public class WorldTest {
 	@Test
 	public void testGenerateRandomWorld(){
 		try{
-			testWorld = World.getContestWorld(38457);
+			testWorld = World.getContestWorld(38457, null);
 			assertTrue(testWorld.isContest());
 		}  catch (ErrorEvent e) {
 			fail(e.getMessage());
@@ -114,7 +114,7 @@ public class WorldTest {
 	@Test
 	public void testInvalidWorld(){
 		try {
-			testWorld = World.getRegularWorld(12, 100, 100, 15);
+			testWorld = World.getRegularWorld(12, 100, 100, 15, null);
 			assertFalse(testWorld.isContest());
 		} catch (ErrorEvent e) {
 			fail(e.getMessage());

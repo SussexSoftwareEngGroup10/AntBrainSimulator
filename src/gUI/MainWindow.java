@@ -408,19 +408,23 @@ public class MainWindow {
 					JOptionPane.QUESTION_MESSAGE);
 			//Validate it's an int
 			int numberOfPlayers;
-			try {
-				numberOfPlayers = Integer.parseInt(stringNumberOfPlayers);
-				if (numberOfPlayers > 1) {
-					//Display contest window
-					new ContestWindow(numberOfPlayers, gameEngine);
-				} else {
+			if (stringNumberOfPlayers != null) {
+				try {
+					System.out.println(stringNumberOfPlayers);
+					numberOfPlayers = Integer.parseInt(stringNumberOfPlayers);
+					if (numberOfPlayers > 1) {
+						//Display contest window
+						new ContestWindow(numberOfPlayers, gameEngine);
+					} else {
+						GUIErrorMsg.displayErrorMsg(
+								"Can't run a contest with less that two " +
+								"brains!");
+					}
+				} catch (NumberFormatException nFE){
 					GUIErrorMsg.displayErrorMsg(
-							"Can't run a contest with less that two brains!");
+							"Input number of players not an integer!");
 				}
-			} catch (NumberFormatException nFE){
-				GUIErrorMsg.displayErrorMsg(
-						"Input number of players not an integer!");
-			}			
+			}
 		}
 	}
 	

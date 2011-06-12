@@ -230,6 +230,7 @@ public class GameDisplay extends PApplet {
 	@Override
 	public void setup() {
 		gridCells = this.world.getCells();
+		markerDrawOrders = new HashMap<Cell, Integer>();
 		setMarkerDrawOrders(gridCells);
 		//Number of hexagons in columns and rows
 		numHexRow = gridCells.length;

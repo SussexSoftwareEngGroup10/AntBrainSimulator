@@ -37,13 +37,14 @@ import utilities.IllegalArgumentEvent;
  * @author wjs25
  */
 public class MainWindow {
+	//Holds the singleton object of this class
+	public final static MainWindow INSTANCE = new MainWindow();
 	//Holds the dimensions of the main display.  These dimensions allow the
 	//program to run in a standard 1024 * 786 XGA display at least.
 	private static final int WINDOW_WIDTH = 921;
 	private static final int WINDOW_HEIGHT = 738;
 	//TODO Known issue, heap space error when more than about 4 or 5 worlds
 	//	   are changed.
-	//TODO add singletons
 	//TODO contest mode shows error when you press cancel
 	
 	//The game engine to use for running the back end code
@@ -76,19 +77,18 @@ public class MainWindow {
 	//Specifies whether the game was muted before the finish button was pressed
 	private boolean isMuteBeforeFinish = false;
 	
+	//Private, so cannot be externally accessed.
+	private MainWindow() {}
+	
 	/**
-	 * Constructs a new MainWindow and draws it to the screen.
+	 * Get the singleton object of this class.
+	 * 
+	 * @return The main window.
 	 */
-	public MainWindow() {
-		try {
-			world = World.getContestWorld(0, soundPlayer);
-			gameEngine = new GameEngine();
-			drawGUI();
-		} catch (ErrorEvent e) {
-			GUIErrorMsg.displayErrorMsg("Error in generating a world!");
-		}
-	}
-		
+	public static MainWindow getInstance() {
+        return INSTANCE;
+    }
+	
 	/**
 	 * Main method to run the program - simply calls the constructor
 	 * to display the GUI.
@@ -96,7 +96,20 @@ public class MainWindow {
 	 * @param args Unused.
 	 */
 	public static void main(String[] args) {
-		new MainWindow();
+		MainWindow.getInstance().init();
+	}
+	
+	/**
+	 * This initialises the window and starts the running of the game.
+	 */
+	public void init() {
+		try {
+			world = World.getContestWorld(0, soundPlayer);
+			gameEngine = new GameEngine();
+			drawGUI();
+		} catch (ErrorEvent e) {
+			GUIErrorMsg.displayErrorMsg("Error in generating a world!");
+		}
 	}
 		
 	/*

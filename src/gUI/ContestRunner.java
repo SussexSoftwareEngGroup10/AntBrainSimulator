@@ -25,7 +25,7 @@ public class ContestRunner extends Thread {
 	 * @param contestWindow The contest window where the contest was started 
 	 * 						from.
 	 */
-	public ContestRunner(
+	private ContestRunner(
 			GameEngine gameEngine, Brain[] brains, 
 			ContestWindow contestWindow) {
 		this.gameEngine = gameEngine;

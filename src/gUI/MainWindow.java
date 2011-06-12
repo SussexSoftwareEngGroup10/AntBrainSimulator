@@ -319,7 +319,7 @@ public class MainWindow {
 					//Validate the file is of the correct format
 					if ((clickedBtn == uploadRedBtn || 
 							clickedBtn == uploadBlackBtn) && 
-							!path.contains(".brain")) {
+							!path.contains(".ant")) {
 							GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .brain file expected.");
 					} else if (clickedBtn == uploadWorldBtn &&

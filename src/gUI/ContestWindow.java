@@ -196,7 +196,7 @@ public class ContestWindow {
 				if (file != null) {
 					path = file.getAbsolutePath();
 					//Validate the file is of the correct format
-					if (!path.contains(".brain")) {
+					if (!path.contains(".ant")) {
 						GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .brain file expected.");
 					} else {

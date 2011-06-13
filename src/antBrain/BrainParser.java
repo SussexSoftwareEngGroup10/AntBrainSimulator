@@ -16,7 +16,6 @@ import utilities.Logger;
 /**
  * @title BrainParser
  * @purpose facilitates the reading and writing of brains to and from files.
- * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -27,16 +26,20 @@ public class BrainParser {
 	private static final String fileNameSuffix = ".ant";
 	
 	/**
-	 * @throws InstantiationException 
+	 * @title BrainParser
+	 * @purpose disables instantiation of this class
+	 * @throws InstantiationException when called
 	 */
 	public BrainParser() throws InstantiationException {
 		throw new InstantiationException("BrainParser class cannot be instantiated");
 	}
 	
 	/**
-	 * @param name
-	 * @return
-	 * @throws IOEvent  if file not found...etc
+	 * @title readBrainFrom
+	 * @purpose attempts to read a Brain object from the path specified
+	 * @param name the path to the file
+	 * @return the Brain read from the file specified
+	 * @throws IOEvent if any IO operations fail
 	 * @throws IllegalArgumentEvent if state cannot be constructed
 	 */
 	public static Brain readBrainFrom(String name) throws IOEvent, IllegalArgumentEvent {
@@ -110,9 +113,11 @@ public class BrainParser {
 	}
 	
 	/**
-	 * @param brain
-	 * @param name
-	 * @throws IOEvent if file not found...etc
+	 * @title writeBrainTo
+	 * @purpose attempts to write a Brain object to the path specified
+	 * @param brain the Brain to be written
+	 * @param name the path to the file to be created
+	 * @throws IOEvent if any of the IO operations fail
 	 */
 	public static void writeBrainTo(Brain brain, String name) throws IOEvent {
 		String path = folderName + "\\"
@@ -141,18 +146,9 @@ public class BrainParser {
 			"object to \"" + path + "\""));
 	}
 	
-	/**
-	 * Gets the state number from the given string
-	 * Starts at the index after "state ", and looks for ints
-	 * Returns the unbroken int starting at said index
-	 * e.g. "state 123 456"
-	 * returns 123
-	 * 
-	 * @param string
-	 * @return
-	 */
 	private static int getStateNum(String string) {
-		//Get a number from the string given, starting after "state "
+		//Get the state number from the given string. Starts at the
+		//index after "state ", and looks for continuous ints.
 		String stateNumString = "";
 		String substring;
 		int i = 0;

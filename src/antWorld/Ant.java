@@ -14,7 +14,6 @@ import antBrain.State;
  * @purpose to execute instructions in an order specified in the Brain it is
  * given, to move between Cell objects, performing a variety of actions
  * including moving food and setting markers. 
- * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -49,11 +48,14 @@ public final class Ant implements Comparable<Ant> {
 	private SoundPlayer soundPlayer;
 	
 	/**
-	 * @param uid
-	 * @param ran
-	 * @param direction
-	 * @param colour
-	 * @param cell
+	 * @title Ant
+	 * @purpose to allow the construction of Ant objects
+	 * @param uid the unique identifier of this Ant object
+	 * @param ran the Random to use to flip
+	 * @param direction the direction this Ant should face
+	 * @param colour 0 or 1, the colour of the Ant
+	 * @param cell the starting location of the Ant
+	 * @param soundPlayer the SoundPlayer, if any, to use to record events
 	 */
 	public Ant(int uid, Random ran, int direction, int colour, Cell cell, SoundPlayer soundPlayer) {
 		this.uid = uid;
@@ -321,11 +323,11 @@ public final class Ant implements Comparable<Ant> {
 				Logger.log(e);
 			}
 			this.hasFood = false;
-			this.state = this.brain.get(this.state.getSt1());
-			//Play sound effect
-			if (this.soundPlayer != null) {
-				this.soundPlayer.playSound("food_deposition");
-			}
+		}
+		this.state = this.brain.get(this.state.getSt1());
+		//Play sound effect
+		if (this.soundPlayer != null) {
+			this.soundPlayer.playSound("food_deposition");
 		}
 	}
 	
@@ -496,28 +498,36 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @return
+	 * @title getUID
+	 * @purpose to return the UID of this Ant
+	 * @return the UID of this Ant
 	 */
 	public final int getUID() {
 		return this.uid;
 	}
 	
 	/**
-	 * @return
+	 * @title getColour
+	 * @purpose to return the colour of this Ant
+	 * @return the colour of this Ant
 	 */
 	public final int getColour() {
 		return this.colour.ordinal();
 	}
 	
 	/**
-	 * @return
+	 * @title getDirection
+	 * @purpose to return the direction this Ant is facing
+	 * @return the direction this Ant is facing
 	 */
 	public int getDirection() {
 		return this.direction;
 	}
 	
 	/**
-	 * @return
+	 * @title hasFood
+	 * @purpose to return whether or not the Ant is currently carrying food
+	 * @return true if the Ant is carrying food
 	 */
 	public final boolean hasFood() {
 		return this.hasFood;
@@ -529,17 +539,35 @@ public final class Ant implements Comparable<Ant> {
 	protected final void setCell(Cell cell) {
 		this.cell = cell;
 	}
-	
-	/**
-	 * @param ant
-	 * @return
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 * 
+	 * @title hashCode
+	 * @purpose to return the Ant's UID
+	 * @return the Ant's UID
 	 */
-	public final boolean equals(Ant ant) {
+	@Override
+	public int hashCode() {
+		return this.uid;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 * 
+	 * @title equals
+	 * @purpose tests whether two Ant objects are equal by comparing their
+	 * UIDs
+	 * @param o the object to test against this Brain
+	 * @return true if the Object passed is equal to this Brain
+	 */
+	@Override
+	public final boolean equals(Object o) {
 		//This is consistent with the natural ordering of Ant objects,
 		//as given by compareTo
 		//Should never return true, as each engine creates a maximum of 1
 		//Ant for any UID number
-		if(ant.getUID() == this.uid){
+		if(((Ant) o).getUID() == this.uid){
 			return true;
 		}
 		return false;
@@ -547,6 +575,12 @@ public final class Ant implements Comparable<Ant> {
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 * 
+	 * @title compareTo
+	 * @purpose compares two Ant objects by their UIDs.
+	 * @param ant the Ant to compare to this Brain
+	 * @return 1 if ant's UID is greater than this Brain, 0 if they
+	 * are equal, -1 if it is lesser
 	 */
 	@Override
 	public final int compareTo(Ant ant) {
@@ -563,6 +597,11 @@ public final class Ant implements Comparable<Ant> {
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
+	 * 
+	 * @title toString
+	 * @purpose to generate and return a String representation of this Ant,
+	 * which includes many of its attributes.
+	 * @return a String representation of this Ant, including many of its fields
 	 */
 	@Override
 	public final String toString() {

@@ -11,7 +11,6 @@ import utilities.Logger;
 /**
  * @title State
  * @purpose holds an ant brain instruction and a list of its parameters.
- * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -43,11 +42,12 @@ public class State implements Serializable {
 	private int stateNum;
 	
 	/**
-	 * Constructor used by the Genetic Algorithm, gives increased efficiency
-	 * 
-	 * @param stateNum
-	 * @param genes
-	 * @throws IllegalArgumentEvent 
+	 * @title State
+	 * @purpose constructor used by the Genetic Algorithm, gives increased
+	 * efficiency.
+	 * @param stateNum the number of this state
+	 * @param genes the values of the command and its parameters for this State
+	 * @throws IllegalArgumentEvent if any of the genes are outside their range
 	 */
 	public State(int stateNum, int[] genes) throws IllegalArgumentEvent {
 		this.stateNum = stateNum;
@@ -230,11 +230,11 @@ public class State implements Serializable {
 	}
 	
 	/**
-	 * General constructor used when reading in States from file
-	 * 
-	 * @param stateNum
-	 * @param stateString
-	 * @throws IllegalArgumentEvent 
+	 * @title
+	 * @purpose constructor used when reading in States from file.
+	 * @param stateNum the number of this State
+	 * @param stateString the String to be converted into a State object
+	 * @throws IllegalArgumentEvent if the stateString is invalid
 	 */
 	public State(int stateNum, String stateString) throws IllegalArgumentEvent {
 		@SuppressWarnings("rawtypes")
@@ -458,9 +458,11 @@ public class State implements Serializable {
 	}
 	
 	/**
+	 * @title getValues
+	 * @purpose returns an array of maximum values for each gene
 	 * @param states maximum stateNum for st1 and st2
 	 * @return number of values for each part of a state
-	 * @throws IllegalArgumentEvent 
+	 * @throws IllegalArgumentEvent if getValue fails
 	 */
 	public static int[] getValues(int states) throws IllegalArgumentEvent {
 		int[] values = new int[9];
@@ -472,10 +474,12 @@ public class State implements Serializable {
 	}
 	
 	/**
-	 * @param states
-	 * @param field
-	 * @return
-	 * @throws IllegalArgumentEvent 
+	 * @title getValue
+	 * @purpose to get the limit for one of the fields of the State
+	 * @param states number of states in the Brain
+	 * @param field index of the field to find the limit of
+	 * @return the limit for the field specified
+	 * @throws IllegalArgumentEvent if field is less than 0 or greater than 9
 	 */
 	public static int getValue(int states, int field) throws IllegalArgumentEvent {
 		switch(field){
@@ -629,9 +633,12 @@ public class State implements Serializable {
 	}
 	
 	/**
+	 * @title getGenes
+	 * @purpose to get an encoding of the instructions in this State
 	 * @return the values of all int fields, and the ordinal of all enum values
 	 * returns -1 if int or enum is not in use by state
-	 * e.g. when command == SENSE, turnDir returns -1, as sense does not have a turnDir
+	 * e.g. when command == SENSE, turnDir returns -1, as sense does not have a
+	 * turnDir
 	 */
 	public int[] getGenes() {
 		int[] genes = new int[9];
@@ -660,7 +667,9 @@ public class State implements Serializable {
 	}
 	
 	/**
-	 * @return
+	 * @title getCommand
+	 * @purpose to get the int representing the command part of the instruction
+	 * @return the ordinal of the command part of the instruction
 	 */
 	public int getCommand() {
 		if(this.command == null){
@@ -670,7 +679,9 @@ public class State implements Serializable {
 	}
 	
 	/**
-	 * @return
+	 * @title getSenseDir
+	 * @purpose to get the int representing the senseDir part of the instruction
+	 * @return the ordinal of the senseDir part of the instruction
 	 */
 	public int getSenseDir() {
 		if(this.senseDir == null){
@@ -680,7 +691,9 @@ public class State implements Serializable {
 	}
 	
 	/**
-	 * @return
+	 * @title getTurnDir
+	 * @purpose to get the int representing the turnDir part of the instruction
+	 * @return the ordinal of the turnDir part of the instruction
 	 */
 	public int getTurnDir() {
 		if(this.turnDir == null){
@@ -690,35 +703,45 @@ public class State implements Serializable {
 	}
 	
 	/**
-	 * @return
+	 * @title getMarker
+	 * @purpose to get the int representing the marker part of the instruction
+	 * @return the ordinal of the marker part of the instruction
 	 */
 	public int getMarker() {
 		return this.marker;
 	}
 	
 	/**
-	 * @return
+	 * @title getP
+	 * @purpose to get the int representing the p part of the instruction
+	 * @return the ordinal of the p part of the instruction
 	 */
 	public int getP() {
 		return this.p;
 	}
 	
 	/**
-	 * @return
+	 * @title getSt1
+	 * @purpose to get the int representing the st1 part of the instruction
+	 * @return the ordinal of the st1 part of the instruction
 	 */
 	public int getSt1() {
 		return this.st1;
 	}
 	
 	/**
-	 * @return
+	 * @title getSt2
+	 * @purpose to get the int representing the st2 part of the instruction
+	 * @return the ordinal of the st2 part of the instruction
 	 */
 	public int getSt2() {
 		return this.st2;
 	}
 	
 	/**
-	 * @return
+	 * @title getCondition
+	 * @purpose to get the int representing the condition part of the instruction
+	 * @return the ordinal of the condition part of the instruction
 	 */
 	public int getCondition() {
 		if(this.condition == null){
@@ -728,21 +751,27 @@ public class State implements Serializable {
 	}
 	
 	/**
-	 * @return
+	 * @title getSenseMarker
+	 * @purpose to get the int representing the senseMarker part of the instruction
+	 * @return the ordinal of the senseMarker part of the instruction
 	 */
 	public int getSenseMarker() {
 		return this.senseMarker;
 	}
 	
 	/**
-	 * @param stateNum
+	 * @title setStateNum
+	 * @purpose to set the stateNum of this State
+	 * @param stateNum the number to set the stateNum of this State to
 	 */
 	protected void setStateNum(int stateNum) {
 		this.stateNum = stateNum;
 	}
 	
 	/**
-	 * @return
+	 * @title getStateNum
+	 * @purpose get the stateNum of this State
+	 * @return an int representing the stateNum of this State
 	 */
 	public int getStateNum() {
 		return this.stateNum;
@@ -750,6 +779,11 @@ public class State implements Serializable {
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
+	 * 
+	 * @title hashCode
+	 * @purpose returns a value unique to the instruction set in this State.
+	 * This is used to compare States
+	 * @return a number unique to this instruction
 	 */
 	@Override
 	public int hashCode() {
@@ -758,6 +792,11 @@ public class State implements Serializable {
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
+	 * 
+	 * @title equals
+	 * @purpose tests whether two State objects are equal.
+	 * @param o the object to test against this State
+	 * @return true if the Object passed is equal to this State
 	 */
 	@Override
 	public boolean equals(Object o) {
@@ -769,6 +808,10 @@ public class State implements Serializable {
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
+	 * 
+	 * @title toString
+	 * @purpose gets all of the instructions in this State, in order.
+	 * @return a string containing all of the valid instructions in this State,
 	 */
 	@Override
 	public String toString() {

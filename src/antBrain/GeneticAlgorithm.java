@@ -35,8 +35,7 @@ import engine.GameEngine;
  * @purpose holds a number of Brain objects, evolves these objects according
  * to various parameters, maximizing their "fitness", however this is defined.
  * This class also gives the best brain it has evolved so far, and can be saved
- * or loaded to and from .ser files.
- * @change_log 
+ * or loaded to and from .ser files. 
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -59,7 +58,9 @@ public class GeneticAlgorithm implements Serializable {
 	private Brain[] population;
 	
 	/**
-	 * 
+	 * @title GeneticAlgorithm
+	 * @purpose constructor for this class
+	 * @param goal the measure of fitness of the Brains in the population
 	 */
 	public GeneticAlgorithm(String goal) {
 		this.goal = goal;
@@ -76,8 +77,9 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * Creates a new population of brain objects ready to be evolved by evolve()
-	 * 
+	 * @title createPopulation
+	 * @purpose overwrites the current population with a new array of Brain
+	 * objects ready to be evolved by evolve().
 	 * @param startBrain the default starting brain for new brains in the population
 	 * @param popLen the number of brains in the population
 	 */
@@ -120,16 +122,23 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * @param dummyEngine the engine object to be used to determine the fitness of brains
-	 * @param threadPoolExecutor used to determine brain fitnesses concurrently
-	 * @param semaphore used to determine brain fitnesses concurrently
+	 * @title evolve
+	 * @purpose to maximize the fitness of the Brains in the population by
+	 * discarding the Brains with the lowest fitness and combining and altering
+	 * the remaining Brains, in a way approximate to evolution by natural
+	 * selection, in living organisms.
+	 * @param gameEngine the engine object to be used to determine the fitness
+	 * of brains
+	 * @param absoluteTrainingBrain the Brain the Brains in the population
+	 * should be tested against to determine part of their fitness
 	 * @param epochs number of times to evolve the population
-	 * @param rounds number of rounds in one simulation
-	 * @param elite number of brains from the old population to retain in the new population
-	 * @param mutationRate the chance of altering any part of any command in any brain
+	 * @param elite number of brains from the old population to retain in the
+	 * new population
+	 * @param mutationRate the chance of altering any part of any command in any
+	 * brain
 	 */
-	private void evolve(GameEngine gameEngine, Brain absoluteTrainingBrain, int epochs, int elite,
-		int mutationRate) {
+	private void evolve(GameEngine gameEngine, Brain absoluteTrainingBrain,
+		int epochs, int elite, int mutationRate) {
 		//Log information on epoch and evolution
 		if(this.epoch == 1){
 			//Starting evolution from a newly created population
@@ -234,11 +243,7 @@ public class GeneticAlgorithm implements Serializable {
 		Logger.log(new InformationHighEvent("Completed GeneticAlgorithm evolution"));
 	}
 	
-	/**
-	 * @param gameEngine
-	 * @param absoluteTrainingBrain
-	 */
-	public void rank(GameEngine gameEngine, Brain absoluteTrainingBrain){
+	private void rank(GameEngine gameEngine, Brain absoluteTrainingBrain){
 		gameEngine.fitnessContestSetup(this.population, absoluteTrainingBrain);
 		//Get popLen permits, restore as runs complete
 		Stack<World> worlds = new Stack<World>();
@@ -479,12 +484,26 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * @param startBrain
-	 * @param trainingBrain
-	 * @return
+	 * @title getBestBrain
+	 * @purpose to create a new population, call evolve, and then to return the
+	 * Brain with the highest fitness in the population.
+	 * @param gameEngine the GameEngine to use to obtain estimations of fitness
+	 * @param startBrain if a new population is needed, this Brain will be used
+	 * to initially fill the array
+	 * @param absoluteTrainingBrain the Brain object used to assess the fitness
+	 * of the Brains in the population
+	 * @param epochs the number of iterations to run evolve for
+	 * @param popLen the number of Brains in the population
+	 * @param elite the number of the highest fitness Brains to retain across
+	 * epochs
+	 * @param mutationRate the chance of altering any part of any command in any
+	 * brain 
+	 * @return the Brain with the highest fitness in the population after all
+	 * the epochs required have been executed
 	 */
-	public Brain getBestBrain(GameEngine gameEngine, Brain startBrain, Brain absoluteTrainingBrain, 
-		int epochs, int popLen, int elite, int mutationRate) {
+	public Brain getBestBrain(GameEngine gameEngine, Brain startBrain,
+		Brain absoluteTrainingBrain, int epochs, int popLen, int elite,
+		int mutationRate) {
 		this.popLen = popLen;
 		createPopulation(startBrain, this.popLen);
 		evolve(gameEngine, absoluteTrainingBrain, epochs, elite, mutationRate);
@@ -492,7 +511,11 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * Delete all except latest toRetain save files
+	 * @title clearSaves
+	 * @purpose to delete all except "toRetain" save files, which will be the
+	 * files with the highest numbers, which are presumably the latest
+	 * serialisations of GeneticAlgorithms.
+	 * @param toRetain the number of .ser files to not delete
 	 */
 	public void clearSaves(int toRetain) {
 		File folder = new File(subFolderPathPrefix + this.instance + "_(" + this.goal + ")");

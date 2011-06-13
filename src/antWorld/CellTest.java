@@ -258,27 +258,11 @@ public class CellTest {
 		try{
 			Cell testCell = new Cell(-10,-10,'.');
 			fail("invalid Co-ordinates set");
-//			assertEquals("invalid Co-ordinates set",10,testCell.getCol());
 		} catch (IllegalArgumentEvent e) {
-//			fail(e.getMessage());
+			assertTrue(true);
 		}
 	}
-	
-	@Test
-	public void testSetOverMaxFood(){
-		try{
-			Cell testCell = new Cell(10,10,'.');
-			testCell.dropFood(10);
-			if(testCell.foodCount() == 10){
-				fail("Invalid amount of food set");
-			}else{
-				assertTrue(true);
-			}
-		} catch (IllegalArgumentEvent e) {
-			fail(e.getMessage());
-		}
-	}
-	
+
 	@Test
 	public void testSetSignedFood(){
 		try{

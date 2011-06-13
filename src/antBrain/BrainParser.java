@@ -51,6 +51,9 @@ public class BrainParser {
 		Brain brain = new Brain(50);
 		BufferedReader br;
 		File f = new File(path);
+		if(!f.exists()){
+			throw new IllegalArgumentEvent("File specified does not exist");
+		}
 		String line;
 		String[] lineParts;
 		

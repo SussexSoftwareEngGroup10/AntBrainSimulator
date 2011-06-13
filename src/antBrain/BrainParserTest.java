@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import utilities.Event;
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
 
@@ -44,12 +45,10 @@ public class BrainParserTest {
 	@Test
 	public void testReadNonExistantBrain(){
 		try{
-			Brain testBrain = BrainParser.readBrainFrom("abcde");
+			BrainParser.readBrainFrom("abcde");
 			fail("Non-existant brain loaded");
-		}catch (IOEvent e) {
+		}catch (Event e) {
 			assertTrue(true);
-		} catch (IllegalArgumentEvent e) {
-			fail(e.getMessage());
 		}
 	}
 	

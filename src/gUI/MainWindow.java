@@ -45,7 +45,6 @@ public class MainWindow {
 	private static final int WINDOW_HEIGHT = 738;
 	//TODO Known issue, heap space error when more than about 4 or 5 worlds
 	//	   are changed.
-	//TODO contest mode shows error when you press cancel
 	
 	//The game engine to use for running the back end code
 	private GameEngine gameEngine;

@@ -215,10 +215,10 @@ public class WorldGenerateWindow {
 			if (contestBtn.isSelected()) {
 				try {
 					mainWindow.setupNewContestWorld();
+					window.setVisible(false);
 				} catch (ErrorEvent eE) {
 					GUIErrorMsg.displayErrorMsg(
-							"World is not a legal standard world!");
-					window.setVisible(false);
+							"Error in generating contest world!");
 				}
 			} else {
 				try {

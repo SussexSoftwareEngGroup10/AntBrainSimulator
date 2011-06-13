@@ -31,6 +31,13 @@ import utilities.WarningEvent;
 import engine.GameEngine;
 
 /**
+ * @title GeneticAlgorithm
+ * @purpose holds a number of Brain objects, evolves these objects according
+ * to various parameters, maximizing their "fitness", however this is defined.
+ * This class also gives the best brain it has evolved so far, and can be saved
+ * or loaded to and from .ser files.
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

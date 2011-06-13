@@ -1,8 +1,10 @@
 package utilities;
 
 /**
- * Logs normal priority information about the state of the program
- * 
+ * @title InformationNormEvent
+ * @purpose to log information of normal importance, in a similar way to
+ * Exceptions.
+ * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

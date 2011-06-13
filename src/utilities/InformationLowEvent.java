@@ -1,8 +1,9 @@
 package utilities;
 
 /**
- * Logs low priority information about the state of the program
- * 
+ * @title InformationLowEvent
+ * @purpose to log information of low importance, in a similar way to Exceptions.
+ * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

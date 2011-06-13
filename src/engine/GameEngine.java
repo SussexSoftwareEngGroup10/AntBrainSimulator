@@ -12,13 +12,14 @@ import antBrain.*;
 import antWorld.*;
 
 /**
- * Dummy DummyEngine class
+ * @title GameEngine
+ * @purpose to run Simulations and tournaments using the Brain and World objects
+ * specified. Also, this class has various methods to aid in the control of
+ * the speed of execution of Simulations.
+ * @change_log 
  * 
  * sortByFitness is needed by the GeneticAlgorithm,
  * it must order the population by how good they are at winning games, best first
- * 
- * the main method is a dummy version of what the engine might do,
- * used to test the functionality of antBrain and antWorld classes
  * 
  * To work out get the winner in a game, call world.getFoodInAnthills()
  * or world.survivingAntsBySpecies()
@@ -124,19 +125,6 @@ public class GameEngine {
 //Ant.step()						  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 75		  ==    562,500,000,000,000 == 39 (100)	== 40		None
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	*/
-	
-//	/*
-//	 * Simulates each Brain against each other Brain in population,
-//	 * sets their fitness to the number of wins they get,
-//	 * then orders the population by fitness, so the most wins is at population[length - 1]
-//	 * @param absoluteTrainingBrain
-//	 */
-//	public void contestSetup(Brain[] population, Brain absoluteTrainingBrain) {
-//		this.threadPoolExecutor = new ThreadPoolExecutor(
-//=======
-//	private void runContest() {
-//		evaluateFitnessContest(false, contestBrains, null);
-//	}
 	
 	public void contestSetup(Brain[] population) throws IllegalArgumentEvent {
 		if(population.length < 2) throw new IllegalArgumentEvent("Insufficient brains");
@@ -351,7 +339,8 @@ public class GameEngine {
 		Brain trainingBrain = null;
 		try{
 //			trainingBrain = BrainParser.readBrainFrom("better_example");
-			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
+			trainingBrain = BrainParser.readBrainFrom("baxterswinbrain_final");
+//			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
 		}catch(IOEvent e){
 			Logger.log(e);
 			return;

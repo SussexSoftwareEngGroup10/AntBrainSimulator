@@ -9,6 +9,10 @@ import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 /**
+ * @title State
+ * @purpose holds an ant brain instruction and a list of its parameters.
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

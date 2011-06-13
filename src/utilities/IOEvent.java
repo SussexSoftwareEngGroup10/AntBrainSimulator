@@ -1,8 +1,10 @@
 package utilities;
 
 /**
- * Thrown in place of an IOException
- * 
+ * @title IOEvent
+ * @purpose to log IO errors thrown in the program, in a similar way to
+ * Exceptions.
+ * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

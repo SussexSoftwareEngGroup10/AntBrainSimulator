@@ -1,8 +1,9 @@
 package utilities;
 
 /**
- * Logs errors thrown in the program
- * 
+ * @title ErrorEvent
+ * @purpose to log errors thrown in the program, in a similar way to Exceptions.
+ * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

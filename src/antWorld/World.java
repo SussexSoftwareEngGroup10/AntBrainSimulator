@@ -9,6 +9,13 @@ import utilities.Logger;
 import antBrain.Brain;
 
 /**
+ * @title World
+ * @purpose to hold a 2D collection of Cell objects and Ants, and to allow these
+ * Ants to execute instructions as they wish, within the rules of the game.
+ * This class also stores statistics and informations about the game's progress
+ * so far.
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */
@@ -964,7 +971,7 @@ public class World implements Cloneable {
 				}
 				
 				//Create and store ant
-				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell, soundPlayer);
+				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell, this.soundPlayer);
 				cell.setAnt(ant);
 				this.ants[nextAntIndex[0] + nextAntIndex[1]] = ant;
 				//Use nextAntIndex[colour] value BEFORE increment (opposite to ++i)
@@ -1295,7 +1302,7 @@ public class World implements Cloneable {
 			this.rockAreaConsistency, this.borderRocks, this.anthills, this.anthillSideLength,
 			this.anthillAreaConsistency, this.foodBlobCount, this.foodBlobSideLength,
 			this.foodBlobCellFoodCount,	this.foodBlobAreaConsistency, this.antInitialDirection,
-			this.gap, newCells, soundPlayer);
+			this.gap, newCells, this.soundPlayer);
 		return world;
 	}
 	

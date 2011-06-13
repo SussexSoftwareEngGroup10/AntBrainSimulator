@@ -1,6 +1,11 @@
 package engine;
 
 /**
+ * @title Random
+ * @purpose to generate pseudorandom numbers between 0 (inclusive) and the value
+ * given (exclusive)
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

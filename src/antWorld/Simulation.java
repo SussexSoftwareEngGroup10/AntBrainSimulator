@@ -11,6 +11,12 @@ import utilities.WarningEvent;
 import antBrain.Brain;
 
 /**
+ * @title Simulation
+ * @purpose to, when given a World, and two Brain objects, allow the Ants in the
+ * World to move, according to their Brains, and to record the result after
+ * a number of steps have passed.
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

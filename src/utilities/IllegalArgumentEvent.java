@@ -1,8 +1,10 @@
 package utilities;
 
 /**
- * Thrown when a value is passed in place of an enum ordinal,
- * which does not have a corresponding enum value, and is not -1 (null)
+ * @title IllegalArgumentEvent
+ * @purpose to log argument errors thrown in the program, in a similar way to
+ * Exceptions.
+ * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

@@ -3,8 +3,11 @@ package utilities;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Logs the current time since the start of timing, and a message,
- * e.g. a marker for the start or end of a method call
+ * @title ErrorEvent
+ * @purpose to log the current time since the start of timing, and a message,
+ * e.g. a marker for the start or end of a method call, in a similar way to
+ * Exceptions.
+ * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

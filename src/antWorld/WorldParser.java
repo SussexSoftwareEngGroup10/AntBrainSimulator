@@ -9,12 +9,15 @@ import java.io.IOException;
 
 import utilities.ErrorEvent;
 import utilities.IOEvent;
-import utilities.IllegalArgumentEvent;
 import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
 import utilities.Logger;
 
 /**
+ * @title WorldParser
+ * @purpose to allow the reading and writing of World objects to and from files.
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */
@@ -36,9 +39,8 @@ public final class WorldParser {
 	 * @return
 	 * @throws IOEvent if file not found...etc
 	 * @throws ErrorEvent if world is not a contest world
-	 * @throws IllegalArgumentEvent 
 	 */
-	public static World readWorldFromContest(String name) throws IOEvent, ErrorEvent, IllegalArgumentEvent {
+	public static World readWorldFromContest(String name) throws IOEvent, ErrorEvent {
 		String path = getPath(name);
 		World world = readWorldFrom(path);
 		if(!world.isContest()){
@@ -52,9 +54,8 @@ public final class WorldParser {
 	 * @param name
 	 * @return
 	 * @throws IOEvent if file not found...etc
-	 * @throws IllegalArgumentEvent 
 	 */
-	public static World readWorldFromCustom(String name) throws IOEvent, IllegalArgumentEvent {
+	public static World readWorldFromCustom(String name) throws IOEvent {
 		return readWorldFrom(getPath(name));
 	}
 	
@@ -62,9 +63,8 @@ public final class WorldParser {
 	 * @param name
 	 * @return the world in the file "name" 
 	 * @throws IOEvent if file not found...etc...
-	 * @throws IllegalArgumentEvent 
 	 */
-	private static World readWorldFrom(String path) throws IOEvent, IllegalArgumentEvent {
+	private static World readWorldFrom(String path) throws IOEvent {
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
 		BufferedReader br;
 		File f = new File(path);

@@ -5,6 +5,13 @@ import utilities.Logger;
 import utilities.WarningEvent;
 
 /**
+ * @title Cell
+ * @purpose to hold a set of values including the states of the markers, the
+ * amount of food present, and the anthill and rockyness of this "hex". The Ant
+ * present in this Cell has limited control over these values, and can do with
+ * them as its Brain, and the rules specify.  
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */
@@ -12,8 +19,6 @@ public class Cell implements Cloneable {
 	private final int row;
 	private final int col;
 	
-	//I would prefer to make 'rocky' and 'anthill' final, but it would be impossible,
-	//given how I construct the world object before altering cell types
 	private boolean rocky;
 	private int food;
 	private int anthill;

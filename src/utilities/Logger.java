@@ -8,6 +8,12 @@ import java.io.PrintStream;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @title Logger
+ * @purpose to print Event objects to a log file, so the terminal is not needed
+ * while the program executes, and significant Events can still be viewed by
+ * the user.
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

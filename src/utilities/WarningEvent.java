@@ -1,8 +1,10 @@
 package utilities;
 
 /**
- * Logs warnings thrown by the program
- * 
+ * @title WarningEvent
+ * @purpose to log potential problems or errors thrown in the program, in a
+ * similar way to Exceptions.
+ * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

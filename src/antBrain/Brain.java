@@ -15,6 +15,12 @@ import utilities.Logger;
 import utilities.WarningEvent;
 
 /**
+ * @title Brain
+ * @purpose holds a list of mappings from state number to state,
+ * it also behaves as a participant in a simulation, with alterable numbers
+ * such as the number of wins the Brain has attained.
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

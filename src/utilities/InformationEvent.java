@@ -1,8 +1,10 @@
 package utilities;
 
 /**
- * Logs information about the state of the program
- * 
+ * @title InformationEvent
+ * @purpose to log information and significant events which happen during the 
+ * running of the program.
+ * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

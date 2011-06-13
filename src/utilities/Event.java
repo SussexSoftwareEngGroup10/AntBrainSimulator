@@ -3,6 +3,10 @@ package utilities;
 import java.util.Calendar;
 
 /**
+ * @title Event
+ * @purpose to provide methods common to subclasses, such as toString.
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

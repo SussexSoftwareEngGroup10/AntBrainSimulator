@@ -10,6 +10,12 @@ import antBrain.Brain;
 import antBrain.State;
 
 /**
+ * @title Ant
+ * @purpose to execute instructions in an order specified in the Brain it is
+ * given, to move between Cell objects, performing a variety of actions
+ * including moving food and setting markers. 
+ * @change_log 
+ * 
  * @author pkew20 / 57116
  * @version 1.0
  */

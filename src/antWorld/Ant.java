@@ -309,7 +309,11 @@ public final class Ant implements Comparable<Ant> {
 		//Assumes food contained in a cell cannot be > 9
 		//If can carrying hasFood, and hasFood in cell < max, drop up hasFood and go to st1
 		if(this.hasFood){// && this.cell.foodCount() < 9){
-			this.cell.dropFood(1);
+			try {
+				this.cell.dropFood(1);
+			} catch (IllegalArgumentEvent e) {
+				Logger.log(e);
+			}
 			this.hasFood = false;
 			this.state = this.brain.get(this.state.getSt1());
 			//Play sound effect
@@ -450,9 +454,17 @@ public final class Ant implements Comparable<Ant> {
 		
 		//Drop hasFood carried + 3
 		if(this.hasFood){
-			this.cell.dropFood(1);
+			try {
+				this.cell.dropFood(1);
+			} catch (IllegalArgumentEvent e) {
+				Logger.log(e);
+			}
 		}
-		this.cell.dropFood(3);
+		try {
+			this.cell.dropFood(3);
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
+		}
 		
 		//Remove from world
 		this.cell.setAnt(null);

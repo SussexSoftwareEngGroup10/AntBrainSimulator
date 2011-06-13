@@ -29,6 +29,9 @@ public class Cell implements Cloneable {
 	 * @throws IllegalArgumentEvent 
 	 */
 	public Cell(int row, int col, char c) throws IllegalArgumentEvent {
+		if(row < 0 || col < 0){
+			throw new IllegalArgumentEvent("row or column value below 0");
+		}
 		this.row = row;
 		this.col = col;
 		
@@ -211,8 +214,12 @@ public class Cell implements Cloneable {
 	
 	/**
 	 * @param i
+	 * @throws IllegalArgumentEvent 
 	 */
-	public void dropFood(int i) {
+	public void dropFood(int i) throws IllegalArgumentEvent {
+		if(i < 1){
+			throw new IllegalArgumentEvent("food dropped must be greater than 0");
+		}
 		//Removed food limit of 9 per cell
 //		if(this.food + i <= 9){
 		this.food += i;

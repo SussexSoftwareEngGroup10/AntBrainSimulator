@@ -205,7 +205,7 @@ public class CellTest {
 	public void testDropFood(){
 		try{
 			Cell testCell = new Cell(4,4,'.');
-			for(int droppedFood = 0; droppedFood <= 9; droppedFood++){
+			for(int droppedFood = 1; droppedFood <= 9; droppedFood++){
 				testCell.dropFood(droppedFood);
 				assertEquals(droppedFood,testCell.foodCount());
 				for(int i = 0; i < droppedFood; i++){
@@ -257,9 +257,10 @@ public class CellTest {
 	public void testSetSignedPosition(){
 		try{
 			Cell testCell = new Cell(-10,-10,'.');
-			assertEquals("invalid Co-ordinates set",10,testCell.getCol());
+			fail("invalid Co-ordinates set");
+//			assertEquals("invalid Co-ordinates set",10,testCell.getCol());
 		} catch (IllegalArgumentEvent e) {
-			fail(e.getMessage());
+//			fail(e.getMessage());
 		}
 	}
 	

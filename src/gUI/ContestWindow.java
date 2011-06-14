@@ -199,7 +199,7 @@ public class ContestWindow {
 					//Validate the file is of the correct format
 					if (!path.contains(".ant")) {
 						GUIErrorMsg.displayErrorMsg(
-								"Invalid file format, .brain file expected.");
+								"Invalid file format, .ant file expected.");
 					} else {
 						//Search for the index of the JButton clicked
 						JButton clickedBtn = (JButton) e.getSource();

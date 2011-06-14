@@ -318,11 +318,11 @@ public class MainWindow {
 							clickedBtn == uploadBlackBtn) && 
 							!path.contains(".ant")) {
 							GUIErrorMsg.displayErrorMsg(
-								"Invalid file format, .brain file expected.");
+								"Invalid file format, .ant file expected.");
 					} else if (clickedBtn == uploadWorldBtn &&
 							!path.contains(".world")) {
 							GUIErrorMsg.displayErrorMsg(
-								"Invalid file format, .world file expected.");
+								"Invalid file format, .ant file expected.");
 					} else {
 						//Depending on which button triggered the event, a tick 
 						//symbol is displayed on that button, and the 

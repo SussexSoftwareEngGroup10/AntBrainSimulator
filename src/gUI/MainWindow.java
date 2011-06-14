@@ -358,7 +358,7 @@ public class MainWindow {
 							} else { //Else world button was clicked
 								try{
 									world = 
-										WorldParser.readWorldFromCustom(path);
+										WorldParser.readWorldFrom(path);
 								} catch (IOEvent iOE) {
 									GUIErrorMsg.displayErrorMsg(
 											"Unable to parse file. " +
@@ -484,7 +484,7 @@ public class MainWindow {
 			//First clone the state of the world so it can be restored later
 			clonedWorld = (World) world.clone();
 			//Set the speed of the simulation to default
-			gameEngine.setSpeed(500);
+			gameEngine.setSleepDur(500);
 			//Set the mute preference to the state the button is in
 			if (muteBtn.getText().equals("Mute")) {
 				soundPlayer.setMute(false);
@@ -529,7 +529,7 @@ public class MainWindow {
 		public void stateChanged(ChangeEvent e) {
 		    JSlider source = (JSlider)e.getSource();
 		    //Subtract from 1000, so that now, the lower the value, the faster
-		    gameEngine.setSpeed(
+		    gameEngine.setSleepDur(
 		    		GameEngine.expScale(1001 - (int)source.getValue()));
 		    //Mute the sound if it runs faster than 700 after the change
 		    if (source.getValue() > 700) {
@@ -591,7 +591,7 @@ public class MainWindow {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Sets the game to the fastest speed (as fast as the CPU can handle)
-			gameEngine.setSpeed(0);
+			gameEngine.setSleepDur(0);
 			speedAdjustmentSlider.setEnabled(false);
 			muteBtn.setEnabled(false);
 			gameDisplay.switchState(DisplayStates.PROCESSING);

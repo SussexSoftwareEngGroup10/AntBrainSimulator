@@ -16,7 +16,6 @@ import antWorld.*;
  * @purpose to run Simulations and tournaments using the Brain and World objects
  * specified. Also, this class has various methods to aid in the control of
  * the speed of execution of Simulations.
- * @change_log 
  * 
  * sortByFitness is needed by the GeneticAlgorithm,
  * it must order the population by how good they are at winning games, best first
@@ -42,27 +41,38 @@ public class GameEngine {
 	private int stepCount = 0;
 	
 	/**
-	 * 
+	 * @title GameEngine
+	 * @purpose to allow the construction of GameEngine objects
 	 */
 	public GameEngine() {
 		Logger.log(new InformationLowEvent("New GameEngine object constructed"));
 	}
 	
 	/**
-	 * @return
+	 * @title getSleepDur
+	 * @purpose to return the length of time Simulations should pause between
+	 * step calls to their World
+	 * @return the sleep duration for Simulations, in milliseconds
 	 */
 	public long getSleepDur() {
 		return this.sleepDur;
 	}
 	
 	/**
-	 * @param sleepDur
+	 * @title setSpeed
+	 * @purpose to allow the altering of the amount of time waited by 
+	 * Simulations after each World step
+	 * @param sleepDur the amount of time to set as sleepDur
 	 */
-	public void setSpeed(int sleepDur) {
+	public void setSleepDur(int sleepDur) {
 		this.sleepDur = sleepDur;
 	}
 	
 	/**
+	 * @title expScale
+	 * @purpose to alter the scale of a value so as to make values from
+	 * 0 to 1000 in a more balanced order, so there is not a sudden increase
+	 * after 0
 	 * @param x should be between 0 and 1000, but is not checked
 	 * @return a value between 1 and 1000 proportional to 2^x
 	 */
@@ -71,7 +81,9 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @param x
+	 * @title log2
+	 * @purpose to perform a log of base 2
+	 * @param x the value to be logged
 	 * @return log base 2 of x
 	 */
 	public static double log2(int x) {
@@ -126,6 +138,14 @@ public class GameEngine {
 //Ant.isSurrounded()				  == rounds * epochs   * ants     * popLen	== 300,000 * 1,000 * 250 * 100 == 7,500,000,000,000 == 80		  ==    600,000,000,000,000 == 46		== N/A		
 	*/
 	
+	/**
+	 * @title contestSetup
+	 * @purpose to setup a contest that may later be stepped through, using the
+	 * Brain population given
+	 * @param population an array of Brain objects to be used to start a contest
+	 * @throws IllegalArgumentEvent if there are less than 2 Brains in the
+	 * population
+	 */
 	public void contestSetup(Brain[] population) throws IllegalArgumentEvent {
 		if(population.length < 2) throw new IllegalArgumentEvent("Insufficient brains");
 		for(Brain brain : population){
@@ -135,11 +155,12 @@ public class GameEngine {
 	}
 	
 	/**
-	 * call once at the start of each contest
-	 * @param threadPoolExecutor
-	 * @param semaphore
-	 * @param useFitness
-	 * @param population
+	 * @title fitnessContestSetup
+	 * @purpose to setup a contest that may later be stepped through, using the
+	 * Brain population given and the Brain given
+	 * @param population an array of Brain objects to be used to start a contest
+	 * @param absoluteTrainingBrain the Brain to test the Brains in the
+	 * population against
 	 */
 	public void fitnessContestSetup(Brain[] population, Brain absoluteTrainingBrain) {
 		this.population = population;
@@ -172,9 +193,14 @@ public class GameEngine {
 	}
 	
 	/**
-	 * worlds.size() == 4 (call pop.len times)
-	 * @param worlds
-	 * @throws IllegalArgumentEvent 
+	 * @title fitnessContestStep
+	 * @purpose to perform one set of Simulations for one of the Brains in the
+	 * population, this method must be called (population.length) times to
+	 * obtain comparissons for all Brains in the population given
+	 * @param worlds must contain at least 2 Worlds, or at least 4 if the Brain
+	 * does not have a fitness value
+	 * @param goal the attribute to maximize, such as food or kills
+	 * @throws IllegalArgumentEvent if the GameEngine's goal is invalid
 	 */
 	public void fitnessContestStep(Stack<World> worlds, String goal) throws IllegalArgumentEvent {
 		//Set fitness for every brain in population
@@ -207,7 +233,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * automatically runs entire contest, with the default seed 1 world
+	 * @title contestStepAll
+	 * @purpose automatically runs entire contest, with the default seed 1 world
 	 */
 	public void contestStepAll() {
 		try {
@@ -218,8 +245,9 @@ public class GameEngine {
 	}
 	
 	/**
-	 * automatically runs entire contest, can only pass a single template world
-	 * @param world
+	 * @title contestStepAll
+	 * @purpose to automatically run the entire contest
+	 * @param world a single template World
 	 */
 	public void contestStepAll(World world) {
 		//Get popLen permits, restore as runs complete
@@ -231,8 +259,11 @@ public class GameEngine {
 	}
 	
 	/**
-	 * worlds.size() == pop.len - 1 (call method pop.len times)
-	 * @param worlds
+	 * @title contestStep
+	 * @purpose to perform one set of Simulations for one of the Brains in the
+	 * population, this method must be called (population.length) times to
+	 * obtain comparissons for all Brains in the population given
+	 * @param worlds must contain at least (population.length - 1) Worlds
 	 */
 	public void contestStep(Stack<World> worlds) {
 		//Get popLen permits, restore as runs complete
@@ -262,11 +293,13 @@ public class GameEngine {
 	}
 	
 	/**
-	 * Runs a standard simulation.
-	 * @param blackBrain
-	 * @param redBrain
-	 * @param world
-	 * @return
+	 * @title simulate
+	 * @purpose to runs a standard simulation using the Brains and World given,
+	 * and to log the result, which can also be obtained from the World or Brains
+	 * @param blackBrain the Brain to be given to the black Ants
+	 * @param redBrain the Brain to be given to the red Ants
+	 * @param world the World in which the Brains should be played
+	 * @return statistics on the simulation, such as food placement at the end
 	 */
 	public GameStats simulate(Brain blackBrain, Brain redBrain, World world) {
 		//Setup brains
@@ -279,7 +312,7 @@ public class GameEngine {
 		//Runs in serial
 		try {
 			new Simulation(this, blackBrain, redBrain, null,
-				this.sleepDur, false, GameEngine.rounds, world, "food").run();
+				0, false, GameEngine.rounds, world, "food").run();
 		} catch (IllegalArgumentEvent e) {
 			Logger.log(e);
 		}
@@ -317,65 +350,94 @@ public class GameEngine {
 		}else return new GameStats(-1, anthillFood[0], anthillFood[1],	survivors[0], survivors[1]);
 	}
 	
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
-		//TODO make deterministic
+		//TODO test how far is deterministic
 		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
-		//TODO remove polling in Ant.step()
-		//TODO use jar on linux server
+		//TODO remove polling in Ant.step() (impossible to do more efficiently)
+		//TODO use .jar on linux server (
 		//TODO javac -O, java -prof, JIT
 		
 		Logger.clearLogs();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
 		
-		//Evolve and get the best brain from the GeneticAlgorithm
-		//trainingBrain is a decent place to start from
-		//but more likely to get stuck there in the optima,
-		//blankBrain is a worse starting point, it would take longer to get to a good brain,
-		//but it encourages the brains generated to be more random
-		Brain trainingBrain = null;
+		GameEngine gameEngine = new GameEngine();
+		Brain ga = null;
+		Brain bax = null;
 		try{
-//			trainingBrain = BrainParser.readBrainFrom("better_example");
-			trainingBrain = BrainParser.readBrainFrom("baxterswinbrain_final");
-//			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
-		}catch(IOEvent e){
-			Logger.log(e);
-			return;
-		} catch (IllegalArgumentEvent e) {
+			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
+			bax = BrainParser.readBrainFrom("baxterswinbrain_final");
+		}catch(Event e){
 			Logger.log(e);
 			return;
 		}
-		GameEngine gameEngine = new GameEngine();
-		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm("surround");
 		
-		Brain gaBrain = null;
-		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
-			trainingBrain, Integer.MAX_VALUE, 50, 50/10, 20);
-//		try {
-//			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
-//		} catch (IOEvent e) {
+		for(int i = 1; i <= 100; i++){
+			try {
+				gameEngine.simulate(ga, bax, World.getContestWorld(i, null));
+			} catch (Event e) {
+				Logger.log(e);
+				return;
+			}
+			System.out.println(i + 0.5);
+			
+			try {
+				gameEngine.simulate(bax, ga, World.getContestWorld(i, null));
+			} catch (Event e) {
+				Logger.log(e);
+				return;
+			}
+			System.out.println(i);
+		}
+		System.out.println("ga  wins: " + ga.getWins());
+		System.out.println("bax wins: " + bax.getWins());
+		System.out.println("   draws: " + ga.getDraws());
+		
+//		//Evolve and get the best brain from the GeneticAlgorithm
+//		//trainingBrain is a decent place to start from
+//		//but more likely to get stuck there in the optima,
+//		//blankBrain is a worse starting point, it would take longer to get to a good brain,
+//		//but it encourages the brains generated to be more random
+//		Brain trainingBrain = null;
+//		try{
+////			trainingBrain = BrainParser.readBrainFrom("better_example");
+//			trainingBrain = BrainParser.readBrainFrom("baxterswinbrain_final");
+////			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
+//		}catch(IOEvent e){
 //			Logger.log(e);
+//			return;
+//		} catch (IllegalArgumentEvent e) {
+//			Logger.log(e);
+//			return;
+//		}
+//		GameEngine gameEngine = new GameEngine();
+//		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm("surround");
+//		
+//		Brain gaBrain = null;
+//		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
+//			trainingBrain, Integer.MAX_VALUE, 50, 50/10, 20);
+////		try {
+////			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
+////		} catch (IOEvent e) {
+////			Logger.log(e);
+////		} catch (IllegalArgumentEvent e) {
+////			Logger.log(e);
+////		}
+//		
+//		//Compact and remove null and unreachable states
+//		try {
+//			trainingBrain.trim();
+//			gaBrain.trim();
 //		} catch (IllegalArgumentEvent e) {
 //			Logger.log(e);
 //		}
-		
-		//Compact and remove null and unreachable states
-		try {
-			trainingBrain.trim();
-			gaBrain.trim();
-		} catch (IllegalArgumentEvent e) {
-			Logger.log(e);
-		}
-		
-		try {
-			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1, null));
-		} catch (ErrorEvent e) {
-			Logger.log(e);
-		}
-		
-		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
+//		
+//		try {
+//			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1, null));
+//		} catch (ErrorEvent e) {
+//			Logger.log(e);
+//		}
+//		
+//		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 }

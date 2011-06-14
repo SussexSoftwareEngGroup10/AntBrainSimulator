@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
  * @purpose to print Event objects to a log file, so the terminal is not needed
  * while the program executes, and significant Events can still be viewed by
  * the user.
- * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -36,23 +35,21 @@ public final class Logger {
 	private PrintStream logErr;
 	private File file;
 	
-	/**
-	 * 
-	 */
 	private Logger() {
 		//No code needed
 	}
 	
+
 	/**
-	 * @return
+	 * @title getLogger
+	 * @purpose to allow the construction of one Logger object, and the ability
+	 * of other objects to obtain a reference to it
+	 * @return the singleton Logger object instance
 	 */
-	public static Logger getLogger() {
+	public synchronized static Logger getLogger() {
 		return logger;
 	}
 	
-	/**
-	 * 
-	 */
 	private static void nextLogFile() {
 		if(!logger.folder.exists()){
 			logger.folder.mkdir();
@@ -82,14 +79,18 @@ public final class Logger {
 	}
 	
 	/**
-	 * @return
+	 * @title getLog
+	 * @purpose to enable the obtaining of the Logger object's current log file
+	 * @return the file to which logs are currently being written
 	 */
 	public static File getLog() {
 		return logger.file;
 	}
 	
 	/**
-	 * 
+	 * @title clearLogs
+	 * @purpose to delete all .log files in the folder this Logger is currently
+	 * writing to
 	 */
 	public static void clearLogs() {
 		//Deletes every file beginning with the above prefix and ending with the above suffix
@@ -107,7 +108,9 @@ public final class Logger {
 	}
 	
 	/**
-	 * @param event
+	 * @title log
+	 * @purpose to allow the writing of Event objects to a .log file
+	 * @param event the Event to be written to the Logger's current .log file
 	 */
 	public static void log(Event event) {
 		if(logger.file == null || logger.file.length() >= logger.sizeLimit){
@@ -143,21 +146,28 @@ public final class Logger {
 	}
 	
 	/**
-	 * @param logLevel
+	 * @title setLogLevel
+	 * @purpose to allow the setting of the minimum severity of Event to be
+	 * printed by this Logger
+	 * @param logLevel the minimum severity to be set
 	 */
 	public static void setLogLevel(LogLevel logLevel) {
 		logger.logLevel = logLevel;
 	}
 	
 	/**
-	 * 
+	 * @title restartTimer
+	 * @purpose to make it so any future timing is recorded relative to now
 	 */
 	public static void restartTimer() {
 		logger.restartTime = System.nanoTime();
 	}
 	
 	/**
-	 * @return
+	 * @tile getCurrentTime
+	 * @purpose to facilitate the obtaining of the time since the Logger was last
+	 * restarted
+	 * @return the in nanoseconds since the Logger was last restarted
 	 */
 	public static long getCurrentTime() {
 		//If there has been one, returns the time since the last restartTimer() call,
@@ -166,15 +176,21 @@ public final class Logger {
 	}
 
 	/**
-	 * @param message
+	 * @title logCurrentTime
+	 * @purpose writes the current time since the Logger was last restarted
+	 * to the current .log file
+	 * @param message the message associated with the Event
 	 */
 	public static void logCurrentTime(String message) {
 		logCurrentTime(message, TimeUnit.NANOSECONDS);
 	}
 	
 	/**
-	 * @param message
-	 * @param timeUnit
+	 * @title logCurrentTime
+	 * @purpose to write the current time since the Logger was last restarted
+	 * to the current .log file
+	 * @param message the message associated with the Event
+	 * @param timeUnit the unit of time that the current time will be recorded in
 	 */
 	public static void logCurrentTime(String message, TimeUnit timeUnit) {
 		//Logs time since custom point, rather than the default time since a point
@@ -182,7 +198,9 @@ public final class Logger {
 	}
 	
 	/**
-	 * @return
+	 * @title getStartTime
+	 * @purpose to return the time since the starting of this Logger
+	 * @return the time since the start of the Logger, not affected by restarts
 	 */
 	public static long getStartTime() {
 		return logger.startTime;

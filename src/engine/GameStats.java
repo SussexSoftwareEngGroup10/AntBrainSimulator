@@ -46,7 +46,7 @@ public class GameStats {
 	/**
 	 * @return Amount of food in black anthill
 	 */
-	public int getFoodInBlackAnthil() {
+	public int getFoodInBlackAnthill() {
 		return this.foodInBlackAnthill;
 	}
 	
@@ -67,7 +67,7 @@ public class GameStats {
 	/**
 	 * @return Amount of red ant survivors
 	 */
-	public int getRedAntsSurvivig() {
+	public int getRedAntsSurviving() {
 		return this.redAntsSurviving;
 	}
 }

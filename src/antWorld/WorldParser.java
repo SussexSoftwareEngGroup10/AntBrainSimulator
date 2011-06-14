@@ -27,18 +27,22 @@ public final class WorldParser {
 	private static final String fileNameSuffix = ".world";
 	
 	/**
-	 * @throws InstantiationException 
-	 * 
+	 * @title WorldParser
+	 * @purpose disables instantiation of this class
+	 * @throws InstantiationException when called
 	 */
 	public WorldParser() throws InstantiationException {
 		throw new InstantiationException("WorldParser class cannot be instantiated");
 	}
 	
 	/**
-	 * @param name
-	 * @return
-	 * @throws IOEvent if file not found...etc
-	 * @throws ErrorEvent if world is not a contest world
+	 * @title readWorldFromContest
+	 * @purpose to effectively cast the World read from the given location as
+	 * suitable for a contest
+	 * @param name the path to the file to be read from
+	 * @return a World read from the file at the path specified
+	 * @throws IOEvent if file not found, or another IO exception is thrown
+	 * @throws ErrorEvent if the World is not a suitable contest world
 	 */
 	public static World readWorldFromContest(String name) throws IOEvent, ErrorEvent {
 		String path = getPath(name);
@@ -51,20 +55,14 @@ public final class WorldParser {
 	}
 	
 	/**
-	 * @param name
-	 * @return
-	 * @throws IOEvent if file not found...etc
+	 * @title readWorldFromCustom
+	 * @purpose to read a World from the file specified, not necessarily
+	 * suitable for contests
+	 * @param name the path to the file to be read from
+	 * @return a World read from the file at the path specified
+	 * @throws IOEvent if file not found, or another IO exception is thrown
 	 */
-	public static World readWorldFromCustom(String name) throws IOEvent {
-		return readWorldFrom(getPath(name));
-	}
-	
-	/**
-	 * @param name
-	 * @return the world in the file "name" 
-	 * @throws IOEvent if file not found...etc...
-	 */
-	private static World readWorldFrom(String path) throws IOEvent {
+	public static World readWorldFrom(String path) throws IOEvent {
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
 		BufferedReader br;
 		File f = new File(path);
@@ -130,9 +128,11 @@ public final class WorldParser {
 	}
 	
 	/**
-	 * @param world
-	 * @param name name to give the file
-	 * @throws IOEvent if file not found...etc
+	 * @title writeWorldTo
+	 * @purpose to write a World to a file
+	 * @param world the World to write to file
+	 * @param name the name to give the file
+	 * @throws IOEvent if an IOException is thrown
 	 */
 	public static void writeWorldTo(World world, String name) throws IOEvent {
 		String path = folderName + "\\" + name + "" + fileNameSuffix;
@@ -159,10 +159,6 @@ public final class WorldParser {
 		Logger.log(new InformationHighEvent("Completed writing World object to \"" + path + "\""));
 	}
 	
-	/**
-	 * @param name
-	 * @return
-	 */
 	private static String getPath(String name) {
 		String path;
 		if(name.endsWith(fileNameSuffix)){

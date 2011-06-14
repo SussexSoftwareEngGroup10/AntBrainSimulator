@@ -1,26 +1,25 @@
-package antWorld;
+package engine;
 
 import java.util.concurrent.Semaphore;
 
-import engine.GameEngine;
 
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 import utilities.WarningEvent;
 
 import antBrain.Brain;
+import antWorld.World;
 
 /**
  * @title Simulation
  * @purpose to, when given a World, and two Brain objects, allow the Ants in the
  * World to move, according to their Brains, and to record the result after
  * a number of steps have passed.
- * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0
  */
-public final class Simulation extends Thread {
+public final class Simulation implements Runnable {
 	private final GameEngine gameEngine;
 	private final Brain blackBrain;
 	private final Brain redBrain;
@@ -32,18 +31,25 @@ public final class Simulation extends Thread {
 	private World world;
 	
 	/**
-	 * @param gameEngine
-	 * @param blackBrain
-	 * @param redBrain
-	 * @param semaphore
-	 * @param fitness
-	 * @param useFitness
-	 * @param rounds
-	 * @param world
-	 * @throws IllegalArgumentEvent 
+	 * @title Simulation
+	 * @purpose to enable the construction of Simulation objects
+	 * @param gameEngine the GameEngine to get the sleep duration from
+	 * @param blackBrain the Brain the black Ants in the World will use
+	 * @param redBrain the Brain the red Ants in the World will use
+	 * @param semaphore the Semaphore to use to notify other objects of the
+	 * completion of this Simulation by releasing a permit
+	 * @param fitness the index of the fitness array in the Brains to increment
+	 * with the result of the simulation
+	 * @param useFitness if true, add the net food of the Brain's Ants to the
+	 * fitness of the Brain, otherwise increment wins, losses or draws of the
+	 * Brain
+	 * @param rounds the number of steps that each Ant in the World will execute
+	 * @param world the World to use to play the Brains against each other
+	 * @throws IllegalArgumentEvent if the goal is not valid
 	 */
-	public Simulation(GameEngine gameEngine, Brain blackBrain, Brain redBrain, Semaphore semaphore,
-		int fitness, boolean useFitness, int rounds, World world, String goal) throws IllegalArgumentEvent {
+	public Simulation(GameEngine gameEngine, Brain blackBrain, Brain redBrain,
+		Semaphore semaphore, int fitness, boolean useFitness, int rounds,
+		World world, String goal) throws IllegalArgumentEvent {
 		this.gameEngine = gameEngine;
 		this.blackBrain = blackBrain;
 		this.redBrain = redBrain;
@@ -59,26 +65,33 @@ public final class Simulation extends Thread {
 		}else if(goal.equals("surround")){
 			this.instance = 2;
 		}else{
-			throw new IllegalArgumentEvent("Illegal type in Simulation constructor");
+			throw new IllegalArgumentEvent("Illegal goal in Simulation constructor");
 		}
 	}
 	
 	/**
-	 * @return
+	 * @title getBlackBrain
+	 * @purpose to get the Brain of the black Ants
+	 * @return the Brain of the black Ants
 	 */
 	public final Brain getBlackBrain() {
 		return this.blackBrain;
 	}
 	
 	/**
-	 * @return
+	 * @title getRedBrain
+	 * @purpose to get the Brain of the red Ants
+	 * @return the Brain of the red Ants
 	 */
 	public final Brain getRedBrain() {
 		return this.redBrain;
 	}
 	
 	/**
-	 * @return
+	 * @title getWorld
+	 * @purpose to get this Simulation's World
+	 * @return the World that this Simulation will use or has used to play the
+	 * given Brains against each other
 	 */
 	public final World getWorld() {
 		return this.world;
@@ -86,6 +99,10 @@ public final class Simulation extends Thread {
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
+	 * 
+	 * @title run
+	 * @purpose to execute the given World using the given Brains for the
+	 * duration specified
 	 */
 	@Override
 	public final void run() {

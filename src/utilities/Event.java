@@ -5,7 +5,6 @@ import java.util.Calendar;
 /**
  * @title Event
  * @purpose to provide methods common to subclasses, such as toString.
- * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -17,7 +16,9 @@ public abstract class Event extends Throwable {
 	protected Severity severity;
 	
 	/**
-	 * @param message
+	 * @title Event
+	 * @purpose to provide a constructor common to all subclasses 
+	 * @param message the message to be stored in the Event
 	 */
 	public Event(String message) {
 		super(message);
@@ -25,8 +26,11 @@ public abstract class Event extends Throwable {
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
+	 * @title Event
+	 * @purpose to provide a constructor common to all subclasses 
+	 * @param message the message to be stored in the Event
+	 * @param cause the cause of this Event, whose StackTrace will be appended
+	 * to that of this Event
 	 */
 	public Event(String message, Throwable cause) {
 		//Adds the stack trace from the cause to that of this instance
@@ -35,12 +39,21 @@ public abstract class Event extends Throwable {
 	}
 	
 	/**
-	 * Enables concrete subclasses to set which severity to assign the field
+	 * @title setSeverity
+	 * @purpose to enable concrete subclasses to set which severity to assign 
+	 * the field, which allows the toString method to add an appropriate
+	 * severity level to its return String
 	 */
 	protected abstract void setSeverity();
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Throwable#toString()
+	 * 
+	 * @title toString
+	 * @purpose to provide a detailed explanation of the severity, class, time,
+	 * description and cause of the throwing of this object
+	 * @return a detailed String representation of the concrete subclass of this
+	 * class and its attributes
 	 */
 	@Override
 	public String toString() {

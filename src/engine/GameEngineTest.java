@@ -42,7 +42,7 @@ public class GameEngineTest {
 	
 	@Test
 	public void testGetRemainingFood(){
-		assertEquals(0,stats.getFoodInBlackAnthil()); //there should be no food left in the dummy ants hill
+		assertEquals(0,stats.getFoodInBlackAnthill()); //there should be no food left in the dummy ants hill
 		assertTrue(stats.getFoodInRedAnthill() > 0); //there should be more than 0 food in this anthill
 	}
 	

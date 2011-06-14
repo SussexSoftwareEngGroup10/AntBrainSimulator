@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
  * @purpose to log the current time since the start of timing, and a message,
  * e.g. a marker for the start or end of a method call, in a similar way to
  * Exceptions.
- * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -16,7 +15,9 @@ public class TimeEvent extends InformationEvent {
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * @param message
+	 * @title ErrorEvent
+	 * @purpose to construct objects of type ErrorEvent
+	 * @param message the message associated with this Event
 	 */
 	public TimeEvent(String message) {
 		super("TIME: " + (Logger.getCurrentTime()) + " " +
@@ -24,8 +25,10 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @param message
-	 * @param timeUnit
+	 * @title ErrorEvent
+	 * @purpose to construct objects of type ErrorEvent
+	 * @param message the message associated with this Event
+	 * @param timeUnit the unit of time that will the stored time will take
 	 */
 	public TimeEvent(String message, TimeUnit timeUnit) {
 		super("TIME: " + timeUnit.convert(Logger.getCurrentTime(), TimeUnit.NANOSECONDS) + " " +
@@ -33,8 +36,11 @@ public class TimeEvent extends InformationEvent {
 	}
 
 	/**
-	 * @param message
-	 * @param cause
+	 * @title ErrorEvent
+	 * @purpose to construct objects of type ErrorEvent
+	 * @param message the message associated with this Event
+	 * @param cause the Throwable that caused this Event's throw, the cause's
+	 * StackTrace will be added to that of this Event
 	 */
 	public TimeEvent(String message, Throwable cause) {
 		super("TIME: " + (Logger.getCurrentTime()) + " " +
@@ -42,9 +48,12 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @param message
-	 * @param timeUnit
-	 * @param cause
+	 * @title ErrorEvent
+	 * @purpose to construct objects of type ErrorEvent
+	 * @param message the message associated with this Event
+	 * @param timeUnit the unit of time that will the stored time will take
+	 * @param cause the Throwable that caused this Event's throw, the cause's
+	 * StackTrace will be added to that of this Event
 	 */
 	public TimeEvent(String message, TimeUnit timeUnit, Throwable cause) {
 		super("TIME: " + timeUnit.convert(Logger.getCurrentTime(), TimeUnit.NANOSECONDS) + " " +
@@ -52,9 +61,11 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @param message
-	 * @param time
-	 * @param timeUnit
+	 * @title ErrorEvent
+	 * @purpose to construct objects of type ErrorEvent
+	 * @param message the message associated with this Event
+	 * @param the amount of time, with the unit timeUnit, to be stored in the message
+	 * @param timeUnit the unit of time that will the stored time will take
 	 */
 	public TimeEvent(String message, long time, TimeUnit timeUnit) {
 		super("TIME: " + time + " " +
@@ -62,10 +73,13 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @param message
-	 * @param time
-	 * @param timeUnit
-	 * @param cause
+	 * @title ErrorEvent
+	 * @purpose to construct objects of type ErrorEvent
+	 * @param message the message associated with this Event
+	 * @param the amount of time, with the unit timeUnit, to be stored in the message
+	 * @param timeUnit the unit of time that will the stored time will take
+	 * @param cause the Throwable that caused this Event's throw, the cause's
+	 * StackTrace will be added to that of this Event
 	 */
 	public TimeEvent(String message, long time, TimeUnit timeUnit, Throwable cause) {
 		super("TIME: " + time + " " +

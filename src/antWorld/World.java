@@ -13,8 +13,7 @@ import antBrain.Brain;
  * @purpose to hold a 2D collection of Cell objects and Ants, and to allow these
  * Ants to execute instructions as they wish, within the rules of the game.
  * This class also stores statistics and informations about the game's progress
- * so far.
- * @change_log 
+ * so far. 
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -63,59 +62,66 @@ public class World implements Cloneable {
 	//'-' == red
 	
 	/**
-	 * @param seed 0 to use random seed
-	 * 
-	 * @return a world which is fit to be used in a tournament
+	 * @title getContestWorld
+	 * @purpose to get a new World with many of the default settings for
+	 * parameters
+	 * @param seed 0 to use random seed, else create a deterministic World where
+	 * all the Ants will move in a fixed seeded pattern
+	 * @param soundPlayer the object with which to play sounds, if any
+	 * @return a world which is fit to be used in a contest
 	 * @throws ErrorEvent if objects specified don't fit in area specified
-	 * @throws IllegalArgumentEvent 
+	 * @throws IllegalArgumentEvent if any arguments are illegal
 	 */
 	public static World getContestWorld(int seed, SoundPlayer soundPlayer) throws ErrorEvent {
 		return getRegularWorld(seed, 140, 140, 13, soundPlayer);
 	}
 	
 	/**
-	 * Generates a new world from given parameters
-	 * Used by the getTournamentWorld method and user
-	 * 
-	 * @param rows
-	 * @param cols
-	 * @param rocks
-	 * @param brains
-	 * @param seed
-	 * @param soundPlayer The sound player for sound effects, if this is null,
-	 * 					  no sounds will be played.
-	 * @return
+	 * @title getContestWorld
+	 * @purpose to get a new World with some of the default settings for
+	 * parameters
+	 * @param seed 0 to use random seed, else create a deterministic World where
+	 * all the Ants will move in a fixed seeded pattern
+	 * @param rows the number of rows in the World to construct
+	 * @param cols the number of columns in the World to construct
+	 * @param rocks the number of rocks, not including rocks around the border
+	 * of the World, to add to the World
+	 * @param soundPlayer the object with which to play sounds, if any
+	 * @return a world which is fit to be used in a contest
 	 * @throws ErrorEvent if objects specified don't fit in area specified
-	 * @throws IllegalArgumentEvent 
+	 * @throws IllegalArgumentEvent if any arguments are illegal 
 	 */
-	public static World getRegularWorld(int seed, int rows, int cols, int rocks, SoundPlayer soundPlayer) throws ErrorEvent {
+	public static World getRegularWorld(int seed, int rows, int cols, int rocks,
+		SoundPlayer soundPlayer) throws ErrorEvent {
 		return new World(seed, rows, cols, rocks, 2, 7, 10, 5, 5, 0, 1, soundPlayer);
 	}
 	
 	/**
-	 * There are 3 different levels of specification of parameters for world generation,
-	 * the user can manually enter values for rows, cols...etc... if they choose, or use
-	 * the defaults for a world which could be used in a tournament
-	 * 
-	 * @param rows
-	 * @param cols
-	 * @param rocks
-	 * @param brains
-	 * @param seed
-	 * @param anthills
-	 * @param anthillSideLength
-	 * @param foodBlobCount
-	 * @param foodBlobSideLength
-	 * @param foodBlobCellFoodCount
-	 * @param antInitialDirection
-	 * @param soundPlayer The sound player for sound effects, if this is null,
-	 * 					  no sounds will be played.
+	 * @title getContestWorld
+	 * @purpose the highest level of specification of parameters, as all
+	 * parameters can be set by the user, unlike the static methods
+	 * @param seed 0 to use random seed, else create a deterministic World where
+	 * all the Ants will move in a fixed seeded pattern
+	 * @param rows the number of rows in the World to construct
+	 * @param cols the number of columns in the World to construct
+	 * @param rocks the number of rocks, not including rocks around the border
+	 * of the World, to add to the World
+	 * @param anthills the number of anthills to create, one per Ant species
+	 * @param anthillSideLength the length of the sides of the anthills
+	 * @param foodBlobCount the number of food blobs to create in the World
+	 * @param foodBlobSideLength the length of all sides of the food blobs
+	 * @param foodBlobCellFoodCount the amount of food in each food blob Cell
+	 * @param antInitialDirection the starting direction of 
+	 * @param gap minimum the number of hexes between non-food objects
+	 * @param soundPlayer the object with which to play sounds, if any
+	 * @return a world which is fit to be used in a contest
 	 * @throws ErrorEvent if objects specified don't fit in area specified
-	 * @throws IllegalArgumentEvent 
+	 * @throws IllegalArgumentEvent if any arguments are illegal 
 	 */
 	public World(int seed, int rows, int cols, int rocks,
-		int anthills, int anthillSideLength, int foodBlobCount, int foodBlobSideLength,
-		int foodBlobCellFoodCount, int antInitialDirection, int gap, SoundPlayer soundPlayer) throws ErrorEvent {
+		int anthills, int anthillSideLength, int foodBlobCount,
+		int foodBlobSideLength, int foodBlobCellFoodCount,
+		int antInitialDirection, int gap, SoundPlayer soundPlayer) throws ErrorEvent {
 		try{
 			//Can either use a random or predefined seed
 			this.seed = seed;
@@ -166,15 +172,15 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * Creates a new world with parameters from given arrays
-	 * Used by the WorldParser class
-	 * 
-	 * @param cellChars
-	 * @throws IllegalArgumentEvent 
+	 * @title World
+	 * @purpose to create a new world with attributes inferred from given
+	 * array, this is used by the WorldParser class and clone.
+	 * @param cellChars the 2D character array to use as the new World's
+	 * @throws ErrorEvent if any Cells in the array are invalid
 	 */
 	protected World(char[][] cellChars) throws ErrorEvent {
 		//Random is not needed for world generation, but is for Ant.step()
-		this.seed = 0;
+		this.seed = 1;
 		this.ran = new Random(this.seed);
 		
 		this.rows = cellChars.length;
@@ -201,7 +207,11 @@ public class World implements Cloneable {
 		for(r = 0; r < this.rows; r++){
 			for(c = 0; c < this.cols; c++){
 				current = this.cells[r][c];
-				current.setNeighbours(getNeighbours(current));
+				try {
+					current.setNeighbours(getNeighbours(current));
+				} catch (IllegalArgumentEvent e) {
+					Logger.log(e);
+				}
 			}
 		}
 		
@@ -474,7 +484,11 @@ public class World implements Cloneable {
 		for(int r = this.rows - 1; r >= 0; r--){
 			for(int c = this.cols - 1; c >= 0; c--){
 				Cell current = cells[r][c];
-				current.setNeighbours(getNeighbours(current));
+				try {
+					current.setNeighbours(getNeighbours(current));
+				} catch (IllegalArgumentEvent e) {
+					Logger.log(e);
+				}
 				current.setupMarkers(this.anthills);
 			}
 		}
@@ -932,7 +946,7 @@ public class World implements Cloneable {
 	 */
 	private void createAnts() {
 		Cell cell;
-		Ant ant;
+		Ant ant = null;
 		int colour;
 		int black = 0;
 		int red = 0;
@@ -971,7 +985,11 @@ public class World implements Cloneable {
 				}
 				
 				//Create and store ant
-				ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell, this.soundPlayer);
+				try {
+					ant = new Ant(uid, this.ran, this.antInitialDirection, colour, cell, this.soundPlayer);
+				} catch (IllegalArgumentEvent e) {
+					Logger.log(e);
+				}
 				cell.setAnt(ant);
 				this.ants[nextAntIndex[0] + nextAntIndex[1]] = ant;
 				//Use nextAntIndex[colour] value BEFORE increment (opposite to ++i)
@@ -1018,23 +1036,29 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @param n
-	 * @return
+	 * @title hexArea
+	 * @purpose to calculate the area of a hexagon with the side length given
+	 * @param len the side length of the hypothetical Cell hex
+	 * @return the area of a hypothetical hexagon of Cells with the length
+	 * specified in len
 	 */
-	public static int hexArea(int n) {
+	public static int hexArea(int len) {
 		//Calculates the number of cells in a hex (e.g. anthill) given side length n
-		if(n < 1){
+		if(len < 1){
 			return 0;
 		}
-		if(n == 1){
+		if(len == 1){
 			return 1;
 		}
-		return hexArea(n - 1) + ((n - 1) * 6);
+		return hexArea(len - 1) + ((len - 1) * 6);
 	}
 	
 	/**
-	 * @param brain
-	 * @param i
+	 * @title setBrain
+	 * @purpose to set the Brain of the Ants of the species specified to the
+	 * given Brain
+	 * @param brain the Brain to set
+	 * @param i the species of Ant to set
 	 */
 	public void setBrain(Brain brain, int i) {
 		for(Ant ant : this.antsBySpecies[i]){
@@ -1048,23 +1072,27 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * Assigns a sound player to this world.
-	 * 
-	 * @param soundPlayer The sound player to use.
+	 * @title setSoundPlayer
+	 * @purpose to assign a sound player to this world.
+	 * @param soundPlayer the sound player to use.
 	 */
 	public void setSoundPlayer(SoundPlayer soundPlayer) {
 		this.soundPlayer = soundPlayer;
 	}
 	
 	/**
-	 * @return
+	 * @title getCells
+	 * @purpose to get the Cell array of this World.
+	 * @return the Cell array of this World
 	 */
 	public Cell[][] getCells() {
 		return this.cells;
 	}
 	
 	/**
-	 * @return
+	 * @title getChars
+	 * @purpose to get the char array version of this World's Cells
+	 * @return the World's Cell array converted to chars
 	 */
 	public char[][] getChars() {
 		char[][] chars = new char[this.rows][this.cols];
@@ -1077,23 +1105,31 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @return
+	 * @title getAnts
+	 * @purpose to get this World's ants
+	 * @return this World's Ants, which were initially ordered from top left
+	 * to bottom right, left first, then down, but may have moved since then
 	 */
 	public Ant[] getAnts() {
 		return this.ants;
 	}
 	
 	/**
-	 * @return
+	 * @title getAntsBySpecies
+	 * @purpose to get this World's ants
+	 * @return this World's Ants, which were initially ordered from top left
+	 * to bottom right, left first, then down, but may have moved since then
 	 */
 	public Ant[][] getAntsBySpecies() {
 		return this.antsBySpecies;
 	}
 	
 	/**
-	 * 
+	 * @title step
+	 * @purpose permits each Ant in the World to perform one step, in order of
+	 * UID, so from top left to bottom right, horizontally first
 	 */
-	protected void step() {
+	public void step() {
 		for(Ant ant : this.ants){
 			ant.step();
 		}
@@ -1181,14 +1217,18 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @return
+	 * @title getSeed
+	 * @purpose to get the seed of this World
+	 * @return the seed of this World
 	 */
 	public int getSeed() {
 		return this.seed;
 	}
 	
 	/**
-	 * @return the amount of food in each anthill
+	 * @title getFoodInAnthills
+	 * @purpose to get the total food in each Cell, for each anthill
+	 * @return the total amount of food in each anthill
 	 */
 	public int[] getFoodInAnthills() {
 		int[] totals = new int[this.antsBySpecies.length];
@@ -1211,6 +1251,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
+	 * @title survivingAntsBySpecies
+	 * @purpose to get a list of the remaining ants for each species
 	 * @return the number of surviving ants in each species
 	 */
 	public int[] survivingAntsBySpecies() {
@@ -1227,6 +1269,12 @@ public class World implements Cloneable {
 		return survivors;
 	}
 	
+	/**
+	 * @title isContest
+	 * @purpose to get whether this World is suitable for running a contest
+	 * @return true if all of this World's attributes are appropriate for a
+	 * contest
+	 */
 	public boolean isContest() {
 		if(this.rows == 140
 		&& this.cols == 140
@@ -1248,7 +1296,9 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @return
+	 * @title getAttributes
+	 * @purpose to determine and return the attributes of the World
+	 * @return a list of this World's attributes
 	 */
 	public String getAttributes() {
 		String s = "";
@@ -1287,8 +1337,11 @@ public class World implements Cloneable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 * 
-	 * Returns a World with a cloned Cell[][], does not copy Ants, generates new ones on anthills,
-	 * equivilent to calling World(char[][]) with one parsed from a file, but without the slow checks
+	 * @title clone
+	 * @purpose to return a copy of this World
+	 * @return a World with a cloned Cell[][], does not copy Ants, generates
+	 * new Ants on anthills, equivilent to calling World(char[][]) with one
+	 * parsed from a file, but without the slow checks
 	 */
 	@Override
 	public Object clone() {
@@ -1308,6 +1361,11 @@ public class World implements Cloneable {
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
+	 * 
+	 * @title toString
+	 * @purpose to obtain a graphic representation of the World
+	 * @return a String representation of all of the Cells in the World in a 
+	 * 2D grid
 	 */
 	@Override
 	public String toString() {

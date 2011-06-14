@@ -56,8 +56,9 @@ public final class Ant implements Comparable<Ant> {
 	 * @param colour 0 or 1, the colour of the Ant
 	 * @param cell the starting location of the Ant
 	 * @param soundPlayer the SoundPlayer, if any, to use to record events
+	 * @throws IllegalArgumentEvent if the direction is invalid
 	 */
-	public Ant(int uid, Random ran, int direction, int colour, Cell cell, SoundPlayer soundPlayer) {
+	public Ant(int uid, Random ran, int direction, int colour, Cell cell, SoundPlayer soundPlayer) throws IllegalArgumentEvent {
 		this.uid = uid;
 		
 		if(ran == null){
@@ -78,6 +79,9 @@ public final class Ant implements Comparable<Ant> {
 				"argument in Ant Constructor"));
 			this.colour = null;
 		}
+		if(direction < 0 || direction > 5){
+			throw new IllegalArgumentEvent("invalid initial direction");
+		}
 		this.direction = direction;
 		this.cell = cell;
 		
@@ -85,7 +89,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * Execute the current state, then move to next state
+	 * @title step
+	 * @purpose to execute the current state, then move to next state
 	 */
 	protected final void step() {
 		//Removed local variables and parameters in step() and methods it calls
@@ -162,13 +167,25 @@ public final class Ant implements Comparable<Ant> {
 			this.senseCell = this.cell;
 			break;
 		case 1:
-			this.senseCell = this.cell.getNeighbour(this.direction);
+			try{
+				this.senseCell = this.cell.getNeighbour(this.direction);
+			} catch (ErrorEvent e) {
+				Logger.log(e);
+			}
 			break;
 		case 2:
-			this.senseCell = this.cell.getNeighbour(this.direction - 1);
+			try {
+				this.senseCell = this.cell.getNeighbour(this.direction - 1);
+			} catch (ErrorEvent e) {
+				Logger.log(e);
+			}
 			break;
 		case 3:
-			this.senseCell = this.cell.getNeighbour(this.direction + 1);
+			try{
+				this.senseCell = this.cell.getNeighbour(this.direction + 1);
+			} catch (ErrorEvent e) {
+				Logger.log(e);
+			}
 			break;
 		default:
 			Logger.log(new IllegalArgumentEvent("Illegal senseDir " +
@@ -317,11 +334,7 @@ public final class Ant implements Comparable<Ant> {
 		//Assumes food contained in a cell cannot be > 9
 		//If can carrying hasFood, and hasFood in cell < max, drop up hasFood and go to st1
 		if(this.hasFood){// && this.cell.foodCount() < 9){
-			try {
-				this.cell.dropFood(1);
-			} catch (IllegalArgumentEvent e) {
-				Logger.log(e);
-			}
+			this.cell.dropFood();
 			this.hasFood = false;
 		}
 		this.state = this.brain.get(this.state.getSt1());
@@ -364,10 +377,13 @@ public final class Ant implements Comparable<Ant> {
 	private final void move() {
 		//If new cell is not rocky and does not contain an ant,
 		//move there and go to st1, else st2
-		this.newCell = this.cell.getNeighbour(this.direction);
+		try{
+			this.newCell = this.cell.getNeighbour(this.direction);
+		} catch (ErrorEvent e) {
+			Logger.log(e);
+		}
 		if(!this.newCell.isRocky() && !this.newCell.hasAnt()){
 			//Move to cell
-			Cell oldCell = this.cell;
 			this.newCell.setAnt(this);
 			this.cell.setAnt(null);
 			this.cell = this.newCell;
@@ -375,19 +391,27 @@ public final class Ant implements Comparable<Ant> {
 			
 			//Check this and 3 neighbour ants for becoming surrounded
 			//removed use of an array, more efficient
-			
-			if(this.cell == null) System.out.println("NULL " + this.cell + "," + oldCell.getRow() +
-				"," + oldCell.getCol() + ", " + this.direction + ", " + this.alive);
-			
-			this.neighbourAnt = this.cell.getNeighbour(this.direction - 1).getAnt();
+			try{
+				this.neighbourAnt = this.cell.getNeighbour(this.direction - 1).getAnt();
+			} catch (ErrorEvent e) {
+				Logger.log(e);
+			}
 			if(this.neighbourAnt != null){
 				if(this.neighbourAnt.isSurrounded()) this.neighbourAnt.kill();
 			}
-			this.neighbourAnt = this.cell.getNeighbour(this.direction).getAnt();
+			try{
+				this.neighbourAnt = this.cell.getNeighbour(this.direction).getAnt();
+			} catch (ErrorEvent e) {
+				Logger.log(e);
+			}
 			if(this.neighbourAnt != null){
 				if(this.neighbourAnt.isSurrounded()) this.neighbourAnt.kill();
 			}
-			this.neighbourAnt = this.cell.getNeighbour(this.direction + 1).getAnt();
+			try{
+				this.neighbourAnt = this.cell.getNeighbour(this.direction + 1).getAnt();
+			} catch (ErrorEvent e) {
+				Logger.log(e);
+			}
 			if(this.neighbourAnt != null){
 				if(this.neighbourAnt.isSurrounded()) this.neighbourAnt.kill();
 			}
@@ -429,7 +453,11 @@ public final class Ant implements Comparable<Ant> {
 		//Assumes none of the neighbouring cells are null
 		int i;
 		for(i = 0; i < 6; i++){
-			this.neighbourAnts[i] = this.cell.getNeighbour(i).getAnt();
+			try{
+				this.neighbourAnts[i] = this.cell.getNeighbour(i).getAnt();
+			} catch (ErrorEvent e) {
+				Logger.log(e);
+			}
 		}
 		
 		int foes = 0;
@@ -447,7 +475,9 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @param brain
+	 * @title setBrain
+	 * @purpose to set the Brain of this Ant, so the Ant uses the Brain's states
+	 * @param brain the Brain to set
 	 */
 	protected final void setBrain(Brain brain) {
 		this.brain = brain;
@@ -462,17 +492,9 @@ public final class Ant implements Comparable<Ant> {
 		
 		//Drop hasFood carried + 3
 		if(this.hasFood){
-			try {
-				this.cell.dropFood(1);
-			} catch (IllegalArgumentEvent e) {
-				Logger.log(e);
-			}
+			this.cell.dropFood();
 		}
-		try {
-			this.cell.dropFood(3);
-		} catch (IllegalArgumentEvent e) {
-			Logger.log(e);
-		}
+		for(int i = 0; i < 3; i++) this.cell.dropFood();
 		
 		//Remove from world
 		this.cell.setAnt(null);
@@ -484,14 +506,18 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @return
+	 * @title isAlive
+	 * @purpose to check whether the Ant is alive, and has a location Cell
+	 * @return true if the Ant is alive
 	 */
 	protected final boolean isAlive() {
 		return this.alive;
 	}
 	
 	/**
-	 * @return
+	 * @title getCell
+	 * @purpose to get the Cell location of this Ant
+	 * @return the Cell that this Ant occupies
 	 */
 	protected final Cell getCell() {
 		return this.cell;
@@ -532,9 +558,11 @@ public final class Ant implements Comparable<Ant> {
 	public final boolean hasFood() {
 		return this.hasFood;
 	}
-
+	
 	/**
-	 * @param cell
+	 * @title setCell
+	 * @purpose to set the Cell location of this Ant
+	 * @param cell the Cell to be set as this Ant's location
 	 */
 	protected final void setCell(Cell cell) {
 		this.cell = cell;

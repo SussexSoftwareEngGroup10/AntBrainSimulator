@@ -1,5 +1,6 @@
 package antWorld;
 
+import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 import utilities.WarningEvent;
@@ -9,8 +10,7 @@ import utilities.WarningEvent;
  * @purpose to hold a set of values including the states of the markers, the
  * amount of food present, and the anthill and rockyness of this "hex". The Ant
  * present in this Cell has limited control over these values, and can do with
- * them as its Brain, and the rules specify.  
- * @change_log 
+ * them as its Brain, and the rules specify.
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -28,10 +28,13 @@ public class Cell implements Cloneable {
 	private Ant ant;
 	
 	/**
-	 * @param row
-	 * @param col
-	 * @param c
-	 * @throws IllegalArgumentEvent 
+	 * @title Cell
+	 * @purpose constructor for objects of type Cell 
+	 * @param row the row of the Cell
+	 * @param col the column of the Cell
+	 * @param c the character that will specify the starting attributes of the 
+	 * Cell 
+	 * @throws IllegalArgumentEvent if row or col is below 0, or c is invalid
 	 */
 	public Cell(int row, int col, char c) throws IllegalArgumentEvent {
 		if(row < 0 || col < 0){
@@ -52,11 +55,13 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @param c
-	 * @throws IllegalArgumentEvent 
+	 * @title setCell
+	 * @purpose to change the attributes of the Cell
+	 * @param c the new format of the Cell
+	 * @throws IllegalArgumentEvent if c is not a valid character
 	 */
-	public void setCell(char c) throws IllegalArgumentEvent {
-		if(c - 48 > 0 && c - 48 < 10){ //'0 to 9'
+	protected void setCell(char c) throws IllegalArgumentEvent {
+		if(c > 48 && c < 58){ //'0 to 9' in ascii
 			this.rocky = false;
 			this.food = c - 48;
 			this.anthill = 0;
@@ -89,82 +94,115 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @param neighbours
+	 * @title setNeighbours
+	 * @purpose to set the neighbours in all 6 directions of this Cell
+	 * @param neighbours the Cell[] of new neighbours of the Cell
+	 * @throws IllegalArgumentEvent if there are not 6 neighbours
 	 */
-	public void setNeighbours(Cell[] neighbours) {
+	protected void setNeighbours(Cell[] neighbours) throws IllegalArgumentEvent {
+		if(neighbours.length != 6){
+			throw new IllegalArgumentEvent("incorrect number of neighbours");
+		}
 		this.neighbours = neighbours;
 	}
 	
 	/**
-	 * @return
+	 * @title getNeighbours
+	 * @purpose to return the Cell's neighbours
+	 * @return the 6 Cells neighbouring this Cell
 	 */
-	public Cell[] getNeighbours() {
+	protected Cell[] getNeighbours() {
 		return this.neighbours;
 	}
 	
 	/**
-	 * @param direction
-	 * @return
+	 * @title getNeighbour
+	 * @purpose to get one of the Cells neighbouring this Cell
+	 * @param direction alters the direction by 6 until it is within the range
+	 * 0 to 6
+	 * @return the neighbour of the Cell in the direction specified
+	 * @throws ErrorEvent if the Cell has no neighbours
 	 */
-	public Cell getNeighbour(int direction) {
-		if(direction < 0){
-			return this.neighbours[direction + 6];
+	protected Cell getNeighbour(int direction) throws ErrorEvent {
+		if(this.neighbours == null){
+			throw new ErrorEvent("This Cell has no neighbours specified");
 		}
-		if(direction > 5){
-			return this.neighbours[direction - 6];
+		int dir = direction;
+		while(dir < 0){
+			dir += 6;
 		}
-		return this.neighbours[direction];
+		while(dir > 5){
+			dir -= 6;
+		}
+		return this.neighbours[dir];
 	}
 	
 	/**
-	 * @return
+	 * @title getRow
+	 * @purpose to return the row of this Cell
+	 * @return the row that this Cell is in
 	 */
-	public int getRow() {
+	protected int getRow() {
 		return this.row;
 	}
 	
 	/**
-	 * @return
+	 * @title getCol
+	 * @purpose to return the column of this Cell
+	 * @return the column that this Cell is in
 	 */
-	public int getCol() {
+	protected int getCol() {
 		return this.col;
 	}
 	
 	/**
-	 * @param specieses
+	 * @title setupMarkers
+	 * @purpose to create a set of 6 boolean markers for each Ant species
+	 * @param specieses the number of species or colours of Ant
 	 */
-	public void setupMarkers(int specieses) {
+	protected void setupMarkers(int specieses) {
 		this.markers = new boolean[specieses][6];
 	}
 	
 	/**
-	 * @param species
-	 * @param i
+	 * @title mark
+	 * @purpose to set the marker of the given species at the given location to
+	 * true
+	 * @param species the species Ants to set to true
+	 * @param i the location of the marker to set to true
 	 */
-	public void mark(int species, int i) {
+	protected void mark(int species, int i) {
 		this.markers[species][i] = true;
 	}
 	
 	/**
-	 * @param species
-	 * @param i
+	 * @title unmark
+	 * @purpose to set the marker of the given species at the given location to
+	 * false
+	 * @param species the species Ants to set to false
+	 * @param i the location of the marker to set to false
 	 */
-	public void unmark(int species, int i) {
+	protected void unmark(int species, int i) {
 		this.markers[species][i] = false;
 	}
 	
 	/**
-	 * @param species
-	 * @param i
-	 * @return
+	 * @title getMarker 
+	 * @purpose to get the value of the marker specified
+	 * @param species the species of Ant of the marker to get
+	 * @param i the location in the marker array to get the value from
+	 * @return true if the marker at the given position is true
 	 */
 	public boolean getMarker(int species, int i) {
 		return this.markers[species][i];
 	}
 	
 	/**
-	 * @param notSpecies
-	 * @return
+	 * @title getAnyMarker
+	 * @purpose to return true if any of the markers of any of the other species
+	 * are true
+	 * @param notSpecies the species to not check
+	 * @return true if any marker of any other species is true
 	 */
 	public boolean getAnyMarker(int notSpecies) {
 		//returns true if any marker not of species notSpecies is true
@@ -183,72 +221,81 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @param ant
+	 * @title setAnt
+	 * @purpose to allow an Ant's location to be set to this Cell
+	 * @param ant the Ant to set as this Cell's Ant
 	 */
-	public void setAnt(Ant ant) {
+	protected void setAnt(Ant ant) {
 		this.ant = ant;
 	}
 	
 	/**
-	 * @return
+	 * @title getAnt
+	 * @purpose to get the Ant positioned on this Cell
+	 * @return this Cell's Ant
 	 */
 	public Ant getAnt() {
 		return this.ant;
 	}
 	
 	/**
-	 * @return
+	 * @title isRocky
+	 * @purpose to get whether or not this Cell is rocky
+	 * @return true if this Cell is rocky
 	 */
 	public boolean isRocky() {
 		return this.rocky;
 	}
 	
 	/**
-	 * @return
+	 * @title foodCount
+	 * @purpose to get the amount of food on this Cell
+	 * @return the amount of food on the Cell
 	 */
 	public int foodCount() {
 		return this.food;
 	}
 	
 	/**
-	 * @return
+	 * @title hasFood
+	 * @purpose to get whether there is any food on this Cell
+	 * @return true if there is any food in this Cell
 	 */
 	public boolean hasFood() {
-		return this.food != 0;
+		return this.food > 0;
 	}
 	
 	/**
-	 * @param i
-	 * @throws IllegalArgumentEvent 
+	 * @title dropFood
+	 * @purpose to drop one food on the Cell
 	 */
-	public void dropFood(int i) throws IllegalArgumentEvent {
-		if(i < 1){
-			throw new IllegalArgumentEvent("food dropped must be greater than 0");
-		}
-		//Removed food limit of 9 per cell
-//		if(this.food + i <= 9){
-		this.food += i;
-//		}
+	protected void dropFood() {
+		this.food++;
 	}
 	
 	/**
-	 * 
+	 * @title pickupFood
+	 * @purpose to allow the removal of 1 food, if there is any food in the Cell
 	 */
-	public void pickupFood() {
+	protected void pickupFood() {
 		if(this.food > 0){
 			this.food--;
 		}
 	}
 	
 	/**
-	 * @return
+	 * @title getAnthill
+	 * @purpose to return the anthill of this Cell
+	 * @return 0 if no anthill, otherwise the value of the anthill of this Cell
 	 */
 	public int getAnthill() {
 		return this.anthill;
 	}
 	
 	/**
-	 * @return
+	 * @title hasAnt
+	 * @purpose to get whether the Cell is the locaiton of an Ant
+	 * @return true if there is an Ant on this Cell
 	 */
 	public boolean hasAnt() {
 		return this.ant != null;
@@ -256,6 +303,10 @@ public class Cell implements Cloneable {
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
+	 * 
+	 * @title clone 
+	 * @purpose to get a copy of this Cell
+	 * @return an deep copy of this Cell with identical attributes
 	 */
 	@Override
 	public Object clone() {
@@ -263,7 +314,9 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @return
+	 * @title toChar
+	 * @purpose to get the character representation of this Cell
+	 * @return a char that depends on the attributes of the Cell
 	 */
 	public char toChar() {
 		//Ant
@@ -344,6 +397,10 @@ public class Cell implements Cloneable {
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
+	 * 
+	 * @title toString
+	 * @purpose to get a String that represents this Cell
+	 * @return a String representation of the attributes of this Cell
 	 */
 	@Override
 	public String toString() {

@@ -408,9 +408,9 @@ public class MainWindow {
 						GUIErrorMsg.displayErrorMsg(
 								"Can't run a contest with less that two " +
 								"brains!");
-					} else if (numberOfPlayers > 200) {
+					} else if (numberOfPlayers > 100) {
 						GUIErrorMsg.displayErrorMsg(
-								"Upper limit of 200 players for contests!");
+								"Upper limit of 100 players for contests!");
 					} else {
 						//Display contest window
 						new ContestWindow(numberOfPlayers, gameEngine);
@@ -545,7 +545,7 @@ public class MainWindow {
 	}
 	
 	/**
-	 * Attched to the mute button to allow the sounds of the game to be toggled
+	 * Attached to the mute button to allow the sounds of the game to be toggled
 	 * on and off.
 	 * 
 	 * @author wjs25

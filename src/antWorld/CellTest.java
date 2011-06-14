@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import engine.SoundPlayer;
 
+import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
 
 public class CellTest {
@@ -102,6 +103,8 @@ public class CellTest {
 			assertEquals("Neighbor 1 invalid", '#', testCell.getNeighbour(0).toChar());
 			assertEquals("Neighbor 2 invalid", '+', testCell.getNeighbour(1).toChar());
 		} catch (IllegalArgumentEvent e) {
+			fail(e.getMessage());
+		} catch (ErrorEvent e) {
 			fail(e.getMessage());
 		}
 	}

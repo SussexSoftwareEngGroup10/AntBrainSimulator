@@ -27,13 +27,11 @@ public class WorldTest {
 	@Test
 	public void testCreation(){
 		try {
-			testWorld = WorldParser.readWorldFromCustom("example");
+			testWorld = WorldParser.readWorldFrom("example");
 		
 			assertTrue("world not created/stored",testWorld != null);
 		} catch (IOEvent e) {
 			
-			fail(e.getMessage());
-		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -42,7 +40,7 @@ public class WorldTest {
 	public void testReturnSize()
 	{
 		try {
-			testWorld = WorldParser.readWorldFromCustom("example");
+			testWorld = WorldParser.readWorldFrom("example");
 		
 			Cell[][] worldSize = testWorld.getCells();
 			assertEquals("retrned wrong size",10, worldSize.length);
@@ -50,22 +48,18 @@ public class WorldTest {
 		} catch (IOEvent e) {
 			
 			fail(e.getMessage());
-		} catch (IllegalArgumentEvent e) {
-			fail(e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testReturnAntsInvalidWorld(){
 		try {
-			testWorld = WorldParser.readWorldFromCustom("example");
+			testWorld = WorldParser.readWorldFrom("example");
 			Ant[] testAnts = testWorld.getAnts();
 			assertEquals("FAILURE: FAILED BECAUSE INVALID WORLD", 32, testAnts.length);
 			//Works out length of hexagon with length
 		} catch (IOEvent e) {
 			
-			fail(e.getMessage());
-		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -84,7 +78,7 @@ public class WorldTest {
 	@Test
 	public void testReturnFood(){
 		try {
-			testWorld = WorldParser.readWorldFromCustom("testWorlds/testFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testFood");
 			// this world has a total of 50 foods in
 			Cell[][] worldCells = testWorld.getCells();
 			int foodCount = 0;
@@ -95,8 +89,6 @@ public class WorldTest {
 			}
 			assertEquals(50, foodCount);
 		} catch (IOEvent e) {
-			fail(e.getMessage());
-		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
 	}
@@ -126,7 +118,7 @@ public class WorldTest {
 	@Test
 	public void testTooMuchFood(){
 		try{
-			testWorld = WorldParser.readWorldFromCustom("testWorlds/tooMuchFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds/tooMuchFood");
 			if(testWorld.getCells()[1][1].foodCount() == 10){
 				fail("world with 10 food loaded");
 			}else{
@@ -134,31 +126,25 @@ public class WorldTest {
 			}
 		}catch (IOEvent e) {
 			fail(e.getMessage());
-		} catch (IllegalArgumentEvent e) {
-			fail(e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testLoadInvalidWorld(){
 		try{
-			testWorld = WorldParser.readWorldFromCustom("testWorlds/invalid");
+			testWorld = WorldParser.readWorldFrom("testWorlds/invalid");
 			assertTrue("Invalid world loaded",testWorld == null);
 		}catch (IOEvent e) {
 			fail(e.getMessage());
-		} catch (IllegalArgumentEvent e) {
-			assertTrue(true);
 		}
 	}
 	
 	@Test
 	public void testLoadNonExistantWorld(){
 		try{
-			testWorld = WorldParser.readWorldFromCustom("abcdefg");
+			testWorld = WorldParser.readWorldFrom("abcdefg");
 			assertTrue("Invalid world loaded",testWorld == null);
 		}catch (IOEvent e) {
-			assertTrue(true);
-		} catch (IllegalArgumentEvent e) {
 			assertTrue(true);
 		}
 	}

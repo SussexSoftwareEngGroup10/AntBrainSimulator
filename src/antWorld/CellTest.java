@@ -209,7 +209,9 @@ public class CellTest {
 		try{
 			Cell testCell = new Cell(4,4,'.');
 			for(int droppedFood = 1; droppedFood <= 9; droppedFood++){
-				testCell.dropFood(droppedFood);
+				for(int i = 0; i < droppedFood; i++){
+					testCell.dropFood();
+				}
 				assertEquals(droppedFood,testCell.foodCount());
 				for(int i = 0; i < droppedFood; i++){
 					testCell.pickupFood();
@@ -266,6 +268,8 @@ public class CellTest {
 		}
 	}
 
+/*	
+ *  //no longer valid since dropFood changed
 	@Test
 	public void testSetSignedFood(){
 		try{
@@ -279,13 +283,16 @@ public class CellTest {
 		} catch (IllegalArgumentEvent e) {
 			assertTrue(true);
 		}
-	}
+	}*/
 	
 	@Test
 	public void testPickupOverMaxFood(){
 		try{
 			Cell testCell = new Cell(10,10,'.');
-			testCell.dropFood(4);
+			for(int t = 0; t < 4; t++){
+				testCell.dropFood();
+			}
+			
 			for(int i = 0; i < 10; i++){
 				testCell.pickupFood();
 			}

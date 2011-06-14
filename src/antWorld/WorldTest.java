@@ -27,7 +27,7 @@ public class WorldTest {
 	@Test
 	public void testCreation(){
 		try {
-			testWorld = WorldParser.readWorldFrom("example");
+			testWorld = WorldParser.readWorldFrom("example", null);
 		
 			assertTrue("world not created/stored",testWorld != null);
 		} catch (IOEvent e) {
@@ -40,7 +40,7 @@ public class WorldTest {
 	public void testReturnSize()
 	{
 		try {
-			testWorld = WorldParser.readWorldFrom("example");
+			testWorld = WorldParser.readWorldFrom("example", null);
 		
 			Cell[][] worldSize = testWorld.getCells();
 			assertEquals("retrned wrong size",10, worldSize.length);
@@ -54,7 +54,7 @@ public class WorldTest {
 	@Test
 	public void testReturnAntsInvalidWorld(){
 		try {
-			testWorld = WorldParser.readWorldFrom("example");
+			testWorld = WorldParser.readWorldFrom("example", null);
 			Ant[] testAnts = testWorld.getAnts();
 			assertEquals("FAILURE: FAILED BECAUSE INVALID WORLD", 32, testAnts.length);
 			//Works out length of hexagon with length
@@ -78,7 +78,7 @@ public class WorldTest {
 	@Test
 	public void testReturnFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testFood", null);
 			// this world has a total of 50 foods in
 			Cell[][] worldCells = testWorld.getCells();
 			int foodCount = 0;
@@ -118,7 +118,7 @@ public class WorldTest {
 	@Test
 	public void testTooMuchFood(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/tooMuchFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds/tooMuchFood", null);
 			if(testWorld.getCells()[1][1].foodCount() == 10){
 				fail("world with 10 food loaded");
 			}else{
@@ -132,7 +132,7 @@ public class WorldTest {
 	@Test
 	public void testLoadInvalidWorld(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/invalid");
+			testWorld = WorldParser.readWorldFrom("testWorlds/invalid", null);
 			assertTrue("Invalid world loaded",testWorld == null);
 		}catch (IOEvent e) {
 			fail(e.getMessage());
@@ -142,7 +142,7 @@ public class WorldTest {
 	@Test
 	public void testLoadNonExistantWorld(){
 		try{
-			testWorld = WorldParser.readWorldFrom("abcdefg");
+			testWorld = WorldParser.readWorldFrom("abcdefg", null);
 			assertTrue("Invalid world loaded",testWorld == null);
 		}catch (IOEvent e) {
 			assertTrue(true);

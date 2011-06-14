@@ -26,7 +26,7 @@ public class AntTest {
 	@Test
 	public void testSenseFoodA() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds\\testSenseFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds\\testSenseFood", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains\\senseFoodTestBrain"); //the ant will turn left if it senses food
@@ -44,7 +44,7 @@ public class AntTest {
 	@Test
 	public void testSenseFoodB() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/senseFoodTestBrain"); //the ant will turn left if it senses food
@@ -66,7 +66,7 @@ public class AntTest {
 		//I've changed it back though
 		//Turns out it was my code:(
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseEnemyAnt");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseEnemyAnt", null);
 			Ant[] testAnts = testWorld.getAnts();
 			try{
 			brain = BrainParser.readBrainFrom("testBrains/senseEnemyAntTestBrain"); //the ant will turn left if it senses an enemy ant
@@ -95,7 +95,7 @@ public class AntTest {
 	@Test
 	public void testSenseEnemyAntB(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			try{
@@ -116,7 +116,7 @@ public class AntTest {
 	@Test
 	public void testSenseFriendlyAntA(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFriendlyAnt");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFriendlyAnt", null);
 			Ant[] testAnts = testWorld.getAnts();
 			try{
 			brain = BrainParser.readBrainFrom("testBrains/senseFriendlyAntTestBrain"); //the ant will turn left if it senses an enemy ant
@@ -144,7 +144,7 @@ public class AntTest {
 	@Test
 	public void testSenseFriendlyAntB(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			try{
@@ -164,7 +164,7 @@ public class AntTest {
 	@Test
 	public void testSenseRocksA() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds\\testSenseRock");
+			testWorld = WorldParser.readWorldFrom("testWorlds\\testSenseRock", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains\\senseRockTestBrain"); //the ant will turn left if it senses food
@@ -182,7 +182,7 @@ public class AntTest {
 	@Test
 	public void testSenseRocksB() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/senseRockTestBrain"); //the ant will turn left if it senses food
@@ -200,7 +200,7 @@ public class AntTest {
 	@Test
 	public void testAttackandKill(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/testKill");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testKill", null);
 			
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("move_ahead");
@@ -223,7 +223,7 @@ public class AntTest {
 	@Test
 	public void testLeftTurn(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
@@ -241,7 +241,7 @@ public class AntTest {
 	@Test
 	public void testRightTurn(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			try{
@@ -260,7 +260,7 @@ public class AntTest {
 	@Test
 	public void testMove(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 
@@ -279,7 +279,7 @@ public class AntTest {
 	@Test
 	public void testCollectFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 
@@ -300,7 +300,7 @@ public class AntTest {
 	@Test
 	public void testDropFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 
@@ -327,7 +327,7 @@ public class AntTest {
 	public void testSetMark(){
 		//Phil: I changed your brain here to make the test pass, I think it's fine now
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
@@ -348,7 +348,7 @@ public class AntTest {
 	@Test
 	public void testRemoveMark(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 		
@@ -377,7 +377,7 @@ public class AntTest {
 	@Test
 	public void testReturnColourA(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/twoAnts");
+			testWorld = WorldParser.readWorldFrom("testWorlds/twoAnts", null);
 			
 			Ant[] testAnts = testWorld.getAnts();
 			
@@ -392,7 +392,7 @@ public class AntTest {
 	public void testReturnColourB(){
 		try{
 			
-			testWorld = WorldParser.readWorldFrom("testWorlds/twoAnts");
+			testWorld = WorldParser.readWorldFrom("testWorlds/twoAnts", null);
 			
 			Ant[] testAnts = testWorld.getAnts();
 			
@@ -407,7 +407,7 @@ public class AntTest {
 	@Test
 	public void testGetCell(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/testCell");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testCell", null);
 			
 			Ant[] testAnts = testWorld.getAnts();
 			assertEquals("wrong cell returned","11", testAnts[0].getCell().getRow() + "" + testAnts[0].getCell().getCol());
@@ -421,7 +421,7 @@ public class AntTest {
 	@Test
 	public void testSetCell(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/testCell");
+			testWorld = WorldParser.readWorldFrom("testWorlds/testCell", null);
 			
 			Ant[] testAnts = testWorld.getAnts();
 			
@@ -443,7 +443,7 @@ public class AntTest {
 	@Test
 	public void testContinualLeftTurning(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			try{
@@ -471,7 +471,7 @@ public class AntTest {
 	@Test
 	public void testContinualRightTurning(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
 			Ant[] testAnts = testWorld.getAnts();
 			try{
@@ -499,7 +499,7 @@ public class AntTest {
 	@Test
 	public void testMoveBeyondEdgeOfMap() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank");
+			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 			
 			Ant[] testAnts = testWorld.getAnts();
 			brain = BrainParser.readBrainFrom("move_ahead");

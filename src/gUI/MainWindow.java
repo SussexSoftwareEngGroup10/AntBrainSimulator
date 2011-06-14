@@ -43,8 +43,6 @@ public class MainWindow {
 	//program to run in a standard 1024 * 786 XGA display at least.
 	private static final int WINDOW_WIDTH = 921;
 	private static final int WINDOW_HEIGHT = 738;
-	//TODO Known issue, heap space error when more than about 4 or 5 worlds
-	//	   are changed.
 	
 	//The game engine to use for running the back end code
 	private GameEngine gameEngine;

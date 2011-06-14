@@ -1072,15 +1072,6 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title setSoundPlayer
-	 * @purpose to assign a sound player to this world.
-	 * @param soundPlayer the sound player to use.
-	 */
-	public void setSoundPlayer(SoundPlayer soundPlayer) {
-		this.soundPlayer = soundPlayer;
-	}
-	
-	/**
 	 * @title getCells
 	 * @purpose to get the Cell array of this World.
 	 * @return the Cell array of this World

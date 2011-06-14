@@ -26,10 +26,10 @@ import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
 
 /**
- * This class displays the window that allows the user to set up a contest.
+ * This class displays the window that allows the user to set up a contest.  
  * Once the contest has been run, results are displayed.
  * 
- * @author will
+ * @author wjs25
  */
 public class ContestWindow {
 	private GameEngine gameEngine;
@@ -47,6 +47,7 @@ public class ContestWindow {
 	private JProgressBar progressBar;
 	
 	/**
+	 * ContestWindow
 	 * Constructs a new ContestWindow and draws it to the screen.
 	 * 
 	 * @param numOfPlayers The number of contest participants.

@@ -178,7 +178,8 @@ public class World implements Cloneable {
 	 * @param cellChars the 2D character array to use as the new World's
 	 * @throws ErrorEvent if any Cells in the array are invalid
 	 */
-	protected World(char[][] cellChars) throws ErrorEvent {
+	protected World(char[][] cellChars, SoundPlayer soundPlayer) throws ErrorEvent {
+		this.soundPlayer = soundPlayer;
 		//Random is not needed for world generation, but is for Ant.step()
 		this.seed = 1;
 		this.ran = new Random(this.seed);

@@ -24,7 +24,7 @@ public class StatisticsWindow {
 	/**
 	 * Constructor for StatisticsWindow, draws the window to the screen.
 	 * 
-	 * @param stats THe statistics from the run game.
+	 * @param stats The statistics from the run game.
 	 */
 	public StatisticsWindow(GameStats stats) {
 		drawGUI(stats);
@@ -69,37 +69,37 @@ public class StatisticsWindow {
 			//Get the stats from the stats class, and draw to text fields
 			winnerBrain = new JTextField("Black Brain (Winner)");
 			winnerFood = 
-				new JTextField(Integer.toString(stats.getFoodInBlackAnthil()));
+				new JTextField(Integer.toString(stats.getFoodInBlackAnthill()));
 			winnerSurvivors = 
 				new JTextField(Integer.toString(stats.getBlackAntsSurviving()));
 			loserBrain = new JTextField("Red Brain (Loser)");
 			loserFood = 
 				new JTextField(Integer.toString(stats.getFoodInRedAnthill()));
 			loserSurvivors = 
-				new JTextField(Integer.toString(stats.getRedAntsSurvivig()));
+				new JTextField(Integer.toString(stats.getRedAntsSurviving()));
 		} else if (stats.getWinner() == 1) { 
 			//Else draw stats as red brain as the winner
 			winnerBrain = new JTextField("Red Brain (Winner)");
 			winnerFood = 
 				new JTextField(Integer.toString(stats.getFoodInRedAnthill()));
 			winnerSurvivors = 
-				new JTextField(Integer.toString(stats.getRedAntsSurvivig()));
+				new JTextField(Integer.toString(stats.getRedAntsSurviving()));
 			loserBrain = new JTextField("Black Brain (Loser)");
 			loserFood = 
-				new JTextField(Integer.toString(stats.getFoodInBlackAnthil()));
+				new JTextField(Integer.toString(stats.getFoodInBlackAnthill()));
 			loserSurvivors = 
 				new JTextField(Integer.toString(stats.getBlackAntsSurviving()));
 		} else { //It was a draw
 			winnerBrain = new JTextField("Black Brain (Draw)");
 			winnerFood = 
-				new JTextField(Integer.toString(stats.getFoodInBlackAnthil()));
+				new JTextField(Integer.toString(stats.getFoodInBlackAnthill()));
 			winnerSurvivors = 
 				new JTextField(Integer.toString(stats.getBlackAntsSurviving()));
 			loserBrain = new JTextField("Red Brain (Draw)");
 			loserFood = 
 				new JTextField(Integer.toString(stats.getFoodInRedAnthill()));
 			loserSurvivors = 
-				new JTextField(Integer.toString(stats.getRedAntsSurvivig()));
+				new JTextField(Integer.toString(stats.getRedAntsSurviving()));
 		}
 		
 		//Made the field un editable

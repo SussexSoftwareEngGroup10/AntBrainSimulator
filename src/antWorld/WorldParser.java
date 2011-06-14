@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import engine.SoundPlayer;
+
 import utilities.ErrorEvent;
 import utilities.IOEvent;
 import utilities.InformationHighEvent;
@@ -40,13 +42,15 @@ public final class WorldParser {
 	 * @purpose to effectively cast the World read from the given location as
 	 * suitable for a contest
 	 * @param name the path to the file to be read from
+	 * @param soundPlayer If sounds should be played for this world, pass in a 
+	 * 					  sound player, otherwise pass in null
 	 * @return a World read from the file at the path specified
 	 * @throws IOEvent if file not found, or another IO exception is thrown
 	 * @throws ErrorEvent if the World is not a suitable contest world
 	 */
-	public static World readWorldFromContest(String name) throws IOEvent, ErrorEvent {
+	public static World readWorldFromContest(String name, SoundPlayer soundPlayer) throws IOEvent, ErrorEvent {
 		String path = getPath(name);
-		World world = readWorldFrom(path);
+		World world = readWorldFrom(path, soundPlayer);
 		if(!world.isContest()){
 			throw new ErrorEvent("World read from \"" + path +
 				"\" is not suitable for contests");
@@ -59,10 +63,12 @@ public final class WorldParser {
 	 * @purpose to read a World from the file specified, not necessarily
 	 * suitable for contests
 	 * @param name the path to the file to be read from
+	 * @param soundPlayer If sounds should be played for this world, pass in a 
+	 * 					  sound player, otherwise pass in null
 	 * @return a World read from the file at the path specified
 	 * @throws IOEvent if file not found, or another IO exception is thrown
 	 */
-	public static World readWorldFrom(String path) throws IOEvent {
+	public static World readWorldFrom(String path, SoundPlayer soundPlayer) throws IOEvent {
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
 		BufferedReader br;
 		File f = new File(path);
@@ -117,7 +123,7 @@ public final class WorldParser {
 			}
 			br.close();
 			
-			world = new World(cellChars);
+			world = new World(cellChars, soundPlayer);
 		}catch(IOException e){
 			throw new IOEvent(e.getMessage(), e);
 		} catch (ErrorEvent e) {

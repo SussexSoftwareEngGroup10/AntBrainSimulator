@@ -7,8 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 /**
- * A listener class to be attached to close buttons to close the window it is
- * a part of.
+ * CloseListener
+ * A listener class to be attached to close buttons to close the window it is a 
+ * part of.
  * 
  * @author wjs25
  */

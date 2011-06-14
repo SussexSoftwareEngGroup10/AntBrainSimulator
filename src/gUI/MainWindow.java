@@ -356,7 +356,7 @@ public class MainWindow {
 							} else { //Else world button was clicked
 								try{
 									world = 
-										WorldParser.readWorldFrom(path);
+										WorldParser.readWorldFrom(path, soundPlayer);
 								} catch (IOEvent iOE) {
 									GUIErrorMsg.displayErrorMsg(
 											"Unable to parse file. " +

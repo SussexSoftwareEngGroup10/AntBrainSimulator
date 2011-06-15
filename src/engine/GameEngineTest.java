@@ -1,20 +1,15 @@
 package engine;
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
-
 import antBrain.Brain;
 import antBrain.BrainParser;
 import antWorld.World;
-
 import utilities.ErrorEvent;
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
 
-
 public class GameEngineTest {
-	
 	public GameStats stats;
 	
 	public GameEngineTest(){
@@ -32,19 +27,16 @@ public class GameEngineTest {
 		} catch (ErrorEvent e) {
 			fail(e.getMessage());
 		}
-		
 	}
 
 	@Test
-	public void testGetWinner(){ //this also tests the siumulate competion test
+	public void testGetWinner(){ //this also tests the simulate competition test
 		assertEquals(1,stats.getWinner());
 	}
 	
 	@Test
 	public void testGetRemainingFood(){
 		assertEquals(0,stats.getFoodInBlackAnthill()); //there should be no food left in the dummy ants hill
-		assertTrue(stats.getFoodInRedAnthill() > 0); //there should be more than 0 food in this anthill
+		assertTrue(stats.getFoodInRedAnthill() > 0); //there should be more than 0 food in this ant hill
 	}
-	
-	
 }

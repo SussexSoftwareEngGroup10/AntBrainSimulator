@@ -2,12 +2,9 @@ package antBrain;
 
 import static org.junit.Assert.*;
 import java.util.Random;
-
 import org.junit.Test;
-
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
-
 
 public class BrainTest {
 
@@ -26,7 +23,6 @@ public class BrainTest {
 		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
-		
 	}
 	
 	@Test
@@ -132,15 +128,8 @@ public class BrainTest {
 		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
-		
 	}
-	
-	//TODO: MORE TESTS FROM HERE MORGAN
-	
-	/**
-	 * 
-	 */
-	
+
 	@Test
 	public void testBoundaryIncrements(){
 		try{
@@ -160,5 +149,4 @@ public class BrainTest {
 			fail(e.getMessage());
 		}
 	}
-	
 }

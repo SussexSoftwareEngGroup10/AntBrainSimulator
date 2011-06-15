@@ -1,19 +1,14 @@
 package antWorld;
+
 import static org.junit.Assert.*;
-
 import java.util.Random;
-
 import org.junit.Test;
-
-import engine.SoundPlayer;
-
 import utilities.ErrorEvent;
 import utilities.IllegalArgumentEvent;
 
 public class CellTest {
 
-
-	/**
+	/*
 	 * ACCEPTANCE TESTS
 	 * FUNCTIONALITY
 	 */
@@ -45,7 +40,7 @@ public class CellTest {
 	public void testAnthillType1(){
 		try{
 			Cell testCell = new Cell(1,1,'+');
-			//anthill is set to type 1, detecting if cell registers correctly
+			//ant hill is set to type 1, detecting if cell registers correctly
 			assertEquals(1,testCell.getAnthill());
 		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
@@ -56,7 +51,7 @@ public class CellTest {
 	public void testAnthillType2(){
 		try{
 			Cell testCell = new Cell(1,1,'-');
-			//anthill is set to type 2, detecting if cell registers correctly
+			//ant hill is set to type 2, detecting if cell registers correctly
 			assertEquals(2,testCell.getAnthill());
 		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
@@ -95,7 +90,6 @@ public class CellTest {
 	@Test
 	public void testReturnIndividualNeighbours(){
 		try{
-			//Phil - you have to pass setNeighbours an array of 6 Cells
 			Cell testCell = new Cell(1,1,'.');
 			Cell[] neighbors = new Cell[6];
 			neighbors[0] = new Cell(0,1,'#');
@@ -232,9 +226,7 @@ public class CellTest {
 		}
 	}
 	
-	//TODO: MORE TESTS FROM HERE MORGAN
-	
-	/**
+	/*
 	 * BOUNDARY AND FAULT TESTS
 	 */
 	
@@ -267,6 +259,7 @@ public class CellTest {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testSetSignedPosition(){
 		try{
@@ -276,23 +269,6 @@ public class CellTest {
 			assertTrue(true);
 		}
 	}
-
-/*	
- *  //no longer valid since dropFood changed
-	@Test
-	public void testSetSignedFood(){
-		try{
-			Cell testCell = new Cell(10,10,'.');
-			testCell.dropFood(-2);
-			if(testCell.foodCount() == -2){
-				fail("signed food set");
-			}else{
-				assertTrue(true);
-			}
-		} catch (IllegalArgumentEvent e) {
-			assertTrue(true);
-		}
-	}*/
 	
 	@Test
 	public void testPickupOverMaxFood(){

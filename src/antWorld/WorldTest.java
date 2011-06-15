@@ -1,25 +1,19 @@
 package antWorld;
+
 import static org.junit.Assert.*;
-
 import org.junit.Test;
-
 import utilities.ErrorEvent;
 import utilities.IOEvent;
-import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
-
 public class WorldTest {
-
-	
-	//world.getContestWorld(0) MAKES A NICE SHINY WORLD
 	public World testWorld;
 	
 	public WorldTest(){
 		Logger.setLogLevel(Logger.LogLevel.WARNING_LOGGING);
 	}
 	
-	/**
+	/*
 	 * ACCEPTANCE TESTS
 	 * FUNCTIONALITY
 	 */
@@ -113,8 +107,6 @@ public class WorldTest {
 		}
 	}
 	
-	//TODO: MORE TESTS TO WRITE UP
-	
 	@Test
 	public void testTooMuchFood(){
 		try{
@@ -148,7 +140,4 @@ public class WorldTest {
 			assertTrue(true);
 		}
 	}
-
-	
-	
 }

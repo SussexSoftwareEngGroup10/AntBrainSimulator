@@ -1,24 +1,23 @@
 package antWorld;
+
 import antBrain.Brain;
 import antBrain.BrainParser;
 import static org.junit.Assert.*;
 import org.junit.Test;
-
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
 import utilities.Logger;
 
 public class AntTest {
-
 	public World testWorld;
 	public Ant testAnt1;
 	public Brain brain;
-	//world.getContestWorld(0) MAKES A NICE SHINY WORLD
 	
 	public AntTest(){
 		Logger.setLogLevel(Logger.LogLevel.WARNING_LOGGING);
 	}
-	/**
+	
+	/*
 	 * ACCEPTANCE TESTS
 	 * FUNCTIONALITY
 	 */
@@ -61,10 +60,6 @@ public class AntTest {
 
 	@Test
 	public void testSenseEnemyAntA(){
-		//Phil: I reversed the loop that created the Ants for efficiency,
-		//so it numbered them backwards
-		//I've changed it back though
-		//Turns out it was my code:(
 		try {
 			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseEnemyAnt", null);
 			Ant[] testAnts = testWorld.getAnts();
@@ -111,7 +106,6 @@ public class AntTest {
 			fail(e.getMessage());
 		}
 	}
-	
 	
 	@Test
 	public void testSenseFriendlyAntA(){
@@ -325,7 +319,6 @@ public class AntTest {
 
 	@Test
 	public void testSetMark(){
-		//Phil: I changed your brain here to make the test pass, I think it's fine now
 		try {
 			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
@@ -435,7 +428,7 @@ public class AntTest {
 		}
 	}
 	
-	/**
+	/*
 	 * BOUNDARY TESTS
 	 * Design testing
 	 */
@@ -454,13 +447,13 @@ public class AntTest {
 			testAnts[0].setBrain(brain);
 			for (int i = 0; i < 10000000; i++){
 				testAnts[0].step();
-			}  /**
+			}  
+			/*
 			 * the ant takes 10,000,000 left turn steps, after this many
-			 *	the direction should be 4 as 10,000,000 / 6 
+			 * the direction should be 4 as 10,000,000 / 6 
 			 * (steps divided by possible directions) = remainder of 4
-			 * so 10,000,00 left turns should result in a endind directions
+			 * so 10,000,00 left turns should result in ending directions
 			 * of 2
-			 *
 			 */
 			assertEquals(2, testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
@@ -482,9 +475,10 @@ public class AntTest {
 			testAnts[0].setBrain(brain);
 			for (int i = 0; i < 10000000; i++){
 				testAnts[0].step();
-			} /**
+			} 
+			/*
 			 * the ant takes 10,000,000 right turn steps, after this many
-			 *	the direction should be 4 as 10,000,000 / 6 
+			 * the direction should be 4 as 10,000,000 / 6 
 			 * (steps divided by possible directions) = remainder of 4
 			 * so 10,000,00 right turns should result in a inevitable direction of 4
 			 */
@@ -493,8 +487,6 @@ public class AntTest {
 			fail(e.getMessage());
 		}
 	}
-	
-	//TODO: MORE TESTS AFTER THIS
 	
 	@Test
 	public void testMoveBeyondEdgeOfMap() {

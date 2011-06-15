@@ -1,16 +1,13 @@
 package antBrain;
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
-
 import utilities.Event;
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
 
 public class BrainParserTest {
 
-	
 	@Test
 	public void testReadBrainFrom() {
 		Brain testBrain;
@@ -23,11 +20,9 @@ public class BrainParserTest {
 		} catch (IllegalArgumentEvent e) {
 			fail(e.getMessage());
 		}
-		
 	}
 	
-	//TODO: NEW TESTS FROM HERE MORGAN!! 
-	
+	@SuppressWarnings("unused")
 	@Test
 	public void testReadInvalidBrain() {
 		try{
@@ -65,6 +60,4 @@ public class BrainParserTest {
 			fail(e.getMessage());
 		}
 	}
-	
-
 }

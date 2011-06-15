@@ -12,8 +12,8 @@ import antBrain.*;
 import antWorld.*;
 
 /**
- *  GameEngine
- *  to run Simulations and tournaments using the Brain and World objects
+ * GameEngine
+ * to run Simulations and tournaments using the Brain and World objects
  * specified. Also, this class has various methods to aid in the control of
  * the speed of execution of Simulations.
  * 

@@ -91,7 +91,7 @@ public abstract class Event extends Throwable {
 		className = className.substring(className.lastIndexOf(".") + 1);
 		s += className;
 		s += ";  ";
-		while(s.length() < 100){
+		while(s.length() < 80){
 			s += " ";
 		}
 		

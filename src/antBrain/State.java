@@ -237,8 +237,6 @@ public class State implements Serializable {
 	 * @throws IllegalArgumentEvent if the stateString is invalid
 	 */
 	public State(int stateNum, String stateString) throws IllegalArgumentEvent {
-		@SuppressWarnings("rawtypes")
-		Enum eVal = null;
 		int iVal = 0;
 		
 		this.stateNum = stateNum;
@@ -247,25 +245,30 @@ public class State implements Serializable {
 		String[] terms = stateString.split(" ");
 		//Gives: [Sense,Ahead,1,3,Food]
 		
+		Command command = null;
 		try{
-			eVal = Command.valueOf(terms[0].trim().toUpperCase());
+			command = Command.valueOf(terms[0].trim().toUpperCase());
 		}catch(IllegalArgumentException e){
 			throw new IllegalArgumentEvent("Illegal Command " +
 				"argument in State constructor: " + e.getMessage(), e);
 		}finally{
-			this.command = (Command) eVal;
+			this.command = command;
 		}
 		
 		switch(this.command){
 		//Sense senseDir st1 st2 condition (senseMarker)
 		case SENSE:
+			if(terms.length != 5 && terms.length != 6){
+				throw new IllegalArgumentException("Incomplete state String");
+			}
+			SenseDir senseDir = null;
 			try{
-				eVal = SenseDir.valueOf(terms[1].trim().toUpperCase());
+				senseDir = SenseDir.valueOf(terms[1].trim().toUpperCase());
 			}catch(IllegalArgumentException e){
 				throw new IllegalArgumentEvent("Illegal SenseDir ordinal " +
 					"argument in State constructor: " + e.getMessage(), e);
 			}finally{
-				this.senseDir = (SenseDir) eVal;
+				this.senseDir = senseDir;
 			}
 			this.turnDir = null;
 			this.marker = -1;
@@ -282,13 +285,15 @@ public class State implements Serializable {
 					"argument in State constructor");
 			}
 			this.st2 = iVal;
+			
+			Condition condition = null;
 			try{
-				eVal = Condition.valueOf(terms[4].trim().toUpperCase());
+				condition = Condition.valueOf(terms[4].trim().toUpperCase());
 			}catch(IllegalArgumentException e){
 				throw new IllegalArgumentEvent("Illegal Condition ordinal " +
 					"argument in State constructor: " + e.getMessage(), e);
 			}finally{
-				this.condition = (Condition) eVal;
+				this.condition = condition;
 			}
 			if(this.condition == Condition.MARKER){
 				iVal = Integer.parseInt(terms[5]);
@@ -303,6 +308,9 @@ public class State implements Serializable {
 			break;
 		//Mark marker st1
 		case MARK:
+			if(terms.length != 3){
+				throw new IllegalArgumentException("Incomplete state String");
+			}
 			this.senseDir = null;
 			this.turnDir = null;
 			iVal = Integer.parseInt(terms[1]);
@@ -324,6 +332,9 @@ public class State implements Serializable {
 			break;
 		//Unmark marker st1
 		case UNMARK:
+			if(terms.length != 3){
+				throw new IllegalArgumentException("Incomplete state String");
+			}
 			this.senseDir = null;
 			this.turnDir = null;
 			iVal = Integer.parseInt(terms[1]);
@@ -345,6 +356,9 @@ public class State implements Serializable {
 			break;
 		//PickUp st1 st2
 		case PICKUP:
+			if(terms.length != 3){
+				throw new IllegalArgumentException("Incomplete state String");
+			}
 			this.senseDir = null;
 			this.turnDir = null;
 			this.marker = -1;
@@ -366,6 +380,9 @@ public class State implements Serializable {
 			break;
 		//Drop st1
 		case DROP:
+			if(terms.length != 2){
+				throw new IllegalArgumentException("Incomplete state String");
+			}
 			this.senseDir = null;
 			this.turnDir = null;
 			this.marker = -1;
@@ -382,14 +399,18 @@ public class State implements Serializable {
 			break;
 		//Turn turnDir st1
 		case TURN:
+			if(terms.length != 3){
+				throw new IllegalArgumentException("Incomplete state String");
+			}
 			this.senseDir = null;
+			TurnDir turnDir = null;
 			try{
-				eVal = TurnDir.valueOf(terms[1].trim().toUpperCase());
+				turnDir = TurnDir.valueOf(terms[1].trim().toUpperCase());
 			}catch(IllegalArgumentException e){
 				throw new IllegalArgumentEvent("Illegal TurnDir ordinal " +
 					"argument in State constructor: " + e.getMessage(), e);
 			}finally{
-				this.turnDir = (TurnDir) eVal;
+				this.turnDir = turnDir;
 			}
 			this.marker = -1;
 			this.p = -1;
@@ -405,6 +426,9 @@ public class State implements Serializable {
 			break;
 		//Move st1 st2
 		case MOVE:
+			if(terms.length != 3){
+				throw new IllegalArgumentException("Incomplete state String");
+			}
 			this.senseDir = null;
 			this.turnDir = null;
 			this.marker = -1;
@@ -426,6 +450,9 @@ public class State implements Serializable {
 			break;
 		//Flip p st1 st2
 		case FLIP:
+			if(terms.length != 4){
+				throw new IllegalArgumentException("Incomplete state String");
+			}
 			this.senseDir = null;
 			this.turnDir = null;
 			this.marker = -1;

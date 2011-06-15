@@ -203,11 +203,12 @@ public class GameEngine {
 	 * @throws IllegalArgumentEvent if the GameEngine's goal is invalid
 	 */
 	public void fitnessContestStep(Stack<World> worlds, String goal) throws IllegalArgumentEvent {
+		int permits = 2;
 		//Set fitness for every brain in population
 		Brain brain = this.population[this.stepCount];
 		
 		if(brain.getFitness() == 0){
-		this.semaphore.acquireUninterruptibly(4);
+		this.semaphore.acquireUninterruptibly(permits);
 		//Absolute fitness tests
 //		if(brain.getFitness() == 0){
 			//Brain is not in elite
@@ -216,10 +217,10 @@ public class GameEngine {
 			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
 				this.semaphore, 1, true, GameEngine.rounds, worlds.pop(), goal));
 			
-			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
-				this.semaphore, 2, true, GameEngine.rounds, worlds.pop(), goal));
-			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
-				this.semaphore, 3, true, GameEngine.rounds, worlds.pop(), goal));
+//			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
+//				this.semaphore, 2, true, GameEngine.rounds, worlds.pop(), goal));
+//			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
+//				this.semaphore, 3, true, GameEngine.rounds, worlds.pop(), goal));
 //		}else{
 //			this.semaphore.release(2);
 //		}
@@ -231,8 +232,8 @@ public class GameEngine {
 //		this.threadPoolExecutor.execute(new Simulation(this, brain, this.relativeTrainingBrain,
 //			this.semaphore, 3, true, GameEngine.rounds, worlds.pop(), goal));
 		//Await completion of Simulations
-		this.semaphore.acquireUninterruptibly(4);
-		this.semaphore.release(4);
+		this.semaphore.acquireUninterruptibly(permits);
+		this.semaphore.release(permits);
 		
 		//increment count
 		this.stepCount++;
@@ -423,7 +424,7 @@ public class GameEngine {
 		
 		Brain gaBrain = null;
 		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
-			trainingBrain, Integer.MAX_VALUE, 50, 50/10, 20);
+			trainingBrain, Integer.MAX_VALUE, 50, 25, 40);
 //		try {
 //			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
 //		} catch (IOEvent e) {

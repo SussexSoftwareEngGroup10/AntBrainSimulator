@@ -384,7 +384,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		}
 		
 		for(int i = 0; i < fitnessLength; i++){
-			out.writeInt(0);//this.fitnesses[i]);
+			out.writeInt(this.fitnesses[i]);
 		}
 	}
 	
@@ -398,8 +398,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		
 		this.fitnesses = new int[fitnessLength];
 		for(int i = 0; i < fitnessLength; i++){
-			this.fitnesses[i] = 0;
-			in.readInt();
+			this.fitnesses[i] = in.readInt();
 		}
 	}
 }

@@ -11,8 +11,8 @@ import antBrain.Brain;
 import antWorld.World;
 
 /**
- * @title Simulation
- * @purpose to, when given a World, and two Brain objects, allow the Ants in the
+ *  Simulation
+ *  to, when given a World, and two Brain objects, allow the Ants in the
  * World to move, according to their Brains, and to record the result after
  * a number of steps have passed.
  * 
@@ -31,8 +31,8 @@ public final class Simulation implements Runnable {
 	private World world;
 	
 	/**
-	 * @title Simulation
-	 * @purpose to enable the construction of Simulation objects
+	 *  Simulation
+	 *  to enable the construction of Simulation objects
 	 * @param gameEngine the GameEngine to get the sleep duration from
 	 * @param blackBrain the Brain the black Ants in the World will use
 	 * @param redBrain the Brain the red Ants in the World will use
@@ -70,8 +70,8 @@ public final class Simulation implements Runnable {
 	}
 	
 	/**
-	 * @title getBlackBrain
-	 * @purpose to get the Brain of the black Ants
+	 *  getBlackBrain
+	 *  to get the Brain of the black Ants
 	 * @return the Brain of the black Ants
 	 */
 	public final Brain getBlackBrain() {
@@ -79,8 +79,8 @@ public final class Simulation implements Runnable {
 	}
 	
 	/**
-	 * @title getRedBrain
-	 * @purpose to get the Brain of the red Ants
+	 *  getRedBrain
+	 *  to get the Brain of the red Ants
 	 * @return the Brain of the red Ants
 	 */
 	public final Brain getRedBrain() {
@@ -88,8 +88,8 @@ public final class Simulation implements Runnable {
 	}
 	
 	/**
-	 * @title getWorld
-	 * @purpose to get this Simulation's World
+	 *  getWorld
+	 *  to get this Simulation's World
 	 * @return the World that this Simulation will use or has used to play the
 	 * given Brains against each other
 	 */
@@ -100,8 +100,8 @@ public final class Simulation implements Runnable {
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 * 
-	 * @title run
-	 * @purpose to execute the given World using the given Brains for the
+	 *  run
+	 *  to execute the given World using the given Brains for the
 	 * duration specified
 	 */
 	@Override

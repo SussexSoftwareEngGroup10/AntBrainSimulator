@@ -14,8 +14,8 @@ import utilities.InformationLowEvent;
 import utilities.Logger;
 
 /**
- * @title BrainParser
- * @purpose facilitates the reading and writing of brains to and from files.
+ *  BrainParser
+ *  facilitates the reading and writing of brains to and from files.
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -26,8 +26,8 @@ public class BrainParser {
 	private static final String fileNameSuffix = ".ant";
 	
 	/**
-	 * @title BrainParser
-	 * @purpose disables instantiation of this class
+	 *  BrainParser
+	 *  disables instantiation of this class
 	 * @throws InstantiationException when called
 	 */
 	public BrainParser() throws InstantiationException {
@@ -35,8 +35,8 @@ public class BrainParser {
 	}
 	
 	/**
-	 * @title readBrainFrom
-	 * @purpose attempts to read a Brain object from the path specified
+	 *  readBrainFrom
+	 *  attempts to read a Brain object from the path specified
 	 * @param name the path to the file
 	 * @return the Brain read from the file specified
 	 * @throws IOEvent if any IO operations fail
@@ -113,8 +113,8 @@ public class BrainParser {
 	}
 	
 	/**
-	 * @title writeBrainTo
-	 * @purpose attempts to write a Brain object to the path specified
+	 *  writeBrainTo
+	 *  attempts to write a Brain object to the path specified
 	 * @param brain the Brain to be written
 	 * @param name the path to the file to be created
 	 * @throws IOEvent if any of the IO operations fail

@@ -3,8 +3,8 @@ package utilities;
 import java.util.Calendar;
 
 /**
- * @title Event
- * @purpose to provide methods common to subclasses, such as toString.
+ *  Event
+ *  to provide methods common to subclasses, such as toString.
  * 
  * @author pkew20 / 57116
  * @version 1.0
@@ -16,8 +16,8 @@ public abstract class Event extends Throwable {
 	protected Severity severity;
 	
 	/**
-	 * @title Event
-	 * @purpose to provide a constructor common to all subclasses 
+	 *  Event
+	 *  to provide a constructor common to all subclasses 
 	 * @param message the message to be stored in the Event
 	 */
 	public Event(String message) {
@@ -26,8 +26,8 @@ public abstract class Event extends Throwable {
 	}
 	
 	/**
-	 * @title Event
-	 * @purpose to provide a constructor common to all subclasses 
+	 *  Event
+	 *  to provide a constructor common to all subclasses 
 	 * @param message the message to be stored in the Event
 	 * @param cause the cause of this Event, whose StackTrace will be appended
 	 * to that of this Event
@@ -39,8 +39,8 @@ public abstract class Event extends Throwable {
 	}
 	
 	/**
-	 * @title setSeverity
-	 * @purpose to enable concrete subclasses to set which severity to assign 
+	 *  setSeverity
+	 *  to enable concrete subclasses to set which severity to assign 
 	 * the field, which allows the toString method to add an appropriate
 	 * severity level to its return String
 	 */
@@ -49,8 +49,8 @@ public abstract class Event extends Throwable {
 	/* (non-Javadoc)
 	 * @see java.lang.Throwable#toString()
 	 * 
-	 * @title toString
-	 * @purpose to provide a detailed explanation of the severity, class, time,
+	 *  toString
+	 *  to provide a detailed explanation of the severity, class, time,
 	 * description and cause of the throwing of this object
 	 * @return a detailed String representation of the concrete subclass of this
 	 * class and its attributes

@@ -9,8 +9,8 @@ import utilities.Logger;
 import antBrain.Brain;
 
 /**
- * @title World
- * @purpose to hold a 2D collection of Cell objects and Ants, and to allow these
+ *  World
+ *  to hold a 2D collection of Cell objects and Ants, and to allow these
  * Ants to execute instructions as they wish, within the rules of the game.
  * This class also stores statistics and informations about the game's progress
  * so far. 
@@ -62,8 +62,8 @@ public class World implements Cloneable {
 	//'-' == red
 	
 	/**
-	 * @title getContestWorld
-	 * @purpose to get a new World with many of the default settings for
+	 *  getContestWorld
+	 *  to get a new World with many of the default settings for
 	 * parameters
 	 * @param seed 0 to use random seed, else create a deterministic World where
 	 * all the Ants will move in a fixed seeded pattern
@@ -77,8 +77,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getContestWorld
-	 * @purpose to get a new World with some of the default settings for
+	 *  getContestWorld
+	 *  to get a new World with some of the default settings for
 	 * parameters
 	 * @param seed 0 to use random seed, else create a deterministic World where
 	 * all the Ants will move in a fixed seeded pattern
@@ -97,8 +97,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getContestWorld
-	 * @purpose the highest level of specification of parameters, as all
+	 *  getContestWorld
+	 *  the highest level of specification of parameters, as all
 	 * parameters can be set by the user, unlike the static methods
 	 * @param seed 0 to use random seed, else create a deterministic World where
 	 * all the Ants will move in a fixed seeded pattern
@@ -172,8 +172,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title World
-	 * @purpose to create a new world with attributes inferred from given
+	 *  World
+	 *  to create a new world with attributes inferred from given
 	 * array, this is used by the WorldParser class and clone.
 	 * @param cellChars the 2D character array to use as the new World's
 	 * @throws ErrorEvent if any Cells in the array are invalid
@@ -1037,8 +1037,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title hexArea
-	 * @purpose to calculate the area of a hexagon with the side length given
+	 *  hexArea
+	 *  to calculate the area of a hexagon with the side length given
 	 * @param len the side length of the hypothetical Cell hex
 	 * @return the area of a hypothetical hexagon of Cells with the length
 	 * specified in len
@@ -1055,8 +1055,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title setBrain
-	 * @purpose to set the Brain of the Ants of the species specified to the
+	 *  setBrain
+	 *  to set the Brain of the Ants of the species specified to the
 	 * given Brain
 	 * @param brain the Brain to set
 	 * @param i the species of Ant to set
@@ -1073,8 +1073,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getCells
-	 * @purpose to get the Cell array of this World.
+	 *  getCells
+	 *  to get the Cell array of this World.
 	 * @return the Cell array of this World
 	 */
 	public Cell[][] getCells() {
@@ -1082,8 +1082,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getChars
-	 * @purpose to get the char array version of this World's Cells
+	 *  getChars
+	 *  to get the char array version of this World's Cells
 	 * @return the World's Cell array converted to chars
 	 */
 	public char[][] getChars() {
@@ -1097,8 +1097,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getAnts
-	 * @purpose to get this World's ants
+	 *  getAnts
+	 *  to get this World's ants
 	 * @return this World's Ants, which were initially ordered from top left
 	 * to bottom right, left first, then down, but may have moved since then
 	 */
@@ -1107,8 +1107,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getAntsBySpecies
-	 * @purpose to get this World's ants
+	 *  getAntsBySpecies
+	 *  to get this World's ants
 	 * @return this World's Ants, which were initially ordered from top left
 	 * to bottom right, left first, then down, but may have moved since then
 	 */
@@ -1117,8 +1117,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title step
-	 * @purpose permits each Ant in the World to perform one step, in order of
+	 *  step
+	 *  permits each Ant in the World to perform one step, in order of
 	 * UID, so from top left to bottom right, horizontally first
 	 */
 	public void step() {
@@ -1209,8 +1209,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getSeed
-	 * @purpose to get the seed of this World
+	 *  getSeed
+	 *  to get the seed of this World
 	 * @return the seed of this World
 	 */
 	public int getSeed() {
@@ -1218,8 +1218,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getFoodInAnthills
-	 * @purpose to get the total food in each Cell, for each anthill
+	 *  getFoodInAnthills
+	 *  to get the total food in each Cell, for each anthill
 	 * @return the total amount of food in each anthill
 	 */
 	public int[] getFoodInAnthills() {
@@ -1243,8 +1243,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title survivingAntsBySpecies
-	 * @purpose to get a list of the remaining ants for each species
+	 *  survivingAntsBySpecies
+	 *  to get a list of the remaining ants for each species
 	 * @return the number of surviving ants in each species
 	 */
 	public int[] survivingAntsBySpecies() {
@@ -1262,8 +1262,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title isContest
-	 * @purpose to get whether this World is suitable for running a contest
+	 *  isContest
+	 *  to get whether this World is suitable for running a contest
 	 * @return true if all of this World's attributes are appropriate for a
 	 * contest
 	 */
@@ -1288,8 +1288,8 @@ public class World implements Cloneable {
 	}
 	
 	/**
-	 * @title getAttributes
-	 * @purpose to determine and return the attributes of the World
+	 *  getAttributes
+	 *  to determine and return the attributes of the World
 	 * @return a list of this World's attributes
 	 */
 	public String getAttributes() {
@@ -1329,8 +1329,8 @@ public class World implements Cloneable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 * 
-	 * @title clone
-	 * @purpose to return a copy of this World
+	 *  clone
+	 *  to return a copy of this World
 	 * @return a World with a cloned Cell[][], does not copy Ants, generates
 	 * new Ants on anthills, equivilent to calling World(char[][]) with one
 	 * parsed from a file, but without the slow checks
@@ -1354,8 +1354,8 @@ public class World implements Cloneable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 * 
-	 * @title toString
-	 * @purpose to obtain a graphic representation of the World
+	 *  toString
+	 *  to obtain a graphic representation of the World
 	 * @return a String representation of all of the Cells in the World in a 
 	 * 2D grid
 	 */

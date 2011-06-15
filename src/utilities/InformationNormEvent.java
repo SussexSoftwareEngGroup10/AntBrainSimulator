@@ -1,8 +1,8 @@
 package utilities;
 
 /**
- * @title InformationNormEvent
- * @purpose to log information of normal importance, in a similar way to
+ *  InformationNormEvent
+ *  to log information of normal importance, in a similar way to
  * Exceptions.
  * 
  * @author pkew20 / 57116
@@ -12,8 +12,8 @@ public class InformationNormEvent extends InformationEvent {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @title InformationNormEvent
-	 * @purpose to construct objects of type InformationNormEvent
+	 *  InformationNormEvent
+	 *  to construct objects of type InformationNormEvent
 	 * @param message the message associated with this Event
 	 */
 	public InformationNormEvent(String message) {
@@ -21,8 +21,8 @@ public class InformationNormEvent extends InformationEvent {
 	}
 
 	/**
-	 * @title InformationNormEvent
-	 * @purpose to construct objects of type InformationNormEvent
+	 *  InformationNormEvent
+	 *  to construct objects of type InformationNormEvent
 	 * @param message the message associated with this Event
 	 * @param cause the Throwable that caused this Event's throw, the cause's
 	 * StackTrace will be added to that of this Event

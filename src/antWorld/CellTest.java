@@ -95,6 +95,7 @@ public class CellTest {
 	@Test
 	public void testReturnIndividualNeighbours(){
 		try{
+			//Phil - you have to pass setNeighbours an array of 6 Cells
 			Cell testCell = new Cell(1,1,'.');
 			Cell[] neighbors = new Cell[2];
 			neighbors[0] = new Cell(0,1,'#');

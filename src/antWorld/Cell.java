@@ -6,8 +6,8 @@ import utilities.Logger;
 import utilities.WarningEvent;
 
 /**
- * @title Cell
- * @purpose to hold a set of values including the states of the markers, the
+ *  Cell
+ *  to hold a set of values including the states of the markers, the
  * amount of food present, and the anthill and rockyness of this "hex". The Ant
  * present in this Cell has limited control over these values, and can do with
  * them as its Brain, and the rules specify.
@@ -28,8 +28,8 @@ public class Cell implements Cloneable {
 	private Ant ant;
 	
 	/**
-	 * @title Cell
-	 * @purpose constructor for objects of type Cell 
+	 *  Cell
+	 *  constructor for objects of type Cell 
 	 * @param row the row of the Cell
 	 * @param col the column of the Cell
 	 * @param c the character that will specify the starting attributes of the 
@@ -55,8 +55,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title setCell
-	 * @purpose to change the attributes of the Cell
+	 *  setCell
+	 *  to change the attributes of the Cell
 	 * @param c the new format of the Cell
 	 * @throws IllegalArgumentEvent if c is not a valid character
 	 */
@@ -94,8 +94,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title setNeighbours
-	 * @purpose to set the neighbours in all 6 directions of this Cell
+	 *  setNeighbours
+	 *  to set the neighbours in all 6 directions of this Cell
 	 * @param neighbours the Cell[] of new neighbours of the Cell
 	 * @throws IllegalArgumentEvent if there are not 6 neighbours
 	 */
@@ -107,8 +107,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title getNeighbours
-	 * @purpose to return the Cell's neighbours
+	 *  getNeighbours
+	 *  to return the Cell's neighbours
 	 * @return the 6 Cells neighbouring this Cell
 	 */
 	protected Cell[] getNeighbours() {
@@ -116,8 +116,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title getNeighbour
-	 * @purpose to get one of the Cells neighbouring this Cell
+	 *  getNeighbour
+	 *  to get one of the Cells neighbouring this Cell
 	 * @param direction alters the direction by 6 until it is within the range
 	 * 0 to 6
 	 * @return the neighbour of the Cell in the direction specified
@@ -138,8 +138,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title getRow
-	 * @purpose to return the row of this Cell
+	 *  getRow
+	 *  to return the row of this Cell
 	 * @return the row that this Cell is in
 	 */
 	protected int getRow() {
@@ -147,8 +147,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title getCol
-	 * @purpose to return the column of this Cell
+	 *  getCol
+	 *  to return the column of this Cell
 	 * @return the column that this Cell is in
 	 */
 	protected int getCol() {
@@ -156,8 +156,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title setupMarkers
-	 * @purpose to create a set of 6 boolean markers for each Ant species
+	 *  setupMarkers
+	 *  to create a set of 6 boolean markers for each Ant species
 	 * @param specieses the number of species or colours of Ant
 	 */
 	protected void setupMarkers(int specieses) {
@@ -165,8 +165,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title mark
-	 * @purpose to set the marker of the given species at the given location to
+	 *  mark
+	 *  to set the marker of the given species at the given location to
 	 * true
 	 * @param species the species Ants to set to true
 	 * @param i the location of the marker to set to true
@@ -176,8 +176,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title unmark
-	 * @purpose to set the marker of the given species at the given location to
+	 *  unmark
+	 *  to set the marker of the given species at the given location to
 	 * false
 	 * @param species the species Ants to set to false
 	 * @param i the location of the marker to set to false
@@ -187,8 +187,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title getMarker 
-	 * @purpose to get the value of the marker specified
+	 *  getMarker 
+	 *  to get the value of the marker specified
 	 * @param species the species of Ant of the marker to get
 	 * @param i the location in the marker array to get the value from
 	 * @return true if the marker at the given position is true
@@ -198,8 +198,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title getAnyMarker
-	 * @purpose to return true if any of the markers of any of the other species
+	 *  getAnyMarker
+	 *  to return true if any of the markers of any of the other species
 	 * are true
 	 * @param notSpecies the species to not check
 	 * @return true if any marker of any other species is true
@@ -221,8 +221,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title setAnt
-	 * @purpose to allow an Ant's location to be set to this Cell
+	 *  setAnt
+	 *  to allow an Ant's location to be set to this Cell
 	 * @param ant the Ant to set as this Cell's Ant
 	 */
 	protected void setAnt(Ant ant) {
@@ -230,8 +230,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title getAnt
-	 * @purpose to get the Ant positioned on this Cell
+	 *  getAnt
+	 *  to get the Ant positioned on this Cell
 	 * @return this Cell's Ant
 	 */
 	public Ant getAnt() {
@@ -239,8 +239,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title isRocky
-	 * @purpose to get whether or not this Cell is rocky
+	 *  isRocky
+	 *  to get whether or not this Cell is rocky
 	 * @return true if this Cell is rocky
 	 */
 	public boolean isRocky() {
@@ -248,8 +248,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title foodCount
-	 * @purpose to get the amount of food on this Cell
+	 *  foodCount
+	 *  to get the amount of food on this Cell
 	 * @return the amount of food on the Cell
 	 */
 	public int foodCount() {
@@ -257,8 +257,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title hasFood
-	 * @purpose to get whether there is any food on this Cell
+	 *  hasFood
+	 *  to get whether there is any food on this Cell
 	 * @return true if there is any food in this Cell
 	 */
 	public boolean hasFood() {
@@ -266,16 +266,16 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title dropFood
-	 * @purpose to drop one food on the Cell
+	 *  dropFood
+	 *  to drop one food on the Cell
 	 */
 	protected void dropFood() {
 		this.food++;
 	}
 	
 	/**
-	 * @title pickupFood
-	 * @purpose to allow the removal of 1 food, if there is any food in the Cell
+	 *  pickupFood
+	 *  to allow the removal of 1 food, if there is any food in the Cell
 	 */
 	protected void pickupFood() {
 		if(this.food > 0){
@@ -284,8 +284,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title getAnthill
-	 * @purpose to return the anthill of this Cell
+	 *  getAnthill
+	 *  to return the anthill of this Cell
 	 * @return 0 if no anthill, otherwise the value of the anthill of this Cell
 	 */
 	public int getAnthill() {
@@ -293,8 +293,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title hasAnt
-	 * @purpose to get whether the Cell is the locaiton of an Ant
+	 *  hasAnt
+	 *  to get whether the Cell is the locaiton of an Ant
 	 * @return true if there is an Ant on this Cell
 	 */
 	public boolean hasAnt() {
@@ -304,8 +304,8 @@ public class Cell implements Cloneable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 * 
-	 * @title clone 
-	 * @purpose to get a copy of this Cell
+	 *  clone 
+	 *  to get a copy of this Cell
 	 * @return an deep copy of this Cell with identical attributes
 	 */
 	@Override
@@ -314,8 +314,8 @@ public class Cell implements Cloneable {
 	}
 	
 	/**
-	 * @title toChar
-	 * @purpose to get the character representation of this Cell
+	 *  toChar
+	 *  to get the character representation of this Cell
 	 * @return a char that depends on the attributes of the Cell
 	 */
 	public char toChar() {
@@ -398,8 +398,8 @@ public class Cell implements Cloneable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 * 
-	 * @title toString
-	 * @purpose to get a String that represents this Cell
+	 *  toString
+	 *  to get a String that represents this Cell
 	 * @return a String representation of the attributes of this Cell
 	 */
 	@Override

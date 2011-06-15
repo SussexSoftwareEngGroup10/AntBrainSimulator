@@ -10,8 +10,8 @@ import antBrain.Brain;
 import antBrain.State;
 
 /**
- * @title Ant
- * @purpose to execute instructions in an order specified in the Brain it is
+ *  Ant
+ *  to execute instructions in an order specified in the Brain it is
  * given, to move between Cell objects, performing a variety of actions
  * including moving food and setting markers. 
  * 
@@ -48,8 +48,8 @@ public final class Ant implements Comparable<Ant> {
 	private SoundPlayer soundPlayer;
 	
 	/**
-	 * @title Ant
-	 * @purpose to allow the construction of Ant objects
+	 *  Ant
+	 *  to allow the construction of Ant objects
 	 * @param uid the unique identifier of this Ant object
 	 * @param ran the Random to use to flip
 	 * @param direction the direction this Ant should face
@@ -89,8 +89,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title step
-	 * @purpose to execute the current state, then move to next state
+	 *  step
+	 *  to execute the current state, then move to next state
 	 */
 	protected final void step() {
 		//Removed local variables and parameters in step() and methods it calls
@@ -475,8 +475,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title setBrain
-	 * @purpose to set the Brain of this Ant, so the Ant uses the Brain's states
+	 *  setBrain
+	 *  to set the Brain of this Ant, so the Ant uses the Brain's states
 	 * @param brain the Brain to set
 	 */
 	protected final void setBrain(Brain brain) {
@@ -506,8 +506,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title isAlive
-	 * @purpose to check whether the Ant is alive, and has a location Cell
+	 *  isAlive
+	 *  to check whether the Ant is alive, and has a location Cell
 	 * @return true if the Ant is alive
 	 */
 	protected final boolean isAlive() {
@@ -515,8 +515,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title getCell
-	 * @purpose to get the Cell location of this Ant
+	 *  getCell
+	 *  to get the Cell location of this Ant
 	 * @return the Cell that this Ant occupies
 	 */
 	protected final Cell getCell() {
@@ -524,8 +524,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title getUID
-	 * @purpose to return the UID of this Ant
+	 *  getUID
+	 *  to return the UID of this Ant
 	 * @return the UID of this Ant
 	 */
 	public final int getUID() {
@@ -533,8 +533,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title getColour
-	 * @purpose to return the colour of this Ant
+	 *  getColour
+	 *  to return the colour of this Ant
 	 * @return the colour of this Ant
 	 */
 	public final int getColour() {
@@ -542,8 +542,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title getDirection
-	 * @purpose to return the direction this Ant is facing
+	 *  getDirection
+	 *  to return the direction this Ant is facing
 	 * @return the direction this Ant is facing
 	 */
 	public int getDirection() {
@@ -551,8 +551,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title hasFood
-	 * @purpose to return whether or not the Ant is currently carrying food
+	 *  hasFood
+	 *  to return whether or not the Ant is currently carrying food
 	 * @return true if the Ant is carrying food
 	 */
 	public final boolean hasFood() {
@@ -560,8 +560,8 @@ public final class Ant implements Comparable<Ant> {
 	}
 	
 	/**
-	 * @title setCell
-	 * @purpose to set the Cell location of this Ant
+	 *  setCell
+	 *  to set the Cell location of this Ant
 	 * @param cell the Cell to be set as this Ant's location
 	 */
 	protected final void setCell(Cell cell) {
@@ -571,8 +571,8 @@ public final class Ant implements Comparable<Ant> {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 * 
-	 * @title hashCode
-	 * @purpose to return the Ant's UID
+	 *  hashCode
+	 *  to return the Ant's UID
 	 * @return the Ant's UID
 	 */
 	@Override
@@ -583,8 +583,8 @@ public final class Ant implements Comparable<Ant> {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 * 
-	 * @title equals
-	 * @purpose tests whether two Ant objects are equal by comparing their
+	 *  equals
+	 *  tests whether two Ant objects are equal by comparing their
 	 * UIDs
 	 * @param o the object to test against this Brain
 	 * @return true if the Object passed is equal to this Brain
@@ -604,8 +604,8 @@ public final class Ant implements Comparable<Ant> {
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 * 
-	 * @title compareTo
-	 * @purpose compares two Ant objects by their UIDs.
+	 *  compareTo
+	 *  compares two Ant objects by their UIDs.
 	 * @param ant the Ant to compare to this Brain
 	 * @return 1 if ant's UID is greater than this Brain, 0 if they
 	 * are equal, -1 if it is lesser
@@ -626,8 +626,8 @@ public final class Ant implements Comparable<Ant> {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 * 
-	 * @title toString
-	 * @purpose to generate and return a String representation of this Ant,
+	 *  toString
+	 *  to generate and return a String representation of this Ant,
 	 * which includes many of its attributes.
 	 * @return a String representation of this Ant, including many of its fields
 	 */

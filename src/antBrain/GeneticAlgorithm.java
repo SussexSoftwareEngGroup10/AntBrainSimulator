@@ -31,8 +31,8 @@ import utilities.WarningEvent;
 import engine.GameEngine;
 
 /**
- * @title GeneticAlgorithm
- * @purpose holds a number of Brain objects, evolves these objects according
+ *  GeneticAlgorithm
+ *  holds a number of Brain objects, evolves these objects according
  * to various parameters, maximizing their "fitness", however this is defined.
  * This class also gives the best brain it has evolved so far, and can be saved
  * or loaded to and from .ser files. 
@@ -58,8 +58,8 @@ public class GeneticAlgorithm implements Serializable {
 	private Brain[] population;
 	
 	/**
-	 * @title GeneticAlgorithm
-	 * @purpose constructor for this class
+	 *  GeneticAlgorithm
+	 *  constructor for this class
 	 * @param goal the measure of fitness of the Brains in the population
 	 */
 	public GeneticAlgorithm(String goal) {
@@ -77,8 +77,8 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * @title createPopulation
-	 * @purpose overwrites the current population with a new array of Brain
+	 *  createPopulation
+	 *  overwrites the current population with a new array of Brain
 	 * objects ready to be evolved by evolve().
 	 * @param startBrain the default starting brain for new brains in the population
 	 * @param popLen the number of brains in the population
@@ -122,8 +122,8 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * @title evolve
-	 * @purpose to maximize the fitness of the Brains in the population by
+	 *  evolve
+	 *  to maximize the fitness of the Brains in the population by
 	 * discarding the Brains with the lowest fitness and combining and altering
 	 * the remaining Brains, in a way approximate to evolution by natural
 	 * selection, in living organisms.
@@ -488,8 +488,8 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * @title getBestBrain
-	 * @purpose to create a new population, call evolve, and then to return the
+	 *  getBestBrain
+	 *  to create a new population, call evolve, and then to return the
 	 * Brain with the highest fitness in the population.
 	 * @param gameEngine the GameEngine to use to obtain estimations of fitness
 	 * @param startBrain if a new population is needed, this Brain will be used
@@ -515,8 +515,8 @@ public class GeneticAlgorithm implements Serializable {
 	}
 	
 	/**
-	 * @title clearSaves
-	 * @purpose to delete all except "toRetain" save files, which will be the
+	 *  clearSaves
+	 *  to delete all except "toRetain" save files, which will be the
 	 * files with the highest numbers, which are presumably the latest
 	 * serialisations of GeneticAlgorithms.
 	 * @param toRetain the number of .ser files to not delete

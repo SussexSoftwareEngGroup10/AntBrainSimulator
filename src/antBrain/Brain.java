@@ -15,8 +15,8 @@ import utilities.Logger;
 import utilities.WarningEvent;
 
 /**
- * @title Brain
- * @purpose holds a list of mappings from state number to state,
+ *  Brain
+ *  holds a list of mappings from state number to state,
  * it also behaves as a participant in a simulation, with alterable numbers
  * such as the number of wins the Brain has attained.
  * 
@@ -34,8 +34,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	private int draws = 0;
 	
 	/**
-	 * @title Brain
-	 * @purpose to allow the construction of Brain objects
+	 *  Brain
+	 *  to allow the construction of Brain objects
 	 * @param initialCapacity the starting maximum number of entries the HashMap
 	 * may contain
 	 */
@@ -44,8 +44,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title Brain
-	 * @purpose to allow the clone() method access to an alternative, more
+	 *  Brain
+	 *  to allow the clone() method access to an alternative, more
 	 * efficient constructor, which takes different parameters.
 	 * @param states a HashMap of States that will be moves into the initial
 	 * Brain object's HashMap of States. 
@@ -55,8 +55,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title getMinNumOfStates
-	 * @purpose to return the minimum number of states
+	 *  getMinNumOfStates
+	 *  to return the minimum number of states
 	 * @return the minimum number of states a brain can contain
 	 */
 	public static int getMinNumOfStates() {
@@ -64,8 +64,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 
 	/**
-	 * @title getMaxNumOfStates
-	 * @purpose to return the maximum number of states
+	 *  getMaxNumOfStates
+	 *  to return the maximum number of states
 	 * @return the maximum number of states a brain can contain
 	 */
 	public static int getMaxNumOfStates() {
@@ -73,8 +73,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title getFitness
-	 * @purpose to return the sum of the fitnesses
+	 *  getFitness
+	 *  to return the sum of the fitnesses
 	 * @return an arbitrary value used to compare brain objects
 	 */
 	public int getFitness() {
@@ -86,8 +86,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title setFitness
-	 * @purpose to set the fitness of this Brain to one value, and to clear
+	 *  setFitness
+	 *  to set the fitness of this Brain to one value, and to clear
 	 * all other fitness values
 	 * @param fitness the value that the fitness of this Brain will be set to
 	 */
@@ -99,8 +99,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title setFitness
-	 * @purpose to set one of the fitness values of this Brain to the value given
+	 *  setFitness
+	 *  to set one of the fitness values of this Brain to the value given
 	 * @param i the location in the fitnesses array to set
 	 * @param fitness the value to set
 	 */
@@ -109,8 +109,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title resetFitnesses
-	 * @purpose to reset all statistics about wins, losses and fitness
+	 *  resetFitnesses
+	 *  to reset all statistics about wins, losses and fitness
 	 */
 	public void resetFitnesses() {
 		for(int i = 0; i < this.fitnesses.length; i++){
@@ -122,32 +122,32 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title incrementWins
-	 * @purpose to add one to the current number of wins.
+	 *  incrementWins
+	 *  to add one to the current number of wins.
 	 */
 	public void incrementWins() {
 		this.wins++;
 	}
 	
 	/**
-	 * @title incrementLosses
-	 * @purpose to add one to the current number of losses.
+	 *  incrementLosses
+	 *  to add one to the current number of losses.
 	 */
 	public void incrementLosses() {
 		this.losses++;
 	}
 	
 	/**
-	 * @title incrementDraws
-	 * @purpose to add one to the current number of draws.
+	 *  incrementDraws
+	 *  to add one to the current number of draws.
 	 */
 	public void incrementDraws() {
 		this.draws++;
 	}
 	
 	/**
-	 * @title getWins
-	 * @purpose to get the current number of wins.
+	 *  getWins
+	 *  to get the current number of wins.
 	 * @return the number of wins this Brain has attained
 	 */
 	public int getWins() {
@@ -155,8 +155,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title getLosses
-	 * @purpose to get the current number of losses.
+	 *  getLosses
+	 *  to get the current number of losses.
 	 * @return the number of losses this Brain has attained
 	 */
 	public int getLosses() {
@@ -164,8 +164,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title getDraws
-	 * @purpose to get the current number of draws.
+	 *  getDraws
+	 *  to get the current number of draws.
 	 * @return the number of draws this Brain has attained
 	 */
 	public int getDraws() {
@@ -173,8 +173,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	}
 	
 	/**
-	 * @title trim
-	 * @purpose to remove unreachable states and compacts the brain by lowering
+	 *  trim
+	 *  to remove unreachable states and compacts the brain by lowering
 	 * state numbers to the minimum possible so that there are no gaps and the
 	 * state numbers start at 0 and end at (the number of states - 1).
 	 * @throws IllegalArgumentEvent if any of the States in the Brain are invalid
@@ -262,8 +262,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	/* (non-Javadoc)
 	 * @see java.util.HashMap#put(java.lang.Object, java.lang.Object)
 	 * 
-	 * @title put
-	 * @purpose adds an entry consisting of the given key-value pair to the
+	 *  put
+	 *  adds an entry consisting of the given key-value pair to the
 	 * mapping list
 	 * @param key the Integer to be set as the key
 	 * @param value the State to be set as the value
@@ -281,8 +281,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	/* (non-Javadoc)
 	 * @see java.util.HashMap#clone()
 	 * 
-	 * @title clone
-	 * @purpose creates and returns a Brain containing pointers to the same
+	 *  clone
+	 *  creates and returns a Brain containing pointers to the same
 	 * key-value pairs as this Brain, does NOT clone keys or values.
 	 * @return a Brain containing pointers to the same key-value pairs as this
 	 * Brain
@@ -295,8 +295,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	/* (non-Javadoc)
 	 * @see java.util.AbstractMap#hashCode()
 	 * 
-	 * @title hashCode
-	 * @purpose returns a value unique to the key-value pairs in this HashMap.
+	 *  hashCode
+	 *  returns a value unique to the key-value pairs in this HashMap.
 	 * This is used to compare HashMaps.
 	 * @return a number unique to this entry configuration
 	 */
@@ -308,8 +308,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	/* (non-Javadoc)
 	 * @see java.util.AbstractMap#equals(java.lang.Object)
 	 * 
-	 * @title equals
-	 * @purpose tests whether two Brain objects are equal. This method is 
+	 *  equals
+	 *  tests whether two Brain objects are equal. This method is 
 	 * inconsistent with natural ordering, as compareTo uses fitness,
 	 * which is arbitrary and relies on randomness, where equals assesses fields
 	 * @param o the object to test against this Brain
@@ -332,8 +332,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 * 
-	 * @title compareTo
-	 * @purpose compares two Brain objects by their fitnesses. This method is 
+	 *  compareTo
+	 *  compares two Brain objects by their fitnesses. This method is 
 	 * inconsistent with equals, as compareTo uses fitness,
 	 * which is arbitrary and relies on randomness, where equals assesses fields
 	 * @param b the Brain to compare to this Brain
@@ -354,8 +354,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	/* (non-Javadoc)
 	 * @see java.util.AbstractMap#toString()
 	 * 
-	 * @title toString
-	 * @purpose gets all of the States in this Brain, in order.
+	 *  toString
+	 *  gets all of the States in this Brain, in order.
 	 * @return a string containing all of the States in this Brain, ordered
 	 * by key, one line at a time.
 	 */

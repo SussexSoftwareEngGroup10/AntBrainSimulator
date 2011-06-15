@@ -16,8 +16,8 @@ import utilities.InformationLowEvent;
 import utilities.Logger;
 
 /**
- * @title WorldParser
- * @purpose to allow the reading and writing of World objects to and from files.
+ *  WorldParser
+ *  to allow the reading and writing of World objects to and from files.
  * @change_log 
  * 
  * @author pkew20 / 57116
@@ -29,8 +29,8 @@ public final class WorldParser {
 	private static final String fileNameSuffix = ".world";
 	
 	/**
-	 * @title WorldParser
-	 * @purpose disables instantiation of this class
+	 *  WorldParser
+	 *  disables instantiation of this class
 	 * @throws InstantiationException when called
 	 */
 	public WorldParser() throws InstantiationException {
@@ -38,8 +38,8 @@ public final class WorldParser {
 	}
 	
 	/**
-	 * @title readWorldFromContest
-	 * @purpose to effectively cast the World read from the given location as
+	 *  readWorldFromContest
+	 *  to effectively cast the World read from the given location as
 	 * suitable for a contest
 	 * @param name the path to the file to be read from
 	 * @param soundPlayer If sounds should be played for this world, pass in a 
@@ -59,8 +59,8 @@ public final class WorldParser {
 	}
 	
 	/**
-	 * @title readWorldFromCustom
-	 * @purpose to read a World from the file specified, not necessarily
+	 *  readWorldFromCustom
+	 *  to read a World from the file specified, not necessarily
 	 * suitable for contests
 	 * @param name the path to the file to be read from
 	 * @param soundPlayer If sounds should be played for this world, pass in a 
@@ -145,8 +145,8 @@ public final class WorldParser {
 	}
 	
 	/**
-	 * @title writeWorldTo
-	 * @purpose to write a World to a file
+	 *  writeWorldTo
+	 *  to write a World to a file
 	 * @param world the World to write to file
 	 * @param name the name to give the file
 	 * @throws IOEvent if an IOException is thrown

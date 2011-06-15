@@ -8,8 +8,8 @@ import java.io.PrintStream;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @title Logger
- * @purpose to print Event objects to a log file, so the terminal is not needed
+ *  Logger
+ *  to print Event objects to a log file, so the terminal is not needed
  * while the program executes, and significant Events can still be viewed by
  * the user.
  * 
@@ -41,8 +41,8 @@ public final class Logger {
 	
 
 	/**
-	 * @title getLogger
-	 * @purpose to allow the construction of one Logger object, and the ability
+	 *  getLogger
+	 *  to allow the construction of one Logger object, and the ability
 	 * of other objects to obtain a reference to it
 	 * @return the singleton Logger object instance
 	 */
@@ -79,8 +79,8 @@ public final class Logger {
 	}
 	
 	/**
-	 * @title getLog
-	 * @purpose to enable the obtaining of the Logger object's current log file
+	 *  getLog
+	 *  to enable the obtaining of the Logger object's current log file
 	 * @return the file to which logs are currently being written
 	 */
 	public static File getLog() {
@@ -88,8 +88,8 @@ public final class Logger {
 	}
 	
 	/**
-	 * @title clearLogs
-	 * @purpose to delete all .log files in the folder this Logger is currently
+	 *  clearLogs
+	 *  to delete all .log files in the folder this Logger is currently
 	 * writing to
 	 */
 	public static void clearLogs() {
@@ -108,8 +108,8 @@ public final class Logger {
 	}
 	
 	/**
-	 * @title log
-	 * @purpose to allow the writing of Event objects to a .log file
+	 *  log
+	 *  to allow the writing of Event objects to a .log file
 	 * @param event the Event to be written to the Logger's current .log file
 	 */
 	public static void log(Event event) {
@@ -146,8 +146,8 @@ public final class Logger {
 	}
 	
 	/**
-	 * @title setLogLevel
-	 * @purpose to allow the setting of the minimum severity of Event to be
+	 *  setLogLevel
+	 *  to allow the setting of the minimum severity of Event to be
 	 * printed by this Logger
 	 * @param logLevel the minimum severity to be set
 	 */
@@ -156,8 +156,8 @@ public final class Logger {
 	}
 	
 	/**
-	 * @title restartTimer
-	 * @purpose to make it so any future timing is recorded relative to now
+	 *  restartTimer
+	 *  to make it so any future timing is recorded relative to now
 	 */
 	public static void restartTimer() {
 		logger.restartTime = System.nanoTime();
@@ -165,7 +165,7 @@ public final class Logger {
 	
 	/**
 	 * @tile getCurrentTime
-	 * @purpose to facilitate the obtaining of the time since the Logger was last
+	 *  to facilitate the obtaining of the time since the Logger was last
 	 * restarted
 	 * @return the in nanoseconds since the Logger was last restarted
 	 */
@@ -176,8 +176,8 @@ public final class Logger {
 	}
 
 	/**
-	 * @title logCurrentTime
-	 * @purpose writes the current time since the Logger was last restarted
+	 *  logCurrentTime
+	 *  writes the current time since the Logger was last restarted
 	 * to the current .log file
 	 * @param message the message associated with the Event
 	 */
@@ -186,8 +186,8 @@ public final class Logger {
 	}
 	
 	/**
-	 * @title logCurrentTime
-	 * @purpose to write the current time since the Logger was last restarted
+	 *  logCurrentTime
+	 *  to write the current time since the Logger was last restarted
 	 * to the current .log file
 	 * @param message the message associated with the Event
 	 * @param timeUnit the unit of time that the current time will be recorded in
@@ -198,8 +198,8 @@ public final class Logger {
 	}
 	
 	/**
-	 * @title getStartTime
-	 * @purpose to return the time since the starting of this Logger
+	 *  getStartTime
+	 *  to return the time since the starting of this Logger
 	 * @return the time since the start of the Logger, not affected by restarts
 	 */
 	public static long getStartTime() {

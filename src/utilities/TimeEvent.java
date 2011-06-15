@@ -3,8 +3,8 @@ package utilities;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @title ErrorEvent
- * @purpose to log the current time since the start of timing, and a message,
+ *  ErrorEvent
+ *  to log the current time since the start of timing, and a message,
  * e.g. a marker for the start or end of a method call, in a similar way to
  * Exceptions.
  * 
@@ -15,8 +15,8 @@ public class TimeEvent extends InformationEvent {
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * @title ErrorEvent
-	 * @purpose to construct objects of type ErrorEvent
+	 *  ErrorEvent
+	 *  to construct objects of type ErrorEvent
 	 * @param message the message associated with this Event
 	 */
 	public TimeEvent(String message) {
@@ -25,8 +25,8 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @title ErrorEvent
-	 * @purpose to construct objects of type ErrorEvent
+	 *  ErrorEvent
+	 *  to construct objects of type ErrorEvent
 	 * @param message the message associated with this Event
 	 * @param timeUnit the unit of time that will the stored time will take
 	 */
@@ -36,8 +36,8 @@ public class TimeEvent extends InformationEvent {
 	}
 
 	/**
-	 * @title ErrorEvent
-	 * @purpose to construct objects of type ErrorEvent
+	 *  ErrorEvent
+	 *  to construct objects of type ErrorEvent
 	 * @param message the message associated with this Event
 	 * @param cause the Throwable that caused this Event's throw, the cause's
 	 * StackTrace will be added to that of this Event
@@ -48,8 +48,8 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @title ErrorEvent
-	 * @purpose to construct objects of type ErrorEvent
+	 *  ErrorEvent
+	 *  to construct objects of type ErrorEvent
 	 * @param message the message associated with this Event
 	 * @param timeUnit the unit of time that will the stored time will take
 	 * @param cause the Throwable that caused this Event's throw, the cause's
@@ -61,8 +61,8 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @title ErrorEvent
-	 * @purpose to construct objects of type ErrorEvent
+	 *  ErrorEvent
+	 *  to construct objects of type ErrorEvent
 	 * @param message the message associated with this Event
 	 * @param the amount of time, with the unit timeUnit, to be stored in the message
 	 * @param timeUnit the unit of time that will the stored time will take
@@ -73,8 +73,8 @@ public class TimeEvent extends InformationEvent {
 	}
 	
 	/**
-	 * @title ErrorEvent
-	 * @purpose to construct objects of type ErrorEvent
+	 *  ErrorEvent
+	 *  to construct objects of type ErrorEvent
 	 * @param message the message associated with this Event
 	 * @param the amount of time, with the unit timeUnit, to be stored in the message
 	 * @param timeUnit the unit of time that will the stored time will take

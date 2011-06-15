@@ -12,8 +12,8 @@ import antBrain.*;
 import antWorld.*;
 
 /**
- * @title GameEngine
- * @purpose to run Simulations and tournaments using the Brain and World objects
+ *  GameEngine
+ *  to run Simulations and tournaments using the Brain and World objects
  * specified. Also, this class has various methods to aid in the control of
  * the speed of execution of Simulations.
  * 
@@ -41,16 +41,16 @@ public class GameEngine {
 	private int stepCount = 0;
 	
 	/**
-	 * @title GameEngine
-	 * @purpose to allow the construction of GameEngine objects
+	 *  GameEngine
+	 *  to allow the construction of GameEngine objects
 	 */
 	public GameEngine() {
 		Logger.log(new InformationLowEvent("New GameEngine object constructed"));
 	}
 	
 	/**
-	 * @title getSleepDur
-	 * @purpose to return the length of time Simulations should pause between
+	 *  getSleepDur
+	 *  to return the length of time Simulations should pause between
 	 * step calls to their World
 	 * @return the sleep duration for Simulations, in milliseconds
 	 */
@@ -59,8 +59,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title setSpeed
-	 * @purpose to allow the altering of the amount of time waited by 
+	 *  setSpeed
+	 *  to allow the altering of the amount of time waited by 
 	 * Simulations after each World step
 	 * @param sleepDur the amount of time to set as sleepDur
 	 */
@@ -69,8 +69,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title expScale
-	 * @purpose to alter the scale of a value so as to make values from
+	 *  expScale
+	 *  to alter the scale of a value so as to make values from
 	 * 0 to 1000 in a more balanced order, so there is not a sudden increase
 	 * after 0
 	 * @param x should be between 0 and 1000, but is not checked
@@ -81,8 +81,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title log2
-	 * @purpose to perform a log of base 2
+	 *  log2
+	 *  to perform a log of base 2
 	 * @param x the value to be logged
 	 * @return log base 2 of x
 	 */
@@ -139,8 +139,8 @@ public class GameEngine {
 	*/
 	
 	/**
-	 * @title contestSetup
-	 * @purpose to setup a contest that may later be stepped through, using the
+	 *  contestSetup
+	 *  to setup a contest that may later be stepped through, using the
 	 * Brain population given
 	 * @param population an array of Brain objects to be used to start a contest
 	 * @throws IllegalArgumentEvent if there are less than 2 Brains in the
@@ -155,8 +155,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title fitnessContestSetup
-	 * @purpose to setup a contest that may later be stepped through, using the
+	 *  fitnessContestSetup
+	 *  to setup a contest that may later be stepped through, using the
 	 * Brain population given and the Brain given
 	 * @param population an array of Brain objects to be used to start a contest
 	 * @param absoluteTrainingBrain the Brain to test the Brains in the
@@ -193,8 +193,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title fitnessContestStep
-	 * @purpose to perform one set of Simulations for one of the Brains in the
+	 *  fitnessContestStep
+	 *  to perform one set of Simulations for one of the Brains in the
 	 * population, this method must be called (population.length) times to
 	 * obtain comparissons for all Brains in the population given
 	 * @param worlds must contain at least 2 Worlds, or at least 4 if the Brain
@@ -239,8 +239,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title contestStepAll
-	 * @purpose automatically runs entire contest, with the default seed 1 world
+	 *  contestStepAll
+	 *  automatically runs entire contest, with the default seed 1 world
 	 */
 	public void contestStepAll() {
 		try {
@@ -251,8 +251,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title contestStepAll
-	 * @purpose to automatically run the entire contest
+	 *  contestStepAll
+	 *  to automatically run the entire contest
 	 * @param world a single template World
 	 */
 	public void contestStepAll(World world) {
@@ -265,8 +265,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title contestStep
-	 * @purpose to perform one set of Simulations for one of the Brains in the
+	 *  contestStep
+	 *  to perform one set of Simulations for one of the Brains in the
 	 * population, this method must be called (population.length) times to
 	 * obtain comparissons for all Brains in the population given
 	 * @param worlds must contain at least (population.length - 1) Worlds
@@ -299,8 +299,8 @@ public class GameEngine {
 	}
 	
 	/**
-	 * @title simulate
-	 * @purpose to runs a standard simulation using the Brains and World given,
+	 *  simulate
+	 *  to runs a standard simulation using the Brains and World given,
 	 * and to log the result, which can also be obtained from the World or Brains
 	 * @param blackBrain the Brain to be given to the black Ants
 	 * @param redBrain the Brain to be given to the red Ants

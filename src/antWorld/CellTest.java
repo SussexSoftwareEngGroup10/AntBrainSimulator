@@ -97,9 +97,13 @@ public class CellTest {
 		try{
 			//Phil - you have to pass setNeighbours an array of 6 Cells
 			Cell testCell = new Cell(1,1,'.');
-			Cell[] neighbors = new Cell[2];
+			Cell[] neighbors = new Cell[6];
 			neighbors[0] = new Cell(0,1,'#');
 			neighbors[1] = new Cell(2,1,'+');
+			neighbors[2] = new Cell(0,0,'#');
+			neighbors[3] = new Cell(1,1,'+');
+			neighbors[4] = new Cell(1,2,'#');
+			neighbors[5] = new Cell(2,2,'+');
 			testCell.setNeighbours(neighbors);
 			assertEquals("Neighbor 1 invalid", '#', testCell.getNeighbour(0).toChar());
 			assertEquals("Neighbor 2 invalid", '+', testCell.getNeighbour(1).toChar());
@@ -114,9 +118,13 @@ public class CellTest {
 	public void testReturnNeighboursArray(){
 		try{
 			Cell testCell = new Cell(1,1,'.');
-			Cell[] neighbors = new Cell[2];
+			Cell[] neighbors = new Cell[6];
 			neighbors[0] = new Cell(0,1,'#');
 			neighbors[1] = new Cell(2,1,'+');
+			neighbors[2] = new Cell(0,0,'#');
+			neighbors[3] = new Cell(1,1,'+');
+			neighbors[4] = new Cell(1,2,'#');
+			neighbors[5] = new Cell(2,2,'+');
 			testCell.setNeighbours(neighbors);
 			assertArrayEquals(neighbors, testCell.getNeighbours());
 		} catch (IllegalArgumentEvent e) {
@@ -294,7 +302,7 @@ public class CellTest {
 				testCell.dropFood();
 			}
 			
-			for(int i = 0; i < 10; i++){
+			for(int i = 0; i < 10; i++) {
 				testCell.pickupFood();
 			}
 			if(testCell.foodCount() > 0){

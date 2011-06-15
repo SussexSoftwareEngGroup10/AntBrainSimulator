@@ -54,7 +54,7 @@ public class WorldTest {
 	@Test
 	public void testReturnAntsInvalidWorld(){
 		try {
-			testWorld = WorldParser.readWorldFrom("example", null);
+			testWorld = WorldParser.readWorldFrom("example.world", null);
 			Ant[] testAnts = testWorld.getAnts();
 			assertEquals("FAILURE: FAILED BECAUSE INVALID WORLD", 32, testAnts.length);
 			//Works out length of hexagon with length

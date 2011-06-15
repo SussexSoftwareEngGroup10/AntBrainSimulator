@@ -10,8 +10,8 @@ import antBrain.Brain;
 import antBrain.State;
 
 /**
- *  Antbb
- *  to execute instructions in an order specified in the Brain it is
+ * Ant
+ * to execute instructions in an order specified in the Brain it is
  * given, to move between Cell objects, performing a variety of actions
  * including moving food and setting markers. 
  * 

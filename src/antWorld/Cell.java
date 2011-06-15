@@ -319,15 +319,15 @@ public class Cell implements Cloneable {
 	 * @return a char that depends on the attributes of the Cell
 	 */
 	public char toChar() {
-		//Ant
-		if(hasAnt()){
-			if(this.ant.getColour() == 0){
-				return '=';
-			}
-			if(this.ant.getColour() == 1){
-				return '|';
-			}
-		}
+//		//Ant
+//		if(hasAnt()){
+//			if(this.ant.getColour() == 0){
+//				return '=';
+//			}
+//			if(this.ant.getColour() == 1){
+//				return '|';
+//			}
+//		}
 		
 		//Rock
 		if(this.rocky){

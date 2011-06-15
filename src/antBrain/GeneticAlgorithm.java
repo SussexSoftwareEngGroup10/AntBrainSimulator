@@ -249,12 +249,16 @@ public class GeneticAlgorithm implements Serializable {
 		Stack<World> worlds = new Stack<World>();
 		//Set fitness for every brain in population
 		for(int i = this.population.length - 1; i >= 0; i--){
-			while(worlds.size() < 4)
+//			while(worlds.size() < 4){
 				try{
-					worlds.push(World.getContestWorld(1, null));
+					worlds.push(World.getContestWorld(23, null));
+					worlds.push(World.getContestWorld(23, null));
+					worlds.push(World.getContestWorld(14, null));
+					worlds.push(World.getContestWorld(14, null));
 				}catch(ErrorEvent e){
 					Logger.log(e);
 				}
+//			}
 			try {
 				gameEngine.fitnessContestStep(worlds, this.goal);
 			} catch (IllegalArgumentEvent e) {

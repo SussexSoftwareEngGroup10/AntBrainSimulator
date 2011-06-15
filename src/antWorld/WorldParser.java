@@ -68,8 +68,19 @@ public final class WorldParser {
 	 * @return a World read from the file at the path specified
 	 * @throws IOEvent if file not found, or another IO exception is thrown
 	 */
-	public static World readWorldFrom(String path, SoundPlayer soundPlayer) throws IOEvent {
+	public static World readWorldFrom(String name, SoundPlayer soundPlayer) throws IOEvent {
+		String path;
+		if(name.endsWith(fileNameSuffix)){
+			path = name;
+		}else{
+			path = name + fileNameSuffix;
+		}
+		if(!path.contains("\\" + folderName + "\\")){
+			path = folderName + "\\" + path;
+		}
+		
 		Logger.log(new InformationLowEvent("Begun reading World object from \"" + path + "\""));
+		
 		BufferedReader br;
 		File f = new File(path);
 		String line;
@@ -141,11 +152,21 @@ public final class WorldParser {
 	 * @throws IOEvent if an IOException is thrown
 	 */
 	public static void writeWorldTo(World world, String name) throws IOEvent {
-		String path = folderName + "\\" + name + "" + fileNameSuffix;
-		Logger.log(new InformationLowEvent("Begun writing World object to \"" + path + "\""));
 		if(!folder.exists()){
 			folder.mkdir();
 		}
+		
+		String path;
+		if(name.endsWith(fileNameSuffix)){
+			path = name;
+		}else{
+			path = name + fileNameSuffix;
+		}
+		if(!path.contains("\\" + folderName + "\\")){
+			path = folderName + "\\" + path;
+		}
+		Logger.log(new InformationLowEvent("Begun writing World object to \"" + path + "\""));
+		
 		File outputFile = new File(path);
 		
 		try{

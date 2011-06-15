@@ -206,24 +206,30 @@ public class GameEngine {
 		//Set fitness for every brain in population
 		Brain brain = this.population[this.stepCount];
 		
-		this.semaphore.acquireUninterruptibly(4);
-		
-		//Absolute fitness tests
 		if(brain.getFitness() == 0){
+		this.semaphore.acquireUninterruptibly(4);
+		//Absolute fitness tests
+//		if(brain.getFitness() == 0){
 			//Brain is not in elite
 			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
 				this.semaphore, 0, true, GameEngine.rounds, worlds.pop(), goal));
 			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
 				this.semaphore, 1, true, GameEngine.rounds, worlds.pop(), goal));
-		}else{
-			this.semaphore.release(2);
+			
+			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
+				this.semaphore, 2, true, GameEngine.rounds, worlds.pop(), goal));
+			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
+				this.semaphore, 3, true, GameEngine.rounds, worlds.pop(), goal));
+//		}else{
+//			this.semaphore.release(2);
+//		}
 		}
 		
-		//Relative fitness tests
-		this.threadPoolExecutor.execute(new Simulation(this, this.relativeTrainingBrain, brain,
-			this.semaphore, 2, true, GameEngine.rounds, worlds.pop(), goal));
-		this.threadPoolExecutor.execute(new Simulation(this, brain, this.relativeTrainingBrain,
-			this.semaphore, 3, true, GameEngine.rounds, worlds.pop(), goal));
+//		//Relative fitness tests
+//		this.threadPoolExecutor.execute(new Simulation(this, this.relativeTrainingBrain, brain,
+//			this.semaphore, 2, true, GameEngine.rounds, worlds.pop(), goal));
+//		this.threadPoolExecutor.execute(new Simulation(this, brain, this.relativeTrainingBrain,
+//			this.semaphore, 3, true, GameEngine.rounds, worlds.pop(), goal));
 		//Await completion of Simulations
 		this.semaphore.acquireUninterruptibly(4);
 		this.semaphore.release(4);
@@ -361,83 +367,85 @@ public class GameEngine {
 		Logger.clearLogs();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
 		
-		GameEngine gameEngine = new GameEngine();
-		Brain ga = null;
-		Brain bax = null;
+//		GameEngine gameEngine = new GameEngine();
+//		Brain ga = null;
+//		Brain bax = null;
+//		try{
+//			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
+//			bax = BrainParser.readBrainFrom("baxterswinbrain_final");
+//		}catch(Event e){
+//			Logger.log(e);
+//			return;
+//		}
+//		
+//		for(int i = 1; i < Integer.MAX_VALUE; i++){
+//			System.out.println("i == " + i);
+//			try {
+//				gameEngine.simulate(ga, bax, World.getContestWorld(i, null));
+//			} catch (Event e) {
+//				Logger.log(e);
+//				return;
+//			}
+//			System.out.println("ga  wins: " + ga.getWins());
+//			System.out.println("bax wins: " + bax.getWins());
+//			System.out.println("   draws: " + ga.getDraws());
+//			
+//			try {
+//				gameEngine.simulate(bax, ga, World.getContestWorld(i, null));
+//			} catch (Event e) {
+//				Logger.log(e);
+//				return;
+//			}
+//			System.out.println("ga  wins: " + ga.getWins());
+//			System.out.println("bax wins: " + bax.getWins());
+//			System.out.println("   draws: " + ga.getDraws());
+//		}
+		
+		//Evolve and get the best brain from the GeneticAlgorithm
+		//trainingBrain is a decent place to start from
+		//but more likely to get stuck there in the optima,
+		//blankBrain is a worse starting point, it would take longer to get to a good brain,
+		//but it encourages the brains generated to be more random
+		Brain trainingBrain = null;
 		try{
-			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
-			bax = BrainParser.readBrainFrom("baxterswinbrain_final");
-		}catch(Event e){
+//			trainingBrain = BrainParser.readBrainFrom("better_example");
+			trainingBrain = BrainParser.readBrainFrom("baxterswinbrain_final");
+//			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
+		}catch(IOEvent e){
+			Logger.log(e);
+			return;
+		} catch (IllegalArgumentEvent e) {
 			Logger.log(e);
 			return;
 		}
+		GameEngine gameEngine = new GameEngine();
+		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm("surround");
 		
-		for(int i = 1; i <= 100; i++){
-			try {
-				gameEngine.simulate(ga, bax, World.getContestWorld(i, null));
-			} catch (Event e) {
-				Logger.log(e);
-				return;
-			}
-			System.out.println(i + 0.5);
-			
-			try {
-				gameEngine.simulate(bax, ga, World.getContestWorld(i, null));
-			} catch (Event e) {
-				Logger.log(e);
-				return;
-			}
-			System.out.println(i);
+		Brain gaBrain = null;
+		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
+			trainingBrain, Integer.MAX_VALUE, 50, 50/10, 20);
+//		try {
+//			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
+//		} catch (IOEvent e) {
+//			Logger.log(e);
+//		} catch (IllegalArgumentEvent e) {
+//			Logger.log(e);
+//		}
+		
+		//Compact and remove null and unreachable states
+		try {
+			trainingBrain.trim();
+			gaBrain.trim();
+		} catch (IllegalArgumentEvent e) {
+			Logger.log(e);
 		}
-		System.out.println("ga  wins: " + ga.getWins());
-		System.out.println("bax wins: " + bax.getWins());
-		System.out.println("   draws: " + ga.getDraws());
 		
-//		//Evolve and get the best brain from the GeneticAlgorithm
-//		//trainingBrain is a decent place to start from
-//		//but more likely to get stuck there in the optima,
-//		//blankBrain is a worse starting point, it would take longer to get to a good brain,
-//		//but it encourages the brains generated to be more random
-//		Brain trainingBrain = null;
-//		try{
-////			trainingBrain = BrainParser.readBrainFrom("better_example");
-//			trainingBrain = BrainParser.readBrainFrom("baxterswinbrain_final");
-////			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
-//		}catch(IOEvent e){
-//			Logger.log(e);
-//			return;
-//		} catch (IllegalArgumentEvent e) {
-//			Logger.log(e);
-//			return;
-//		}
-//		GameEngine gameEngine = new GameEngine();
-//		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm("surround");
-//		
-//		Brain gaBrain = null;
-//		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
-//			trainingBrain, Integer.MAX_VALUE, 50, 50/10, 20);
-////		try {
-////			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
-////		} catch (IOEvent e) {
-////			Logger.log(e);
-////		} catch (IllegalArgumentEvent e) {
-////			Logger.log(e);
-////		}
-//		
-//		//Compact and remove null and unreachable states
-//		try {
-//			trainingBrain.trim();
-//			gaBrain.trim();
-//		} catch (IllegalArgumentEvent e) {
-//			Logger.log(e);
-//		}
-//		
-//		try {
-//			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1, null));
-//		} catch (ErrorEvent e) {
-//			Logger.log(e);
-//		}
-//		
-//		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
+		try {
+			gameEngine.simulate(trainingBrain, gaBrain, World.getContestWorld(1, null));
+		} catch (ErrorEvent e) {
+			Logger.log(e);
+		}
+		
+		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 }

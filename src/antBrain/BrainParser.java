@@ -53,8 +53,8 @@ public class BrainParser {
 			path = folderName + "\\" + path;
 		}
 		
-		Logger.log(new InformationLowEvent("Begun reading Brain " +
-			"object from \"" + path + "\""));
+		Logger.log(new InformationLowEvent("Begun reading Brain object from \"" + path + "\""));
+		
 		Brain brain = new Brain(50);
 		BufferedReader br;
 		File f = new File(path);
@@ -120,12 +120,21 @@ public class BrainParser {
 	 * @throws IOEvent if any of the IO operations fail
 	 */
 	public static void writeBrainTo(Brain brain, String name) throws IOEvent {
-		String path = folderName + "\\"
-			+ name + "" + fileNameSuffix;
-		Logger.log(new InformationLowEvent("Begun writing Brain object to \"" + path + "\""));
 		if(!folder.exists()){
 			folder.mkdir();
 		}
+		
+		String path;
+		if(name.endsWith(fileNameSuffix)){
+			path = name;
+		}else{
+			path = name + fileNameSuffix;
+		}
+		if(!path.contains("\\" + folderName + "\\")){
+			path = folderName + "\\" + path;
+		}
+		Logger.log(new InformationLowEvent("Begun writing Brain object to \"" + path + "\""));
+		
 		File outputFile = new File(path);
 		
 		try{

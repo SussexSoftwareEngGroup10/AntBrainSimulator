@@ -363,7 +363,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 	public String toString() {
 		String s = "";
 		//Prints in state order
-		Integer[] keys = (Integer[]) super.keySet().toArray();
+		Object[] keys = super.keySet().toArray();
 		Arrays.sort(keys);
 		int i = 0;
 		
@@ -384,7 +384,7 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		}
 		
 		for(int i = 0; i < fitnessLength; i++){
-			out.writeInt(this.fitnesses[i]);
+			out.writeInt(0);//this.fitnesses[i]);
 		}
 	}
 	
@@ -398,7 +398,8 @@ public class Brain extends HashMap<Integer, State> implements Comparable<Brain> 
 		
 		this.fitnesses = new int[fitnessLength];
 		for(int i = 0; i < fitnessLength; i++){
-			this.fitnesses[i] = in.readInt();
+			this.fitnesses[i] = 0;
+			in.readInt();
 		}
 	}
 }

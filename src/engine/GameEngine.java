@@ -350,50 +350,47 @@ public class GameEngine {
 		}else return new GameStats(-1, anthillFood[0], anthillFood[1],	survivors[0], survivors[1]);
 	}
 	
-	public static void main(String[] args) {
-		//TODO test how far is deterministic
-		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
-			//or at least allow a numOfStates parameter
-		//TODO remove polling in Ant.step() (impossible to do more efficiently)
-		//TODO use .jar on linux server (
-		//TODO javac -O, java -prof, JIT
-		
-		Logger.clearLogs();
-		Logger.setLogLevel(Logger.LogLevel.HIGH_LOGGING);
-		
-//		GameEngine gameEngine = new GameEngine();
-//		Brain ga = null;
-//		Brain bax = null;
-//		try{
-//			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
+	@SuppressWarnings("unused")
+	private static void runBrainContest() {
+		//Used by the main method to test Brains infinite seeded worlds
+		GameEngine gameEngine = new GameEngine();
+		Brain ga = null;
+		Brain bax = null;
+		try{
+			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
+			bax = BrainParser.readBrainFrom("baxtersfinalbrain");
 //			bax = BrainParser.readBrainFrom("baxterswinbrain_final");
-//		}catch(Event e){
-//			Logger.log(e);
-//			return;
-//		}
-//		
-//		for(int i = 1; i < Integer.MAX_VALUE; i++){
-//			System.out.println("i == " + i);
-//			try {
-//				gameEngine.simulate(ga, bax, World.getContestWorld(i, null));
-//			} catch (Event e) {
-//				Logger.log(e);
-//				return;
-//			}
-//			System.out.println("ga  wins: " + ga.getWins());
-//			System.out.println("bax wins: " + bax.getWins());
-//			System.out.println("   draws: " + ga.getDraws());
-//			
-//			try {
-//				gameEngine.simulate(bax, ga, World.getContestWorld(i, null));
-//			} catch (Event e) {
-//				Logger.log(e);
-//				return;
-//			}
-//			System.out.println("ga  wins: " + ga.getWins());
-//			System.out.println("bax wins: " + bax.getWins());
-//			System.out.println("   draws: " + ga.getDraws());
-//		}
+		}catch(Event e){
+			Logger.log(e);
+			return;
+		}
+		
+		for(int i = 1; i < Integer.MAX_VALUE; i++){
+			System.out.println("i == " + i);
+			try {
+				gameEngine.simulate(ga, bax, World.getContestWorld(i, null));
+			} catch (Event e) {
+				Logger.log(e);
+				return;
+			}
+			System.out.println("ga  wins: " + ga.getWins());
+			System.out.println("bax wins: " + bax.getWins());
+			System.out.println("   draws: " + ga.getDraws());
+			
+			try {
+				gameEngine.simulate(bax, ga, World.getContestWorld(i, null));
+			} catch (Event e) {
+				Logger.log(e);
+				return;
+			}
+			System.out.println("ga  wins: " + ga.getWins());
+			System.out.println("bax wins: " + bax.getWins());
+			System.out.println("   draws: " + ga.getDraws());
+		}
+	}
+	
+	private static void runGA() {
+		//Used by the main() method to run the GA
 		
 		//Evolve and get the best brain from the GeneticAlgorithm
 		//trainingBrain is a decent place to start from
@@ -440,5 +437,20 @@ public class GameEngine {
 		}
 		
 		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
+	}
+	
+	public static void main(String[] args) {
+		//TODO test how far is deterministic
+		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
+			//or at least allow a numOfStates parameter
+		//TODO remove polling in Ant.step() (impossible to do more efficiently)
+		//TODO use .jar on linux server (
+		//TODO javac -O, java -prof, JIT
+		
+		Logger.clearLogs();
+		Logger.setLogLevel(Logger.LogLevel.HIGH_LOGGING);
+		
+//		runBrainContest();
+		runGA();
 	}
 }

@@ -403,8 +403,7 @@ public class GameEngine {
 		Brain trainingBrain = null;
 		try{
 //			trainingBrain = BrainParser.readBrainFrom("better_example");
-			trainingBrain = BrainParser.readBrainFrom("baxterswinbrain_final");
-//			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
+			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
 		}catch(IOEvent e){
 			Logger.log(e);
 			return;

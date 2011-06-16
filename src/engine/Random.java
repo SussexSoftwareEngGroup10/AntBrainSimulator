@@ -10,6 +10,7 @@ package engine;
  */
 public class Random {
 	private static final long serialVersionUID = 1L;
+	private final int seed;
 	private int s;
 	
 	/**
@@ -19,6 +20,7 @@ public class Random {
 	 * Random, the same seed will produce the same set of numbers
 	 */
 	public Random(int seed) {
+		this.seed = seed;
 		if(seed == 0){
 			this.s = (int) (Math.random() * Integer.MAX_VALUE + 1);
 		}else{
@@ -44,6 +46,14 @@ public class Random {
 	        return r + y - 1;
 	    }
 	    return r;
+	}
+	
+	/**
+	 *  reset
+	 *  to enable the reuse of a Random object
+	 */
+	public void reset() {
+		this.s = this.seed;
 	}
 	
 	/**

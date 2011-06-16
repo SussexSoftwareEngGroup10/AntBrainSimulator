@@ -216,7 +216,7 @@ public class GameEngine {
 			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
 				this.semaphore, 1, true, GameEngine.rounds, worlds.pop(), goal));
 		}else{
-			this.semaphore.release(permits);//2);
+			this.semaphore.release(permits);
 		}
 		
 //		//Relative fitness tests
@@ -358,8 +358,8 @@ public class GameEngine {
 		Brain bax = null;
 		try{
 			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
-			bax = BrainParser.readBrainFrom("baxtersfinalbrain");
-//			bax = BrainParser.readBrainFrom("baxterswinbrain_final");
+//			bax = BrainParser.readBrainFrom("ga_result_1_(food)");
+			bax = BrainParser.readBrainFrom("baxters_brain_final");
 		}catch(Event e){
 			Logger.log(e);
 			return;
@@ -400,7 +400,8 @@ public class GameEngine {
 		Brain trainingBrain = null;
 		try{
 //			trainingBrain = BrainParser.readBrainFrom("better_example");
-			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
+//			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
+			trainingBrain = BrainParser.readBrainFrom("baxters_brain_final");
 		}catch(IOEvent e){
 			Logger.log(e);
 			return;
@@ -435,8 +436,6 @@ public class GameEngine {
 		} catch (ErrorEvent e) {
 			Logger.log(e);
 		}
-		
-		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 	
 	public static void main(String[] args) {
@@ -444,7 +443,7 @@ public class GameEngine {
 		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
 			//or at least allow a numOfStates parameter
 		//TODO remove polling in Ant.step() (impossible to do more efficiently)
-		//TODO use .jar on linux server (
+		//TODO use .jar on linux server
 		//TODO javac -O, java -prof, JIT
 		
 		Logger.clearLogs();
@@ -452,5 +451,7 @@ public class GameEngine {
 		
 //		runBrainContest();
 		runGA();
+		
+		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 }

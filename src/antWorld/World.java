@@ -946,6 +946,8 @@ public class World implements Cloneable {
 	 * Call after anthills generated, puts an ant in each anthill hex
 	 */
 	private void createAnts() {
+		this.ran.reset();
+		
 		Cell cell;
 		Ant ant = null;
 		int colour;

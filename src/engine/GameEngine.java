@@ -34,7 +34,7 @@ public class GameEngine {
 	private static final int processors = Runtime.getRuntime().availableProcessors();
 	private int sleepDur = 0;
 	private Brain absoluteTrainingBrain;
-	private Brain relativeTrainingBrain;
+//	private Brain relativeTrainingBrain;
 	private ThreadPoolExecutor threadPoolExecutor;
 	private Semaphore semaphore;
 	private Brain[] population;
@@ -183,12 +183,12 @@ public class GameEngine {
 		for(int i = population.length - 2; i >= 0; i--){
 			if(population[i].getFitness() > population[index].getFitness())	index = i;
 		}
-		if(population[index].getFitness() <= 0 && absoluteTrainingBrain != null){
-			//Either no elite or first epoch, so use absoluteTrainingBrain
-			this.relativeTrainingBrain = absoluteTrainingBrain;
-		}else{
-			this.relativeTrainingBrain = population[index];
-		}
+//		if(population[index].getFitness() <= 0 && absoluteTrainingBrain != null){
+//			//Either no elite or first epoch, so use absoluteTrainingBrain
+//			this.relativeTrainingBrain = absoluteTrainingBrain;
+//		}else{
+//			this.relativeTrainingBrain = population[index];
+//		}
 		this.stepCount = 0;
 	}
 	

@@ -1,0 +1,78 @@
+Sense Ahead 11 1 Home
+Turn Right 2
+Sense Ahead 5 3 Home
+Turn Right 4
+Sense Ahead 5 23 Home
+Turn Right 6
+Turn Right 7
+Turn Right 8
+Sense Ahead 23 9 Home
+Turn Right 10
+Sense Ahead 11 29 Home
+Turn Right 12
+Sense Ahead 13 1 Home
+Turn Right 14
+Sense Ahead 15 1 Home
+Turn Right 16
+Sense Ahead 17 1 Home
+Turn Right 18
+Sense Ahead 19 1 Home
+Turn Right 20
+Sense Ahead 40 1 Home
+Mark 2 22
+Turn Left 22
+Mark 1 24
+Turn Left 25
+Move 21 26
+Turn Right 27
+Turn Right 28
+Move 21 24
+Sense Ahead 21 30 Marker 1
+Turn Right 31
+Sense Ahead 21 32 Marker 1
+Turn Right 33
+Sense Ahead 21 34 Marker 1
+Turn Right 35
+Sense Ahead 21 36 Marker 1
+Turn Right 37
+Sense Ahead 21 38 Marker 1
+Turn Right 39
+Sense Ahead 21 51 Marker 1
+Sense Ahead 21 41 Marker 1
+Turn Right 42
+Sense Ahead 21 43 Marker 1
+Turn Right 44
+Sense Ahead 21 45 Marker 1
+Turn Right 46
+Sense Ahead 21 47 Marker 1
+Turn Right 48
+Sense Ahead 21 49 Marker 1
+Turn Right 50
+Sense Ahead 21 51 Marker 1
+Sense Ahead 21 52 Marker 1
+Turn Right 53
+Sense Ahead 73 54 Marker 2
+Turn Right 55
+Sense Ahead 73 56 Marker 2
+Turn Right 57
+Sense Ahead 73 58 Marker 2
+Turn Right 59
+Sense Ahead 73 60 Marker 2
+Turn Right 61
+Sense Ahead 73 62 Marker 2
+Sense Ahead 21 63 Marker 1
+Turn Right 64
+Sense Ahead 21 65 Marker 1
+Turn Right 66
+Sense Ahead 21 67 Marker 1
+Turn Right 68
+Sense Ahead 21 69 Marker 1
+Turn Right 70
+Sense Ahead 21 71 Marker 1
+Turn Right 72
+Sense Ahead 21 73 Marker 1
+Turn Left 74
+Move 77 75
+Turn Left 74
+Move 75 77
+Turn Right 76

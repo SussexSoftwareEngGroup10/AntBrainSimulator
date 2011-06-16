@@ -9,8 +9,8 @@ import java.io.IOException;
 
 import utilities.IOEvent;
 import utilities.IllegalArgumentEvent;
-import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
+import utilities.InformationNormEvent;
 import utilities.Logger;
 
 /**
@@ -107,7 +107,7 @@ public class BrainParser {
 		}catch(IOException e){
 			throw new IOEvent(e.getMessage(), e);
 		}
-		Logger.log(new InformationHighEvent("Completed reading Brain " +
+		Logger.log(new InformationNormEvent("Completed reading Brain " +
 			"object from \"" + path + "\""));
 		return brain;
 	}
@@ -151,7 +151,7 @@ public class BrainParser {
 		}catch(IOException e){
 			throw new IOEvent(e.getMessage(), e);
 		}
-		Logger.log(new InformationHighEvent("Completed writing Brain " +
+		Logger.log(new InformationNormEvent("Completed writing Brain " +
 			"object to \"" + path + "\""));
 	}
 	

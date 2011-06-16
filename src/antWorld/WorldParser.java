@@ -11,8 +11,8 @@ import engine.SoundPlayer;
 
 import utilities.ErrorEvent;
 import utilities.IOEvent;
-import utilities.InformationHighEvent;
 import utilities.InformationLowEvent;
+import utilities.InformationNormEvent;
 import utilities.Logger;
 
 /**
@@ -140,7 +140,7 @@ public final class WorldParser {
 		} catch (ErrorEvent e) {
 			throw new IOEvent(e.getMessage(), e);
 		}
-		Logger.log(new InformationHighEvent("Completed reading World object from \"" + path + "\""));
+		Logger.log(new InformationNormEvent("Completed reading World object from \"" + path + "\""));
 		return world;
 	}
 	
@@ -183,7 +183,7 @@ public final class WorldParser {
 		}catch(IOException e){
 			throw new IOEvent(e.getMessage(), e);
 		}
-		Logger.log(new InformationHighEvent("Completed writing World object to \"" + path + "\""));
+		Logger.log(new InformationNormEvent("Completed writing World object to \"" + path + "\""));
 	}
 	
 	private static String getPath(String name) {

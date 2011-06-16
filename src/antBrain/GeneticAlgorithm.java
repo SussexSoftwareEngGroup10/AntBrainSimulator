@@ -236,7 +236,7 @@ public class GeneticAlgorithm implements Serializable {
 			Logger.restartTimer();
 			
 			//Logging
-			Logger.log(new InformationHighEvent("Completed "
+			Logger.log(new InformationNormEvent("Completed "
 				+ (this.epoch) / (double) epochs * 100
 				+ "% of GeneticAlgorithm evolution epochs"));
 		}
@@ -279,7 +279,7 @@ public class GeneticAlgorithm implements Serializable {
 		int maxFitness = this.population[maxIndex].getFitness();
 		int minFitness = this.population[minIndex].getFitness();
 		
-		Logger.log(new InformationNormEvent("Fitnesses: max: " + maxFitness
+		Logger.log(new InformationHighEvent("Fitnesses: max: " + maxFitness
 			+ ";  avg: " + avgFitness + ";  min: " + minFitness));
 	}
 	

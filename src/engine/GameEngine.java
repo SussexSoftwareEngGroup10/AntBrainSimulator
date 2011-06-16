@@ -207,23 +207,16 @@ public class GameEngine {
 		//Set fitness for every brain in population
 		Brain brain = this.population[this.stepCount];
 		
-		if(brain.getFitness() == 0){
 		this.semaphore.acquireUninterruptibly(permits);
 		//Absolute fitness tests
-//		if(brain.getFitness() == 0){
+		if(brain.getFitness() == 0){
 			//Brain is not in elite
 			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
 				this.semaphore, 0, true, GameEngine.rounds, worlds.pop(), goal));
 			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
 				this.semaphore, 1, true, GameEngine.rounds, worlds.pop(), goal));
-			
-//			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
-//				this.semaphore, 2, true, GameEngine.rounds, worlds.pop(), goal));
-//			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
-//				this.semaphore, 3, true, GameEngine.rounds, worlds.pop(), goal));
-//		}else{
-//			this.semaphore.release(2);
-//		}
+		}else{
+			this.semaphore.release(permits);//2);
 		}
 		
 //		//Relative fitness tests
@@ -366,7 +359,7 @@ public class GameEngine {
 		//TODO javac -O, java -prof, JIT
 		
 		Logger.clearLogs();
-		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
+		Logger.setLogLevel(Logger.LogLevel.HIGH_LOGGING);
 		
 //		GameEngine gameEngine = new GameEngine();
 //		Brain ga = null;
@@ -424,7 +417,7 @@ public class GameEngine {
 		
 		Brain gaBrain = null;
 		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
-			trainingBrain, Integer.MAX_VALUE, 50, 25, 40);
+			trainingBrain, Integer.MAX_VALUE, 50, 25, 30);
 //		try {
 //			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
 //		} catch (IOEvent e) {

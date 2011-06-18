@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="core.jar">
+	<classpathentry kind="lib" path="C:/Users/Will/workspace/AntBrainSimulator/lib/core.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://processing.googlecode.com/svn/trunk/processing/build/javadoc/core/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="gicentreUtils.jar">
+	<classpathentry kind="lib" path="C:/Users/Will/workspace/AntBrainSimulator/lib/gicentreUtils.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.gicentre.org/utils/reference/"/>
 		</attributes>

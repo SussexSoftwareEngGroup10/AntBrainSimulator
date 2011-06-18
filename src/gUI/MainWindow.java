@@ -165,6 +165,9 @@ public class MainWindow {
 		
 		buttonsPanel.add(setupPanel, BorderLayout.NORTH);
 		
+		JPanel gameControlsAndStatsPanel = new JPanel();
+		gameControlsAndStatsPanel.setLayout(new BorderLayout());
+		
 		//Set up JPanel to hold the speed adjustment sliders and game control
 		//buttons
 		JPanel gameControlsPanel = new JPanel();
@@ -190,17 +193,20 @@ public class MainWindow {
 		speedAdjustmentSlider.setEnabled(false);
 		speedAdjustmentPanel.add(speedAdjustmentSlider);
 		
-		//Set a panel to contain the mute button
-		JPanel mutePanel = new JPanel();
-		mutePanel.setLayout(new FlowLayout());
-		mutePanel.setBorder(new EmptyBorder(0, 0, 200, 0) );
+		//Set a panel to contain the mute & toggle markers buttons
+		JPanel muteAndHideMarkersPanel = new JPanel();
+		muteAndHideMarkersPanel.setLayout(new FlowLayout());
+		muteAndHideMarkersPanel.setBorder(new EmptyBorder(0, 0, 200, 0) );
+		
 		muteBtn = new JButton("Mute");
 		muteBtn.addActionListener(new MuteListener());
-		mutePanel.add(muteBtn);
+		JButton toggleMarkersBtn = new JButton("Markers On");
+		//TODO: Decide what to do!
+		muteAndHideMarkersPanel.add(muteBtn);
 		
 		gameControlsPanel.add(controlButtonsPanel, BorderLayout.NORTH);
 		gameControlsPanel.add(speedAdjustmentPanel, BorderLayout.CENTER);
-		gameControlsPanel.add(mutePanel, BorderLayout.SOUTH);
+		gameControlsPanel.add(muteAndHideMarkersPanel, BorderLayout.SOUTH);
 		pane.add(gameControlsPanel, BorderLayout.CENTER);
 		
 		buttonsPanel.add(gameControlsPanel, BorderLayout.CENTER);

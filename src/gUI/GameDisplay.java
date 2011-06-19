@@ -109,6 +109,9 @@ public class GameDisplay extends PApplet {
 	//depending on the state it's in
 	private DisplayStates currentGameState = DisplayStates.DISPLAYING_GRID;
 	
+	//Holds whether the chemical markers should be displayed
+	private boolean isMarkers;
+	
 	private Random random = new Random(); //Used for generating random nums
 	private ZoomPan zoomer; //Class for zooming and panning
 	//Used for drawing the background tiles to an off screen buffer, which can
@@ -343,7 +346,7 @@ public class GameDisplay extends PApplet {
 	 * 
 	 * @param world The world to update the displayw ith.
 	 */
-	public void updateWorld(World world) {
+	protected void updateWorld(World world) {
 		this.world = world;
 		setup(); //Call setup again to re assign certain varibles that depend
 				 // on the world
@@ -355,8 +358,17 @@ public class GameDisplay extends PApplet {
 	 * 
 	 * @param gameState The state to switch the display to.
 	 */
-	public void switchState(DisplayStates gameState) {
+	protected void switchState(DisplayStates gameState) {
 		currentGameState = gameState;
+	}
+	
+	/**
+	 * Set whether markers are displayed.
+	 * 
+	 * @param isMarkers True means they are displayed.
+	 */
+	protected void setMarkers(boolean isMarkers) {
+		this.isMarkers = isMarkers;
 	}
 
 	/*
@@ -440,7 +452,9 @@ public class GameDisplay extends PApplet {
 			//ants in that order
 			for (int row = 0; row < numHexRow; row++) {
 				for (int col = 0; col < numHexCol; col++) {
-					drawMarker(row, col, gridCells);
+					if (isMarkers) {
+						drawMarker(row, col, gridCells);
+					}
 					drawFood(imageScale, row, col);
 					drawAnt(imageScale, row, col);
 
@@ -520,7 +534,7 @@ public class GameDisplay extends PApplet {
 	 * Also displays the ant carrying food if it is (at the smallest scale).
 	 * Furthermore it rotates the ants at the smallest scale.
 	 */
-	public void drawAnt(int imageScale, int row, int col) {
+	private void drawAnt(int imageScale, int row, int col) {
 		Ant currentAnt;
 		try { //Try this if the current ant is null e.g. if there is an ant
 			  //on the current hexagon

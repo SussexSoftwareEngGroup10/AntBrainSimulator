@@ -2,11 +2,11 @@ package gUI;
 
 import engine.GameEngine;
 
-public class RunningGameStatGrabber implements Runnable {
+public class LiveStatGrabber implements Runnable {
 	MainWindow mainWindow;
 	GameEngine gameEngine;
 	
-	public RunningGameStatGrabber(MainWindow mainWindow, 
+	public LiveStatGrabber(MainWindow mainWindow, 
 								  GameEngine gameEngine) {
 		this.mainWindow = mainWindow;
 		this.mainWindow = mainWindow;

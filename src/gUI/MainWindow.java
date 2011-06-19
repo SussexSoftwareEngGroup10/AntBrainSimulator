@@ -62,16 +62,16 @@ public class MainWindow {
 	
 	//The control buttons to be display at the bottom of the window
 	private JButton startGameBtn;
-	private JButton finishButton;
 	private JButton contestBtn;
 	private JButton uploadRedBtn;
 	private JButton uploadBlackBtn;
 	private JButton uploadWorldBtn;
 	private JButton genWorldBtn;
+	private JButton finishBtn;
 	private JSlider speedAdjustmentSlider;
 	private JButton muteBtn;
 	private JButton toggleMarkersBtn;
-	private JLabel roundLbl;
+	private JLabel roundsLbl;
 	private JLabel blackAnthillFoodLbl;
 	private JLabel redAnthillFoodLbl;
 
@@ -183,10 +183,10 @@ public class MainWindow {
 		//Set up button to finish the current game
 		JPanel controlButtonsPanel = new JPanel();
 		controlButtonsPanel.setLayout(new FlowLayout());
-		finishButton = new JButton("Finish");
-		finishButton.addActionListener(new finishListener());
-		finishButton.setEnabled(false);
-		controlButtonsPanel.add(finishButton);
+		finishBtn = new JButton("Finish");
+		finishBtn.addActionListener(new FinishListener());
+		finishBtn.setEnabled(false);
+		controlButtonsPanel.add(finishBtn);
 		
 		//Set up JPanel to display the speed adjustment slider
 		JPanel speedAdjustmentPanel = new JPanel();
@@ -213,9 +213,11 @@ public class MainWindow {
 		muteBtn = new JButton("Mute");
 		muteBtn.addActionListener(new MuteListener());
 		muteBtn.setPreferredSize(new Dimension(90, 26));
-		muteBtn.setEnabled(false);
+		muteBtn.setEnabled(true);
 		toggleMarkersBtn = new JButton("Markers On");
-		toggleMarkersBtn.setEnabled(false);
+		toggleMarkersBtn.addActionListener(new MarkersListener());
+		toggleMarkersBtn.setPreferredSize(new Dimension(105, 26));
+		toggleMarkersBtn.setEnabled(true);
 		muteAndHideMarkersPanel.add(muteBtn);
 		muteAndHideMarkersPanel.add(toggleMarkersBtn);
 		
@@ -224,10 +226,10 @@ public class MainWindow {
 		liveStatsPanel.setLayout(new GridLayout(3, 1));
 		
 		//Label to display the current round
-		roundLbl = new JLabel("Round:");
-		roundLbl.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
-		roundLbl.setEnabled(false);
-		liveStatsPanel.add(roundLbl);
+		roundsLbl = new JLabel("Round:");
+		roundsLbl.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
+		roundsLbl.setEnabled(false);
+		liveStatsPanel.add(roundsLbl);
 		//Label to display food in black ant hill
 		blackAnthillFoodLbl 
 				= new JLabel("Food in black ant hill:");
@@ -264,27 +266,57 @@ public class MainWindow {
 	}
 	
 	/**
+	 * Sets up and displays a new standard world in the main window.
+	 * 
+	 * @param rows The height in hexagons.
+	 * @param cols The width in hexagons.
+	 * @param rocks The number of rocks.
+	 * @throws ErrorEvent When the world generation fails.
+	 */
+	protected void setupNewWorldStandardWorld(int rows, int cols, int rocks) 
+			throws ErrorEvent {
+		world = World.getRegularWorld(0, rows, cols, rocks, soundPlayer);
+		gameDisplay.updateWorld(world); //Update game display with the world
+	}
+
+	/**
+	 * Sets up and displays a new contest world in the main window.
+	 * 
+	 * @throws ErrorEvent When the world generation fails.
+	 */
+	protected void setupNewContestWorld() throws ErrorEvent {
+			world = World.getContestWorld(0, soundPlayer);
+			gameDisplay.updateWorld(world);
+	}
+
+	/**
 	 * To be called when the game is complete.  Modifies the window to initial
 	 * configuration as well as providing the user with the option of viewing
 	 * statistics.
 	 * 
 	 * @param winner The winner of the game.
 	 */
-	public void notifyGameComplete(GameStats gameStats) {
+	protected void notifyGameComplete(GameStats gameStats) {
 		//Restore whether the game was muted or not
 		soundPlayer.setMute(isMuteBeforeFinish);
 		//Play the end of game sound
 		soundPlayer.playSound("finish");
 		
-		//re-enable buttons
+		//Re-enable buttons
 		startGameBtn.setEnabled(true);
 		contestBtn.setEnabled(true);
 		uploadBlackBtn.setEnabled(true);
 		uploadRedBtn.setEnabled(true);
 		uploadWorldBtn.setEnabled(true);
 		genWorldBtn.setEnabled(true);
-		speedAdjustmentSlider.setEnabled(true);
-		muteBtn.setEnabled(true);
+		
+		//And disable others
+		finishBtn.setEnabled(false);
+		speedAdjustmentSlider.setEnabled(false);
+		roundsLbl.setEnabled(false);
+		blackAnthillFoodLbl.setEnabled(false);
+		redAnthillFoodLbl.setEnabled(false);
+		
 		
 		//Set speed adjustment slider back to default
 		speedAdjustmentSlider.setValue(500);
@@ -312,40 +344,31 @@ public class MainWindow {
 	}
 	
 	/**
-	 * Sets up and displays a new standard world on the main window.
+	 * Updates the main window with current stats from the game.
 	 * 
-	 * @param rows The height in hexagons.
-	 * @param cols The width in hexagons.
-	 * @param rocks The number of rocks.
-	 * @throws ErrorEvent When the world generation fails.
+	 * @param round The current round.
+	 * @param blackAnthillFood Amount of food in the black ant hill.
+	 * @param intBlackAnthillFood Amount of food in the red ant hill.
 	 */
-	public void setupNewWorldStandardWorld(int rows, int cols, int rocks) 
-			throws ErrorEvent {
-		world = World.getRegularWorld(0, rows, cols, rocks, soundPlayer);
-		gameDisplay.updateWorld(world); //Update game display with the world
+	protected void updateLiveStats(
+			int round, int blackAnthillFood, int redAnthillFood) {
+		//Update labal's text
+		roundsLbl.setText("Round: " + round);
+		blackAnthillFoodLbl.setText(
+				"Food in black ant hill: " + blackAnthillFood);
+		redAnthillFoodLbl.setText(
+				"Food in red ant hill: " + redAnthillFood);
 	}
 	
-	/**
-	 * Sets up and displays a new contest world on the main window.
-	 * 
-	 * @throws ErrorEvent When the world generation fails.
-	 */
-	public void setupNewContestWorld() throws ErrorEvent {
-			world = World.getContestWorld(0, soundPlayer);
-			gameDisplay.updateWorld(world);
-	}
-	
-	/**
+	/*
 	 * Attached to the buttons which need to bring up a file browser window.
-	 * 
-	 * @author wjs25
 	 */
-	public class FileBrowseListener implements ActionListener 
+	private class FileBrowseListener implements ActionListener 
 	{
 		/**
 		 * Displays the file chooser box when the browse button is 
-		 * clicked, a tick is display on the button to confirm the file has been
-		 * selected.
+		 * clicked, a tick is display on the button to confirm the file has 
+		 * been selected.
 		 * 
 		 * @param e The triggering event.
 		 */
@@ -431,12 +454,10 @@ public class MainWindow {
 		}
 	}
 	
-	/**
+	/*
 	 * Attached to the button for initiating contest mode.
-	 * 
-	 * @author wjs25
 	 */
-	public class ContestListener implements ActionListener {
+	private class ContestListener implements ActionListener {
 		/**
 		 * Brings up a dialog box to select the amount of contest participants
 		 * and then builds the contest window based on the amount of 
@@ -474,12 +495,10 @@ public class MainWindow {
 		}
 	}
 	
-	/**
+	/*
 	 * Attached to the button for generating a world.
-	 * 
-	 * @author wjs25
 	 */
-	public class WorldGenListener implements ActionListener {
+	private class WorldGenListener implements ActionListener {
 		MainWindow mainWindow;
 		
 		/**
@@ -503,13 +522,11 @@ public class MainWindow {
 		}
 	}
 	
-	/**
+	/*
 	 * Attached to the start game listener for starting the game.  This is only
 	 * possible when two ant brains have been selected.
-	 * 
-	 * @author wjs25
 	 */
-	public class StartGameListener implements ActionListener {
+	private class StartGameListener implements ActionListener {
 		MainWindow mainWindow;
 		
 		/**
@@ -548,8 +565,11 @@ public class MainWindow {
 			gameDisplay.switchState(DisplayStates.RUNNING);
 			
 			//Enable the finish button and the speed adjustment slider
-			finishButton.setEnabled(true);
+			finishBtn.setEnabled(true);
 			speedAdjustmentSlider.setEnabled(true);
+			roundsLbl.setEnabled(true);
+			blackAnthillFoodLbl.setEnabled(true);
+			redAnthillFoodLbl.setEnabled(true);
 			
 			//Disable other buttons
 			startGameBtn.setEnabled(false);
@@ -561,13 +581,11 @@ public class MainWindow {
 		}
 	}
 	
-	/**
+	/*
 	 * Attached to the speed adjustment slider to listen for changes of the
 	 * slider on it.
-	 * 
-	 * @author wjs25
 	 */
-	public class SpeedSliderChangeListener implements ChangeListener {
+	private class SpeedSliderChangeListener implements ChangeListener {
 		
 		/**
 		 * Sets the speed of the game to the new speed of the slider.
@@ -595,13 +613,11 @@ public class MainWindow {
 		}
 	}
 	
-	/**
+	/*
 	 * Attached to the mute button to allow the sounds of the game to be toggled
 	 * on and off.
-	 * 
-	 * @author wjs25
 	 */
-	public class MuteListener implements ActionListener {
+	private class MuteListener implements ActionListener {
 
 		/**
 		 * Depending on what state the button was currently in, flip the state
@@ -619,17 +635,38 @@ public class MainWindow {
 				soundPlayer.setMute(false);
 				source.setText("Mute");
 			}
-			
 		}
 	}
 	
-	/**
+	/*
+	 * Attached to the show markers button to allow for the chemical markers
+	 * to be toggled on and off.
+	 */
+	private class MarkersListener implements ActionListener {
+		
+		/**
+		 * Depending on what state the button was currently in, flip the state
+		 * of the button, and turn on or off the chemical markers.
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton source = (JButton) e.getSource();
+			//Works in a very similar way to the mute button listener
+			if (source.getText().equals("Markers Off")) {
+				gameDisplay.setMarkers(true);
+				source.setText("Markers On");
+			} else {
+				gameDisplay.setMarkers(false);
+				source.setText("Markers Off");
+			}
+		}
+	}
+	
+	/*
 	 * Attached to the finish button to allow the game to be rapidly completed
 	 * mid way through.
-	 * 
-	 * @author wjs25
 	 */
-	public class finishListener implements ActionListener {
+	private class FinishListener implements ActionListener {
 		
 		/**
 		 * Sets the game to unlimited speed and sets the game  display to the

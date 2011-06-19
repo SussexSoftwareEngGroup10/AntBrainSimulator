@@ -152,11 +152,11 @@ public class ContestWindow {
 		window.setVisible(true);
 	}
 	
-	public void setProgressBarVal(int val) {
+	protected void setProgressBarVal(int val) {
 		progressBar.setValue(val);
 	}
 	
-	public void notifyContestComplete(Brain[] brains) {
+	protected void notifyContestComplete(Brain[] brains) {
 		for (int i = 0; i < brains.length; i++) {
 			String wins = Integer.toString(brains[i].getWins());
 			String losses = Integer.toString(brains[i].getLosses());

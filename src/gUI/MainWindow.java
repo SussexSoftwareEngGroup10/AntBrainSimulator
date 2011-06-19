@@ -3,6 +3,7 @@ package gUI;
 import java.io.File;
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -68,6 +70,10 @@ public class MainWindow {
 	private JButton genWorldBtn;
 	private JSlider speedAdjustmentSlider;
 	private JButton muteBtn;
+	private JButton toggleMarkersBtn;
+	private JLabel roundLbl;
+	private JLabel blackAnthillFoodLbl;
+	private JLabel redAnthillFoodLbl;
 
 	//Sound player used to play all the sounds in the game
 	private SoundPlayer soundPlayer = new SoundPlayer();
@@ -165,6 +171,7 @@ public class MainWindow {
 		
 		buttonsPanel.add(setupPanel, BorderLayout.NORTH);
 		
+		//Panel to hold the game controls and live stats
 		JPanel gameControlsAndStatsPanel = new JPanel();
 		gameControlsAndStatsPanel.setLayout(new BorderLayout());
 		
@@ -193,20 +200,58 @@ public class MainWindow {
 		speedAdjustmentSlider.setEnabled(false);
 		speedAdjustmentPanel.add(speedAdjustmentSlider);
 		
+		//Panel to hold the mute and toggle markers panel as well as the live
+		//game stats
+		JPanel muteMarkersAndStatsPanel = new JPanel();
+		muteMarkersAndStatsPanel.setLayout(new BorderLayout());
+		muteMarkersAndStatsPanel.setBorder(new EmptyBorder(0, 0, 140, 0) );
+		
 		//Set a panel to contain the mute & toggle markers buttons
 		JPanel muteAndHideMarkersPanel = new JPanel();
 		muteAndHideMarkersPanel.setLayout(new FlowLayout());
-		muteAndHideMarkersPanel.setBorder(new EmptyBorder(0, 0, 200, 0) );
 		
 		muteBtn = new JButton("Mute");
 		muteBtn.addActionListener(new MuteListener());
-		JButton toggleMarkersBtn = new JButton("Markers On");
-		//TODO: Decide what to do!
+		muteBtn.setPreferredSize(new Dimension(90, 26));
+		muteBtn.setEnabled(false);
+		toggleMarkersBtn = new JButton("Markers On");
+		toggleMarkersBtn.setEnabled(false);
 		muteAndHideMarkersPanel.add(muteBtn);
+		muteAndHideMarkersPanel.add(toggleMarkersBtn);
 		
+		//Panel to display the live stats
+		JPanel liveStatsPanel = new JPanel();
+		liveStatsPanel.setLayout(new GridLayout(3, 1));
+		
+		//Label to display the current round
+		roundLbl = new JLabel("Round:");
+		roundLbl.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
+		roundLbl.setEnabled(false);
+		liveStatsPanel.add(roundLbl);
+		//Label to display food in black ant hill
+		blackAnthillFoodLbl 
+				= new JLabel("Food in black ant hill:");
+		blackAnthillFoodLbl.setBorder(
+				BorderFactory.createEmptyBorder(5, 10, 5, 0));
+		blackAnthillFoodLbl.setEnabled(false);
+		liveStatsPanel.add(blackAnthillFoodLbl);
+		//Label to display food in red ant hill
+		redAnthillFoodLbl 
+				= new JLabel("Food in red ant hill:");
+		redAnthillFoodLbl.setBorder(
+				BorderFactory.createEmptyBorder(5, 10, 5, 0));
+		redAnthillFoodLbl.setEnabled(false);
+		liveStatsPanel.add(redAnthillFoodLbl);
+		
+		//Add the panels for muting and markers and stats to the outer panel
+		muteMarkersAndStatsPanel.add(
+				muteAndHideMarkersPanel, BorderLayout.NORTH);
+		muteMarkersAndStatsPanel.add(liveStatsPanel, BorderLayout.CENTER);
+		
+		//Add the three sub panels to the main outer panel
 		gameControlsPanel.add(controlButtonsPanel, BorderLayout.NORTH);
 		gameControlsPanel.add(speedAdjustmentPanel, BorderLayout.CENTER);
-		gameControlsPanel.add(muteAndHideMarkersPanel, BorderLayout.SOUTH);
+		gameControlsPanel.add(muteMarkersAndStatsPanel, BorderLayout.SOUTH);
 		pane.add(gameControlsPanel, BorderLayout.CENTER);
 		
 		buttonsPanel.add(gameControlsPanel, BorderLayout.CENTER);

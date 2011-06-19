@@ -110,7 +110,7 @@ public class GameDisplay extends PApplet {
 	private DisplayStates currentGameState = DisplayStates.DISPLAYING_GRID;
 	
 	//Holds whether the chemical markers should be displayed
-	private boolean isMarkers;
+	private boolean isMarkers = true;
 	
 	private Random random = new Random(); //Used for generating random nums
 	private ZoomPan zoomer; //Class for zooming and panning
@@ -384,12 +384,12 @@ public class GameDisplay extends PApplet {
 		//Iterate for each hexgon in the grid
 		for (int row = 0; row < numHexRow; row++) {
 			for (int col = 0; col < numHexCol; col++) {
-				if (gridCells[row][col].getAnthill() == 1) { 
+			if (gridCells[row][col].getAnthill() == 1) {
+				//If it is black anthill
+				drawImage(blackAnthillTile, row, col, 1);
+			} else if (gridCells[row][col].getAnthill() == 2) { 
 					//If the cell is a red anthill
 					drawImage(redAnthillTile, row, col, 1);
-				} else if (gridCells[row][col].getAnthill() == 2) {
-					//If it is black anthill
-					drawImage(blackAnthillTile, row, col, 1);
 				} else if (gridCells[row][col].isRocky()) { //If it's rocky
 					//Randomly pick shade of grey
 					int shade = random.nextInt(2);

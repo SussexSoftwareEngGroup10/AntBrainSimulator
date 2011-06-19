@@ -77,6 +77,8 @@ public class MainWindow {
 
 	//Sound player used to play all the sounds in the game
 	private SoundPlayer soundPlayer = new SoundPlayer();
+	//Used to fetch stats from the game and update them to this window
+	private LiveStatGrabber liveStatGrabber;
 	//Specifies whether the game was muted before the finish button was pressed
 	private boolean isMuteBeforeFinish = false;
 	
@@ -109,6 +111,8 @@ public class MainWindow {
 		try {
 			world = World.getContestWorld(0, soundPlayer);
 			gameEngine = new GameEngine();
+			liveStatGrabber = new LiveStatGrabber(this, world);
+			liveStatGrabber.start();
 			drawGUI();
 		} catch (ErrorEvent e) {
 			GUIErrorMsg.displayErrorMsg("Error in generating a world!");
@@ -214,7 +218,7 @@ public class MainWindow {
 		muteBtn.addActionListener(new MuteListener());
 		muteBtn.setPreferredSize(new Dimension(90, 26));
 		muteBtn.setEnabled(true);
-		toggleMarkersBtn = new JButton("Markers On");
+		toggleMarkersBtn = new JButton("Markers Off");
 		toggleMarkersBtn.addActionListener(new MarkersListener());
 		toggleMarkersBtn.setPreferredSize(new Dimension(105, 26));
 		toggleMarkersBtn.setEnabled(true);
@@ -277,6 +281,7 @@ public class MainWindow {
 			throws ErrorEvent {
 		world = World.getRegularWorld(0, rows, cols, rocks, soundPlayer);
 		gameDisplay.updateWorld(world); //Update game display with the world
+		liveStatGrabber.updateWorld(world);
 	}
 
 	/**
@@ -285,8 +290,9 @@ public class MainWindow {
 	 * @throws ErrorEvent When the world generation fails.
 	 */
 	protected void setupNewContestWorld() throws ErrorEvent {
-			world = World.getContestWorld(0, soundPlayer);
-			gameDisplay.updateWorld(world);
+		world = World.getContestWorld(0, soundPlayer);
+		gameDisplay.updateWorld(world);
+		liveStatGrabber.updateWorld(world);
 	}
 
 	/**
@@ -324,6 +330,7 @@ public class MainWindow {
 		//Swap back the state of the world before the game was run
 		world = clonedWorld;
 		gameDisplay.updateWorld(world);
+		liveStatGrabber.updateWorld(world);
 		gameDisplay.switchState(DisplayStates.DISPLAYING_GRID);
 		
 		//Display dialog box asking if statistics should be displayed
@@ -429,8 +436,8 @@ public class MainWindow {
 								}
 							} else { //Else world button was clicked
 								try{
-									world = 
-										WorldParser.readWorldFrom(path, soundPlayer);
+									world = WorldParser.readWorldFrom(
+											path, soundPlayer);
 								} catch (IOEvent iOE) {
 									GUIErrorMsg.displayErrorMsg(
 											"Unable to parse file. " +
@@ -442,7 +449,7 @@ public class MainWindow {
 							}
 						} catch (IOEvent iOE) { }
 					}
-				}	
+				}
 			} catch (SecurityException sE) {
 				//If the user does not have permission to access the file
 				GUIErrorMsg.displayErrorMsg("Security violation with file!");
@@ -653,10 +660,10 @@ public class MainWindow {
 			JButton source = (JButton) e.getSource();
 			//Works in a very similar way to the mute button listener
 			if (source.getText().equals("Markers Off")) {
-				gameDisplay.setMarkers(true);
+				gameDisplay.setMarkers(false);
 				source.setText("Markers On");
 			} else {
-				gameDisplay.setMarkers(false);
+				gameDisplay.setMarkers(true);
 				source.setText("Markers Off");
 			}
 		}

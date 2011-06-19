@@ -97,6 +97,7 @@ public class GeneticAlgorithm implements Serializable {
 				for(int i = popLen - 1; i >= 0; i--){
 					if(popLen - 1 - i >= popLen - 1 - this.population.length){
 						newPopulation[popLen - 1 - i] = this.population[this.population.length - 1 - i];
+//						newPopulation[popLen - 1 - i].resetFitnesses();
 					}else{
 						//If there are more brains required than there are in the
 						//population read in from loadLast(), create new brains
@@ -249,18 +250,21 @@ public class GeneticAlgorithm implements Serializable {
 		Stack<World> worlds = new Stack<World>();
 		//Set fitness for every brain in population
 		for(int i = this.population.length - 1; i >= 0; i--){
-//			while(worlds.size() < 4){
-				try{
-					worlds.push(World.getContestWorld(24, null));
-					worlds.push(World.getContestWorld(24, null));
-				}catch(ErrorEvent e){
-					Logger.log(e);
+			try{
+				for(int f = 1; f <= 10; f++){
+					worlds.push(World.getContestWorld(f, null));
+					worlds.push(World.getContestWorld(f, null));
 				}
-//			}
+			}catch(ErrorEvent e){
+				Logger.log(e);
+			}
 			try {
 				gameEngine.fitnessContestStep(worlds, this.goal);
 			} catch (IllegalArgumentEvent e) {
 				Logger.log(e);
+			}
+			while(worlds.size() > 0){
+				worlds.pop();
 			}
 		}
 		

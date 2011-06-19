@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import utilities.*;
+import utilities.Logger.LogLevel;
 import antBrain.*;
 import antWorld.*;
 
@@ -169,8 +170,8 @@ public class GameEngine {
 		if(absoluteTrainingBrain != null){
 			this.threadPoolExecutor = new ThreadPoolExecutor(
 				GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
-					new ArrayBlockingQueue<Runnable>(4));
-			this.semaphore = new Semaphore(4, true);
+					new ArrayBlockingQueue<Runnable>(20));
+			this.semaphore = new Semaphore(20, true);
 		}else{
 			this.threadPoolExecutor = new ThreadPoolExecutor(
 				GameEngine.processors, GameEngine.processors, 1, TimeUnit.NANOSECONDS,
@@ -203,7 +204,7 @@ public class GameEngine {
 	 * @throws IllegalArgumentEvent if the GameEngine's goal is invalid
 	 */
 	public void fitnessContestStep(Stack<World> worlds, String goal) throws IllegalArgumentEvent {
-		int permits = 2;
+		int permits = 20;
 		//Set fitness for every brain in population
 		Brain brain = this.population[this.stepCount];
 		
@@ -211,10 +212,13 @@ public class GameEngine {
 		//Absolute fitness tests
 		if(brain.getFitness() == 0){
 			//Brain is not in elite
-			this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
-				this.semaphore, 0, true, GameEngine.rounds, worlds.pop(), goal));
-			this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
-				this.semaphore, 1, true, GameEngine.rounds, worlds.pop(), goal));
+			//At the end of each Simulation.run() one permit is released
+			for(int world = (permits / 2) - 1; world >= 0; world--){
+				this.threadPoolExecutor.execute(new Simulation(this, this.absoluteTrainingBrain, brain,
+					this.semaphore, (world * 2), true, GameEngine.rounds, worlds.pop(), goal));
+				this.threadPoolExecutor.execute(new Simulation(this, brain, this.absoluteTrainingBrain,
+					this.semaphore, (world * 2) + 1, true, GameEngine.rounds, worlds.pop(), goal));
+			}
 		}else{
 			this.semaphore.release(permits);
 		}
@@ -352,6 +356,7 @@ public class GameEngine {
 	
 	@SuppressWarnings("unused")
 	private static void runBrainContest() {
+		Logger.setLogLevel(LogLevel.WARNING_LOGGING);
 		//Used by the main method to test Brains infinite seeded worlds
 		GameEngine gameEngine = new GameEngine();
 		Brain ga = null;
@@ -359,33 +364,43 @@ public class GameEngine {
 		try{
 			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
 //			bax = BrainParser.readBrainFrom("ga_result_1_(food)");
-			bax = BrainParser.readBrainFrom("baxters_brain_final");
+//			bax = BrainParser.readBrainFrom("baxters_brain_final");
+			bax = BrainParser.readBrainFrom("frictionless_bananas_1");
 		}catch(Event e){
 			Logger.log(e);
 			return;
 		}
 		
-		for(int i = 1; i < Integer.MAX_VALUE; i++){
-			System.out.println("i == " + i);
+		GameStats gs = null;
+		int wins;
+		int draws;
+		int losses;
+		for(int seed = 1; seed < Integer.MAX_VALUE; seed++){
+			wins = 0;
+			draws = 0;
+			losses = 0;
 			try {
-				gameEngine.simulate(ga, bax, World.getContestWorld(i, null));
+				gs = gameEngine.simulate(ga, bax, World.getContestWorld(seed, null));
 			} catch (Event e) {
 				Logger.log(e);
 				return;
 			}
-			System.out.println("ga  wins: " + ga.getWins());
-			System.out.println("bax wins: " + bax.getWins());
-			System.out.println("   draws: " + ga.getDraws());
+			if(gs.getWinner() == 0) wins++;
+			else if(gs.getWinner() == -1) draws++;
+			else if(gs.getWinner() == 1) losses++;
 			
 			try {
-				gameEngine.simulate(bax, ga, World.getContestWorld(i, null));
+				gs = gameEngine.simulate(bax, ga, World.getContestWorld(seed, null));
 			} catch (Event e) {
 				Logger.log(e);
 				return;
 			}
-			System.out.println("ga  wins: " + ga.getWins());
-			System.out.println("bax wins: " + bax.getWins());
-			System.out.println("   draws: " + ga.getDraws());
+			if(gs.getWinner() == 1) wins++;
+			else if(gs.getWinner() == -1) draws++;
+			else if(gs.getWinner() == 0) losses++;
+			
+			System.out.println("seed: " + seed + ", wins|draws|losses : " + wins + "|" + draws + "|" + losses +
+				", total : " + ga.getWins() + "|" + ga.getDraws() + "|" + ga.getLosses());
 		}
 	}
 	
@@ -401,7 +416,8 @@ public class GameEngine {
 		try{
 //			trainingBrain = BrainParser.readBrainFrom("better_example");
 //			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
-			trainingBrain = BrainParser.readBrainFrom("baxters_brain_final");
+//			trainingBrain = BrainParser.readBrainFrom("baxters_brain_final");
+			trainingBrain = BrainParser.readBrainFrom("frictionless_bananas_1");
 		}catch(IOEvent e){
 			Logger.log(e);
 			return;
@@ -439,19 +455,19 @@ public class GameEngine {
 	}
 	
 	public static void main(String[] args) {
-		//TODO test how far is deterministic
+		//TODO test how far is deterministic (seed fixed now)
 		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
-			//or at least allow a numOfStates parameter
+			//or at least allow a numOfStates parameter (does not need more, does not use all of the States given)
 		//TODO remove polling in Ant.step() (impossible to do more efficiently)
-		//TODO use .jar on linux server
+		//TODO use GA .jar on linux server (too late)
 		//TODO javac -O, java -prof, JIT
 		
 		Logger.clearLogs();
-		Logger.setLogLevel(Logger.LogLevel.HIGH_LOGGING);
+		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
 		
-//		runBrainContest();
-		runGA();
+		runBrainContest();
+//		runGA();
 		
-		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
+		Logger.log(new InformationNormEvent("Virtual Machine terminated normally"));
 	}
 }

@@ -300,7 +300,7 @@ public class MainWindow {
 	 * configuration as well as providing the user with the option of viewing
 	 * statistics.
 	 * 
-	 * @param winner The winner of the game.
+	 * @param gameStats The stats of the game.
 	 */
 	protected void notifyGameComplete(GameStats gameStats) {
 		//Restore whether the game was muted or not
@@ -355,7 +355,7 @@ public class MainWindow {
 	 * 
 	 * @param round The current round.
 	 * @param blackAnthillFood Amount of food in the black ant hill.
-	 * @param intBlackAnthillFood Amount of food in the red ant hill.
+	 * @param redAnthillFood Amount of food in the red ant hill.
 	 */
 	protected void updateLiveStats(
 			int round, int blackAnthillFood, int redAnthillFood) {

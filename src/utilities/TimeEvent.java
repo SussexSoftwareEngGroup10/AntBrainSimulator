@@ -64,7 +64,7 @@ public class TimeEvent extends InformationEvent {
 	 *  ErrorEvent
 	 *  to construct objects of type ErrorEvent
 	 * @param message the message associated with this Event
-	 * @param the amount of time, with the unit timeUnit, to be stored in the message
+	 * @param time the amount of time, with the unit timeUnit, to be stored in the message
 	 * @param timeUnit the unit of time that will the stored time will take
 	 */
 	public TimeEvent(String message, long time, TimeUnit timeUnit) {
@@ -76,7 +76,7 @@ public class TimeEvent extends InformationEvent {
 	 *  ErrorEvent
 	 *  to construct objects of type ErrorEvent
 	 * @param message the message associated with this Event
-	 * @param the amount of time, with the unit timeUnit, to be stored in the message
+	 * @param time the amount of time, with the unit timeUnit, to be stored in the message
 	 * @param timeUnit the unit of time that will the stored time will take
 	 * @param cause the Throwable that caused this Event's throw, the cause's
 	 * StackTrace will be added to that of this Event

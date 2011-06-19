@@ -18,7 +18,6 @@ import utilities.Logger;
 /**
  *  WorldParser
  *  to allow the reading and writing of World objects to and from files.
- * @change_log 
  * 
  * @author pkew20 / 57116
  * @version 1.0

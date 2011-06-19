@@ -116,7 +116,6 @@ public class World implements Cloneable {
 	 * @param antInitialDirection the starting direction of 
 	 * @param gap minimum the number of hexes between non-food objects
 	 * @param soundPlayer the object with which to play sounds, if any
-	 * @return a world which is fit to be used in a contest
 	 * @throws ErrorEvent if objects specified don't fit in area specified
 	 * @throws IllegalArgumentEvent if any arguments are illegal 
 	 */

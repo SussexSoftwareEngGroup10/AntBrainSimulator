@@ -14,7 +14,7 @@ public class GameStats {
 	private int redAntsSurviving;
 	
 	/**
-	 * 
+	 * Constructs a new GameStats class.
 	 * 
 	 * @param winner The brain which won the game.
 	 * @param foodInBlackAnthill The amount of food left in the black anthill at
@@ -23,7 +23,7 @@ public class GameStats {
 	 * 						   the end of the game.
 	 * @param blackAntsSurviving Number of black ants left surviving at the end
 	 * 							 of the game.
-	 * @param redAntsSurvivig Number of black ants left surviving at the end
+	 * @param redAntsSurviving Number of black ants left surviving at the end
 	 * 						  of the game.
 	 */
 	public GameStats(int winner, int foodInBlackAnthill, 

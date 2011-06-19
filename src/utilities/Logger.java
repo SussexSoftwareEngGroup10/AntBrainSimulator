@@ -164,7 +164,7 @@ public final class Logger {
 	}
 	
 	/**
-	 * @tile getCurrentTime
+	 *  getCurrentTime
 	 *  to facilitate the obtaining of the time since the Logger was last
 	 * restarted
 	 * @return the in nanoseconds since the Logger was last restarted

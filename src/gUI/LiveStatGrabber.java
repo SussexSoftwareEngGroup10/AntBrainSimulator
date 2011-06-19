@@ -1,13 +1,14 @@
 package gUI;
 
+import antWorld.World;
 import engine.GameEngine;
 
 public class LiveStatGrabber implements Runnable {
-	MainWindow mainWindow;
-	GameEngine gameEngine;
+	private MainWindow mainWindow;
+	private GameEngine gameEngine;
 	
 	public LiveStatGrabber(MainWindow mainWindow, 
-								  GameEngine gameEngine) {
+								  GameEngine gameEngine, World world) {
 		this.mainWindow = mainWindow;
 		this.mainWindow = mainWindow;
 	}

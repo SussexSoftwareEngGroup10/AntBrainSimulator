@@ -499,7 +499,7 @@ public class MainWindow {
 	 * Attached to the button for generating a world.
 	 */
 	private class WorldGenListener implements ActionListener {
-		MainWindow mainWindow;
+		private MainWindow mainWindow;
 		
 		/**
 		 * Constructor for the WorldGenListener listener class.
@@ -527,7 +527,7 @@ public class MainWindow {
 	 * possible when two ant brains have been selected.
 	 */
 	private class StartGameListener implements ActionListener {
-		MainWindow mainWindow;
+		private MainWindow mainWindow;
 		
 		/**
 		 * Constructor for the StartGameListener listener class.

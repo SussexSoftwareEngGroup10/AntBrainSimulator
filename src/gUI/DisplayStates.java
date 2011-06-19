@@ -4,7 +4,7 @@ package gUI;
  * Enumeration of the different states the game display can be in.
  * 
  * DISPLAYING_GRID means that the game is just displaying the background of the
- * world.  E.g. just grass cells, anthills and rocks.
+ * world.  E.g. just grass cells, ant hills and rocks.
  * 
  * RUNNING means that the game display is displaying the game currently in
  * progress.

@@ -227,9 +227,9 @@ public class ContestWindow {
 	}
 	
 	public class StartContestListener implements ActionListener {
-		ContestWindow contestWindow;
-		Container pane;
-		Brain[] brains;
+		private ContestWindow contestWindow;
+		private Container pane;
+		private Brain[] brains;
 		
 		public StartContestListener(
 				ContestWindow contestWindow, Container pane) {

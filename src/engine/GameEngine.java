@@ -364,7 +364,7 @@ public class GameEngine {
 		try{
 			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
 //			bax = BrainParser.readBrainFrom("ga_result_1_(food)");
-//			bax = BrainParser.readBrainFrom("baxters_brain_final");
+//			bax = BrainParser.readBrainFrom("baxters_brain_3");
 			bax = BrainParser.readBrainFrom("frictionless_bananas_1");
 		}catch(Event e){
 			Logger.log(e);
@@ -416,7 +416,7 @@ public class GameEngine {
 		try{
 //			trainingBrain = BrainParser.readBrainFrom("better_example");
 //			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
-//			trainingBrain = BrainParser.readBrainFrom("baxters_brain_final");
+//			trainingBrain = BrainParser.readBrainFrom("baxters_brain_3");
 			trainingBrain = BrainParser.readBrainFrom("frictionless_bananas_1");
 		}catch(IOEvent e){
 			Logger.log(e);

@@ -465,8 +465,8 @@ public class GameEngine {
 		Logger.clearLogs();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
 		
-		runBrainContest();
-//		runGA();
+//		runBrainContest();
+		runGA();
 		
 		Logger.log(new InformationNormEvent("Virtual Machine terminated normally"));
 	}

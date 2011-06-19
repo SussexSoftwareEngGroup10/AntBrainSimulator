@@ -51,6 +51,8 @@ public class World implements Cloneable {
 	//Arrays.sort() will restore the list to UID order, as it was created
 	private Ant[] ants;
 	private Ant[][] antsBySpecies;
+
+	private int round = 0;
 	
 	//Sound player for the possible sound effects ants can produce
 	//This can be null (in the case of contests, so checks for null need to be
@@ -1119,6 +1121,15 @@ public class World implements Cloneable {
 	}
 	
 	/**
+	 *  getRound
+	 *  to return the current round
+	 * @return the number of times step() has been called
+	 */
+	public int getRound() {
+		return this.round;
+	}
+	
+	/**
 	 *  step
 	 *  permits each Ant in the World to perform one step, in order of
 	 * UID, so from top left to bottom right, horizontally first
@@ -1127,6 +1138,7 @@ public class World implements Cloneable {
 		for(Ant ant : this.ants){
 			ant.step();
 		}
+		this.round++;
 	}
 	
 	/**

@@ -29,7 +29,6 @@ public final class Simulation implements Runnable {
 	private final int rounds;
 	private final int instance;
 	private World world;
-	private int round = 0;
 	
 	/**
 	 *  Simulation
@@ -98,15 +97,6 @@ public final class Simulation implements Runnable {
 		return this.world;
 	}
 	
-	/**
-	 *  getRound
-	 *  to return the current round the simulation is executing
-	 * @return current round
-	 */
-	public int getRound() {
-		return this.round;
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 * 
@@ -123,7 +113,7 @@ public final class Simulation implements Runnable {
 		this.world.setBrain(this.redBrain, 1);
 		
 		//Run ants for all steps, serial / in this thread
-		for(; this.round < this.rounds; this.round++){
+		for(int round = 0; round < this.rounds; round++){
 			this.world.step();
 			try{
 				Thread.sleep(this.gameEngine.getSleepDur());

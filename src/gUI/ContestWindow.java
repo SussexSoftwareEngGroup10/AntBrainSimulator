@@ -75,7 +75,8 @@ public class ContestWindow {
 		//Panel to display the grid where each row allows a contestant to
 		//upload a brain, and show the wins and losses for that brain
 		JPanel brainUploadPanel = new JPanel();
-		brainUploadPanel.setLayout(new GridLayout(this.numOfPlayers + 1, 5, 10, 10));
+		brainUploadPanel.setLayout(
+				new GridLayout(this.numOfPlayers + 1, 5, 10, 10));
 		brainUploadPanel.setBorder(new EmptyBorder(0, 10, 0, 10) );
 		
 		//Labels that are the column headings
@@ -207,8 +208,10 @@ public class ContestWindow {
 						JButton clickedBtn = (JButton) e.getSource();
 						int index = 0;
 						int i = 0;
-						while (i < ContestWindow.this.numOfPlayers && index == 0) {
-							if (ContestWindow.this.browseBtns[i] == clickedBtn) {
+						while (i < ContestWindow.this.numOfPlayers 
+								&& index == 0) {
+							if (ContestWindow.this.browseBtns[i]
+							        == clickedBtn) {
 								index = i;
 							}
 							i++;
@@ -251,10 +254,12 @@ public class ContestWindow {
 			this.brains = new Brain[ContestWindow.this.numOfPlayers];
 			try {
 				for (int i = 0; i < ContestWindow.this.numOfPlayers; i++) {
-					this.brains[i] = BrainParser.readBrainFrom(ContestWindow.this.brainPaths[i]);
+					this.brains[i] = BrainParser.readBrainFrom(
+							ContestWindow.this.brainPaths[i]);
 				}
 				ContestWindow.this.contestRunner = 
-						new ContestRunner(ContestWindow.this.gameEngine, this.brains, this.contestWindow);
+						new ContestRunner(ContestWindow.this.gameEngine, 
+										  this.brains, this.contestWindow);
 				ContestWindow.this.contestRunner.start();
 				//Need to disable run button on main window
 				ContestWindow.this.goBtn.setEnabled(false);

@@ -646,8 +646,8 @@ public class MainWindow {
 	}
 	
 	/*
-	 * Attached to the mute button to allow the sounds of the game to be toggled
-	 * on and off.
+	 * Attached to the mute button to allow the sounds of the game to be 
+	 * toggled on and off.
 	 */
 	private class MuteListener implements ActionListener {
 

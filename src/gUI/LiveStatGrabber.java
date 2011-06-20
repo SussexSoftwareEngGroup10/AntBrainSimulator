@@ -51,7 +51,8 @@ public class LiveStatGrabber extends Thread {
 				this.round = this.world.getRound();
 				this.blackAnthillFood = this.world.getFoodInAnthills()[0];
 				this.redAnthillFood = this.world.getFoodInAnthills()[1];
-				this.mainWindow.updateLiveStats(this.round, this.blackAnthillFood, this.redAnthillFood);
+				this.mainWindow.updateLiveStats(
+						this.round, this.blackAnthillFood, this.redAnthillFood);
 			} catch (NullPointerException nPE) { /**/ }
 		}
 	}

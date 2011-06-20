@@ -225,9 +225,12 @@ public class WorldGenerateWindow {
 			} else {
 				try {
 					//Try converting parameters to integers
-					int rows = Integer.parseInt(WorldGenerateWindow.this.rowsSelectText.getText());
-					int cols = Integer.parseInt(WorldGenerateWindow.this.colsSelectText.getText());
-					int rocks = Integer.parseInt(WorldGenerateWindow.this.rocksSelectText.getText());
+					int rows = Integer.parseInt(
+							WorldGenerateWindow.this.rowsSelectText.getText());
+					int cols = Integer.parseInt(
+							WorldGenerateWindow.this.colsSelectText.getText());
+					int rocks = Integer.parseInt(
+							WorldGenerateWindow.this.rocksSelectText.getText());
 					
 					//Validate user input complies to this games rules
 					if (rows > 140 || cols > 140) {
@@ -238,7 +241,8 @@ public class WorldGenerateWindow {
 													"negative!");
 					} else {
 						try {
-							WorldGenerateWindow.this.mainWindow.setupNewWorldStandardWorld(
+							WorldGenerateWindow.this
+									.mainWindow.setupNewWorldStandardWorld(
 									rows, cols, rocks);
 							WorldGenerateWindow.this.window.setVisible(false);
 						} catch (ErrorEvent eE) {

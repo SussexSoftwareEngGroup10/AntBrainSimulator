@@ -43,7 +43,8 @@ public class SimulationRunner extends Thread {
 	public void run(){
 		//Run the simulation and pass back the stats from it to the main window
 		GameStats gameStats;
-		gameStats = this.gameEngine.simulate(this.blackBrain, this.redBrain, this.world);
+		gameStats = this.gameEngine.simulate(
+				this.blackBrain, this.redBrain, this.world);
 		this.mainWindow.notifyGameComplete(gameStats);
 	}
 }

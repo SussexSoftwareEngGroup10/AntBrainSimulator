@@ -172,54 +172,57 @@ public class GameDisplay extends PApplet {
 		//amount of loading/unloading image files which would slow the game 
 		//down when running
 		this.grassTile = loadImage("resources/images/tiles/grass_tile.png");
-		this.blackAnthillTile = 
-				loadImage("resources/images/tiles/black_anthill.png");
-		this.redAnthillTile = loadImage("resources/images/tiles/red_anthill.png");
+		this.blackAnthillTile 
+				= loadImage("resources/images/tiles/black_anthill.png");
+		this.redAnthillTile 
+				= loadImage("resources/images/tiles/red_anthill.png");
 		this.rockTile = loadImage("resources/images/tiles/rock_tile.png");
 		
 		//Some entities have different images depending on how zoomed in the
 		//display is, i.e. ants and food.  In these cases the different scaled
 		//images are held in array, accessed via constants
 		this.blackAnt = new PImage[3];
-		this.blackAnt[SMALL_IMAGE] = 
-				loadImage("resources/images/ants/black_ant_small.png");
-		this.blackAnt[LARGE_IMAGE] = 
-				loadImage("resources/images/ants/black_ant_large.png");
+		this.blackAnt[SMALL_IMAGE] 
+		        = loadImage("resources/images/ants/black_ant_small.png");
+		this.blackAnt[LARGE_IMAGE] 
+		        = loadImage("resources/images/ants/black_ant_large.png");
 		this.blackAntFood = 
 				loadImage("resources/images/ants/black_ant_food_large.png");
 		
 		this.redAnt = new PImage[3];
-		this.redAnt[SMALL_IMAGE] = 
-				loadImage("resources/images/ants/red_ant_small.png");
-		this.redAnt[LARGE_IMAGE] = 
-				loadImage("resources/images/ants/red_ant_large.png");
+		this.redAnt[SMALL_IMAGE] 
+		        = loadImage("resources/images/ants/red_ant_small.png");
+		this.redAnt[LARGE_IMAGE] 
+		        = loadImage("resources/images/ants/red_ant_large.png");
 		this.redAntFood =
 				loadImage("resources/images/ants/red_ant_food_large.png");
 		
 		this.foodSmall = loadImage("resources/images/food/food_small.png");
 		this.foodMedium = loadImage("resources/images/food/food_medium.png");
 		this.foodLarge = new PImage[9];
-		this.foodLarge[ONE_FOOD] = 
-				loadImage("resources/images/food/food_one_large.png");
-		this.foodLarge[TWO_FOOD] = 
-				loadImage("resources/images/food/food_two_large.png");
-		this.foodLarge[THREE_FOOD] = 
-				loadImage("resources/images/food/food_three_large.png");
-		this.foodLarge[FOUR_FOOD] = 
-				loadImage("resources/images/food/food_four_large.png");
-		this.foodLarge[FIVE_FOOD] = 
-				loadImage("resources/images/food/food_five_large.png");
-		this.foodLarge[SIX_FOOD] = 
-				loadImage("resources/images/food/food_six_large.png");
-		this.foodLarge[SEVEN_FOOD] = 
-				loadImage("resources/images/food/food_seven_large.png");
-		this.foodLarge[EIGHT_FOOD] = 
-				loadImage("resources/images/food/food_eight_large.png");
+		this.foodLarge[ONE_FOOD] 
+		        = loadImage("resources/images/food/food_one_large.png");
+		this.foodLarge[TWO_FOOD] 
+		        = loadImage("resources/images/food/food_two_large.png");
+		this.foodLarge[THREE_FOOD] 
+		        = loadImage("resources/images/food/food_three_large.png");
+		this.foodLarge[FOUR_FOOD] 
+		        = loadImage("resources/images/food/food_four_large.png");
+		this.foodLarge[FIVE_FOOD] 
+		        = loadImage("resources/images/food/food_five_large.png");
+		this.foodLarge[SIX_FOOD] 
+		        = loadImage("resources/images/food/food_six_large.png");
+		this.foodLarge[SEVEN_FOOD] 
+		        = loadImage("resources/images/food/food_seven_large.png");
+		this.foodLarge[EIGHT_FOOD] 
+		        = loadImage("resources/images/food/food_eight_large.png");
 		this.foodLarge[NINE_FOOD] = 
 				loadImage("resources/images/food/food_nine_large.png");
 		
-		this.blackMarker = loadImage("resources/images/markers/chemical_black.png");
-		this.redMarker = loadImage("resources/images/markers/chemical_red.png");
+		this.blackMarker 
+				= loadImage("resources/images/markers/chemical_black.png");
+		this.redMarker 
+				= loadImage("resources/images/markers/chemical_red.png");
 		
 		//Load font
 		this.courierFont = loadFont("resources/fonts/courier_new_font.vlw");
@@ -241,7 +244,8 @@ public class GameDisplay extends PApplet {
 		//Calculate the total width and height in pixels the hexagons take up
 		this.totalHexWidth = (this.numHexCol * HEX_WIDTH) + HEX_WIDTH / 2;
 		this.totalHexHeight = 
-			(HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) * this.numHexRow + HEX_ANGLE_HEIGHT;
+				(HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) 
+				* this.numHexRow + HEX_ANGLE_HEIGHT;
 		
 		//Work out which dimension take up the most space
 		if (this.totalHexWidth > this.totalHexHeight) {
@@ -344,11 +348,11 @@ public class GameDisplay extends PApplet {
 	/**
 	 * Allows the current world to be updated.
 	 * 
-	 * @param world The world to update the displayw ith.
+	 * @param world The world to update the display width.
 	 */
 	protected void updateWorld(World world) {
 		this.world = world;
-		setup(); //Call setup again to re assign certain varibles that depend
+		setup(); //Call setup again to re assign certain variables that depend
 				 // on the world
 		bufferWorld(); //Buffer the new world
 	}
@@ -388,10 +392,10 @@ public class GameDisplay extends PApplet {
 				//If it is black anthill
 				drawImage(this.blackAnthillTile, row, col, 1);
 			} else if (this.gridCells[row][col].getAnthill() == 2) { 
-					//If the cell is a red anthill
+					//If the cell is a red ant hill
 					drawImage(this.redAnthillTile, row, col, 1);
-				} else if (this.gridCells[row][col].isRocky()) { //If it's rocky
-					//Randomly pick shade of grey
+				} else if (this.gridCells[row][col].isRocky()) {
+					//If it's rocky, randomly pick shade of grey
 					int shade = this.random.nextInt(2);
 					switch (shade) {
 						case 0: this.backgroundBuffer.tint(LIGHT_ROCK_TINT);
@@ -425,7 +429,8 @@ public class GameDisplay extends PApplet {
 			text("Processing, please wait...", 30, 340); 
 		} else { //Otherwise, the grid should be drawn in it's current state
 			this.zoomer.transform(); //Transform the zoom based on user input
-			this.gridCells = this.world.getCells(); //Get the cells in their current state
+			//Get the cells in their current state
+			this.gridCells = this.world.getCells(); 
 			//Work out which size images to use.
 			updateImageScale();
 			//Draw the images to the sketch based on the current scale
@@ -493,7 +498,7 @@ public class GameDisplay extends PApplet {
 	 * Helper method for drawing food on a specific hexagon if this is any.
 	 */
 	private void drawFood(int imageScale, int row, int col) {
-		 //If scale is small, need to check quantity to show the correct image
+		//If scale is small, need to check quantity to show the correct image
 		if (imageScale == LARGE_IMAGE) {
 			int foodCount = this.gridCells[row][col].foodCount();
 			if(foodCount > 9) foodCount = 9;
@@ -603,7 +608,7 @@ public class GameDisplay extends PApplet {
 					drawImage(this.redAnt[SMALL_IMAGE], row, col, 0);
 				}
 			}
-		} catch (NullPointerException nPE) { /**/ } //Do nothing if the was no ant
+		} catch (NullPointerException nPE) { /**/ } //Do nothing if no ant
 	}
 	
 	/*
@@ -641,8 +646,8 @@ public class GameDisplay extends PApplet {
 				   HEX_WIDTH, HEX_HEIGHT);
 		} else if (type == 1) {
 			this.backgroundBuffer.image(image, getColPixelCoords(col, row), 
-								   getRowPixelCoords(row), 
-								   HEX_WIDTH, HEX_HEIGHT);
+								   		getRowPixelCoords(row), 
+								   		HEX_WIDTH, HEX_HEIGHT);
 		}
 	}
 	
@@ -694,7 +699,8 @@ public class GameDisplay extends PApplet {
 		else if (numHexLargestDimension < 70) {
 			if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 22.2) {
 				this.currentImageScale = ImageDrawScales.LARGE;
-			} else if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 14.5){
+			} else if (this.zoomer.getZoomScale() 
+					* (this.numHexCol / 2) > 14.5){
 				this.currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
 				this.currentImageScale = ImageDrawScales.SMALL;

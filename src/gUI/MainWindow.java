@@ -304,7 +304,6 @@ public class MainWindow {
 	 * 
 	 * @param gameStats The stats of the game.
 	 */
-	@SuppressWarnings("unused")
 	protected void notifyGameComplete(GameStats gameStats) {
 		//Restore whether the game was muted or not
 		this.soundPlayer.setMute(this.isMuteBeforeFinish);
@@ -375,9 +374,10 @@ public class MainWindow {
 	 */
 	private class FileBrowseListener implements ActionListener 
 	{
-		public FileBrowseListener() {
-			// TODO Auto-generated constructor stub
-		}
+		/**
+		 * Constructs a new FileBrowseListener
+		 */
+		public FileBrowseListener() { }
 
 		/**
 		 * Displays the file chooser box when the browse button is 
@@ -477,9 +477,11 @@ public class MainWindow {
 	 * Attached to the button for initiating contest mode.
 	 */
 	private class ContestListener implements ActionListener {
-		public ContestListener() {
-			// TODO Auto-generated constructor stub
-		}
+		
+		/**
+		 * Constructs a new ContestListener
+		 */
+		public ContestListener() { }
 
 		/**
 		 * Brings up a dialog box to select the amount of contest participants
@@ -488,7 +490,6 @@ public class MainWindow {
 		 * 
 		 * @param e The triggering event.
 		 */
-		@SuppressWarnings("unused")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Display a dialog box where the user inputs the number of players
@@ -541,7 +542,6 @@ public class MainWindow {
 		 * 
 		 * @param e The triggering event.
 		 */
-		@SuppressWarnings("unused")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			new WorldGenerateWindow(this.mainWindow);
@@ -572,7 +572,7 @@ public class MainWindow {
 		 * @param e The triggering event.
 		 */
 		@Override
-		public void actionPerformed(@SuppressWarnings("unused") ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			//First clone the state of the world so it can be restored later
 			MainWindow.this.clonedWorld = (World) MainWindow.this.world.clone();
 			//Set the speed of the simulation to default
@@ -615,9 +615,10 @@ public class MainWindow {
 	 */
 	private class SpeedSliderChangeListener implements ChangeListener {
 		
-		public SpeedSliderChangeListener() {
-			// TODO Auto-generated constructor stub
-		}
+		/**
+		 * Constructs a new SpeedSliderChangeListenerListener
+		 */
+		public SpeedSliderChangeListener() { }
 
 		/**
 		 * Sets the speed of the game to the new speed of the slider.
@@ -651,9 +652,10 @@ public class MainWindow {
 	 */
 	private class MuteListener implements ActionListener {
 
-		public MuteListener() {
-			// TODO Auto-generated constructor stub
-		}
+		/**
+		 * Constructs a new MuteListener
+		 */
+		public MuteListener() { }
 
 		/**
 		 * Depending on what state the button was currently in, flip the state
@@ -680,9 +682,10 @@ public class MainWindow {
 	 */
 	private class MarkersListener implements ActionListener {
 		
-		public MarkersListener() {
-			// TODO Auto-generated constructor stub
-		}
+		/**
+		 * Constructs a new MarkersListener
+		 */
+		public MarkersListener() { }
 
 		/**
 		 * Depending on what state the button was currently in, flip the state
@@ -708,9 +711,10 @@ public class MainWindow {
 	 */
 	private class FinishListener implements ActionListener {
 		
-		public FinishListener() {
-			// TODO Auto-generated constructor stub
-		}
+		/**
+		 * Constructs a new FinishListener
+		 */
+		public FinishListener() { }
 
 		/**
 		 * Sets the game to unlimited speed and sets the game  display to the
@@ -719,7 +723,7 @@ public class MainWindow {
 		 * @param e The triggering event.
 		 */
 		@Override
-		public void actionPerformed(@SuppressWarnings("unused") ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			//Sets the game to the fastest speed (as fast as the CPU can handle)
 			MainWindow.this.gameEngine.setSleepDur(0);
 			MainWindow.this.speedAdjustmentSlider.setEnabled(false);

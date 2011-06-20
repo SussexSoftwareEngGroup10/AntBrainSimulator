@@ -243,7 +243,7 @@ public class ContestWindow {
 		}
 		
 		@Override
-		public void actionPerformed(@SuppressWarnings("unused") ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			//If a contest has already been run on this window, reset the wins
 			//and losses text fields
 			for (int i = 0; i < ContestWindow.this.numOfPlayers; i++) { 

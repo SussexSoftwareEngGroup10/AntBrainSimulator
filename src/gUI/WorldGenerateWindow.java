@@ -213,7 +213,7 @@ public class WorldGenerateWindow {
 		 * @param e The triggering event.
 		 */
 		@Override
-		public void actionPerformed(@SuppressWarnings("unused") ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			if (WorldGenerateWindow.this.contestBtn.isSelected()) {
 				try {
 					WorldGenerateWindow.this.mainWindow.setupNewContestWorld();

@@ -96,7 +96,7 @@ public class GameDisplay extends PApplet {
 		 * @return Gives the value of the direction specified.
 		 */
 		public float direction()  {
-			return direction;
+			return this.direction;
 		}
 	}
 	
@@ -171,58 +171,58 @@ public class GameDisplay extends PApplet {
 		//rather than dynamically when needed because it would require a large 
 		//amount of loading/unloading image files which would slow the game 
 		//down when running
-		grassTile = loadImage("resources/images/tiles/grass_tile.png");
-		blackAnthillTile = 
+		this.grassTile = loadImage("resources/images/tiles/grass_tile.png");
+		this.blackAnthillTile = 
 				loadImage("resources/images/tiles/black_anthill.png");
-		redAnthillTile = loadImage("resources/images/tiles/red_anthill.png");
-		rockTile = loadImage("resources/images/tiles/rock_tile.png");
+		this.redAnthillTile = loadImage("resources/images/tiles/red_anthill.png");
+		this.rockTile = loadImage("resources/images/tiles/rock_tile.png");
 		
 		//Some entities have different images depending on how zoomed in the
 		//display is, i.e. ants and food.  In these cases the different scaled
 		//images are held in array, accessed via constants
-		blackAnt = new PImage[3];
-		blackAnt[SMALL_IMAGE] = 
+		this.blackAnt = new PImage[3];
+		this.blackAnt[SMALL_IMAGE] = 
 				loadImage("resources/images/ants/black_ant_small.png");
-		blackAnt[LARGE_IMAGE] = 
+		this.blackAnt[LARGE_IMAGE] = 
 				loadImage("resources/images/ants/black_ant_large.png");
-		blackAntFood = 
+		this.blackAntFood = 
 				loadImage("resources/images/ants/black_ant_food_large.png");
 		
-		redAnt = new PImage[3];
-		redAnt[SMALL_IMAGE] = 
+		this.redAnt = new PImage[3];
+		this.redAnt[SMALL_IMAGE] = 
 				loadImage("resources/images/ants/red_ant_small.png");
-		redAnt[LARGE_IMAGE] = 
+		this.redAnt[LARGE_IMAGE] = 
 				loadImage("resources/images/ants/red_ant_large.png");
-		redAntFood =
+		this.redAntFood =
 				loadImage("resources/images/ants/red_ant_food_large.png");
 		
-		foodSmall = loadImage("resources/images/food/food_small.png");
-		foodMedium = loadImage("resources/images/food/food_medium.png");
-		foodLarge = new PImage[9];
-		foodLarge[ONE_FOOD] = 
+		this.foodSmall = loadImage("resources/images/food/food_small.png");
+		this.foodMedium = loadImage("resources/images/food/food_medium.png");
+		this.foodLarge = new PImage[9];
+		this.foodLarge[ONE_FOOD] = 
 				loadImage("resources/images/food/food_one_large.png");
-		foodLarge[TWO_FOOD] = 
+		this.foodLarge[TWO_FOOD] = 
 				loadImage("resources/images/food/food_two_large.png");
-		foodLarge[THREE_FOOD] = 
+		this.foodLarge[THREE_FOOD] = 
 				loadImage("resources/images/food/food_three_large.png");
-		foodLarge[FOUR_FOOD] = 
+		this.foodLarge[FOUR_FOOD] = 
 				loadImage("resources/images/food/food_four_large.png");
-		foodLarge[FIVE_FOOD] = 
+		this.foodLarge[FIVE_FOOD] = 
 				loadImage("resources/images/food/food_five_large.png");
-		foodLarge[SIX_FOOD] = 
+		this.foodLarge[SIX_FOOD] = 
 				loadImage("resources/images/food/food_six_large.png");
-		foodLarge[SEVEN_FOOD] = 
+		this.foodLarge[SEVEN_FOOD] = 
 				loadImage("resources/images/food/food_seven_large.png");
-		foodLarge[EIGHT_FOOD] = 
+		this.foodLarge[EIGHT_FOOD] = 
 				loadImage("resources/images/food/food_eight_large.png");
-		foodLarge[NINE_FOOD] = 
+		this.foodLarge[NINE_FOOD] = 
 				loadImage("resources/images/food/food_nine_large.png");
 		
-		blackMarker = loadImage("resources/images/markers/chemical_black.png");
-		redMarker = loadImage("resources/images/markers/chemical_red.png");
+		this.blackMarker = loadImage("resources/images/markers/chemical_black.png");
+		this.redMarker = loadImage("resources/images/markers/chemical_red.png");
 		
 		//Load font
-		courierFont = loadFont("resources/fonts/courier_new_font.vlw");
+		this.courierFont = loadFont("resources/fonts/courier_new_font.vlw");
 	}
 	
 	/**
@@ -232,41 +232,41 @@ public class GameDisplay extends PApplet {
 	 */
 	@Override
 	public void setup() {
-		gridCells = this.world.getCells();
-		markerDrawOrders = new HashMap<Cell, Integer>();
-		setMarkerDrawOrders(gridCells);
+		this.gridCells = this.world.getCells();
+		this.markerDrawOrders = new HashMap<Cell, Integer>();
+		setMarkerDrawOrders(this.gridCells);
 		//Number of hexagons in columns and rows
-		numHexRow = gridCells.length;
-		numHexCol = gridCells[0].length;
+		this.numHexRow = this.gridCells.length;
+		this.numHexCol = this.gridCells[0].length;
 		//Calculate the total width and height in pixels the hexagons take up
-		totalHexWidth = (numHexCol * HEX_WIDTH) + HEX_WIDTH / 2;
-		totalHexHeight = 
-			(HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) * numHexRow + HEX_ANGLE_HEIGHT;
+		this.totalHexWidth = (this.numHexCol * HEX_WIDTH) + HEX_WIDTH / 2;
+		this.totalHexHeight = 
+			(HEX_ANGLE_HEIGHT + HEX_VERT_HEIGHT) * this.numHexRow + HEX_ANGLE_HEIGHT;
 		
 		//Work out which dimension take up the most space
-		if (totalHexWidth > totalHexHeight) {
-			largestDimension = Dimensions.HORIZONTAL;
+		if (this.totalHexWidth > this.totalHexHeight) {
+			this.largestDimension = Dimensions.HORIZONTAL;
 		} else {
-			largestDimension = Dimensions.VERTICAL;
+			this.largestDimension = Dimensions.VERTICAL;
 		}
 		size(PIXEL_WIDTH, PIXEL_HEIGHT);
 		
 		//Gives the garbage clearer time to free up memory before the 
 		//background buffer is recalculated
-		backgroundBuffer = null; 
+		this.backgroundBuffer = null; 
 		//Of screen buffer to where the background tiles of the ant world a are
 		//drawn.  This means that each time the buffer is drawn to the screen,
 		//rather than all the tiles which makes it much faster!
-		backgroundBuffer = createGraphics(totalHexWidth,
-				totalHexHeight, P2D);
+		this.backgroundBuffer = createGraphics(this.totalHexWidth,
+				this.totalHexHeight, P2D);
 		
 		smooth(); //Turn on anti aliasing
 		frameRate(10); //Turn down the frame rate for less processing power
 		//Text variables
-		textFont(courierFont, 30);
+		textFont(this.courierFont, 30);
 		fill(255); //Fill colour (white) for the text
-		zoomer = new ZoomPan(this);  // Initialise the zoomer
-		zoomer.allowZoomButton(false); 
+		this.zoomer = new ZoomPan(this);  // Initialise the zoomer
+		this.zoomer.allowZoomButton(false); 
 		setInitialPanAndZoom(); //Set the initial zoom and pan
 		updateImageScale(); //Update the image scales because zoom scale has
 							//been changed
@@ -281,8 +281,8 @@ public class GameDisplay extends PApplet {
 	private void setMarkerDrawOrders(Cell[][] cells) {
 		for (Cell[] cellCol : cells) {
 			for (Cell cell : cellCol) {
-				int order = random.nextInt(2);
-				markerDrawOrders.put(cell, order);
+				int order = this.random.nextInt(2);
+				this.markerDrawOrders.put(cell, order);
 			}
 		}
 	}
@@ -294,49 +294,49 @@ public class GameDisplay extends PApplet {
 	 * to an appropriate zoom and pan offset.
 	 */
 	private void setInitialPanAndZoom() {
-		if (largestDimension == Dimensions.HORIZONTAL) {
-			if (numHexCol <= 20) {
-				zoomer.setZoomScale(0.94);
-			} else if (numHexCol <= 40) {
-				zoomer.setZoomScale(0.48);
-				zoomer.setPanOffset(-160, -160);
-			} else if (numHexCol <= 60) {
-				zoomer.setZoomScale(0.32);
-				zoomer.setPanOffset(-220, -220);
-			} else if (numHexCol <= 80) {
-				zoomer.setZoomScale(0.24);
-				zoomer.setPanOffset(-250, -250);
-			} else if (numHexCol <= 100) {
-				zoomer.setZoomScale(0.19);
-				zoomer.setPanOffset(-270, -270);
-			} else if (numHexCol <= 120) {
-				zoomer.setZoomScale(0.16);
-				zoomer.setPanOffset(-280, -280);
-			} else if (numHexCol <= 140) {
-				zoomer.setZoomScale(0.14);
-				zoomer.setPanOffset(-290, -290);
+		if (this.largestDimension == Dimensions.HORIZONTAL) {
+			if (this.numHexCol <= 20) {
+				this.zoomer.setZoomScale(0.94);
+			} else if (this.numHexCol <= 40) {
+				this.zoomer.setZoomScale(0.48);
+				this.zoomer.setPanOffset(-160, -160);
+			} else if (this.numHexCol <= 60) {
+				this.zoomer.setZoomScale(0.32);
+				this.zoomer.setPanOffset(-220, -220);
+			} else if (this.numHexCol <= 80) {
+				this.zoomer.setZoomScale(0.24);
+				this.zoomer.setPanOffset(-250, -250);
+			} else if (this.numHexCol <= 100) {
+				this.zoomer.setZoomScale(0.19);
+				this.zoomer.setPanOffset(-270, -270);
+			} else if (this.numHexCol <= 120) {
+				this.zoomer.setZoomScale(0.16);
+				this.zoomer.setPanOffset(-280, -280);
+			} else if (this.numHexCol <= 140) {
+				this.zoomer.setZoomScale(0.14);
+				this.zoomer.setPanOffset(-290, -290);
 			}
 		} else {
-			if (numHexRow <= 20) {
-				zoomer.setZoomScale(0.94);
-			} else if (numHexRow <= 40) {
-				zoomer.setZoomScale(0.48);
-				zoomer.setPanOffset(-160, -160);
-			} else if (numHexRow <= 60) {
-				zoomer.setZoomScale(0.32);
-				zoomer.setPanOffset(-220, -220);
-			} else if (numHexRow <= 80) {
-				zoomer.setZoomScale(0.24);
-				zoomer.setPanOffset(-250, -250);
-			} else if (numHexRow <= 100) {
-				zoomer.setZoomScale(0.19);
-				zoomer.setPanOffset(-270, -270);
-			} else if (numHexRow <= 120) {
-				zoomer.setZoomScale(0.16);
-				zoomer.setPanOffset(-280, -280);
-			} else if (numHexRow <= 140) {
-				zoomer.setZoomScale(0.14);
-				zoomer.setPanOffset(-290, -290);
+			if (this.numHexRow <= 20) {
+				this.zoomer.setZoomScale(0.94);
+			} else if (this.numHexRow <= 40) {
+				this.zoomer.setZoomScale(0.48);
+				this.zoomer.setPanOffset(-160, -160);
+			} else if (this.numHexRow <= 60) {
+				this.zoomer.setZoomScale(0.32);
+				this.zoomer.setPanOffset(-220, -220);
+			} else if (this.numHexRow <= 80) {
+				this.zoomer.setZoomScale(0.24);
+				this.zoomer.setPanOffset(-250, -250);
+			} else if (this.numHexRow <= 100) {
+				this.zoomer.setZoomScale(0.19);
+				this.zoomer.setPanOffset(-270, -270);
+			} else if (this.numHexRow <= 120) {
+				this.zoomer.setZoomScale(0.16);
+				this.zoomer.setPanOffset(-280, -280);
+			} else if (this.numHexRow <= 140) {
+				this.zoomer.setZoomScale(0.14);
+				this.zoomer.setPanOffset(-290, -290);
 			}
 		}
 	}
@@ -359,7 +359,7 @@ public class GameDisplay extends PApplet {
 	 * @param gameState The state to switch the display to.
 	 */
 	protected void switchState(DisplayStates gameState) {
-		currentGameState = gameState;
+		this.currentGameState = gameState;
 	}
 	
 	/**
@@ -378,37 +378,37 @@ public class GameDisplay extends PApplet {
 	 */
 	private void bufferWorld() {
 		//Draws to a PGraphics object must be surrounded with this...
-		backgroundBuffer.beginDraw();
+		this.backgroundBuffer.beginDraw();
 		//Set a dark grey background
-		backgroundBuffer.background(50, 50, 50);
+		this.backgroundBuffer.background(50, 50, 50);
 		//Iterate for each hexgon in the grid
-		for (int row = 0; row < numHexRow; row++) {
-			for (int col = 0; col < numHexCol; col++) {
-			if (gridCells[row][col].getAnthill() == 1) {
+		for (int row = 0; row < this.numHexRow; row++) {
+			for (int col = 0; col < this.numHexCol; col++) {
+			if (this.gridCells[row][col].getAnthill() == 1) {
 				//If it is black anthill
-				drawImage(blackAnthillTile, row, col, 1);
-			} else if (gridCells[row][col].getAnthill() == 2) { 
+				drawImage(this.blackAnthillTile, row, col, 1);
+			} else if (this.gridCells[row][col].getAnthill() == 2) { 
 					//If the cell is a red anthill
-					drawImage(redAnthillTile, row, col, 1);
-				} else if (gridCells[row][col].isRocky()) { //If it's rocky
+					drawImage(this.redAnthillTile, row, col, 1);
+				} else if (this.gridCells[row][col].isRocky()) { //If it's rocky
 					//Randomly pick shade of grey
-					int shade = random.nextInt(2);
+					int shade = this.random.nextInt(2);
 					switch (shade) {
-						case 0: backgroundBuffer.tint(LIGHT_ROCK_TINT);
+						case 0: this.backgroundBuffer.tint(LIGHT_ROCK_TINT);
 						break;
-						case 1: backgroundBuffer.tint(NEUTRAL_ROCK_TINT);
+						case 1: this.backgroundBuffer.tint(NEUTRAL_ROCK_TINT);
 						break;
-						case 2: backgroundBuffer.tint (DARK_ROCK_TINT);
+						case 2: this.backgroundBuffer.tint (DARK_ROCK_TINT);
 					}
-					drawImage(rockTile, row, col, 1);
-					backgroundBuffer.tint(255); //Restore default no tint
+					drawImage(this.rockTile, row, col, 1);
+					this.backgroundBuffer.tint(255); //Restore default no tint
 				} else {
 					//Otherwise it is a grass tile
-					drawImage(grassTile, row, col, 1); 
+					drawImage(this.grassTile, row, col, 1); 
 				}
 			}
 		}
-		backgroundBuffer.endDraw();
+		this.backgroundBuffer.endDraw();
 	}
 	
 	/**
@@ -421,20 +421,20 @@ public class GameDisplay extends PApplet {
 		//Set the background to dark grey
 		background(50, 50, 50);	
 		//If the current state is processing, display text explaining this
-		if (currentGameState == DisplayStates.PROCESSING) {
+		if (this.currentGameState == DisplayStates.PROCESSING) {
 			text("Processing, please wait...", 30, 340); 
 		} else { //Otherwise, the grid should be drawn in it's current state
-			zoomer.transform(); //Transform the zoom based on user input
-			gridCells = world.getCells(); //Get the cells in their current state
+			this.zoomer.transform(); //Transform the zoom based on user input
+			this.gridCells = this.world.getCells(); //Get the cells in their current state
 			//Work out which size images to use.
 			updateImageScale();
 			//Draw the images to the sketch based on the current scale
-			if (currentImageScale == ImageDrawScales.LARGE) {
-				drawImages(LARGE_IMAGE, gridCells);
-			} else if (currentImageScale == ImageDrawScales.MEDIUM) {
-				drawImages(MEDIUM_IMAGE, gridCells);
+			if (this.currentImageScale == ImageDrawScales.LARGE) {
+				drawImages(LARGE_IMAGE, this.gridCells);
+			} else if (this.currentImageScale == ImageDrawScales.MEDIUM) {
+				drawImages(MEDIUM_IMAGE, this.gridCells);
 			} else {
-				drawImages(SMALL_IMAGE, gridCells);
+				drawImages(SMALL_IMAGE, this.gridCells);
 			}
 		}
 	}
@@ -444,15 +444,15 @@ public class GameDisplay extends PApplet {
 	 */
 	private void drawImages(int imageScale, Cell[][] gridCells) {
 		//If the background buffer isn't null, draw it to the screen
-		if (backgroundBuffer != null) {
-			image(backgroundBuffer, 0, 0);
+		if (this.backgroundBuffer != null) {
+			image(this.backgroundBuffer, 0, 0);
 		}
-		if (currentGameState == DisplayStates.RUNNING) {
+		if (this.currentGameState == DisplayStates.RUNNING) {
 			//Loop through each hexagon, and draw the markers, then food, then
 			//ants in that order
-			for (int row = 0; row < numHexRow; row++) {
-				for (int col = 0; col < numHexCol; col++) {
-					if (isMarkers) {
+			for (int row = 0; row < this.numHexRow; row++) {
+				for (int col = 0; col < this.numHexCol; col++) {
+					if (this.isMarkers) {
 						drawMarker(row, col, gridCells);
 					}
 					drawFood(imageScale, row, col);
@@ -469,21 +469,21 @@ public class GameDisplay extends PApplet {
 	private void drawMarker(int row, int col, Cell[][] gridCells) {
 		for (int i = 0; i < 6; i++) { //Check in each type of the 6 markers
 			//Get the draw order and draw in that order
-			int drawOrder = markerDrawOrders.get(gridCells[row][col]);
+			int drawOrder = this.markerDrawOrders.get(gridCells[row][col]);
 			if (drawOrder == 0) {
 				//Draw a marker if one exists for either of the species
 				if (gridCells[row][col].getMarker(0, i)) {
-					drawImage(blackMarker, row, col, 0);
+					drawImage(this.blackMarker, row, col, 0);
 				}
 				if (gridCells[row][col].getMarker(1, i)) {
-					drawImage(redMarker, row, col, 0);
+					drawImage(this.redMarker, row, col, 0);
 				}
 			} else {
 				if (gridCells[row][col].getMarker(1, i)) {
-					drawImage(redMarker, row, col, 0);
+					drawImage(this.redMarker, row, col, 0);
 				}
 				if (gridCells[row][col].getMarker(0, i)) {
-					drawImage(blackMarker, row, col, 0);
+					drawImage(this.blackMarker, row, col, 0);
 				}
 			}
 		}
@@ -495,36 +495,36 @@ public class GameDisplay extends PApplet {
 	private void drawFood(int imageScale, int row, int col) {
 		 //If scale is small, need to check quantity to show the correct image
 		if (imageScale == LARGE_IMAGE) {
-			int foodCount = gridCells[row][col].foodCount();
+			int foodCount = this.gridCells[row][col].foodCount();
 			if(foodCount > 9) foodCount = 9;
 			switch (foodCount) {
-				case 1: drawImage(foodLarge[ONE_FOOD], row, col, 0); 
+				case 1: drawImage(this.foodLarge[ONE_FOOD], row, col, 0); 
 				break;
-				case 2: drawImage(foodLarge[TWO_FOOD], row, col, 0); 
+				case 2: drawImage(this.foodLarge[TWO_FOOD], row, col, 0); 
 				break;
-				case 3: drawImage(foodLarge[THREE_FOOD], row, col, 0); 
+				case 3: drawImage(this.foodLarge[THREE_FOOD], row, col, 0); 
 				break;
-				case 4: drawImage(foodLarge[FOUR_FOOD], row, col, 0); 
+				case 4: drawImage(this.foodLarge[FOUR_FOOD], row, col, 0); 
 				break;
-				case 5: drawImage(foodLarge[FIVE_FOOD], row, col, 0); 
+				case 5: drawImage(this.foodLarge[FIVE_FOOD], row, col, 0); 
 				break;
-				case 6: drawImage(foodLarge[SIX_FOOD], row, col, 0); 
+				case 6: drawImage(this.foodLarge[SIX_FOOD], row, col, 0); 
 				break;
-				case 7: drawImage(foodLarge[SEVEN_FOOD], row, col, 0); 
+				case 7: drawImage(this.foodLarge[SEVEN_FOOD], row, col, 0); 
 				break;
-				case 8: drawImage(foodLarge[EIGHT_FOOD], row, col, 0); 
+				case 8: drawImage(this.foodLarge[EIGHT_FOOD], row, col, 0); 
 				break;
-				case 9: drawImage(foodLarge[NINE_FOOD], row, col, 0); 
+				case 9: drawImage(this.foodLarge[NINE_FOOD], row, col, 0); 
 				break;
 			}
 		} else if (imageScale == MEDIUM_IMAGE) { 
 			//Otherwise, just check if any is there
-			if (gridCells[row][col].hasFood()) {
-				drawImage(foodMedium, row, col, 0); 
+			if (this.gridCells[row][col].hasFood()) {
+				drawImage(this.foodMedium, row, col, 0); 
 			}
 		} else {
-			if (gridCells[row][col].hasFood()) {
-				drawImage(foodSmall, row, col, 0); 
+			if (this.gridCells[row][col].hasFood()) {
+				drawImage(this.foodSmall, row, col, 0); 
 			}
 		}
 	}
@@ -538,7 +538,7 @@ public class GameDisplay extends PApplet {
 		Ant currentAnt;
 		try { //Try this if the current ant is null e.g. if there is an ant
 			  //on the current hexagon
-			currentAnt = gridCells[row][col].getAnt();
+			currentAnt = this.gridCells[row][col].getAnt();
 			//On both small and medium scales, display the smallest image
 			if (imageScale == LARGE_IMAGE || imageScale == MEDIUM_IMAGE) {	
 				//Note: all cases of the if statement work in the same way,
@@ -561,7 +561,7 @@ public class GameDisplay extends PApplet {
 								currentAnt.getDirection()).direction());
 						//Draw the image at an offset so that the origin is 
 						//back to the top left of the tile.
-						image(blackAntFood, -(HEX_WIDTH / 2),
+						image(this.blackAntFood, -(HEX_WIDTH / 2),
 								-HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 						popMatrix();
 					} else {
@@ -570,7 +570,7 @@ public class GameDisplay extends PApplet {
 								(getRowPixelCoords(row) + HEX_VERT_HEIGHT));
 						rotate(getAntDirection(
 								currentAnt.getDirection()).direction());
-						image(blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2),
+						image(this.blackAnt[LARGE_IMAGE], -(HEX_WIDTH / 2),
 								-HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 						popMatrix();
 					}
@@ -581,7 +581,7 @@ public class GameDisplay extends PApplet {
 								(getRowPixelCoords(row) + HEX_VERT_HEIGHT));
 						rotate(getAntDirection(
 								currentAnt.getDirection()).direction());
-						image(redAntFood, -(HEX_WIDTH / 2),
+						image(this.redAntFood, -(HEX_WIDTH / 2),
 								-HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 						popMatrix();
 					} else {
@@ -590,7 +590,7 @@ public class GameDisplay extends PApplet {
 								(getRowPixelCoords(row) + HEX_VERT_HEIGHT));
 						rotate(getAntDirection(
 								currentAnt.getDirection()).direction());
-						image(redAnt[LARGE_IMAGE], -(HEX_WIDTH / 2),
+						image(this.redAnt[LARGE_IMAGE], -(HEX_WIDTH / 2),
 								-HEX_VERT_HEIGHT, HEX_WIDTH, HEX_HEIGHT);
 						popMatrix();
 					}
@@ -598,12 +598,12 @@ public class GameDisplay extends PApplet {
 			} else {
 				//Else just draw the highly zoomed out image
 				if (currentAnt.getColour() == 0) { //If it's a black ant
-					drawImage(blackAnt[SMALL_IMAGE], row, col, 0);
+					drawImage(this.blackAnt[SMALL_IMAGE], row, col, 0);
 				} else {
-					drawImage(redAnt[SMALL_IMAGE], row, col, 0);
+					drawImage(this.redAnt[SMALL_IMAGE], row, col, 0);
 				}
 			}
-		} catch (NullPointerException nPE) { } //Do nothing if the was no ant
+		} catch (NullPointerException nPE) { /**/ } //Do nothing if the was no ant
 	}
 	
 	/*
@@ -611,7 +611,7 @@ public class GameDisplay extends PApplet {
 	 * used in the game engine
 	 */
 	private AntDirection getAntDirection(int directionVal) {
-		AntDirection direction = AntDirection.EAST; ;
+		AntDirection direction = AntDirection.EAST;
 		switch (directionVal) {
 			case 0: direction = AntDirection.EAST; 
 			break;
@@ -640,7 +640,7 @@ public class GameDisplay extends PApplet {
 			 image(image, getColPixelCoords(col, row), getRowPixelCoords(row),
 				   HEX_WIDTH, HEX_HEIGHT);
 		} else if (type == 1) {
-			backgroundBuffer.image(image, getColPixelCoords(col, row), 
+			this.backgroundBuffer.image(image, getColPixelCoords(col, row), 
 								   getRowPixelCoords(row), 
 								   HEX_WIDTH, HEX_HEIGHT);
 		}
@@ -677,45 +677,45 @@ public class GameDisplay extends PApplet {
 	 */
 	private void updateImageScale() {
 		//Check which dimension is larger and store it in this variable.
-		int numHexLargestDimension = numHexRow;
-		if (totalHexWidth > totalHexHeight) {
-			numHexLargestDimension = numHexCol;
+		int numHexLargestDimension = this.numHexRow;
+		if (this.totalHexWidth > this.totalHexHeight) {
+			numHexLargestDimension = this.numHexCol;
 		}
 		
 		if (numHexLargestDimension < 35) {
-			if (zoomer.getZoomScale() * (numHexCol / 2) > 16.5) {
-				currentImageScale = ImageDrawScales.LARGE;
-			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 7){
-				currentImageScale = ImageDrawScales.MEDIUM;
+			if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 16.5) {
+				this.currentImageScale = ImageDrawScales.LARGE;
+			} else if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 7){
+				this.currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
-				currentImageScale = ImageDrawScales.SMALL;
+				this.currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
 		else if (numHexLargestDimension < 70) {
-			if (zoomer.getZoomScale() * (numHexCol / 2) > 22.2) {
-				currentImageScale = ImageDrawScales.LARGE;
-			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 14.5){
-				currentImageScale = ImageDrawScales.MEDIUM;
+			if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 22.2) {
+				this.currentImageScale = ImageDrawScales.LARGE;
+			} else if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 14.5){
+				this.currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
-				currentImageScale = ImageDrawScales.SMALL;
+				this.currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
 		else if (numHexLargestDimension < 105) {
-			if (zoomer.getZoomScale() * (numHexCol / 2) > 32.6) {
-				currentImageScale = ImageDrawScales.LARGE;
-			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 21){
-				currentImageScale = ImageDrawScales.MEDIUM;
+			if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 32.6) {
+				this.currentImageScale = ImageDrawScales.LARGE;
+			} else if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 21){
+				this.currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
-				currentImageScale = ImageDrawScales.SMALL;
+				this.currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
 		else {
-			if (zoomer.getZoomScale() * (numHexCol / 2) > 44.4) {
-				currentImageScale = ImageDrawScales.LARGE;
-			} else if (zoomer.getZoomScale() * (numHexCol / 2) > 28){
-				currentImageScale = ImageDrawScales.MEDIUM;
+			if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 44.4) {
+				this.currentImageScale = ImageDrawScales.LARGE;
+			} else if (this.zoomer.getZoomScale() * (this.numHexCol / 2) > 28){
+				this.currentImageScale = ImageDrawScales.MEDIUM;
 			} else {
-				currentImageScale = ImageDrawScales.SMALL;
+				this.currentImageScale = ImageDrawScales.SMALL;
 			}
 		}
 	}

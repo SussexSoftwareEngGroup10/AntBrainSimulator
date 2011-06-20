@@ -47,33 +47,33 @@ public class SoundPlayer implements LineListener {
 			
 			//Tese blocks of code get an audio line to use, create the clip,
 			//and open the relevent audio file with it
-			dieLine = AudioSystem.getLine(lineInfo);
-			dieSound = (Clip) dieLine;
-			dieSound.addLineListener(this);
+			this.dieLine = AudioSystem.getLine(lineInfo);
+			this.dieSound = (Clip) this.dieLine;
+			this.dieSound.addLineListener(this);
 			audioInputStream = AudioSystem.getAudioInputStream(
 					new File("resources/sounds/die.wav"));
-			dieSound.open(audioInputStream);
+			this.dieSound.open(audioInputStream);
 			
-			finishLine = AudioSystem.getLine(lineInfo);
-			finishSound = (Clip) finishLine;
-			finishSound.addLineListener(this);
+			this.finishLine = AudioSystem.getLine(lineInfo);
+			this.finishSound = (Clip) this.finishLine;
+			this.finishSound.addLineListener(this);
 			audioInputStream = AudioSystem.getAudioInputStream(
 					new File("resources/sounds/finish.wav"));
-			finishSound.open(audioInputStream);
+			this.finishSound.open(audioInputStream);
 
-			foodCollectionLine = AudioSystem.getLine(lineInfo);
-			foodCollectionSound = (Clip) foodCollectionLine;
-			foodCollectionSound.addLineListener(this);
+			this.foodCollectionLine = AudioSystem.getLine(lineInfo);
+			this.foodCollectionSound = (Clip) this.foodCollectionLine;
+			this.foodCollectionSound.addLineListener(this);
 			audioInputStream = AudioSystem.getAudioInputStream(
 					new File("resources/sounds/food_collection.wav"));
-			foodCollectionSound.open(audioInputStream);
+			this.foodCollectionSound.open(audioInputStream);
 			
-			foodDepositionLine = AudioSystem.getLine(lineInfo);
-			foodDepositionSound = (Clip) foodDepositionLine;
-			foodDepositionSound.addLineListener(this);
+			this.foodDepositionLine = AudioSystem.getLine(lineInfo);
+			this.foodDepositionSound = (Clip) this.foodDepositionLine;
+			this.foodDepositionSound.addLineListener(this);
 			audioInputStream = AudioSystem.getAudioInputStream(
 					new File("resources/sounds/food_deposition.wav"));
-			foodDepositionSound.open(audioInputStream);
+			this.foodDepositionSound.open(audioInputStream);
 			
 		} catch (LineUnavailableException lUE) {
 			Logger.log(new ErrorEvent("Requested audio line is unavailable."));
@@ -92,16 +92,16 @@ public class SoundPlayer implements LineListener {
 	 */
 	public void playSound(String sound) {
 		//Do not play if muted
-		if (!mute) {
+		if (!this.mute) {
 			if (sound.equals("die")) {
 				//Call the start methods of the clips
-				dieSound.start();
+				this.dieSound.start();
 			} else if (sound.equals("finish")) {
-				finishSound.start();
+				this.finishSound.start();
 			} else if (sound.equals("food_collection")) {
-				foodCollectionSound.start();
+				this.foodCollectionSound.start();
 			} else if (sound.equals("food_deposition")) {
-				foodDepositionSound.start();
+				this.foodDepositionSound.start();
 			} else {
 				Logger.log(new IllegalArgumentEvent(
 						"Non existant sound requested."));
@@ -124,7 +124,7 @@ public class SoundPlayer implements LineListener {
 	 * @return True if it is muted.
 	 */
 	public boolean isMute() {
-		return mute;
+		return this.mute;
 	}
 
 	/**
@@ -136,10 +136,10 @@ public class SoundPlayer implements LineListener {
 	public void update(LineEvent le) {
 		LineEvent.Type type = le.getType();
 	    if (type == LineEvent.Type.STOP) {
-	    	dieSound.setFramePosition(0);
-	    	finishSound.setFramePosition(0);
-	    	foodCollectionSound.setFramePosition(0);
-	    	foodDepositionSound.setFramePosition(0);
+	    	this.dieSound.setFramePosition(0);
+	    	this.finishSound.setFramePosition(0);
+	    	this.foodCollectionSound.setFramePosition(0);
+	    	this.foodDepositionSound.setFramePosition(0);
 	    }
 	}
 }

@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import engine.GameStats;
 
@@ -36,7 +37,7 @@ public class StatisticsWindow {
 	private void drawGUI(GameStats stats) {
 		//Set up the window frame and get the content pane
 		JFrame window = new JFrame("Statistics");
-		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		Container pane = window.getContentPane();
 		pane.setLayout(new BorderLayout());
 		

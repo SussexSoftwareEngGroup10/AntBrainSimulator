@@ -25,11 +25,11 @@ public class AntTest {
 	@Test
 	public void testSenseFoodA() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds\\testSenseFood", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds\\testSenseFood", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains\\senseFoodTestBrain"); //the ant will turn left if it senses food
-			testWorld.setBrain(brain,0);
+			Ant[] testAnts = this.testWorld.getAnts();
+			this.brain = BrainParser.readBrainFrom("testBrains\\senseFoodTestBrain"); //the ant will turn left if it senses food
+			this.testWorld.setBrain(this.brain,0);
 			testAnts[0].step();
 			testAnts[0].step();
 			assertEquals(5, testAnts[0].getDirection());
@@ -43,11 +43,11 @@ public class AntTest {
 	@Test
 	public void testSenseFoodB() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/senseFoodTestBrain"); //the ant will turn left if it senses food
-			testWorld.setBrain(brain,0);
+			Ant[] testAnts = this.testWorld.getAnts();
+			this.brain = BrainParser.readBrainFrom("testBrains/senseFoodTestBrain"); //the ant will turn left if it senses food
+			this.testWorld.setBrain(this.brain,0);
 			testAnts[0].step();
 			testAnts[0].step();
 			assertEquals(0, testAnts[0].getDirection());
@@ -61,15 +61,15 @@ public class AntTest {
 	@Test
 	public void testSenseEnemyAntA(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseEnemyAnt", null);
-			Ant[] testAnts = testWorld.getAnts();
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testSenseEnemyAnt", null);
+			Ant[] testAnts = this.testWorld.getAnts();
 			try{
-			brain = BrainParser.readBrainFrom("testBrains/senseEnemyAntTestBrain"); //the ant will turn left if it senses an enemy ant
+			this.brain = BrainParser.readBrainFrom("testBrains/senseEnemyAntTestBrain"); //the ant will turn left if it senses an enemy ant
 			}catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
-			testWorld.setBrain(brain,0);
-			testWorld.setBrain(brain,1);
+			this.testWorld.setBrain(this.brain,0);
+			this.testWorld.setBrain(this.brain,1);
 			Ant ant = testAnts[0];
 			
 			for(int i = 0; i < 2; i++){
@@ -90,15 +90,15 @@ public class AntTest {
 	@Test
 	public void testSenseEnemyAntB(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			try{
-				brain = BrainParser.readBrainFrom("testBrains/senseEnemyAntTestBrain"); //the ant will turn left if it senses an enemy ant
+				this.brain = BrainParser.readBrainFrom("testBrains/senseEnemyAntTestBrain"); //the ant will turn left if it senses an enemy ant
 			} catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
-			testWorld.setBrain(brain,0); //turns right if no ant present
+			this.testWorld.setBrain(this.brain,0); //turns right if no ant present
 			testAnts[0].step();
 			testAnts[0].step();
 			assertEquals(1, testAnts[0].getDirection());
@@ -110,15 +110,15 @@ public class AntTest {
 	@Test
 	public void testSenseFriendlyAntA(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFriendlyAnt", null);
-			Ant[] testAnts = testWorld.getAnts();
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFriendlyAnt", null);
+			Ant[] testAnts = this.testWorld.getAnts();
 			try{
-			brain = BrainParser.readBrainFrom("testBrains/senseFriendlyAntTestBrain"); //the ant will turn left if it senses an enemy ant
+			this.brain = BrainParser.readBrainFrom("testBrains/senseFriendlyAntTestBrain"); //the ant will turn left if it senses an enemy ant
 			}catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
 			Ant ant = testAnts[0];
-			ant.setBrain(brain);
+			ant.setBrain(this.brain);
 			
 			for(int i = 0; i < 2; i++){
 				ant.step();
@@ -138,15 +138,15 @@ public class AntTest {
 	@Test
 	public void testSenseFriendlyAntB(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			try{
-				brain = BrainParser.readBrainFrom("testBrains/senseFriendlyAntTestBrain"); //the ant will turn left if it senses an enemy ant
+				this.brain = BrainParser.readBrainFrom("testBrains/senseFriendlyAntTestBrain"); //the ant will turn left if it senses an enemy ant
 			} catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
-			testWorld.setBrain(brain,0); //turns right if no ant present
+			this.testWorld.setBrain(this.brain,0); //turns right if no ant present
 			testAnts[0].step();
 			testAnts[0].step();
 			assertEquals(1, testAnts[0].getDirection());
@@ -158,11 +158,11 @@ public class AntTest {
 	@Test
 	public void testSenseRocksA() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds\\testSenseRock", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds\\testSenseRock", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains\\senseRockTestBrain"); //the ant will turn left if it senses food
-			testWorld.setBrain(brain,0);
+			Ant[] testAnts = this.testWorld.getAnts();
+			this.brain = BrainParser.readBrainFrom("testBrains\\senseRockTestBrain"); //the ant will turn left if it senses food
+			this.testWorld.setBrain(this.brain,0);
 			testAnts[0].step();
 			testAnts[0].step();
 			assertEquals(5, testAnts[0].getDirection());
@@ -176,11 +176,11 @@ public class AntTest {
 	@Test
 	public void testSenseRocksB() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/senseRockTestBrain"); //the ant will turn left if it senses food
-			testWorld.setBrain(brain,0);
+			Ant[] testAnts = this.testWorld.getAnts();
+			this.brain = BrainParser.readBrainFrom("testBrains/senseRockTestBrain"); //the ant will turn left if it senses food
+			this.testWorld.setBrain(this.brain,0);
 			testAnts[0].step();
 			testAnts[0].step();
 			assertEquals(0, testAnts[0].getDirection());
@@ -194,12 +194,12 @@ public class AntTest {
 	@Test
 	public void testAttackandKill(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/testKill", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testKill", null);
 			
-			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("move_ahead");
-			testWorld.setBrain(brain, 0);
-			testWorld.setBrain(brain, 1);
+			Ant[] testAnts = this.testWorld.getAnts();
+			this.brain = BrainParser.readBrainFrom("move_ahead");
+			this.testWorld.setBrain(this.brain, 0);
+			this.testWorld.setBrain(this.brain, 1);
 			for(int i = 0; i < 15; i++){
 				for(int r = 0; r < testAnts.length; r++){
 					testAnts[r].step();
@@ -217,12 +217,12 @@ public class AntTest {
 	@Test
 	public void testLeftTurn(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
+			Ant[] testAnts = this.testWorld.getAnts();
+			this.brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
 
-			testAnts[0].setBrain(brain);
+			testAnts[0].setBrain(this.brain);
 			testAnts[0].step();
 			assertEquals(5, testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
@@ -235,15 +235,15 @@ public class AntTest {
 	@Test
 	public void testRightTurn(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			try{
-				brain = BrainParser.readBrainFrom("testBrains/turnRightOnly");
+				this.brain = BrainParser.readBrainFrom("testBrains/turnRightOnly");
 			} catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
-			testAnts[0].setBrain(brain);
+			testAnts[0].setBrain(this.brain);
 			testAnts[0].step();
 			assertEquals(1,testAnts[0].getDirection()); //testing for 5, since 5 is after one left turn
 		} catch (IOEvent e) {
@@ -254,13 +254,13 @@ public class AntTest {
 	@Test
 	public void testMove(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 
-			brain = BrainParser.readBrainFrom("move_ahead");
+			this.brain = BrainParser.readBrainFrom("move_ahead");
 
-			testAnts[0].setBrain(brain);
+			testAnts[0].setBrain(this.brain);
 			testAnts[0].step();
 			assertEquals(4, testAnts[0].getCell().getRow());
 		} catch (IOEvent e) {
@@ -273,13 +273,13 @@ public class AntTest {
 	@Test
 	public void testCollectFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 
-			brain = BrainParser.readBrainFrom("testBrains/testCollectFood"); //load working brain with the ability to pick up food
+			this.brain = BrainParser.readBrainFrom("testBrains/testCollectFood"); //load working brain with the ability to pick up food
 
-			testWorld.setBrain(brain, 0);
+			this.testWorld.setBrain(this.brain, 0);
 			for (int i = 0; i < 17; i++){ //after 17 steps, the ant should have JUST picked up the food acording to the brain
 				testAnts[0].step();
 			}
@@ -294,13 +294,13 @@ public class AntTest {
 	@Test
 	public void testDropFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testSenseFood", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 
-			brain = BrainParser.readBrainFrom("testBrains/testDropFood"); //load working brain with the ability to pick up food
+			this.brain = BrainParser.readBrainFrom("testBrains/testDropFood"); //load working brain with the ability to pick up food
 
-			testWorld.setBrain(brain, 0);
+			this.testWorld.setBrain(this.brain, 0);
 			for (int i = 0; i < 17; i++){
 				testAnts[0].step();
 			}
@@ -320,13 +320,13 @@ public class AntTest {
 	@Test
 	public void testSetMark(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
+			Ant[] testAnts = this.testWorld.getAnts();
+			this.brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndSense"); 
 
 			//this brain places a marker, moves, and turns around to sense, if detected, the ant turns left
-			testWorld.setBrain(brain, 0);
+			this.testWorld.setBrain(this.brain, 0);
 			for (int i = 0; i < 3; i++){
 				testAnts[0].step();
 			}
@@ -341,13 +341,13 @@ public class AntTest {
 	@Test
 	public void testRemoveMark(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 		
-			brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndRemove"); 
+			this.brain = BrainParser.readBrainFrom("testBrains/markerPlaceAndRemove"); 
 			//this brain places a marker, moves, and turns around to sense, if detected, the ant turns left
-			testWorld.setBrain(brain, 0);
+			this.testWorld.setBrain(this.brain, 0);
 			for (int i = 0; i < 3; i++){
 				testAnts[0].step();
 			}
@@ -370,9 +370,9 @@ public class AntTest {
 	@Test
 	public void testReturnColourA(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/twoAnts", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/twoAnts", null);
 			
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			
 			assertEquals(0, testAnts[0].getColour());
 			
@@ -385,9 +385,9 @@ public class AntTest {
 	public void testReturnColourB(){
 		try{
 			
-			testWorld = WorldParser.readWorldFrom("testWorlds/twoAnts", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/twoAnts", null);
 			
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			
 			assertEquals(1, testAnts[1].getColour());
 			
@@ -400,9 +400,9 @@ public class AntTest {
 	@Test
 	public void testGetCell(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/testCell", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testCell", null);
 			
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			assertEquals("wrong cell returned","11", testAnts[0].getCell().getRow() + "" + testAnts[0].getCell().getCol());
 			assertEquals("wrong cell returned","88", testAnts[1].getCell().getRow() + "" + testAnts[1].getCell().getCol());
 
@@ -414,9 +414,9 @@ public class AntTest {
 	@Test
 	public void testSetCell(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/testCell", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testCell", null);
 			
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			
 			Cell testCell = new Cell(5,5,'+');
 			testAnts[0].setCell(testCell);
@@ -436,15 +436,15 @@ public class AntTest {
 	@Test
 	public void testContinualLeftTurning(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			try{
-				brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
+				this.brain = BrainParser.readBrainFrom("testBrains/turnLeftOnly");
 			} catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
-			testAnts[0].setBrain(brain);
+			testAnts[0].setBrain(this.brain);
 			for (int i = 0; i < 10000000; i++){
 				testAnts[0].step();
 			}  
@@ -464,15 +464,15 @@ public class AntTest {
 	@Test
 	public void testContinualRightTurning(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 		
-			Ant[] testAnts = testWorld.getAnts();
+			Ant[] testAnts = this.testWorld.getAnts();
 			try{
-				brain = BrainParser.readBrainFrom("testBrains/turnRightOnly");
+				this.brain = BrainParser.readBrainFrom("testBrains/turnRightOnly");
 			} catch (IllegalArgumentEvent e) {
 				fail(e.getMessage());
 			}
-			testAnts[0].setBrain(brain);
+			testAnts[0].setBrain(this.brain);
 			for (int i = 0; i < 10000000; i++){
 				testAnts[0].step();
 			} 
@@ -491,11 +491,11 @@ public class AntTest {
 	@Test
 	public void testMoveBeyondEdgeOfMap() {
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/blank", null);
 			
-			Ant[] testAnts = testWorld.getAnts();
-			brain = BrainParser.readBrainFrom("move_ahead");
-			testAnts[0].setBrain(brain);
+			Ant[] testAnts = this.testWorld.getAnts();
+			this.brain = BrainParser.readBrainFrom("move_ahead");
+			testAnts[0].setBrain(this.brain);
 			for(int i = 0; i < 100; i++){
 				testAnts[0].step();
 			}		

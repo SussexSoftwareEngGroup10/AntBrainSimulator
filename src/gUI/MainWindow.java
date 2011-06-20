@@ -47,43 +47,43 @@ public class MainWindow {
 	private static final int WINDOW_HEIGHT = 738;
 	
 	//The game engine to use for running the back end code
-	private GameEngine gameEngine;
+	protected GameEngine gameEngine;
 	//The world currently displaying in the display
-	private World world;
+	protected World world;
 	//Used to reset the world back to the state before the game is run
-	private World clonedWorld;
+	protected World clonedWorld;
 	
 	//The two ant brains to vs each other
-	private Brain blackBrain;
-	private Brain redBrain;
+	protected Brain blackBrain;
+	protected Brain redBrain;
 	
 	//The other GUI windows used, and generated from here
-	private GameDisplay gameDisplay;
+	protected GameDisplay gameDisplay;
 	
 	//The control buttons to be display at the bottom of the window
-	private JButton startGameBtn;
-	private JButton contestBtn;
-	private JButton uploadRedBtn;
-	private JButton uploadBlackBtn;
-	private JButton uploadWorldBtn;
-	private JButton genWorldBtn;
-	private JButton finishBtn;
-	private JSlider speedAdjustmentSlider;
-	private JButton muteBtn;
-	private JButton toggleMarkersBtn;
-	private JLabel roundsLbl;
-	private JLabel blackAnthillFoodLbl;
-	private JLabel redAnthillFoodLbl;
+	protected JButton startGameBtn;
+	protected JButton contestBtn;
+	protected JButton uploadRedBtn;
+	protected JButton uploadBlackBtn;
+	protected JButton uploadWorldBtn;
+	protected JButton genWorldBtn;
+	protected JButton finishBtn;
+	protected JSlider speedAdjustmentSlider;
+	protected JButton muteBtn;
+	protected JButton toggleMarkersBtn;
+	protected JLabel roundsLbl;
+	protected JLabel blackAnthillFoodLbl;
+	protected JLabel redAnthillFoodLbl;
 
 	//Sound player used to play all the sounds in the game
-	private SoundPlayer soundPlayer = new SoundPlayer();
+	protected SoundPlayer soundPlayer = new SoundPlayer();
 	//Used to fetch stats from the game and update them to this window
 	private LiveStatGrabber liveStatGrabber;
 	//Specifies whether the game was muted before the finish button was pressed
-	private boolean isMuteBeforeFinish = false;
+	protected boolean isMuteBeforeFinish = false;
 	
 	//Private, so cannot be externally accessed.
-	private MainWindow() {}
+	private MainWindow() {/**/}
 	
 	/**
 	 * Get the singleton object of this class.
@@ -109,10 +109,10 @@ public class MainWindow {
 	 */
 	public void init() {
 		try {
-			world = World.getContestWorld(0, soundPlayer);
-			gameEngine = new GameEngine();
-			liveStatGrabber = new LiveStatGrabber(this, world);
-			liveStatGrabber.start();
+			this.world = World.getContestWorld(0, this.soundPlayer);
+			this.gameEngine = new GameEngine();
+			this.liveStatGrabber = new LiveStatGrabber(this, this.world);
+			this.liveStatGrabber.start();
 			drawGUI();
 		} catch (ErrorEvent e) {
 			GUIErrorMsg.displayErrorMsg("Error in generating a world!");
@@ -135,9 +135,9 @@ public class MainWindow {
 		JPanel gridDisplayPanel = new JPanel();
 		gridDisplayPanel.setLayout(new FlowLayout());
 		
-		gameDisplay = new GameDisplay(world);
-		gridDisplayPanel.add(gameDisplay);
-		gameDisplay.init();
+		this.gameDisplay = new GameDisplay(this.world);
+		gridDisplayPanel.add(this.gameDisplay);
+		this.gameDisplay.init();
 		pane.add(gridDisplayPanel, BorderLayout.WEST);
 		
 		//Set up JPanel at the bottom to display the control buttons, displayed
@@ -152,26 +152,26 @@ public class MainWindow {
 		setupPanel.setBorder(new EmptyBorder(150, 20, 30, 20) );
 		
 		//Create the buttons and assign listeners
-		startGameBtn = new JButton("Start Game");
-		startGameBtn.addActionListener(new StartGameListener(this));
-		startGameBtn.setEnabled(false);
-		contestBtn = new JButton("Contest Mode");
-		contestBtn.addActionListener(new ContestListener());
-		uploadRedBtn = new JButton("Upload Red Brain");
-		uploadRedBtn.addActionListener(new FileBrowseListener());
-		uploadBlackBtn = new JButton("Upload Black Brain");
-		uploadBlackBtn.addActionListener(new FileBrowseListener());
-		uploadWorldBtn = new JButton("Upload World");
-		uploadWorldBtn.addActionListener(new FileBrowseListener());
-		genWorldBtn = new JButton("Generate World");
-		genWorldBtn.addActionListener(new WorldGenListener(this));
+		this.startGameBtn = new JButton("Start Game");
+		this.startGameBtn.addActionListener(new StartGameListener(this));
+		this.startGameBtn.setEnabled(false);
+		this.contestBtn = new JButton("Contest Mode");
+		this.contestBtn.addActionListener(new ContestListener());
+		this.uploadRedBtn = new JButton("Upload Red Brain");
+		this.uploadRedBtn.addActionListener(new FileBrowseListener());
+		this.uploadBlackBtn = new JButton("Upload Black Brain");
+		this.uploadBlackBtn.addActionListener(new FileBrowseListener());
+		this.uploadWorldBtn = new JButton("Upload World");
+		this.uploadWorldBtn.addActionListener(new FileBrowseListener());
+		this.genWorldBtn = new JButton("Generate World");
+		this.genWorldBtn.addActionListener(new WorldGenListener(this));
 		
-		setupPanel.add(startGameBtn);
-		setupPanel.add(contestBtn);
-		setupPanel.add(uploadBlackBtn);
-		setupPanel.add(uploadRedBtn);
-		setupPanel.add(uploadWorldBtn);
-		setupPanel.add(genWorldBtn);
+		setupPanel.add(this.startGameBtn);
+		setupPanel.add(this.contestBtn);
+		setupPanel.add(this.uploadBlackBtn);
+		setupPanel.add(this.uploadRedBtn);
+		setupPanel.add(this.uploadWorldBtn);
+		setupPanel.add(this.genWorldBtn);
 		
 		buttonsPanel.add(setupPanel, BorderLayout.NORTH);
 		
@@ -187,22 +187,22 @@ public class MainWindow {
 		//Set up button to finish the current game
 		JPanel controlButtonsPanel = new JPanel();
 		controlButtonsPanel.setLayout(new FlowLayout());
-		finishBtn = new JButton("Finish");
-		finishBtn.addActionListener(new FinishListener());
-		finishBtn.setEnabled(false);
-		controlButtonsPanel.add(finishBtn);
+		this.finishBtn = new JButton("Finish");
+		this.finishBtn.addActionListener(new FinishListener());
+		this.finishBtn.setEnabled(false);
+		controlButtonsPanel.add(this.finishBtn);
 		
 		//Set up JPanel to display the speed adjustment slider
 		JPanel speedAdjustmentPanel = new JPanel();
-		speedAdjustmentSlider = new JSlider(1, 1000, 500);
-		speedAdjustmentSlider.addChangeListener(
+		this.speedAdjustmentSlider = new JSlider(1, 1000, 500);
+		this.speedAdjustmentSlider.addChangeListener(
 				new SpeedSliderChangeListener());
 		//Add a border, and tick marks to slider
-		speedAdjustmentSlider.setBorder(
+		this.speedAdjustmentSlider.setBorder(
 				BorderFactory.createTitledBorder("Speed Adjustment Slider"));
-		speedAdjustmentSlider.setMajorTickSpacing(20);
-		speedAdjustmentSlider.setEnabled(false);
-		speedAdjustmentPanel.add(speedAdjustmentSlider);
+		this.speedAdjustmentSlider.setMajorTickSpacing(20);
+		this.speedAdjustmentSlider.setEnabled(false);
+		speedAdjustmentPanel.add(this.speedAdjustmentSlider);
 		
 		//Panel to hold the mute and toggle markers panel as well as the live
 		//game stats
@@ -214,40 +214,40 @@ public class MainWindow {
 		JPanel muteAndHideMarkersPanel = new JPanel();
 		muteAndHideMarkersPanel.setLayout(new FlowLayout());
 		
-		muteBtn = new JButton("Mute");
-		muteBtn.addActionListener(new MuteListener());
-		muteBtn.setPreferredSize(new Dimension(90, 26));
-		muteBtn.setEnabled(true);
-		toggleMarkersBtn = new JButton("Markers Off");
-		toggleMarkersBtn.addActionListener(new MarkersListener());
-		toggleMarkersBtn.setPreferredSize(new Dimension(105, 26));
-		toggleMarkersBtn.setEnabled(true);
-		muteAndHideMarkersPanel.add(muteBtn);
-		muteAndHideMarkersPanel.add(toggleMarkersBtn);
+		this.muteBtn = new JButton("Mute");
+		this.muteBtn.addActionListener(new MuteListener());
+		this.muteBtn.setPreferredSize(new Dimension(90, 26));
+		this.muteBtn.setEnabled(true);
+		this.toggleMarkersBtn = new JButton("Markers Off");
+		this.toggleMarkersBtn.addActionListener(new MarkersListener());
+		this.toggleMarkersBtn.setPreferredSize(new Dimension(105, 26));
+		this.toggleMarkersBtn.setEnabled(true);
+		muteAndHideMarkersPanel.add(this.muteBtn);
+		muteAndHideMarkersPanel.add(this.toggleMarkersBtn);
 		
 		//Panel to display the live stats
 		JPanel liveStatsPanel = new JPanel();
 		liveStatsPanel.setLayout(new GridLayout(3, 1));
 		
 		//Label to display the current round
-		roundsLbl = new JLabel("Round:");
-		roundsLbl.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
-		roundsLbl.setEnabled(false);
-		liveStatsPanel.add(roundsLbl);
+		this.roundsLbl = new JLabel("Round:");
+		this.roundsLbl.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
+		this.roundsLbl.setEnabled(false);
+		liveStatsPanel.add(this.roundsLbl);
 		//Label to display food in black ant hill
-		blackAnthillFoodLbl 
+		this.blackAnthillFoodLbl 
 				= new JLabel("Food in black ant hill:");
-		blackAnthillFoodLbl.setBorder(
+		this.blackAnthillFoodLbl.setBorder(
 				BorderFactory.createEmptyBorder(5, 10, 5, 0));
-		blackAnthillFoodLbl.setEnabled(false);
-		liveStatsPanel.add(blackAnthillFoodLbl);
+		this.blackAnthillFoodLbl.setEnabled(false);
+		liveStatsPanel.add(this.blackAnthillFoodLbl);
 		//Label to display food in red ant hill
-		redAnthillFoodLbl 
+		this.redAnthillFoodLbl 
 				= new JLabel("Food in red ant hill:");
-		redAnthillFoodLbl.setBorder(
+		this.redAnthillFoodLbl.setBorder(
 				BorderFactory.createEmptyBorder(5, 10, 5, 0));
-		redAnthillFoodLbl.setEnabled(false);
-		liveStatsPanel.add(redAnthillFoodLbl);
+		this.redAnthillFoodLbl.setEnabled(false);
+		liveStatsPanel.add(this.redAnthillFoodLbl);
 		
 		//Add the panels for muting and markers and stats to the outer panel
 		muteMarkersAndStatsPanel.add(
@@ -279,9 +279,9 @@ public class MainWindow {
 	 */
 	protected void setupNewWorldStandardWorld(int rows, int cols, int rocks) 
 			throws ErrorEvent {
-		world = World.getRegularWorld(0, rows, cols, rocks, soundPlayer);
-		gameDisplay.updateWorld(world); //Update game display with the world
-		liveStatGrabber.updateWorld(world);
+		this.world = World.getRegularWorld(0, rows, cols, rocks, this.soundPlayer);
+		this.gameDisplay.updateWorld(this.world); //Update game display with the world
+		this.liveStatGrabber.updateWorld(this.world);
 	}
 
 	/**
@@ -290,9 +290,9 @@ public class MainWindow {
 	 * @throws ErrorEvent When the world generation fails.
 	 */
 	protected void setupNewContestWorld() throws ErrorEvent {
-		world = World.getContestWorld(0, soundPlayer);
-		gameDisplay.updateWorld(world);
-		liveStatGrabber.updateWorld(world);
+		this.world = World.getContestWorld(0, this.soundPlayer);
+		this.gameDisplay.updateWorld(this.world);
+		this.liveStatGrabber.updateWorld(this.world);
 	}
 
 	/**
@@ -302,36 +302,37 @@ public class MainWindow {
 	 * 
 	 * @param gameStats The stats of the game.
 	 */
+	@SuppressWarnings("unused")
 	protected void notifyGameComplete(GameStats gameStats) {
 		//Restore whether the game was muted or not
-		soundPlayer.setMute(isMuteBeforeFinish);
+		this.soundPlayer.setMute(this.isMuteBeforeFinish);
 		//Play the end of game sound
-		soundPlayer.playSound("finish");
+		this.soundPlayer.playSound("finish");
 		
 		//Re-enable buttons
-		startGameBtn.setEnabled(true);
-		contestBtn.setEnabled(true);
-		uploadBlackBtn.setEnabled(true);
-		uploadRedBtn.setEnabled(true);
-		uploadWorldBtn.setEnabled(true);
-		genWorldBtn.setEnabled(true);
+		this.startGameBtn.setEnabled(true);
+		this.contestBtn.setEnabled(true);
+		this.uploadBlackBtn.setEnabled(true);
+		this.uploadRedBtn.setEnabled(true);
+		this.uploadWorldBtn.setEnabled(true);
+		this.genWorldBtn.setEnabled(true);
 		
 		//And disable others
-		finishBtn.setEnabled(false);
-		speedAdjustmentSlider.setEnabled(false);
-		roundsLbl.setEnabled(false);
-		blackAnthillFoodLbl.setEnabled(false);
-		redAnthillFoodLbl.setEnabled(false);
+		this.finishBtn.setEnabled(false);
+		this.speedAdjustmentSlider.setEnabled(false);
+		this.roundsLbl.setEnabled(false);
+		this.blackAnthillFoodLbl.setEnabled(false);
+		this.redAnthillFoodLbl.setEnabled(false);
 		
 		
 		//Set speed adjustment slider back to default
-		speedAdjustmentSlider.setValue(500);
+		this.speedAdjustmentSlider.setValue(500);
 		
 		//Swap back the state of the world before the game was run
-		world = clonedWorld;
-		gameDisplay.updateWorld(world);
-		liveStatGrabber.updateWorld(world);
-		gameDisplay.switchState(DisplayStates.DISPLAYING_GRID);
+		this.world = this.clonedWorld;
+		this.gameDisplay.updateWorld(this.world);
+		this.liveStatGrabber.updateWorld(this.world);
+		this.gameDisplay.switchState(DisplayStates.DISPLAYING_GRID);
 		
 		//Display dialog box asking if statistics should be displayed
 		String[] options = {"Statistics", "OK"}; //Possible options
@@ -360,10 +361,10 @@ public class MainWindow {
 	protected void updateLiveStats(
 			int round, int blackAnthillFood, int redAnthillFood) {
 		//Update labal's text
-		roundsLbl.setText("Round: " + round);
-		blackAnthillFoodLbl.setText(
+		this.roundsLbl.setText("Round: " + round);
+		this.blackAnthillFoodLbl.setText(
 				"Food in black ant hill: " + blackAnthillFood);
-		redAnthillFoodLbl.setText(
+		this.redAnthillFoodLbl.setText(
 				"Food in red ant hill: " + redAnthillFood);
 	}
 	
@@ -372,6 +373,10 @@ public class MainWindow {
 	 */
 	private class FileBrowseListener implements ActionListener 
 	{
+		public FileBrowseListener() {
+			// TODO Auto-generated constructor stub
+		}
+
 		/**
 		 * Displays the file chooser box when the browse button is 
 		 * clicked, a tick is display on the button to confirm the file has 
@@ -395,12 +400,12 @@ public class MainWindow {
 					path = file.getAbsolutePath();
 					JButton clickedBtn = (JButton) e.getSource();
 					//Validate the file is of the correct format
-					if ((clickedBtn == uploadRedBtn || 
-							clickedBtn == uploadBlackBtn) && 
+					if ((clickedBtn == MainWindow.this.uploadRedBtn || 
+							clickedBtn == MainWindow.this.uploadBlackBtn) && 
 							!path.contains(".ant")) {
 							GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .ant file expected.");
-					} else if (clickedBtn == uploadWorldBtn &&
+					} else if (clickedBtn == MainWindow.this.uploadWorldBtn &&
 							!path.contains(".world")) {
 							GUIErrorMsg.displayErrorMsg(
 								"Invalid file format, .ant file expected.");
@@ -409,25 +414,25 @@ public class MainWindow {
 						//symbol is displayed on that button, and the 
 						//associated file path is updated with the file chosen
 						try {
-							if (clickedBtn == uploadRedBtn) {
+							if (clickedBtn == MainWindow.this.uploadRedBtn) {
 								if (!clickedBtn.getText().contains("✔")) {
 									clickedBtn.setText(
 												clickedBtn.getText() + " ✔");
 								}
 								try{
-									redBrain = BrainParser.readBrainFrom(path);
+									MainWindow.this.redBrain = BrainParser.readBrainFrom(path);
 								} catch (IllegalArgumentEvent iae) {
 									GUIErrorMsg.displayErrorMsg(
 											"Unable to parse file. " +
 											"Brain syntactically incorrect!");
 								}
-							} else if (clickedBtn == uploadBlackBtn) {
+							} else if (clickedBtn == MainWindow.this.uploadBlackBtn) {
 								if (!clickedBtn.getText().contains("✔")) {
 									clickedBtn.setText(
 												clickedBtn.getText() + " ✔");
 								}
 								try{
-									blackBrain = 
+									MainWindow.this.blackBrain = 
 										BrainParser.readBrainFrom(path);
 								} catch (IllegalArgumentEvent iae) {
 									GUIErrorMsg.displayErrorMsg(
@@ -436,8 +441,8 @@ public class MainWindow {
 								}
 							} else { //Else world button was clicked
 								try{
-									world = WorldParser.readWorldFrom(
-											path, soundPlayer);
+									MainWindow.this.world = WorldParser.readWorldFrom(
+											path, MainWindow.this.soundPlayer);
 								} catch (IOEvent iOE) {
 									GUIErrorMsg.displayErrorMsg(
 											"Unable to parse file. " +
@@ -445,9 +450,9 @@ public class MainWindow {
 								}
 								//Updated the game display with the parsed 
 								//world
-								gameDisplay.updateWorld(world);
+								MainWindow.this.gameDisplay.updateWorld(MainWindow.this.world);
 							}
-						} catch (IOEvent iOE) { }
+						} catch (IOEvent iOE) { /**/ }
 					}
 				}
 			} catch (SecurityException sE) {
@@ -455,8 +460,8 @@ public class MainWindow {
 				GUIErrorMsg.displayErrorMsg("Security violation with file!");
 			}
 			//If all files have been selected, allow game to be played.
-			if (!(blackBrain == null) && !(redBrain == null)) {
-				startGameBtn.setEnabled(true);
+			if (!(MainWindow.this.blackBrain == null) && !(MainWindow.this.redBrain == null)) {
+				MainWindow.this.startGameBtn.setEnabled(true);
 			}
 		}
 	}
@@ -465,6 +470,10 @@ public class MainWindow {
 	 * Attached to the button for initiating contest mode.
 	 */
 	private class ContestListener implements ActionListener {
+		public ContestListener() {
+			// TODO Auto-generated constructor stub
+		}
+
 		/**
 		 * Brings up a dialog box to select the amount of contest participants
 		 * and then builds the contest window based on the amount of 
@@ -472,10 +481,11 @@ public class MainWindow {
 		 * 
 		 * @param e The triggering event.
 		 */
+		@SuppressWarnings("unused")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			//Display a dialog box where the user inputs the number of players
-			String stringNumberOfPlayers = (String) JOptionPane.showInputDialog(
+			String stringNumberOfPlayers = JOptionPane.showInputDialog(
 					null, "Select number of players:", "Player Selector", 
 					JOptionPane.QUESTION_MESSAGE);
 			//Validate it's an int
@@ -492,7 +502,7 @@ public class MainWindow {
 								"Upper limit of 100 players for contests!");
 					} else {
 						//Display contest window
-						new ContestWindow(numberOfPlayers, gameEngine);
+						new ContestWindow(numberOfPlayers, MainWindow.this.gameEngine);
 					}
 				} catch (NumberFormatException nFE){
 					GUIErrorMsg.displayErrorMsg(
@@ -523,9 +533,10 @@ public class MainWindow {
 		 * 
 		 * @param e The triggering event.
 		 */
+		@SuppressWarnings("unused")
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new WorldGenerateWindow(mainWindow);
+			new WorldGenerateWindow(this.mainWindow);
 		}
 	}
 	
@@ -553,38 +564,38 @@ public class MainWindow {
 		 * @param e The triggering event.
 		 */
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(@SuppressWarnings("unused") ActionEvent e) {
 			//First clone the state of the world so it can be restored later
-			clonedWorld = (World) world.clone();
+			MainWindow.this.clonedWorld = (World) MainWindow.this.world.clone();
 			//Set the speed of the simulation to default
-			gameEngine.setSleepDur(500);
+			MainWindow.this.gameEngine.setSleepDur(500);
 			//Set the mute preference to the state the button is in
-			if (muteBtn.getText().equals("Mute")) {
-				soundPlayer.setMute(false);
+			if (MainWindow.this.muteBtn.getText().equals("Mute")) {
+				MainWindow.this.soundPlayer.setMute(false);
 			} else {
-				soundPlayer.setMute(true);
+				MainWindow.this.soundPlayer.setMute(true);
 			}
 			//State a new simulation runner to run the simulation in a new
 			//thread
 			new SimulationRunner(
-					gameEngine, blackBrain, redBrain, world, mainWindow)
+					MainWindow.this.gameEngine, MainWindow.this.blackBrain, MainWindow.this.redBrain, MainWindow.this.world, this.mainWindow)
 					.start();
-			gameDisplay.switchState(DisplayStates.RUNNING);
+			MainWindow.this.gameDisplay.switchState(DisplayStates.RUNNING);
 			
 			//Enable the finish button and the speed adjustment slider
-			finishBtn.setEnabled(true);
-			speedAdjustmentSlider.setEnabled(true);
-			roundsLbl.setEnabled(true);
-			blackAnthillFoodLbl.setEnabled(true);
-			redAnthillFoodLbl.setEnabled(true);
+			MainWindow.this.finishBtn.setEnabled(true);
+			MainWindow.this.speedAdjustmentSlider.setEnabled(true);
+			MainWindow.this.roundsLbl.setEnabled(true);
+			MainWindow.this.blackAnthillFoodLbl.setEnabled(true);
+			MainWindow.this.redAnthillFoodLbl.setEnabled(true);
 			
 			//Disable other buttons
-			startGameBtn.setEnabled(false);
-			contestBtn.setEnabled(false);
-			uploadBlackBtn.setEnabled(false);
-			uploadRedBtn.setEnabled(false);
-			uploadWorldBtn.setEnabled(false);
-			genWorldBtn.setEnabled(false);
+			MainWindow.this.startGameBtn.setEnabled(false);
+			MainWindow.this.contestBtn.setEnabled(false);
+			MainWindow.this.uploadBlackBtn.setEnabled(false);
+			MainWindow.this.uploadRedBtn.setEnabled(false);
+			MainWindow.this.uploadWorldBtn.setEnabled(false);
+			MainWindow.this.genWorldBtn.setEnabled(false);
 		}
 	}
 	
@@ -594,6 +605,10 @@ public class MainWindow {
 	 */
 	private class SpeedSliderChangeListener implements ChangeListener {
 		
+		public SpeedSliderChangeListener() {
+			// TODO Auto-generated constructor stub
+		}
+
 		/**
 		 * Sets the speed of the game to the new speed of the slider.
 		 * 
@@ -603,19 +618,19 @@ public class MainWindow {
 		public void stateChanged(ChangeEvent e) {
 		    JSlider source = (JSlider)e.getSource();
 		    //Subtract from 1000, so that now, the lower the value, the faster
-		    gameEngine.setSleepDur(
-		    		GameEngine.expScale(1001 - (int)source.getValue()));
+		    MainWindow.this.gameEngine.setSleepDur(
+		    		GameEngine.expScale(1001 - source.getValue()));
 		    //Mute the sound if it runs faster than 700 after the change
 		    if (source.getValue() > 700) {
-		    	soundPlayer.setMute(true);
-		    	muteBtn.setEnabled(false);
-		    } else if (muteBtn.getText().equals("Mute")) {
+		    	MainWindow.this.soundPlayer.setMute(true);
+		    	MainWindow.this.muteBtn.setEnabled(false);
+		    } else if (MainWindow.this.muteBtn.getText().equals("Mute")) {
 		    	//If it's slower than 700, unmute if the mute button is toggled
 		    	//to not be muted
-		    	soundPlayer.setMute(false);
-		    	muteBtn.setEnabled(true);
+		    	MainWindow.this.soundPlayer.setMute(false);
+		    	MainWindow.this.muteBtn.setEnabled(true);
 		    } else {
-		    	muteBtn.setEnabled(true);
+		    	MainWindow.this.muteBtn.setEnabled(true);
 		    }
 		}
 	}
@@ -625,6 +640,10 @@ public class MainWindow {
 	 * on and off.
 	 */
 	private class MuteListener implements ActionListener {
+
+		public MuteListener() {
+			// TODO Auto-generated constructor stub
+		}
 
 		/**
 		 * Depending on what state the button was currently in, flip the state
@@ -636,10 +655,10 @@ public class MainWindow {
 			//If it was set to being unmuted, set it to being muted and change
 			//the text of the button, otherwise do the opposite
 			if (source.getText().equals("Mute")) {
-				soundPlayer.setMute(true);
+				MainWindow.this.soundPlayer.setMute(true);
 				source.setText("Unmute");
 			} else {
-				soundPlayer.setMute(false);
+				MainWindow.this.soundPlayer.setMute(false);
 				source.setText("Mute");
 			}
 		}
@@ -651,6 +670,10 @@ public class MainWindow {
 	 */
 	private class MarkersListener implements ActionListener {
 		
+		public MarkersListener() {
+			// TODO Auto-generated constructor stub
+		}
+
 		/**
 		 * Depending on what state the button was currently in, flip the state
 		 * of the button, and turn on or off the chemical markers.
@@ -660,10 +683,10 @@ public class MainWindow {
 			JButton source = (JButton) e.getSource();
 			//Works in a very similar way to the mute button listener
 			if (source.getText().equals("Markers Off")) {
-				gameDisplay.setMarkers(false);
+				MainWindow.this.gameDisplay.setMarkers(false);
 				source.setText("Markers On");
 			} else {
-				gameDisplay.setMarkers(true);
+				MainWindow.this.gameDisplay.setMarkers(true);
 				source.setText("Markers Off");
 			}
 		}
@@ -675,6 +698,10 @@ public class MainWindow {
 	 */
 	private class FinishListener implements ActionListener {
 		
+		public FinishListener() {
+			// TODO Auto-generated constructor stub
+		}
+
 		/**
 		 * Sets the game to unlimited speed and sets the game  display to the
 		 * state where it will display the processing screen.
@@ -682,16 +709,16 @@ public class MainWindow {
 		 * @param e The triggering event.
 		 */
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(@SuppressWarnings("unused") ActionEvent e) {
 			//Sets the game to the fastest speed (as fast as the CPU can handle)
-			gameEngine.setSleepDur(0);
-			speedAdjustmentSlider.setEnabled(false);
-			muteBtn.setEnabled(false);
-			gameDisplay.switchState(DisplayStates.PROCESSING);
+			MainWindow.this.gameEngine.setSleepDur(0);
+			MainWindow.this.speedAdjustmentSlider.setEnabled(false);
+			MainWindow.this.muteBtn.setEnabled(false);
+			MainWindow.this.gameDisplay.switchState(DisplayStates.PROCESSING);
 			//Store whether the game was muted before the game is skipped to
 			//the end. Then mute
-			isMuteBeforeFinish = soundPlayer.isMute();
-			soundPlayer.setMute(true);
+			MainWindow.this.isMuteBeforeFinish = MainWindow.this.soundPlayer.isMute();
+			MainWindow.this.soundPlayer.setMute(true);
 		}
 	}
 }

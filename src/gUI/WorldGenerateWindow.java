@@ -14,6 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
+
 import utilities.ErrorEvent;
 
 /**
@@ -54,9 +56,9 @@ public class WorldGenerateWindow {
 	 */
 	private void drawGUI() {
 		//Set up the JFrame
-		window = new JFrame("World Generator");
-		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		Container pane = window.getContentPane();
+		this.window = new JFrame("World Generator");
+		this.window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		Container pane = this.window.getContentPane();
 		pane.setLayout(new BorderLayout());
 		
 		//Description panel to display advice to the user
@@ -77,14 +79,14 @@ public class WorldGenerateWindow {
 		
 		//Create the radio buttons, and group them
 		ButtonGroup radioBtnGroup = new ButtonGroup();
-		contestBtn = new JRadioButton("Contest Style World", true);
-		contestBtn.addItemListener(new ContestBtnListener());
-		standardBtn = new JRadioButton("Custom World", false);
-		radioBtnGroup.add(contestBtn);
-		radioBtnGroup.add(standardBtn);
+		this.contestBtn = new JRadioButton("Contest Style World", true);
+		this.contestBtn.addItemListener(new ContestBtnListener());
+		this.standardBtn = new JRadioButton("Custom World", false);
+		radioBtnGroup.add(this.contestBtn);
+		radioBtnGroup.add(this.standardBtn);
 		//Add the radio buttons to the JPanel, and then the window
-		radioBtnPanel.add(contestBtn);
-		radioBtnPanel.add(standardBtn);
+		radioBtnPanel.add(this.contestBtn);
+		radioBtnPanel.add(this.standardBtn);
 		pane.add(radioBtnPanel, BorderLayout.CENTER);
 		
 		//Panel to hold the input areas for the custom worl parameter, as well 
@@ -101,12 +103,12 @@ public class WorldGenerateWindow {
 		JPanel rowsSelectPanel = new JPanel();
 		rowsSelectPanel.setLayout(new FlowLayout());
 		
-		rowsSelectLbl = new JLabel("Number of rows: ");
-		rowsSelectLbl.setEnabled(false);
-		rowsSelectText = new JTextField(5);
-		rowsSelectText.setEnabled(false);
-		rowsSelectPanel.add(rowsSelectLbl);
-		rowsSelectPanel.add(rowsSelectText);
+		this.rowsSelectLbl = new JLabel("Number of rows: ");
+		this.rowsSelectLbl.setEnabled(false);
+		this.rowsSelectText = new JTextField(5);
+		this.rowsSelectText.setEnabled(false);
+		rowsSelectPanel.add(this.rowsSelectLbl);
+		rowsSelectPanel.add(this.rowsSelectText);
 		
 		worldParametersPanel.add(rowsSelectPanel);
 		
@@ -114,12 +116,12 @@ public class WorldGenerateWindow {
 		JPanel colsSelectPanel = new JPanel();
 		colsSelectPanel.setLayout(new FlowLayout());
 		
-		colsSelectLbl = new JLabel("Number of columns: ");
-		colsSelectLbl.setEnabled(false);
-		colsSelectText = new JTextField(5);
-		colsSelectText.setEnabled(false);
-		rowsSelectPanel.add(colsSelectLbl);
-		rowsSelectPanel.add(colsSelectText);
+		this.colsSelectLbl = new JLabel("Number of columns: ");
+		this.colsSelectLbl.setEnabled(false);
+		this.colsSelectText = new JTextField(5);
+		this.colsSelectText.setEnabled(false);
+		rowsSelectPanel.add(this.colsSelectLbl);
+		rowsSelectPanel.add(this.colsSelectText);
 		
 		worldParametersPanel.add(colsSelectPanel);
 		
@@ -127,12 +129,12 @@ public class WorldGenerateWindow {
 		JPanel rocksSelectPanel = new JPanel();
 		rocksSelectPanel.setLayout(new FlowLayout());
 		
-		rocksSelectLbl = new JLabel("Number of rocks: ");
-		rocksSelectLbl.setEnabled(false);
-		rocksSelectText = new JTextField(5);
-		rocksSelectText.setEnabled(false);
-		rocksSelectPanel.add(rocksSelectLbl);
-		rocksSelectPanel.add(rocksSelectText);
+		this.rocksSelectLbl = new JLabel("Number of rocks: ");
+		this.rocksSelectLbl.setEnabled(false);
+		this.rocksSelectText = new JTextField(5);
+		this.rocksSelectText.setEnabled(false);
+		rocksSelectPanel.add(this.rocksSelectLbl);
+		rocksSelectPanel.add(this.rocksSelectText);
 		
 		worldParametersPanel.add(rocksSelectPanel);
 		worldParamsAndGeneratePanel.add(
@@ -152,10 +154,10 @@ public class WorldGenerateWindow {
 		pane.add(worldParamsAndGeneratePanel, BorderLayout.SOUTH);
 		
 		//set window properties, and draw to screen
-		window.pack();
-		window.setLocationRelativeTo(null);
-		window.setResizable(false);
-		window.setVisible(true);
+		this.window.pack();
+		this.window.setLocationRelativeTo(null);
+		this.window.setResizable(false);
+		this.window.setVisible(true);
 	}
 	
 	 
@@ -178,21 +180,21 @@ public class WorldGenerateWindow {
 			//If contest button is selected, deselect parameter selection 
 			//options otherwise, enable them
 			if (e.getStateChange() == ItemEvent.SELECTED) {
-				rowsSelectLbl.setEnabled(false);
-				colsSelectLbl.setEnabled(false);
-				rocksSelectLbl.setEnabled(false);
+				WorldGenerateWindow.this.rowsSelectLbl.setEnabled(false);
+				WorldGenerateWindow.this.colsSelectLbl.setEnabled(false);
+				WorldGenerateWindow.this.rocksSelectLbl.setEnabled(false);
 				
-				rowsSelectText.setEnabled(false);
-				colsSelectText.setEnabled(false);
-				rocksSelectText.setEnabled(false);
+				WorldGenerateWindow.this.rowsSelectText.setEnabled(false);
+				WorldGenerateWindow.this.colsSelectText.setEnabled(false);
+				WorldGenerateWindow.this.rocksSelectText.setEnabled(false);
 			} else {
-				rowsSelectLbl.setEnabled(true);
-				colsSelectLbl.setEnabled(true);
-				rocksSelectLbl.setEnabled(true);
+				WorldGenerateWindow.this.rowsSelectLbl.setEnabled(true);
+				WorldGenerateWindow.this.colsSelectLbl.setEnabled(true);
+				WorldGenerateWindow.this.rocksSelectLbl.setEnabled(true);
 				
-				rowsSelectText.setEnabled(true);
-				colsSelectText.setEnabled(true);
-				rocksSelectText.setEnabled(true);
+				WorldGenerateWindow.this.rowsSelectText.setEnabled(true);
+				WorldGenerateWindow.this.colsSelectText.setEnabled(true);
+				WorldGenerateWindow.this.rocksSelectText.setEnabled(true);
 			}
 		}
 	}
@@ -211,11 +213,11 @@ public class WorldGenerateWindow {
 		 * @param e The triggering event.
 		 */
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (contestBtn.isSelected()) {
+		public void actionPerformed(@SuppressWarnings("unused") ActionEvent e) {
+			if (WorldGenerateWindow.this.contestBtn.isSelected()) {
 				try {
-					mainWindow.setupNewContestWorld();
-					window.setVisible(false);
+					WorldGenerateWindow.this.mainWindow.setupNewContestWorld();
+					WorldGenerateWindow.this.window.setVisible(false);
 				} catch (ErrorEvent eE) {
 					GUIErrorMsg.displayErrorMsg(
 							"Error in generating contest world!");
@@ -223,9 +225,9 @@ public class WorldGenerateWindow {
 			} else {
 				try {
 					//Try converting parameters to integers
-					int rows = Integer.parseInt(rowsSelectText.getText());
-					int cols = Integer.parseInt(colsSelectText.getText());
-					int rocks = Integer.parseInt(rocksSelectText.getText());
+					int rows = Integer.parseInt(WorldGenerateWindow.this.rowsSelectText.getText());
+					int cols = Integer.parseInt(WorldGenerateWindow.this.colsSelectText.getText());
+					int rocks = Integer.parseInt(WorldGenerateWindow.this.rocksSelectText.getText());
 					
 					//Validate user input complies to this games rules
 					if (rows > 140 || cols > 140) {
@@ -236,9 +238,9 @@ public class WorldGenerateWindow {
 													"negative!");
 					} else {
 						try {
-							mainWindow.setupNewWorldStandardWorld(
+							WorldGenerateWindow.this.mainWindow.setupNewWorldStandardWorld(
 									rows, cols, rocks);
-							window.setVisible(false);
+							WorldGenerateWindow.this.window.setVisible(false);
 						} catch (ErrorEvent eE) {
 							GUIErrorMsg.displayErrorMsg(
 									"World is not a legal standard world!");

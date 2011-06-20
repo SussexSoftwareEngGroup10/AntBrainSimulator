@@ -21,9 +21,9 @@ public class WorldTest {
 	@Test
 	public void testCreation(){
 		try {
-			testWorld = WorldParser.readWorldFrom("example", null);
+			this.testWorld = WorldParser.readWorldFrom("example", null);
 		
-			assertTrue("world not created/stored",testWorld != null);
+			assertTrue("world not created/stored",this.testWorld != null);
 		} catch (IOEvent e) {
 			
 			fail(e.getMessage());
@@ -34,9 +34,9 @@ public class WorldTest {
 	public void testReturnSize()
 	{
 		try {
-			testWorld = WorldParser.readWorldFrom("example", null);
+			this.testWorld = WorldParser.readWorldFrom("example", null);
 		
-			Cell[][] worldSize = testWorld.getCells();
+			Cell[][] worldSize = this.testWorld.getCells();
 			assertEquals("retrned wrong size",10, worldSize.length);
 			//the example world is size 10, that is what should be returned
 		} catch (IOEvent e) {
@@ -48,8 +48,8 @@ public class WorldTest {
 	@Test
 	public void testReturnAntsInvalidWorld(){
 		try {
-			testWorld = WorldParser.readWorldFrom("example.world", null);
-			Ant[] testAnts = testWorld.getAnts();
+			this.testWorld = WorldParser.readWorldFrom("example.world", null);
+			Ant[] testAnts = this.testWorld.getAnts();
 			assertEquals("FAILURE: FAILED BECAUSE INVALID WORLD", 32, testAnts.length);
 			//Works out length of hexagon with length
 		} catch (IOEvent e) {
@@ -61,8 +61,8 @@ public class WorldTest {
 	@Test
 	public void testReturnAntsValidWorld(){
 		try {
-				testWorld = World.getContestWorld(93745, null);
-				Ant[] testAnts = testWorld.getAnts();
+				this.testWorld = World.getContestWorld(93745, null);
+				Ant[] testAnts = this.testWorld.getAnts();
 				assertEquals(254, testAnts.length);
 				} catch (ErrorEvent e) {
 					fail(e.getMessage());
@@ -72,9 +72,9 @@ public class WorldTest {
 	@Test
 	public void testReturnFood(){
 		try {
-			testWorld = WorldParser.readWorldFrom("testWorlds/testFood", null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/testFood", null);
 			// this world has a total of 50 foods in
-			Cell[][] worldCells = testWorld.getCells();
+			Cell[][] worldCells = this.testWorld.getCells();
 			int foodCount = 0;
 			for(int x = 0; x < 9; x++){
 				for(int y = 0; y < 9; y++){
@@ -90,8 +90,8 @@ public class WorldTest {
 	@Test
 	public void testGenerateRandomWorld(){
 		try{
-			testWorld = World.getContestWorld(38457, null);
-			assertTrue(testWorld.isContest());
+			this.testWorld = World.getContestWorld(38457, null);
+			assertTrue(this.testWorld.isContest());
 		}  catch (ErrorEvent e) {
 			fail(e.getMessage());
 		}
@@ -100,8 +100,8 @@ public class WorldTest {
 	@Test
 	public void testInvalidWorld(){
 		try {
-			testWorld = World.getRegularWorld(12, 100, 100, 15, null);
-			assertFalse(testWorld.isContest());
+			this.testWorld = World.getRegularWorld(12, 100, 100, 15, null);
+			assertFalse(this.testWorld.isContest());
 		} catch (ErrorEvent e) {
 			fail(e.getMessage());
 		}
@@ -110,8 +110,8 @@ public class WorldTest {
 	@Test
 	public void testTooMuchFood(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/tooMuchFood", null);
-			if(testWorld.getCells()[1][1].foodCount() == 10){
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/tooMuchFood", null);
+			if(this.testWorld.getCells()[1][1].foodCount() == 10){
 				fail("world with 10 food loaded");
 			}else{
 				assertTrue(true);
@@ -124,8 +124,8 @@ public class WorldTest {
 	@Test
 	public void testLoadInvalidWorld(){
 		try{
-			testWorld = WorldParser.readWorldFrom("testWorlds/invalid", null);
-			assertTrue("Invalid world loaded",testWorld == null);
+			this.testWorld = WorldParser.readWorldFrom("testWorlds/invalid", null);
+			assertTrue("Invalid world loaded",this.testWorld == null);
 		}catch (IOEvent e) {
 			fail(e.getMessage());
 		}
@@ -134,8 +134,8 @@ public class WorldTest {
 	@Test
 	public void testLoadNonExistantWorld(){
 		try{
-			testWorld = WorldParser.readWorldFrom("abcdefg", null);
-			assertTrue("Invalid world loaded",testWorld == null);
+			this.testWorld = WorldParser.readWorldFrom("abcdefg", null);
+			assertTrue("Invalid world loaded",this.testWorld == null);
 		}catch (IOEvent e) {
 			assertTrue(true);
 		}

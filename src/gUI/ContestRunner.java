@@ -40,23 +40,23 @@ public class ContestRunner extends Thread {
 	public void run(){
 		World world;
 		try {
-			gameEngine.contestSetup(brains);
+			this.gameEngine.contestSetup(this.brains);
 			//Create a world to use
 			world = World.getContestWorld(1, null);
 			Stack<World> worlds = new Stack<World>();
-			for(int i = 0 ; i <= brains.length; i++) {
+			for(int i = 0 ; i <= this.brains.length; i++) {
 				//Create a new clone of the world for all the matches in this 
 				//step
-				while(worlds.size() < brains.length - 1) {
+				while(worlds.size() < this.brains.length - 1) {
 					worlds.push((World) world.clone());
 				}
 				//increase the progress bar for each iteration
-				contestWindow.setProgressBarVal(i);
+				this.contestWindow.setProgressBarVal(i);
 				//Runs a step of the contest
-				gameEngine.contestStep(worlds);
+				this.gameEngine.contestStep(worlds);
 			}
 			//Tell the contest window that the contest is complete
-			contestWindow.notifyContestComplete(brains);
+			this.contestWindow.notifyContestComplete(this.brains);
 		} catch (IllegalArgumentEvent iAE) {
 			GUIErrorMsg.displayErrorMsg("A supplied brain is not valid!");
 		} catch (ErrorEvent e) {

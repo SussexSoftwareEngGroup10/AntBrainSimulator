@@ -17,7 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import antBrain.Brain;
 import antBrain.BrainParser;
@@ -32,19 +34,19 @@ import utilities.IllegalArgumentEvent;
  * @author wjs25
  */
 public class ContestWindow {
-	private GameEngine gameEngine;
-	private ContestRunner contestRunner;
-	private int numOfPlayers;
+	protected GameEngine gameEngine;
+	protected ContestRunner contestRunner;
+	protected int numOfPlayers;
 	//Holds the file paths of the ant brains
-	private String[] brainPaths;
+	protected String[] brainPaths;
 	
 	//Stores arrays of GUI components
-	private JButton[] browseBtns;
-	private JTextField[] brainPathLbls;
-	private JTextField[] winsFields;
-	private JTextField[] lossesFields;
-	private JButton goBtn;
-	private JProgressBar progressBar;
+	protected JButton[] browseBtns;
+	protected JTextField[] brainPathLbls;
+	protected JTextField[] winsFields;
+	protected JTextField[] lossesFields;
+	protected JButton goBtn;
+	protected JProgressBar progressBar;
 	
 	/**
 	 * ContestWindow
@@ -56,7 +58,7 @@ public class ContestWindow {
 	public ContestWindow(int numOfPlayers, GameEngine gameEngine) {
 		this.numOfPlayers = numOfPlayers;
 		this.gameEngine = gameEngine;
-		brainPaths = new String[numOfPlayers];
+		this.brainPaths = new String[numOfPlayers];
 		drawGUI();
 	}
 	
@@ -66,14 +68,14 @@ public class ContestWindow {
 	private void drawGUI() {
 		//Set up the main frame with a border layout
 		JFrame window = new JFrame("Contest Mode");
-		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		Container pane = window.getContentPane();
 		pane.setLayout(new BorderLayout());
 		
 		//Panel to display the grid where each row allows a contestant to
 		//upload a brain, and show the wins and losses for that brain
 		JPanel brainUploadPanel = new JPanel();
-		brainUploadPanel.setLayout(new GridLayout(numOfPlayers + 1, 5, 10, 10));
+		brainUploadPanel.setLayout(new GridLayout(this.numOfPlayers + 1, 5, 10, 10));
 		brainUploadPanel.setBorder(new EmptyBorder(0, 10, 0, 10) );
 		
 		//Labels that are the column headings
@@ -90,57 +92,57 @@ public class ContestWindow {
 		brainUploadPanel.add(lossesLbl);
 		
 		//Arrays of the components to be added on each row
-		JLabel[] nameLbls = new JLabel[numOfPlayers];
-		browseBtns = new JButton[numOfPlayers];
-		brainPathLbls = new JTextField[numOfPlayers];
-		winsFields = new JTextField[numOfPlayers];
-		lossesFields = new JTextField[numOfPlayers];
+		JLabel[] nameLbls = new JLabel[this.numOfPlayers];
+		this.browseBtns = new JButton[this.numOfPlayers];
+		this.brainPathLbls = new JTextField[this.numOfPlayers];
+		this.winsFields = new JTextField[this.numOfPlayers];
+		this.lossesFields = new JTextField[this.numOfPlayers];
 		
 		//Loop displays each row for uploading a brain for each player
-		for (int i = 0; i < numOfPlayers; i++) { 
+		for (int i = 0; i < this.numOfPlayers; i++) { 
 			nameLbls[i] = new JLabel("Player"  + (i + 1));
-			browseBtns[i] = new JButton("Browse");
-			browseBtns[i].addActionListener(new brainBrowseListener());
-			brainPathLbls[i] = new JTextField();
-			winsFields[i] = new JTextField("");
-			winsFields[i].setEnabled(false);
-			lossesFields[i] = new JTextField("");
-			lossesFields[i].setEnabled(false);
+			this.browseBtns[i] = new JButton("Browse");
+			this.browseBtns[i].addActionListener(new brainBrowseListener());
+			this.brainPathLbls[i] = new JTextField();
+			this.winsFields[i] = new JTextField("");
+			this.winsFields[i].setEnabled(false);
+			this.lossesFields[i] = new JTextField("");
+			this.lossesFields[i].setEnabled(false);
 			
 			brainUploadPanel.add(nameLbls[i]);
-			brainUploadPanel.add(browseBtns[i]);
-			brainUploadPanel.add(brainPathLbls[i]);
-			brainUploadPanel.add(winsFields[i]);
-			brainUploadPanel.add(lossesFields[i]);
+			brainUploadPanel.add(this.browseBtns[i]);
+			brainUploadPanel.add(this.brainPathLbls[i]);
+			brainUploadPanel.add(this.winsFields[i]);
+			brainUploadPanel.add(this.lossesFields[i]);
 		}
 		
 		JScrollPane scrollPanel = new JScrollPane(brainUploadPanel);
 		//Only add scroll bars by limiting the preferred size of the scroll 
 		//panel if the number of players is above 7 (the amount that fits into 
 		//300 pixels).
-		if (numOfPlayers > 7) {
+		if (this.numOfPlayers > 7) {
 			scrollPanel.setPreferredSize(new Dimension(500, 300));
 		} else {
 			//If there won't be scrolling, remove the border of the scroll panel
 			scrollPanel.setBorder(null);
 		}
 		scrollPanel.setHorizontalScrollBarPolicy(
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPanel.setVerticalScrollBarPolicy(
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		pane.add(scrollPanel, BorderLayout.NORTH);
 		
-		progressBar = new JProgressBar(0, numOfPlayers);
-		progressBar.setBorder(new EmptyBorder(10, 10, 10, 10) );
-		pane.add(progressBar, BorderLayout.CENTER);
+		this.progressBar = new JProgressBar(0, this.numOfPlayers);
+		this.progressBar.setBorder(new EmptyBorder(10, 10, 10, 10) );
+		pane.add(this.progressBar, BorderLayout.CENTER);
 		
 		JPanel goPanel = new JPanel();
 		goPanel.setLayout(new FlowLayout());
-		goBtn = new JButton("Go");
-		goBtn.addActionListener(new StartContestListener(this, pane));
+		this.goBtn = new JButton("Go");
+		this.goBtn.addActionListener(new StartContestListener(this, pane));
 		JButton cancelBtn = new JButton("Cancel");
 		cancelBtn.addActionListener(new CloseListener());
-		goPanel.add(goBtn);
+		goPanel.add(this.goBtn);
 		goPanel.add(cancelBtn);
 		pane.add(goPanel, BorderLayout.SOUTH);
 		
@@ -153,18 +155,18 @@ public class ContestWindow {
 	}
 	
 	protected void setProgressBarVal(int val) {
-		progressBar.setValue(val);
+		this.progressBar.setValue(val);
 	}
 	
 	protected void notifyContestComplete(Brain[] brains) {
 		for (int i = 0; i < brains.length; i++) {
 			String wins = Integer.toString(brains[i].getWins());
 			String losses = Integer.toString(brains[i].getLosses());
-			winsFields[i].setText(wins);
-			lossesFields[i].setText(losses);
+			this.winsFields[i].setText(wins);
+			this.lossesFields[i].setText(losses);
 			}
-		goBtn.setEnabled(true);
-		for (JButton browseBtn : browseBtns) {
+		this.goBtn.setEnabled(true);
+		for (JButton browseBtn : this.browseBtns) {
 			browseBtn.setEnabled(true);
 		}
 	}
@@ -205,15 +207,15 @@ public class ContestWindow {
 						JButton clickedBtn = (JButton) e.getSource();
 						int index = 0;
 						int i = 0;
-						while (i < numOfPlayers && index == 0) {
-							if (browseBtns[i] == clickedBtn) {
+						while (i < ContestWindow.this.numOfPlayers && index == 0) {
+							if (ContestWindow.this.browseBtns[i] == clickedBtn) {
 								index = i;
 							}
 							i++;
 						}
 						//Update to selected path
-						brainPathLbls[index].setText(path);
-						brainPaths[index] = path;
+						ContestWindow.this.brainPathLbls[index].setText(path);
+						ContestWindow.this.brainPaths[index] = path;
 					}
 				}
 				
@@ -238,34 +240,34 @@ public class ContestWindow {
 		}
 		
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(@SuppressWarnings("unused") ActionEvent e) {
 			//If a contest has already been run on this window, reset the wins
 			//and losses text fields
-			for (int i = 0; i < numOfPlayers; i++) { 
-				winsFields[i].setText("");
-				lossesFields[i].setText("");
+			for (int i = 0; i < ContestWindow.this.numOfPlayers; i++) { 
+				ContestWindow.this.winsFields[i].setText("");
+				ContestWindow.this.lossesFields[i].setText("");
 			}
 			
-			brains = new Brain[numOfPlayers];
+			this.brains = new Brain[ContestWindow.this.numOfPlayers];
 			try {
-				for (int i = 0; i < numOfPlayers; i++) {
-					brains[i] = BrainParser.readBrainFrom(brainPaths[i]);
+				for (int i = 0; i < ContestWindow.this.numOfPlayers; i++) {
+					this.brains[i] = BrainParser.readBrainFrom(ContestWindow.this.brainPaths[i]);
 				}
-				contestRunner = 
-						new ContestRunner(gameEngine, brains, contestWindow);
-				contestRunner.start();
+				ContestWindow.this.contestRunner = 
+						new ContestRunner(ContestWindow.this.gameEngine, this.brains, this.contestWindow);
+				ContestWindow.this.contestRunner.start();
 				//Need to disable run button on main window
-				goBtn.setEnabled(false);
+				ContestWindow.this.goBtn.setEnabled(false);
 				
-				for (JButton browseBtn : browseBtns) {
+				for (JButton browseBtn : ContestWindow.this.browseBtns) {
 					browseBtn.setEnabled(false);
 				}
 				
 				//Show a part of the progress bar so it's clear what it is for
-				progressBar.setValue(1);
+				ContestWindow.this.progressBar.setValue(1);
 				
 				JOptionPane.showMessageDialog(
-						pane, "Running contest, please wait.");
+						this.pane, "Running contest, please wait.");
 			} catch (IOEvent ioE) {
 				GUIErrorMsg.displayErrorMsg(
 						"An error occured while parsing an ant brain " +
@@ -285,7 +287,7 @@ public class ContestWindow {
 			JButton triggeringBtn = (JButton) e.getSource();
 			//Get the frame the button was on
 			JFrame window = (JFrame) SwingUtilities.getRoot(triggeringBtn);
-			contestRunner.interrupt();
+			ContestWindow.this.contestRunner.interrupt();
 			window.setVisible(false);
 		}
 	}

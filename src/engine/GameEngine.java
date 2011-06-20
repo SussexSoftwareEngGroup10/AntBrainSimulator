@@ -360,12 +360,12 @@ public class GameEngine {
 		//Used by the main method to test Brains infinite seeded worlds
 		GameEngine gameEngine = new GameEngine();
 		Brain ga = null;
-		Brain bax = null;
+		Brain testBrain = null;
 		try{
 			ga = BrainParser.readBrainFrom("ga_result_2_(surround)");
-//			bax = BrainParser.readBrainFrom("ga_result_1_(food)");
-//			bax = BrainParser.readBrainFrom("baxters_brain_3");
-			bax = BrainParser.readBrainFrom("frictionless_bananas_1");
+//			testBrain  = BrainParser.readBrainFrom("ga_result_1_(food)");
+			testBrain = BrainParser.readBrainFrom("baxters_brain_3");
+//			testBrain  = BrainParser.readBrainFrom("frictionless_bananas_1");
 		}catch(Event e){
 			Logger.log(e);
 			return;
@@ -380,7 +380,7 @@ public class GameEngine {
 			draws = 0;
 			losses = 0;
 			try {
-				gs = gameEngine.simulate(ga, bax, World.getContestWorld(seed, null));
+				gs = gameEngine.simulate(ga, testBrain, World.getContestWorld(seed, null));
 			} catch (Event e) {
 				Logger.log(e);
 				return;
@@ -390,7 +390,7 @@ public class GameEngine {
 			else if(gs.getWinner() == 1) losses++;
 			
 			try {
-				gs = gameEngine.simulate(bax, ga, World.getContestWorld(seed, null));
+				gs = gameEngine.simulate(testBrain, ga, World.getContestWorld(seed, null));
 			} catch (Event e) {
 				Logger.log(e);
 				return;

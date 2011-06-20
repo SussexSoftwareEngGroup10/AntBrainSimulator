@@ -33,7 +33,8 @@ public class SoundPlayer implements LineListener {
 	private Clip foodDepositionSound;
 	
 	//This is set to true when the sound should be muted
-	private boolean mute = false;
+	//By default it is muted
+	private boolean mute = true;
 
 	/**
 	 * Constructor for the sound player.  This loads in all the audio files.

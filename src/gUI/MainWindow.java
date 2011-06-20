@@ -214,7 +214,7 @@ public class MainWindow {
 		JPanel muteAndHideMarkersPanel = new JPanel();
 		muteAndHideMarkersPanel.setLayout(new FlowLayout());
 		
-		this.muteBtn = new JButton("Mute");
+		this.muteBtn = new JButton("Unmute");
 		this.muteBtn.addActionListener(new MuteListener());
 		this.muteBtn.setPreferredSize(new Dimension(90, 26));
 		this.muteBtn.setEnabled(true);
@@ -631,7 +631,7 @@ public class MainWindow {
 		    MainWindow.this.gameEngine.setSleepDur(
 		    		GameEngine.expScale(1001 - source.getValue()));
 		    //Mute the sound if it runs faster than 700 after the change
-		    if (source.getValue() > 700) {
+		    if (source.getValue() > 501) {
 		    	MainWindow.this.soundPlayer.setMute(true);
 		    	MainWindow.this.muteBtn.setEnabled(false);
 		    } else if (MainWindow.this.muteBtn.getText().equals("Mute")) {

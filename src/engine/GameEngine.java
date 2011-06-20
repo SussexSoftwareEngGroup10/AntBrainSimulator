@@ -399,8 +399,9 @@ public class GameEngine {
 			else if(gs.getWinner() == -1) draws++;
 			else if(gs.getWinner() == 0) losses++;
 			
-			System.out.println("seed: " + seed + ", wins|draws|losses : " + wins + "|" + draws + "|" + losses +
-				", total : " + ga.getWins() + "|" + ga.getDraws() + "|" + ga.getLosses());
+			Logger.log(new InformationHighEvent("seed: " + seed + ", wins|draws|losses : " +
+				wins + "|" + draws + "|" + losses + ", total : " +
+				ga.getWins() + "|" + ga.getDraws() + "|" + ga.getLosses()));
 		}
 	}
 	
@@ -430,7 +431,7 @@ public class GameEngine {
 		
 		Brain gaBrain = null;
 		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
-			trainingBrain, Integer.MAX_VALUE, 50, 25, 30);
+			trainingBrain, Integer.MAX_VALUE, 50, 25, 50);
 //		try {
 //			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
 //		} catch (IOEvent e) {
@@ -454,20 +455,19 @@ public class GameEngine {
 		}
 	}
 	
+	/**
+	 *  main
+	 *  method used to initiate genetic algorithm evolution
+	 * @param args unused
+	 */
 	public static void main(String[] args) {
-		//TODO test how far is deterministic (seed fixed now)
-		//TODO number of states in GeneticAlgorithm.breed(), allow removal of states
-			//or at least allow a numOfStates parameter (does not need more, does not use all of the States given)
-		//TODO remove polling in Ant.step() (impossible to do more efficiently)
-		//TODO use GA .jar on linux server (too late)
-		//TODO javac -O, java -prof, JIT
-		
 		Logger.clearLogs();
 		Logger.setLogLevel(Logger.LogLevel.NORM_LOGGING);
+		Logger.setLogToTerminal(true);
 		
 //		runBrainContest();
 		runGA();
 		
-		Logger.log(new InformationNormEvent("Virtual Machine terminated normally"));
+		Logger.log(new InformationHighEvent("Virtual Machine terminated normally"));
 	}
 }

@@ -25,6 +25,7 @@ public final class Logger {
 	HIGH_LOGGING, NORM_LOGGING, LOW_LOGGING, ALL_LOGGING }
 	
 	private LogLevel logLevel = LogLevel.ALL_LOGGING;
+	private boolean logToTerminal = false;
 	private final long startTime = System.nanoTime();
 	private long restartTime = this.startTime;
 	private final long sizeLimit = 10000000; //10MB
@@ -141,8 +142,7 @@ public final class Logger {
 		
 		//Write the toString of e to a log file
 		logger.logErr.println(event.toString());
-		//TODO remove this print
-		System.out.println(event.toString());
+		if(logger.logToTerminal) System.out.println(event.toString());
 	}
 	
 	/**
@@ -153,6 +153,16 @@ public final class Logger {
 	 */
 	public static void setLogLevel(LogLevel logLevel) {
 		logger.logLevel = logLevel;
+	}
+	
+	/**
+	 *  setLogToTerminal
+	 *  set whether the Logger should print to the console as well as
+	 *  to a .log file
+	 * @param logToTerminal if true, print to the console
+	 */
+	public static void setLogToTerminal(boolean logToTerminal) {
+		logger.logToTerminal = logToTerminal;
 	}
 	
 	/**

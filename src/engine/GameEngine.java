@@ -432,7 +432,7 @@ public class GameEngine {
 		
 		Brain gaBrain = null;
 		gaBrain = geneticAlgorithm.getBestBrain(gameEngine, trainingBrain,
-			trainingBrain, Integer.MAX_VALUE, 50, 25, 20);
+			trainingBrain, Integer.MAX_VALUE, 50, 25, 30);
 //		try {
 //			gaBrain = BrainParser.readBrainFrom("ga_result_2_(surround)");
 //		} catch (IOEvent e) {

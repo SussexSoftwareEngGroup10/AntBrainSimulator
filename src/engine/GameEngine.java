@@ -356,7 +356,6 @@ public class GameEngine {
 	
 	@SuppressWarnings("unused")
 	private static void runBrainContest() {
-		Logger.setLogLevel(LogLevel.WARNING_LOGGING);
 		//Used by the main method to test Brains infinite seeded worlds
 		GameEngine gameEngine = new GameEngine();
 		Brain ga = null;
@@ -376,6 +375,7 @@ public class GameEngine {
 		int draws;
 		int losses;
 		for(int seed = 1; seed < Integer.MAX_VALUE; seed++){
+			Logger.setLogToTerminal(false);
 			wins = 0;
 			draws = 0;
 			losses = 0;
@@ -399,6 +399,7 @@ public class GameEngine {
 			else if(gs.getWinner() == -1) draws++;
 			else if(gs.getWinner() == 0) losses++;
 			
+			Logger.setLogToTerminal(true);
 			Logger.log(new InformationHighEvent("seed: " + seed + ", wins|draws|losses : " +
 				wins + "|" + draws + "|" + losses + ", total : " +
 				ga.getWins() + "|" + ga.getDraws() + "|" + ga.getLosses()));
@@ -417,8 +418,8 @@ public class GameEngine {
 		try{
 //			trainingBrain = BrainParser.readBrainFrom("better_example");
 //			trainingBrain = BrainParser.readBrainFrom("ga_result_1_(food)");
-//			trainingBrain = BrainParser.readBrainFrom("baxters_brain_3");
-			trainingBrain = BrainParser.readBrainFrom("frictionless_bananas_1");
+			trainingBrain = BrainParser.readBrainFrom("baxters_brain_3");
+//			trainingBrain = BrainParser.readBrainFrom("frictionless_bananas_1");
 		}catch(IOEvent e){
 			Logger.log(e);
 			return;

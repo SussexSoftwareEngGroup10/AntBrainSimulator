@@ -279,8 +279,10 @@ public class MainWindow {
 	 */
 	protected void setupNewWorldStandardWorld(int rows, int cols, int rocks) 
 			throws ErrorEvent {
-		this.world = World.getRegularWorld(0, rows, cols, rocks, this.soundPlayer);
-		this.gameDisplay.updateWorld(this.world); //Update game display with the world
+		this.world 
+				= World.getRegularWorld(0, rows, cols, rocks, this.soundPlayer);
+		//Update game display with the world
+		this.gameDisplay.updateWorld(this.world);
 		this.liveStatGrabber.updateWorld(this.world);
 	}
 
@@ -420,13 +422,15 @@ public class MainWindow {
 												clickedBtn.getText() + " ✔");
 								}
 								try{
-									MainWindow.this.redBrain = BrainParser.readBrainFrom(path);
+									MainWindow.this.redBrain 
+											= BrainParser.readBrainFrom(path);
 								} catch (IllegalArgumentEvent iae) {
 									GUIErrorMsg.displayErrorMsg(
 											"Unable to parse file. " +
 											"Brain syntactically incorrect!");
 								}
-							} else if (clickedBtn == MainWindow.this.uploadBlackBtn) {
+							} else if (clickedBtn 
+									== MainWindow.this.uploadBlackBtn) {
 								if (!clickedBtn.getText().contains("✔")) {
 									clickedBtn.setText(
 												clickedBtn.getText() + " ✔");
@@ -441,7 +445,8 @@ public class MainWindow {
 								}
 							} else { //Else world button was clicked
 								try{
-									MainWindow.this.world = WorldParser.readWorldFrom(
+									MainWindow.this.world 
+											= WorldParser.readWorldFrom(
 											path, MainWindow.this.soundPlayer);
 								} catch (IOEvent iOE) {
 									GUIErrorMsg.displayErrorMsg(
@@ -450,7 +455,8 @@ public class MainWindow {
 								}
 								//Updated the game display with the parsed 
 								//world
-								MainWindow.this.gameDisplay.updateWorld(MainWindow.this.world);
+								MainWindow.this.gameDisplay.updateWorld(
+										MainWindow.this.world);
 							}
 						} catch (IOEvent iOE) { /**/ }
 					}
@@ -460,7 +466,8 @@ public class MainWindow {
 				GUIErrorMsg.displayErrorMsg("Security violation with file!");
 			}
 			//If all files have been selected, allow game to be played.
-			if (!(MainWindow.this.blackBrain == null) && !(MainWindow.this.redBrain == null)) {
+			if (!(MainWindow.this.blackBrain == null) 
+					&& !(MainWindow.this.redBrain == null)) {
 				MainWindow.this.startGameBtn.setEnabled(true);
 			}
 		}
@@ -502,7 +509,8 @@ public class MainWindow {
 								"Upper limit of 100 players for contests!");
 					} else {
 						//Display contest window
-						new ContestWindow(numberOfPlayers, MainWindow.this.gameEngine);
+						new ContestWindow(
+								numberOfPlayers, MainWindow.this.gameEngine);
 					}
 				} catch (NumberFormatException nFE){
 					GUIErrorMsg.displayErrorMsg(
@@ -577,9 +585,11 @@ public class MainWindow {
 			}
 			//State a new simulation runner to run the simulation in a new
 			//thread
-			new SimulationRunner(
-					MainWindow.this.gameEngine, MainWindow.this.blackBrain, MainWindow.this.redBrain, MainWindow.this.world, this.mainWindow)
-					.start();
+			new SimulationRunner(MainWindow.this.gameEngine, 
+								 MainWindow.this.blackBrain, 
+								 MainWindow.this.redBrain, 
+								 MainWindow.this.world, this.mainWindow)
+								 .start();
 			MainWindow.this.gameDisplay.switchState(DisplayStates.RUNNING);
 			
 			//Enable the finish button and the speed adjustment slider
@@ -717,7 +727,11 @@ public class MainWindow {
 			MainWindow.this.gameDisplay.switchState(DisplayStates.PROCESSING);
 			//Store whether the game was muted before the game is skipped to
 			//the end. Then mute
-			MainWindow.this.isMuteBeforeFinish = MainWindow.this.soundPlayer.isMute();
+			if (MainWindow.this.muteBtn.getText().equals("Mute")) {
+				MainWindow.this.isMuteBeforeFinish = false;
+			} else {
+				MainWindow.this.isMuteBeforeFinish = true;
+			}
 			MainWindow.this.soundPlayer.setMute(true);
 		}
 	}

@@ -8,6 +8,7 @@ automatically every time the program is compiled because together the whole
 test suite can take around 4 minutes to run.  For this reason, they are run
 manually when significant changes to the code are made or new functionality is
 added.
+The tests are documented in the test specification, and not th  javadoc.
 
 brain_populations contains a serialized version of the GeneticAlgorithm class. 
 This is done so the program can read and write them to save their state so they 

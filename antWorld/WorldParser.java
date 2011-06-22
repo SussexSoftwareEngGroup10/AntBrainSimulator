@@ -97,9 +97,8 @@ public final class WorldParser {
 				rows = Integer.parseInt(br.readLine());
 				cols = Integer.parseInt(br.readLine());
 			}catch(NumberFormatException e){
-				Logger.log(new IOEvent("Failed to read row and column values from "
-					+ path + ". " + e.getMessage(), e));
-				return null;
+				throw new IOEvent("Failed to read row and column values from "
+					+ path + ". " + e.getMessage(), e);
 			}
 			
 			cellChars = new char[rows][cols];

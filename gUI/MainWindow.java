@@ -448,6 +448,7 @@ public class MainWindow {
 									MainWindow.this.world 
 											= WorldParser.readWorldFrom(
 											path, MainWindow.this.soundPlayer);
+									MainWindow.this.liveStatGrabber.updateWorld(MainWindow.this.world);
 								} catch (IOEvent iOE) {
 									GUIErrorMsg.displayErrorMsg(
 											"Unable to parse file. " +
